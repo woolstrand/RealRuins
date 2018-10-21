@@ -7,8 +7,8 @@
     <ProjectGuid>{D7D21B4A-1DA7-41D8-B202-C58CA8FA62AA}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Real_Ruins</RootNamespace>
-    <AssemblyName>Real_Ruins</AssemblyName>
+    <RootNamespace>RealRuins</RootNamespace>
+    <AssemblyName>RealRuins</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile>Client</TargetFrameworkProfile>
@@ -35,6 +35,10 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
+    <None Include="README.md" />
+    <Reference Include="0Harmony">
+      <HintPath>..\..\..\..\..\workshop\content\294100\818773962\Assemblies\0Harmony.dll</HintPath>
+    </Reference>
     <Reference Include="Assembly-CSharp">
       <HintPath>..\..\..\..\..\..\..\Assembly-CSharp.dll</HintPath>
       <Private>False</Private>
@@ -60,15 +64,15 @@
     <None Include="..\About\About-Release.xml" />
     <None Include="..\About\About.xml" />
     <None Include="..\About\Preview.png" />
-    <None Include="..\Defs\KeyBindingDefs\KeyBindings.xml" />
-    <None Include="..\Defs\Storyteller\Incidents_UploadBase.xml" />
     <None Include="..\Languages\**" />
     <None Include="..\Patches\**" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Classes\Snapshotting\IncidentWorker_BaseSnapshot.cs" />
+    <Compile Include="Classes\Debug.cs" />
+    <Compile Include="Classes\Snapshotting\SnapshotGenerator.cs" />
     <Compile Include="Classes\Scattering\GenStep_ScatterRealRuins.cs" />
     <Compile Include="Classes\RealRuins.cs" />
+    <Compile Include="Classes\Utility\SnapshotManager.cs" />
     <Compile Include="Classes\Utility\SnapshotStoreManager.cs" />
     <Compile Include="Classes\Utility\AmazonS3Service.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

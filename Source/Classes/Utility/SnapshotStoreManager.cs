@@ -3,14 +3,25 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-using System.IO;
 using Verse;
 
-namespace RealRuins.Classes.Snapshotting
+using System.IO;
+using System.Security.AccessControl;
+using System.Security.Principal;
+
+namespace RealRuins
 {
     class SnapshotStoreManager
     {
-        public static SnapshotStoreManager instance = new SnapshotStoreManager();
+        private static SnapshotStoreManager instance = null;
+        public static SnapshotStoreManager Instance {
+            get {
+                if (instance == null) {
+                    instance = new SnapshotStoreManager();
+                }
+                return instance;
+            }
+        }
 
         private string rootFolder = "../Snapshots";
 
@@ -20,8 +31,8 @@ namespace RealRuins.Classes.Snapshotting
             }
         }
 
-        public void StoreData(byte[] buffer, string filename) {
-            File.WriteAllBytes(rootFolder, buffer);
+        public void StoreData(string buffer, string filename) {
+            File.WriteAllText(rootFolder + "/" + filename, buffer);
         }
 
         private string DoGetRandomFilenameFromRootFolder() {
@@ -30,7 +41,7 @@ namespace RealRuins.Classes.Snapshotting
             return files[index];
         }
 
-        private string RandomSnapshotFilename() {
+        public string RandomSnapshotFilename() {
             string filename = null;
             do {
                 filename = DoGetRandomFilenameFromRootFolder();
@@ -41,6 +52,22 @@ namespace RealRuins.Classes.Snapshotting
                 }
             } while (filename == null);
             return filename;
+        }
+
+        public int StoredSnapshotsCount() {
+            return Directory.GetFiles(rootFolder).Count();
+        }
+
+        public List<string> FilterOutExistingItems(List<string> source) {
+            List<string> result = new List<string>();
+
+            foreach (string item in source) {
+                if (!File.Exists(rootFolder + "/" + item)) {
+                    result.Add(item);
+                }
+            }
+
+            return result;
         }
 
     }

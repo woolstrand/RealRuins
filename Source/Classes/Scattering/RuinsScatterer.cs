@@ -132,23 +132,17 @@ namespace RealRuins
             return num;
         }
 
-        private void Message(string format, params object[] args)
-        {
-            string message = string.Format(format, args);
-            Log.Message(message, true);
-        }
 
         //Deterioration degree is unconditional modifier of destruction applied to the ruins bluepring. Degree of 0.5 means that in average each 2nd block in "central" part will be destroyed.
         //Scavenge threshold is an item price threshold after which the item or terrain is most likely scavenged.
         public void ScatterRuinsAt(IntVec3 loc, Map map, int wallRadius = 6, int wallRadiusJitter = 2, int floorRadius = 7, int floorRadiusJitter = 2, float deteriorationDegree = 0.5f, float scavengeThreshold = 50.0f)
         {
-            Message("Scattering ruins at ({0}, {1})", loc.x, loc.z);
+            Debug.Message("Scattering ruins at ({0}, {1})", loc.x, loc.z);
 
             //Create the XmlDocument.  
             XmlDocument snapshot = new XmlDocument();
 
-            Log.Message("Loading file...");
-            snapshot.Load("C:\\temp\\jeluder.txt");
+            snapshot.Load(SnapshotStoreManager.Instance.RandomSnapshotFilename());
 
             XmlNodeList elemList = snapshot.GetElementsByTagName("cell");
             int blueprintWidth = int.Parse(snapshot.FirstChild.Attributes["width"].Value);
@@ -180,7 +174,6 @@ namespace RealRuins
                 }
             }
 
-            Message("File read and prepared for inserting.");
 
             //cut and deteriorate:
             // since the original blueprint can be pretty big, you usually don't want to replicate it as is. You need to cut a small piece and make a smooth transition
@@ -222,6 +215,7 @@ namespace RealRuins
                 }
             }
 
+            Faction faction = (Rand.Value > 0.5) ? Find.FactionManager.OfAncientsHostile : Find.FactionManager.OfAncients;
 
             //Planting blueprint
             for (int z = 0; z < blueprintHeight; z++) {
@@ -261,7 +255,6 @@ namespace RealRuins
                     if (itemsMap[x, z] != null && itemsMap[x, z].Count > 0) {
 
                         bool cellIsAlreadyCleared = false;
-                        Message("Processing items on tile {0}, {1}", mapLocation.x, mapLocation.z);
                         foreach (ItemTile itemTile in itemsMap[x, z]) {
 
                             ThingDef thingDef = ThingDef.Named(itemTile.defName);
@@ -275,7 +268,6 @@ namespace RealRuins
                             //check if can be built on top of existing terrain
                             if (thingDef != null) {
                                 if (thingDef.terrainAffordanceNeeded != null && !map.terrainGrid.TerrainAt(mapLocation).affordances.Contains(thingDef.terrainAffordanceNeeded)) {
-                                    Message("Terrain can't fullfill requirements: {0}", thingDef.terrainAffordanceNeeded);
                                     continue;
                                 }
 
@@ -290,17 +282,14 @@ namespace RealRuins
                                 float scavengeModifier = Math.Min(0.95f, scavengeThreshold / cost);
                                 float spawnThreshold = itemsIntegrity[x, z] * scavengeModifier * (1.0f - deteriorationDegree);
 
-                                Message("Spawning {0} of {1} (stack of {2}). cost is {3}. chance is {4}", thingDef, (stuffDef!=null)?stuffDef.defName:"<NULL>", itemTile.stackCount, cost, spawnThreshold);
 
                                 float spawnChance = Rand.Value;
                                 if (spawnChance > spawnThreshold * 1.5) {
-                                    Message("Did not spawn");
                                     continue; //item deteriorated/scavenged completely
                                 } else { 
                                     //otherwise there is a chance that player will get some leftovers
                                     if (!cellIsAlreadyCleared) { //first item to be spawned should also clear place for itself. we can't do it beforehand because we don't know it it will be able and get a chance to be spawned.
                                         if (!ClearCell(mapLocation, map)) {
-                                            Message("Could not clear cell");
                                             break; //if cell was not cleared successfully -> break things placement cycle and move on to the next item
                                         } else {
                                             cellIsAlreadyCleared = true;
@@ -309,7 +298,6 @@ namespace RealRuins
 
                                     if (!thingDef.BuildableByPlayer) {
                                         if (spawnChance > spawnThreshold) {
-                                            Message("Did not spawn");
                                             continue; //no leftovers for items, only for buildings
                                         }
                                     }
@@ -321,6 +309,7 @@ namespace RealRuins
                                         GenSpawn.Spawn(thing, mapLocation, map, new Rot4(itemTile.rot));
                                         if (itemTile.stackCount > 1) {
                                             thing.stackCount = Rand.Range(1, itemTile.stackCount);
+                                            thing.SetFactionDirect(faction);
 
                                             //Spoil things that can be spoiled. You shouldn't find a fresh meat an the old ruins.
                                             CompRottable rottable = thing.TryGetComp<CompRottable>();
@@ -336,10 +325,8 @@ namespace RealRuins
                                         }
 
                                         if (spawnChance > spawnThreshold) {
-                                            Message("Spawned and destroyed");
                                             thing.Destroy(DestroyMode.KillFinalize);
                                         } else {
-                                            Message("Spawned!");
                                         }
 
 
@@ -360,17 +347,19 @@ namespace RealRuins
                         }
                     }
 
-                    if (Rand.Value < 0.1) {
-                        PawnGenerationRequest request = new PawnGenerationRequest(PawnKindDefOf.WildMan, null, PawnGenerationContext.NonPlayer, -1, false, false, false, false, true, false, 20f, false, true, true, false, false, false, false, null, null, null, null, null, null, null, null);
-                        Pawn dweller = PawnGenerator.GeneratePawn(request);
-                        GenSpawn.Spawn(dweller, mapLocation, map);
-                        dweller.Kill(null);
-                        CompRottable rottable = dweller.Corpse.TryGetComp<CompRottable>();
-                        rottable.RotProgress = rottable.PropsRot.TicksToDessicated + Rand.Value * 1000000;
-                        dweller.Corpse.timeOfDeath = -1304005;
-                        Message("Time of death: {0}", dweller.Corpse.timeOfDeath);
+                    //Pretty low chance to have someone's remainings
+                    if (Rand.Value < 0.001) {
+                        int timeOfDeath = Find.TickManager.TicksGame - (int)(Rand.Value * 100000000);
+                        do {
+                            PawnGenerationRequest request = new PawnGenerationRequest(PawnKindDefOf.WildMan, null, PawnGenerationContext.NonPlayer, -1, false, false, false, false, true, false, 20f, false, true, true, false, false, false, false, null, null, null, null, null, null, null, null);
+                            Pawn dweller = PawnGenerator.GeneratePawn(request);
+                            GenSpawn.Spawn(dweller, mapLocation, map);
+                            dweller.Kill(null);
+                            CompRottable rottable = dweller.Corpse.TryGetComp<CompRottable>();
+                            rottable.RotProgress = rottable.PropsRot.TicksToDessicated;
+                            dweller.Corpse.timeOfDeath = timeOfDeath + (int)(Rand.Value * 100000);
+                        } while (Rand.Value < 0.5);
                     }
-
                 }
             }
         }

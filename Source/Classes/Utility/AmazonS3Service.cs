@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Security.Cryptography;
 using System.Text;
+using System.Xml;
 using UnityEngine.Networking;
 
 using HugsLib.Utils;
@@ -171,7 +172,7 @@ namespace RealRuins
             };
 
             this.activeRequest = request;
-            HugsLibUtility.AwaitUnityWebResponse(request, onUploadComplete, failureHandler);
+            HugsLibUtility.AwaitUnityWebResponse(request, successHandler, failureHandler);
             GC.KeepAlive(this);
             return true;
         }
@@ -181,22 +182,43 @@ namespace RealRuins
 
             UnityWebRequest request = AmazonS3SignedWebRequest("GET", "", null);
 
-            Action<string> internalSuccessHandler = delegate (string response) {
+            void InternalSuccessHandler(string response) {
+                Debug.Message("Success loading names list, response: {0}", response);
+                XmlDocument filesListDocument = new XmlDocument();
+                filesListDocument.LoadXml(response);
 
-                Log.Message(string.Format("Objects list: {0}", response), true);
-            };
+                XmlNodeList filesList = filesListDocument.GetElementsByTagName("Contents");
+                Debug.Message("Got names list");
+
+                List<string> namesList = new List<string>();
+
+                foreach (XmlNode node in filesList) {
+                    if (node.HasChildNodes) {
+                        foreach (XmlNode innerNode in node.ChildNodes) {
+                            if (innerNode.Name == "Key") {
+                                string value = innerNode.InnerText;
+                                if (value != null) {
+                                    namesList.Add(value);
+                                }
+                            }
+                        }
+                    }
+                }
+
+                successHandler(namesList);
+            }
 
             Action<Exception> failureHandler = delegate (Exception ex) {
                 Log.Message(string.Format("Exception during loading list {0}", ex), true);
             };
 
             this.activeRequest = request;
-            HugsLibUtility.AwaitUnityWebResponse(request, onUploadComplete, failureHandler);
+            HugsLibUtility.AwaitUnityWebResponse(request, InternalSuccessHandler, failureHandler);
 
             return true;
         }
 
-        public bool AmazonS3LoadSnapshot(string snapshotName, Action<string> successHandler) {
+        public bool AmazonS3DownloadSnapshot(string snapshotName, Action<string> successHandler) {
 
             UnityWebRequest request = AmazonS3SignedWebRequest("GET", snapshotName, null);
 
@@ -204,20 +226,17 @@ namespace RealRuins
                 successHandler(response);
             };
 
-            Action<Exception> failureHandler = delegate (Exception ex) {
-                Log.Message(string.Format("Exception during loading list {0}", ex), true);
-            };
+            void failureHandler(Exception ex) {
+                Log.Message(string.Format("Exception during loading object: {0}", ex), true);
+            }
 
             this.activeRequest = request;
-            HugsLibUtility.AwaitUnityWebResponse(request, onUploadComplete, failureHandler);
+            HugsLibUtility.AwaitUnityWebResponse(request, successHandler, failureHandler);
 
             return true;
         }
 
-        public void onUploadComplete(string response) {
-            Log.Message(string.Format("Objects list: {0}", response), true);
-        }
-
+        
     }
 
 }
