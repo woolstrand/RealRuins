@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+
+  <!--=============== BaseSnapshot =============-->
+  
+  <IncidentDef>
+    <defName>BaseSnapshot</defName>
+    <label>Uploads base snapshot eventually</label>
+    <targetTags>
+      <li>Map_PlayerHome</li>
+    </targetTags>
+    <workerClass>RealRuins.IncidentWorker_BaseSnapshot</workerClass>
+    <category>Misc</category>
+    <baseChance>3</baseChance>
+  </IncidentDef>
+
+</Defs>
+

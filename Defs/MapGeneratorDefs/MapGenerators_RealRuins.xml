@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+	<!-- Empty ruins -->
+	<GenStepDef>
+		<defName>ScatterRealRuins</defName>
+		<order>301</order>
+		<genStep Class="Real_Ruins.GenStep_ScatterRealRuins">
+			<allowInWaterBiome>false</allowInWaterBiome>
+			<countPer10kCellsRange>
+				<min>0.20</min>
+				<max>2.35</max>
+			</countPer10kCellsRange>
+		</genStep>
+	</GenStepDef>
+</Defs>
