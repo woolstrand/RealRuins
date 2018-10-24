@@ -8,6 +8,7 @@ using System.Xml;
 
 namespace RealRuins
 {
+
     //stores information about terrain in the blueprint
     class TerrainTile
     {
@@ -55,6 +56,8 @@ namespace RealRuins
 
     class RuinsScatterer
     {
+
+        static private int totalWorkTime = 0;
 
         // Clear the cell from other destroyable objects
         private bool ClearCell(IntVec3 location, Map map)
@@ -137,7 +140,9 @@ namespace RealRuins
         //Scavenge threshold is an item price threshold after which the item or terrain is most likely scavenged.
         public void ScatterRuinsAt(IntVec3 loc, Map map, int wallRadius = 6, int wallRadiusJitter = 2, int floorRadius = 7, int floorRadiusJitter = 2, float deteriorationDegree = 0.5f, float scavengeThreshold = 50.0f)
         {
+
             Debug.Message("Scattering ruins at ({0}, {1})", loc.x, loc.z);
+            DateTime start = DateTime.Now;
 
             //Create the XmlDocument.  
             XmlDocument snapshot = new XmlDocument();
@@ -157,6 +162,9 @@ namespace RealRuins
             //deterioration change also depends on material and cost, but is always based on base chance
             float[,] terrainIntegrity = new float[blueprintWidth, blueprintHeight]; //integrity of floor tiles
             float[,] itemsIntegrity = new float[blueprintWidth, blueprintHeight]; //base integrity of walls, roofs and items
+
+            bool canHaveFood = false; //should food ever be spawned for this ruins
+            canHaveFood = Rand.Chance((1.0f - deteriorationDegree) / 4);
 
             foreach (XmlNode cellNode in elemList) {
                 int x = int.Parse(cellNode.Attributes["x"].Value);
@@ -216,6 +224,7 @@ namespace RealRuins
             }
 
             Faction faction = (Rand.Value > 0.5) ? Find.FactionManager.OfAncientsHostile : Find.FactionManager.OfAncients;
+            Debug.Message("Setting faction to {0}", faction.def.defName);
 
             //Planting blueprint
             for (int z = 0; z < blueprintHeight; z++) {
@@ -265,8 +274,8 @@ namespace RealRuins
 
 
 
-                            //check if can be built on top of existing terrain
                             if (thingDef != null) {
+                                //check if can ever be built on top of existing terrain
                                 if (thingDef.terrainAffordanceNeeded != null && !map.terrainGrid.TerrainAt(mapLocation).affordances.Contains(thingDef.terrainAffordanceNeeded)) {
                                     continue;
                                 }
@@ -309,13 +318,21 @@ namespace RealRuins
                                         GenSpawn.Spawn(thing, mapLocation, map, new Rot4(itemTile.rot));
                                         if (itemTile.stackCount > 1) {
                                             thing.stackCount = Rand.Range(1, itemTile.stackCount);
-                                            thing.SetFactionDirect(faction);
+
+                                            if (thingDef.CanHaveFaction) {
+                                                thing.SetFactionDirect(faction);
+                                            }
 
                                             //Spoil things that can be spoiled. You shouldn't find a fresh meat an the old ruins.
                                             CompRottable rottable = thing.TryGetComp<CompRottable>();
                                             if (rottable != null) {
-                                                //if deterioration degree is > 0.5 you won't find any food.
-                                                rottable.RotProgress = (Rand.Value * 0.5f + deteriorationDegree) * (rottable.PropsRot.TicksToRotStart);
+                                                //if deterioration degree is > 0.5 you definitely won't find any food.
+                                                //anyway, there is a chance that you also won't get any food even if deterioriation is relatively low. animalr, raiders, you know.
+                                                if (canHaveFood) {
+                                                    rottable.RotProgress = (Rand.Value * 0.5f + deteriorationDegree) * (rottable.PropsRot.TicksToRotStart);
+                                                } else {
+                                                    rottable.RotProgress = rottable.PropsRot.TicksToRotStart + 1;
+                                                }
                                             }
                                         }
 
@@ -329,8 +346,6 @@ namespace RealRuins
                                         } else {
                                         }
 
-
-
                                         didAlterCell = true;
                                     }
                                 }
@@ -341,27 +356,32 @@ namespace RealRuins
                     //Add some generic filth to floor. TODO: add optional rotten bodies, blood trails, vomit, whatever
                     if (didAlterCell && map.terrainGrid.TerrainAt(mapLocation).acceptFilth) {
 
-                        ThingDef[] filthDef = { ThingDefOf.Filth_Dirt, ThingDefOf.Filth_RubbleBuilding, ThingDefOf.Filth_RubbleRock, ThingDefOf.Filth_Trash, ThingDefOf.Filth_Ash };
-                        while (Rand.Value > 0.5) {
-                            FilthMaker.MakeFilth(mapLocation, map, filthDef[Rand.Range(0, 4)], Rand.Range(1, 5));
+                        ThingDef[] filthDef = { ThingDefOf.Filth_Dirt, ThingDefOf.Filth_Trash, ThingDefOf.Filth_Ash };
+                        FilthMaker.MakeFilth(mapLocation, map, filthDef[0], Rand.Range(0, 3));
+
+                        while (Rand.Value > 0.7) {
+                            FilthMaker.MakeFilth(mapLocation, map, filthDef[Rand.Range(0, 2)], Rand.Range(1, 5));
                         }
                     }
 
                     //Pretty low chance to have someone's remainings
-                    if (Rand.Value < 0.001) {
+                    if (Rand.Value < 0.0001) {
                         int timeOfDeath = Find.TickManager.TicksGame - (int)(Rand.Value * 100000000);
-                        do {
-                            PawnGenerationRequest request = new PawnGenerationRequest(PawnKindDefOf.WildMan, null, PawnGenerationContext.NonPlayer, -1, false, false, false, false, true, false, 20f, false, true, true, false, false, false, false, null, null, null, null, null, null, null, null);
-                            Pawn dweller = PawnGenerator.GeneratePawn(request);
-                            GenSpawn.Spawn(dweller, mapLocation, map);
-                            dweller.Kill(null);
-                            CompRottable rottable = dweller.Corpse.TryGetComp<CompRottable>();
-                            rottable.RotProgress = rottable.PropsRot.TicksToDessicated;
-                            dweller.Corpse.timeOfDeath = timeOfDeath + (int)(Rand.Value * 100000);
-                        } while (Rand.Value < 0.5);
+                        PawnGenerationRequest request = new PawnGenerationRequest(PawnKindDefOf.WildMan, null, PawnGenerationContext.NonPlayer, -1, false, false, false, false, true, false, 20f, false, true, true, false, false, false, false, null, null, null, null, null, null, null, null);
+                        Pawn dweller = PawnGenerator.GeneratePawn(request);
+                        GenSpawn.Spawn(dweller, mapLocation, map);
+                        dweller.Kill(null);
+                        CompRottable rottable = dweller.Corpse.TryGetComp<CompRottable>();
+                        rottable.RotProgress = rottable.PropsRot.TicksToDessicated;
+                        dweller.Corpse.timeOfDeath = timeOfDeath + (int)(Rand.Value * 100000);
                     }
                 }
             }
+
+            TimeSpan span = DateTime.Now - start;
+            totalWorkTime += (int)span.TotalMilliseconds;
+            Debug.Message("Added ruins for {0} seconds, total: {1} msec", span.TotalSeconds, totalWorkTime);
+
         }
     }
 }
