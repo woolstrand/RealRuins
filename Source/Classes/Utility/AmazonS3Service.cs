@@ -88,12 +88,13 @@ namespace RealRuins
     class AmazonS3Service
     {
 
-        //since there is no any way to really hide those tokens, let just "hide" them from simple robots.
-        private static readonly string apk = "AKIAJ57" + "CCBI6YW" + "OZL5HA";
-        private static readonly string ask = "+Uyvqjl4z" + "3LjCzt856OD6JBv5adm" + "iSpGKMQ+AKlZ";
+        private static readonly string publicKey = "AKIAJ57CCBI6YWOZL5HA";
+        private static readonly string secretKey = "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";
         private static readonly string bucketName = "realruins";
         private static readonly string s3host = bucketName + ".s3.amazonaws.com";
         private static readonly string region = "eu-central-1";
+
+        private bool canProcess = false;
 
         private UnityWebRequest activeRequest;
 
@@ -129,13 +130,13 @@ namespace RealRuins
                 shortDate + "/" + region + "/" + "s3" + "/aws4_request" + "\n" +
                 requestHash;
 
-            string dateKey = EncryptionHelper.HMACSHARawStrings("AWS4" + ask, shortDate);
+            string dateKey = EncryptionHelper.HMACSHARawStrings("AWS4" + secretKey, shortDate);
             string dateRegionKey = EncryptionHelper.HashHMACHex(dateKey, region);
             string dateRegionServiceKey = EncryptionHelper.HashHMACHex(dateRegionKey, "s3");
             string signingKey = EncryptionHelper.HashHMACHex(dateRegionServiceKey, "aws4_request");
 
             string signature = EncryptionHelper.HashHMACHex(signingKey, stringToSign);
-            string headerValue = "AWS4-HMAC-SHA256 Credential=" + apk + "/" + shortDate + "/" + region + "/s3/aws4_request,SignedHeaders=" + headersList + ",Signature=" + signature;
+            string headerValue = "AWS4-HMAC-SHA256 Credential=" + publicKey + "/" + shortDate + "/" + region + "/s3/aws4_request,SignedHeaders=" + headersList + ",Signature=" + signature;
 
             UnityWebRequest request = new UnityWebRequest("https://" + s3host + "/" + path, method);
 
@@ -156,6 +157,8 @@ namespace RealRuins
 
         public bool AmazonS3Upload(string localFilePath, string subDirectoryInBucket, string fileNameInS3)
         {
+
+
             byte[] fileBuffer = System.IO.File.ReadAllBytes(localFilePath);
 
             UnityWebRequest request = AmazonS3SignedWebRequest("PUT", fileNameInS3, fileBuffer);
