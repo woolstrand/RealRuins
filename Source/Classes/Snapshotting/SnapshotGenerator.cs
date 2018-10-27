@@ -3,31 +3,19 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-using RimWorld;
 using Verse;
+using RimWorld;
 
-namespace RealRuins
-{
-    public class IncidentWorker_BaseSnapshot : IncidentWorker
-    {
-        public override float AdjustedChance => base.AdjustedChance;
-
-        protected override bool CanFireNowSub(IncidentParms parms)
-        {
-            Map map = (Map)parms.target;
-
-            //Snapshot map only if home area is large enough
-            if (map.areaManager.Home.TrueCount > 60) return true;
-
-            Log.Message("Home area is less than 60 squares");
-
-            return false;
-        
+namespace RealRuins {
+    class SnapshotGenerator {
+        private Map map;
+        public SnapshotGenerator(Map map) {
+            this.map = map;
         }
 
-        protected override bool TryExecuteWorker(IncidentParms parms)
-        {
-            Map map = (Map)parms.target;
+        public string Generate() {
+
+            if (map.areaManager.Home.ActiveCells.Count() < 100) return null;
 
             int xmin = 10000, xmax = 0, zmin = 10000, zmax = 0;
             foreach (IntVec3 cell in map.areaManager.Home.ActiveCells) {
@@ -129,27 +117,10 @@ namespace RealRuins
 
             fileBuilder.Append("</snapshot>");
 
-            int planetHash = map.Parent.GetHashCode();
-            int mapHash = map.GetHashCode();
-
             string tmpPath = System.IO.Path.GetTempFileName();
             System.IO.File.WriteAllText(tmpPath, fileBuilder.ToString());
-            System.IO.File.WriteAllText("C:\\temp\\jeluder.jeluder.txt", fileBuilder.ToString());
 
-            string amazonFileName = string.Format("jeluder-{0}-{1}.xml", mapHash, planetHash);
-            Log.Message(string.Format("Temporary file: {0}", tmpPath), true);
-
-            AmazonS3Service uploader = new AmazonS3Service();
-            uploader.AmazonS3Upload(tmpPath, "", amazonFileName);
-
-            AmazonS3Service listLoader = new AmazonS3Service();
-                listLoader.AmazonS3ListFiles(delegate(List<string> files) {
-            });
-
-            System.IO.File.WriteAllText("./test.txt", "test file");
-            
-
-            return true;
+            return tmpPath;
         }
     }
 }

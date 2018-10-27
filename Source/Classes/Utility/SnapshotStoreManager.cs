@@ -3,14 +3,25 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-using System.IO;
 using Verse;
 
-namespace RealRuins.Classes.Snapshotting
+using System.IO;
+using System.Security.AccessControl;
+using System.Security.Principal;
+
+namespace RealRuins
 {
     class SnapshotStoreManager
     {
-        public static SnapshotStoreManager instance = new SnapshotStoreManager();
+        private static SnapshotStoreManager instance = null;
+        public static SnapshotStoreManager Instance {
+            get {
+                if (instance == null) {
+                    instance = new SnapshotStoreManager();
+                }
+                return instance;
+            }
+        }
 
         private string rootFolder = "../Snapshots";
 
@@ -20,8 +31,33 @@ namespace RealRuins.Classes.Snapshotting
             }
         }
 
-        public void StoreData(byte[] buffer, string filename) {
-            File.WriteAllBytes(rootFolder, buffer);
+        public void StoreData(string buffer, string filename) {
+            //when storing a file you need to remove older version of snapshots of the same game
+            string[] parts = filename.Split('=');
+            if (parts.Count() > 1) {
+                int date = 0;
+                if (int.TryParse(parts[0], out date)) {
+                    parts[0] = "*";
+                    string mask = string.Join("=", parts);
+                    string[] files = Directory.GetFiles(rootFolder, mask);
+                    foreach (string existingFile in files) {
+                        int existingFileDate = 0;
+                        string[] existingFileParts = existingFile.Split('-');
+                        if (int.TryParse(existingFileParts[0], out existingFileDate)) {
+                            if (existingFileDate > date) {
+                                //there is more fresh file. no need to save this one.
+                                return;
+                            } else {
+                                //remove older files
+                                File.Delete(existingFile);
+                            }
+                        }
+                    }
+                }
+            }
+
+            //writing file in all cases except "newer version available"
+            File.WriteAllText(rootFolder + "/" + filename, buffer);
         }
 
         private string DoGetRandomFilenameFromRootFolder() {
@@ -30,7 +66,7 @@ namespace RealRuins.Classes.Snapshotting
             return files[index];
         }
 
-        private string RandomSnapshotFilename() {
+        public string RandomSnapshotFilename() {
             string filename = null;
             do {
                 filename = DoGetRandomFilenameFromRootFolder();
@@ -41,6 +77,22 @@ namespace RealRuins.Classes.Snapshotting
                 }
             } while (filename == null);
             return filename;
+        }
+
+        public int StoredSnapshotsCount() {
+            return Directory.GetFiles(rootFolder).Count();
+        }
+
+        public List<string> FilterOutExistingItems(List<string> source) {
+            List<string> result = new List<string>();
+
+            foreach (string item in source) {
+                if (!File.Exists(rootFolder + "/" + item)) {
+                    result.Add(item);
+                }
+            }
+
+            return result;
         }
 
     }
