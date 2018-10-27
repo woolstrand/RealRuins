@@ -135,7 +135,7 @@ namespace RealRuins
             string signingKey = EncryptionHelper.HashHMACHex(dateRegionServiceKey, "aws4_request");
 
             string signature = EncryptionHelper.HashHMACHex(signingKey, stringToSign);
-            string headerValue = "AWS4-HMAC-SHA256 Credential=" + ask + "/" + shortDate + "/" + region + "/s3/aws4_request,SignedHeaders=" + headersList + ",Signature=" + signature;
+            string headerValue = "AWS4-HMAC-SHA256 Credential=" + apk + "/" + shortDate + "/" + region + "/s3/aws4_request,SignedHeaders=" + headersList + ",Signature=" + signature;
 
             UnityWebRequest request = new UnityWebRequest("https://" + s3host + "/" + path, method);
 
