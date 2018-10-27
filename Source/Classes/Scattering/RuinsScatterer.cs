@@ -10,9 +10,15 @@ namespace RealRuins
 {
 
     //stores information about terrain in the blueprint
-    class TerrainTile
-    {
+    class Tile {
         public string defName;
+        public float cost = 0.0f; //populated later
+        public float weight = 0.0f;
+        public IntVec3 location;
+    }
+
+    class TerrainTile: Tile
+    {
 
         public TerrainTile(XmlNode node)
         {
@@ -21,14 +27,11 @@ namespace RealRuins
     }
 
     //stores information about item in the blueprint
-    class ItemTile
+    class ItemTile: Tile
     {
-        public string defName;
         public string stuffDef;
         public int stackCount;
         public int rot;
-
-        public int cost; //populated later
 
         public ItemTile(XmlNode node)
         {
@@ -134,8 +137,14 @@ namespace RealRuins
         }
 
 
+        Map map;
+        IntVec3 targetPoint;
+
         int blueprintWidth;
         int blueprintHeight;
+
+        int minX, maxX, minZ, maxZ; //boundaries of used part of the blueprint
+        int mapOriginX, mapOriginZ; //target coordinates for minX, minZ on the map
 
         int referenceRadius;
         int referenceRadiusJitter;
@@ -154,6 +163,7 @@ namespace RealRuins
 
         float deteriorationDegree = 0;
         float scavengersActivity = 0; //depends on how far tile is from villages
+        float elapsedTime = 0; //ruins age
 
 
         private void LoadRandomXMLSnapshot() {
@@ -189,9 +199,12 @@ namespace RealRuins
 
                 foreach (XmlNode cellElement in cellNode.ChildNodes) {
                     if (cellElement.Name.Equals("terrain")) {
-                        terrainMap[x, z] = new TerrainTile(cellElement);
+                        TerrainTile terrain = new TerrainTile(cellElement);
+                        terrain.location = new IntVec3(x, 0, z);
+                        terrainMap[x, z] = terrain;
                     } else if (cellElement.Name.Equals("item")) {
                         ItemTile tile = new ItemTile(cellElement);
+                        tile.location = new IntVec3(x, 0, z);
                         itemsMap[x, z].Add(tile);
 
                         ThingDef thingDef = DefDatabase<ThingDef>.GetNamed(tile.defName, false);
@@ -204,6 +217,65 @@ namespace RealRuins
                 }
             }
         }
+
+        private void BlurIntegrityMap(float[,] map, int stepsCount) {
+            float[,] delta = new float[blueprintWidth, blueprintHeight]; //delta integrity for making blur
+                                                                         // - then blur the map to create gradient deterioration around the intact area.
+            for (int steps = 0; steps < stepsCount; steps++) { //terrain map
+                for (int x = minX + 1; x < maxX - 1; x++) {
+                    for (int z = minZ + 1; z < maxZ - 1; z++) {
+                        delta[x, z] = (map[x - 1, z - 1] + map[x, z - 1] + map[x + 1, z - 1] +
+                            map[x - 1, z] + map[x, z] + map[x + 1, z] +
+                            map[x - 1, z + 1] + map[x, z + 1] + map[x + 1, z + 1]) / 9.0f;
+                    }
+                }
+                for (int x = minX + 1; x < maxX - 1; x++) {
+                    for (int z = minZ + 1; z < maxZ - 1; z++) {
+                        if (map[x, z] < 1) {
+                            map[x, z] = delta[x, z] * (0.9f + Rand.Value * 0.1f);
+                        }
+                    }
+                }
+            }
+
+        }
+
+        private void FallbackIntegrityMapConstructor(IntVec3 center, int radius) {
+            if (center.x == 0 && center.z == 0) {
+                if (radius * 2 > blueprintWidth) { radius = blueprintWidth / 2 - 1; }
+                if (radius * 2 > blueprintHeight) { radius = blueprintHeight / 2 - 1; }
+                center = new IntVec3(Rand.Range(radius, blueprintWidth - radius), 0, Rand.Range(radius, blueprintHeight - radius));
+            }
+
+            minX = center.x - radius; maxX = center.x + radius;
+            minZ = center.z - radius; maxZ = center.z + radius;
+
+            mapOriginX = targetPoint.x - (maxX - minX) / 2;
+            mapOriginZ = targetPoint.z - (maxZ - minZ) / 2;
+
+            if (mapOriginX < 10) mapOriginX = 10;
+            if (mapOriginZ < 10) mapOriginZ = 10;
+
+            if (mapOriginX + (maxX - minX) > map.info.Size.x) mapOriginX = map.info.Size.x - 10 - (maxX - minX);
+            if (mapOriginZ + (maxZ - minZ) > map.info.Size.z) mapOriginZ = map.info.Size.z - 10 - (maxZ - minZ);
+
+            for (int x = minX; x < maxX; x++) {
+                for (int z = minZ; z < maxZ; z++) {
+                    int sqrDistance = (x - center.x) * (x - center.x) + (z - center.z) * (z - center.z);
+                    if (sqrDistance < (radius / 2) * (radius / 2)) {
+                        terrainIntegrity[x, z] = Rand.Value * 0.4f + 0.8f;
+                        itemsIntegrity[x, z] = Rand.Value * 0.4f + 0.8f;
+                    } else if (sqrDistance < (radius * radius)) { //edge
+                        terrainIntegrity[x, z] = Rand.Value * 0.2f + 0.8f;
+                        itemsIntegrity[x, z] = Rand.Value * 0.2f + 0.7f;
+                    }
+                }
+            }
+
+            BlurIntegrityMap(terrainIntegrity, 10);
+            BlurIntegrityMap(itemsIntegrity, 7);
+        }
+
 
         private void FindRoomsAndConstructIntegrityMaps() {
             int currentRoomIndex = 1;
@@ -248,6 +320,8 @@ namespace RealRuins
 
             if (currentRoomIndex == 1) { //no new rooms were added => blueprint does not have regular rooms or rooms were formed with use of some missing components or materials
                 //fallback plan: construct old-fashioned circular deterioration map from a some random point
+                FallbackIntegrityMapConstructor(new IntVec3(0, 0, 0), referenceRadius);
+                return;
             } else {
                 //1. select one random room with suitable area
                 List<int> suitableRoomIndices = new List<int>();
@@ -260,6 +334,8 @@ namespace RealRuins
                 int selectedRoomIndex = 0;
                 if (suitableRoomIndices.Count == 0) {
                     //1x. no suitable rooms: fallback plan
+                    FallbackIntegrityMapConstructor(new IntVec3(0, 0, 0), referenceRadius);
+                    return;
                 } else {
                     selectedRoomIndex = suitableRoomIndices[Rand.Range(0, suitableRoomIndices.Count)];
                 }
@@ -285,8 +361,18 @@ namespace RealRuins
                 if (center.x + radius > blueprintWidth) { center.x = blueprintWidth - radius; }
                 if (center.y + radius > blueprintHeight) { center.y = blueprintHeight - radius; }
 
-                int minX = center.x - radius; int maxX = center.x + radius;
-                int minZ = center.z - radius; int maxZ = center.z + radius;
+                minX = center.x - radius; maxX = center.x + radius;
+                minZ = center.z - radius; maxZ = center.z + radius;
+
+                mapOriginX = targetPoint.x - (maxX - minX) / 2;
+                mapOriginZ = targetPoint.z - (maxZ - minZ) / 2;
+
+                if (mapOriginX < 10) mapOriginX = 10;
+                if (mapOriginZ < 10) mapOriginZ = 10;
+
+                if (mapOriginX + (maxX - minX) > map.info.Size.x) mapOriginX = map.info.Size.x - 10 - (maxX - minX);
+                if (mapOriginZ + (maxZ - minZ) > map.info.Size.z) mapOriginZ = map.info.Size.z - 10 - (maxZ - minZ);
+
 
                 //4. enumerate all rooms in the circle
                 //5. enumerate all rooms intersecting the circle outline
@@ -308,6 +394,8 @@ namespace RealRuins
                 //if all rooms are intersecting circle outline do fallback plan (circular deterioration chance map)
                 if (allRooms.Count == openRooms.Count) {
                     //fallback
+                    FallbackIntegrityMapConstructor(center, radius);
+                    return;
                 } else {
                     //otherwise create the following deterioration map: 
                     List<int> closedRooms = allRooms.ListFullCopy();
@@ -350,127 +438,174 @@ namespace RealRuins
                         }
                     }
 
-                    float[,] delta = new float[blueprintWidth, blueprintHeight]; //delta integrity for making blur
-                    // - then blur the map to create gradient deterioration around the intact area.
-                    for (int steps = 0; steps < 10; steps++) { //terrain map
-                        for (int x = minX + 1; x < maxX - 1; x++) {
-                            for (int z = minZ + 1; z < maxZ - 1; z++) {
-                                delta[x, z] = (terrainIntegrity[x - 1, z - 1] + terrainIntegrity[x, z - 1] + terrainIntegrity[x + 1, z - 1] +
-                                    terrainIntegrity[x - 1, z] + terrainIntegrity[x, z] + terrainIntegrity[x + 1, z] +
-                                    terrainIntegrity[x - 1, z + 1] + terrainIntegrity[x, z + 1] + terrainIntegrity[x + 1, z + 1]) / 9.0f;
-                            }
-                        }
-                        for (int x = minX + 1; x < maxX - 1; x++) {
-                            for (int z = minZ + 1; z < maxZ - 1; z++) {
-                                if (terrainIntegrity[x, z] < 1) {
-                                    terrainIntegrity[x, z] = delta[x, z] * (0.9f + Rand.Value * 0.1f);
-                                }
-                            }
-                        }
-                    }
-
-                    for (int steps = 0; steps < 4; steps++) {//items map
-                        for (int x = minX + 1; x < maxX - 1; x++) {
-                            for (int z = minZ + 1; z < maxZ - 1; z++) {
-                                delta[x, z] = (itemsIntegrity[x - 1, z - 1] + itemsIntegrity[x, z - 1] + itemsIntegrity[x + 1, z - 1] +
-                                    itemsIntegrity[x - 1, z] + itemsIntegrity[x, z] + itemsIntegrity[x + 1, z] +
-                                    itemsIntegrity[x - 1, z + 1] + itemsIntegrity[x, z + 1] + itemsIntegrity[x + 1, z + 1]) / 9.0f;
-                            }
-                        }
-                        for (int x = minX + 1; x < maxX - 1; x++) {
-                            for (int z = minZ + 1; z < maxZ - 1; z++) {
-                                if (itemsIntegrity[x, z] < 1) {
-                                    itemsIntegrity[x, z] = delta[x, z] * (0.7f + Rand.Value * 0.3f);
-                                }
-                            }
-                        }
-                    }
+                    BlurIntegrityMap(terrainIntegrity, 7);
+                    BlurIntegrityMap(itemsIntegrity, 4);
                     //At this step we have integrity maps, so we can proceed further and simulate deterioration and scavenging
                 }
             }
         }
 
-        private void RemoveUnplaceableItems() {
+        private void ProcessItems() {
             //Each item should be checked if it can be placed or not. This should help preventing situations when simulated scavenging removes things which anyway won't be placed.
+            //For each placed item it's cost should be calculated
+            for (int x = minX; x < maxX; x++) {
+                for (int z = minZ; z < maxZ; z++) {
+                    //Log.Clear();
+
+                    if (itemsMap[x, z] == null) { itemsMap[x, z] = new List<ItemTile>(); }//to make thngs easier add empty list to every cell
+
+                    List<ItemTile> items = itemsMap[x, z];
+                    TerrainTile terrain = terrainMap[x, z];
+                    TerrainDef terrainDef = null;
+
+                    if (terrain != null) {
+                        terrainDef = DefDatabase<TerrainDef>.GetNamed(terrain.defName, false);
+                        if (terrainDef != null) {
+                            terrain.cost = ThingComponentsMarketCost(terrainDef);
+                        } else {
+                            terrain.cost = 0.0f;
+                        }
+                        terrain.weight = 5.0f;
+                    }
+
+                    TerrainDef existingTerrain = map.terrainGrid.TerrainAt(new IntVec3(x - minX + mapOriginX, 0, z - minZ + mapOriginZ));
+
+                    List<ItemTile> itemsToRemove = new List<ItemTile>();
+                    foreach (ItemTile item in items) {
+                        ThingDef thingDef = DefDatabase<ThingDef>.GetNamed(item.defName, false);
+
+                        if (thingDef != null && thingDef.terrainAffordanceNeeded != null) {
+                            if (terrainDef != null && terrainDef.terrainAffordanceNeeded != null && existingTerrain.affordances.Contains(terrainDef.terrainAffordanceNeeded)) {
+                                if (!terrainDef.affordances.Contains(thingDef.terrainAffordanceNeeded)) { //if new terrain can be placed over existing terrain, checking if an item can be placed over a new terrain
+                                    itemsToRemove.Add(item);
+                                }
+                            } else {
+                                if (!existingTerrain.affordances.Contains(thingDef.terrainAffordanceNeeded)) {//otherwise checking if the item can be placed over the existing terrain.
+                                    itemsToRemove.Add(item);
+                                }
+                            }
+                        }
+                    }
+
+                    foreach (ItemTile item in itemsToRemove) {
+                        items.Remove(item);
+                    }
+
+                    //calculating cost for the remaining ones
+                    foreach (ItemTile item in items) {
+                        ThingDef thingDef = DefDatabase<ThingDef>.GetNamed(item.defName, false);
+                        ThingDef stuffDef = (item.stuffDef != null)?DefDatabase<ThingDef>.GetNamed(item.stuffDef, false):null;
+
+                        item.cost = ThingComponentsMarketCost(thingDef, stuffDef) * item.stackCount;
+                        item.weight = thingDef.GetStatValueAbstract(StatDefOf.Mass, stuffDef) * item.stackCount;
+                        if (item.weight == 0) {
+                            item.weight = 0.5f * item.stackCount;
+                        }
+                    }
+                }
+            }
         }
 
         private void Deteriorate() {
             //remove everything according do integrity maps
+            for (int x = minX; x < maxX; x++) {
+                for (int z = minZ; z < maxZ; z++) {
+                    List<ItemTile> items = itemsMap[x, z];
+
+                    if (!Rand.Chance(terrainIntegrity[x, z])) {
+                        terrainMap[x, z] = null;
+                    }
+
+                    float itemsChance = itemsIntegrity[x, z];
+                    List<ItemTile> newItems = new List<ItemTile>();
+                    if (itemsChance > 0 && itemsChance < 1) {
+                        foreach (ItemTile item in items) {
+                            if (Rand.Chance(itemsChance)) {
+                                newItems.Add(item);
+                            }
+                        }
+                    }
+                    if (itemsChance < 1) {
+                        itemsMap[x, z] = newItems; //will be empty if chance is 0
+                    }
+                }
+            }
         }
 
         private void RaidAndScavenge() {
             //remove the most precious things. smash some other things.
-        }
+            //word is spread, so each next raid is more destructive than the previous ones
+            //to make calculations a bit easier we're going to calculate value per cell, not per item.
 
-        private void AddFilthAndRubble() {
-            //spice up the area with some high quality dirt and trash
-        }
+            //Log.Clear();
+            
+            List<Tile> tilesByCost = new List<Tile>();
 
-        private void AddSpecials() {
-            //corpses, blood trails, mines and traps, bugs and bees
-        }
-
-
-
-        //Deterioration degree is unconditional modifier of destruction applied to the ruins bluepring. Degree of 0.5 means that in average each 2nd block in "central" part will be destroyed.
-        //Scavenge threshold is an item price threshold after which the item or terrain is most likely scavenged.
-        public void ScatterRuinsAt(IntVec3 loc, Map map, int wallRadius = 6, int wallRadiusJitter = 2, int floorRadius = 7, int floorRadiusJitter = 2, float deteriorationDegree = 0.5f, float scavengeThreshold = 50.0f)
-        {
-
-            Debug.Message("Scattering ruins at ({0}, {1})", loc.x, loc.z);
-            DateTime start = DateTime.Now;
-
-
-            //cut and deteriorate:
-            // since the original blueprint can be pretty big, you usually don't want to replicate it as is. You need to cut a small piece and make a smooth transition
-            // center is a center of translated area inside the blueprint
-            // floor cutoff radius is a radius at which floors becomes cut off completely. This is effective application radius as well
-            // wall cutoff radius is a radius at which walls become cut off almost completely. It is smaller than floor cutoff radius.
-
-            //now let's just fill deterioration mask with some circles, ald later will do freeform deterioration patterns
-            // base integrity = 0.0 means item will never be spawned. 1.0 means item will always be spawned
-
-            IntVec3 floorCenter = SelectRandomCenterInBounds(blueprintWidth, blueprintHeight, floorRadius, floorRadiusJitter);
-            IntVec3 wallCenter = new IntVec3(floorCenter.x + Rand.Range(-(floorRadius - wallRadius), floorRadius - wallRadius), 0,
-                                             floorCenter.z + Rand.Range(-(floorRadius - wallRadius), floorRadius - wallRadius));
-
-            for (int z = Math.Max(floorCenter.z - floorRadius - floorRadiusJitter, 0); z < Math.Min(floorCenter.z + floorRadius + floorRadiusJitter, blueprintHeight); z++) {
-                for (int x = Math.Max(floorCenter.x - floorRadius - floorRadiusJitter, 0); x < Math.Min(floorCenter.x + floorRadius + floorRadiusJitter, blueprintWidth); x++) {
-                    if (!PointInsideCircle(x, z, floorCenter, floorRadius + floorRadiusJitter)) {
-                        terrainIntegrity[x, z] = 0.0f; //outside all bounds => destroyed completely
-                        itemsIntegrity[x, z] = 0.0f;
-                        continue;
+            for (int x = minX; x < maxX; x++) {
+                for (int z = minZ; z < maxZ; z++) {
+                    if (terrainMap[x, z] != null) {
+                        tilesByCost.Add(terrainMap[x, z]);
                     }
 
-                    if (PointInsideCircle(x, z, wallCenter, wallRadius - wallRadiusJitter)) {
-                        terrainIntegrity[x, z] = 1.0f;//Rand.Value / 20.0f + 0.95f; //inside walls => almost untouched
-                        itemsIntegrity[x, z] = 1.0f;// Rand.Value / 20.0f + 0.95f;
-                        continue;
+                    foreach (ItemTile item in itemsMap[x, z]) {
+                        tilesByCost.Add(item);
                     }
-
-                    double terrainDistance = Distance(x, z, floorCenter); //trying to make some gradient
-                    double itemsDistance = Distance(x, z, wallCenter);
-
-                    terrainIntegrity[x, z] = (floorRadius + floorRadiusJitter - (float)terrainDistance) / (floorRadius + floorRadiusJitter - (wallRadius - wallRadiusJitter));
-                    if (terrainIntegrity[x, z] < 0) terrainIntegrity[x, z] = 0;
-                    if (terrainIntegrity[x, z] > 1) terrainIntegrity[x, z] = 1;
-
-                    itemsIntegrity[x, z] = (floorRadius + floorRadiusJitter - (float)itemsDistance) / (floorRadius + floorRadiusJitter - (wallRadius - wallRadiusJitter));
-                    if (itemsIntegrity[x, z] < 0) itemsIntegrity[x, z] = 0;
-                    if (itemsIntegrity[x, z] > 1) itemsIntegrity[x, z] = 1;
                 }
             }
 
+            tilesByCost.Sort(delegate(Tile t1, Tile t2) {
+                return (t1.cost / t1.weight).CompareTo(t2.cost / t2.weight);
+            });
+
+            Debug.Message("Enumerated {0} items", tilesByCost.Count());
+
+            int raidsCount = (int)(elapsedTime * scavengersActivity);
+            int ruinsArea = (maxX - minX) * (maxZ - minZ);
+            float baseRaidCapacity = Math.Max(10, (ruinsArea / 5) * scavengersActivity);
+
+            Debug.Message("Performing {0} raids. Base capacity: {1}", raidsCount, baseRaidCapacity);
+
+            for (int i = 0; i < raidsCount; i ++) {
+                float raidCapacity = baseRaidCapacity * (float)Math.Pow(1.2, i);
+                bool shouldStop = false;
+                Debug.Message("Performing raid {0} of capacity {1}", i, raidCapacity);
+
+                while (tilesByCost.Count > 0 && raidCapacity > 0 && !shouldStop) {
+                    Tile topTile = tilesByCost.Pop();
+                    String msg = string.Format("Inspecting tile \"{0}\" of cost {1} and weight {2}. ", topTile.defName, topTile.cost, topTile.weight);
+
+                    if (topTile.cost < 25) {
+                        shouldStop = true; //nothing to do here, everything valueable has already gone
+                        msg += "Too cheap, stopping.";
+                    } else {
+                        if (Rand.Chance(0.999f)) { //there is still chance that even the most expensive thing will be left after raid. "Big momma said ya shouldn't touch that golden chair, it's cursed")
+                            raidCapacity -= topTile.weight; //not counting weight for now.
+                            if (topTile is TerrainTile) {
+                                terrainMap[topTile.location.x, topTile.location.z] = null;
+                                msg += "Terrain removed.";
+                            } else if (topTile is ItemTile) {
+                                itemsMap[topTile.location.x, topTile.location.z].Remove((ItemTile)topTile);
+                                msg += "Tile removed.";
+                            }
+                        }
+                    }
+                    Debug.Message(msg);
+                }
+            }
+        }
+
+        private void TransferBlueprint() {
+            //Planting blueprint
+
             Faction faction = (Rand.Value > 0.5) ? Find.FactionManager.OfAncientsHostile : Find.FactionManager.OfAncients;
+            faction = Find.FactionManager.RandomEnemyFaction();
             Debug.Message("Setting faction to {0}", faction.def.defName);
 
-            //Planting blueprint
-            for (int z = 0; z < blueprintHeight; z++) {
-                for (int x = 0; x < blueprintWidth; x++) {
+            for (int z = minZ; z < maxZ; z++) {
+                for (int x = minX; x < maxX; x++) {
 
                     //{loc.x, loc.z} should be mapped from blueprint's {floorcenter.x, floorcenter.z}
-                    IntVec3 mapLocation = new IntVec3(x - floorCenter.x + loc.x, 0, z - floorCenter.z + loc.z);
-                    bool didAlterCell = false;
+                    IntVec3 mapLocation = new IntVec3(x - minX + mapOriginX, 0, z - minZ + mapOriginZ);
 
                     //Check if thepoint is in allowed bounds of the map
                     if (!mapLocation.InBounds(map) || mapLocation.InNoBuildEdgeArea(map)) {
@@ -480,23 +615,8 @@ namespace RealRuins
                     //Construct terrain if some specific terrain stored in the blueprint
                     if (terrainMap[x, z] != null) {
                         TerrainDef blueprintTerrain = TerrainDef.Named(terrainMap[x, z].defName);
-                        
-
-                        //check if terrain from blueprint can be built on top of existing terrain
-                        if (blueprintTerrain != null && map.terrainGrid.TerrainAt(mapLocation).affordances.Contains(blueprintTerrain.terrainAffordanceNeeded)) {
-
-                            float scavengeMultiplier = (float)Math.Max(1.0, scavengeThreshold / ThingComponentsMarketCost(blueprintTerrain));
-                            float resultingIntegrity = terrainIntegrity[x, z] * scavengeMultiplier * (1.0f - deteriorationDegree);
-                            float rv = Rand.Value;
-                                                     
-                            if (rv < resultingIntegrity) {
-                                map.terrainGrid.SetTerrain(mapLocation, blueprintTerrain);
-                                didAlterCell = true;
-                            }
-                        }
+                        map.terrainGrid.SetTerrain(mapLocation, blueprintTerrain);
                     }
-
-
 
                     //Add items
                     if (itemsMap[x, z] != null && itemsMap[x, z].Count > 0) {
@@ -510,100 +630,98 @@ namespace RealRuins
                                 stuffDef = DefDatabase<ThingDef>.GetNamed(itemTile.stuffDef, false);
                             }
 
+                            if (!cellIsAlreadyCleared) { //first item to be spawned should also clear place for itself. we can't do it beforehand because we don't know it it will be able and get a chance to be spawned.
+                                if (!ClearCell(mapLocation, map)) {
+                                    break; //if cell was not cleared successfully -> break things placement cycle and move on to the next item
+                                } else {
+                                    cellIsAlreadyCleared = true;
+                                }
+                            }
+
+                            Thing thing = ThingMaker.MakeThing(thingDef, stuffDef);
 
 
-                            if (thingDef != null) {
-                                //check if can ever be built on top of existing terrain
-                                if (thingDef.terrainAffordanceNeeded != null && !map.terrainGrid.TerrainAt(mapLocation).affordances.Contains(thingDef.terrainAffordanceNeeded)) {
-                                    continue;
+                            if (thing != null) {
+                                GenSpawn.Spawn(thing, mapLocation, map, new Rot4(itemTile.rot));
+                                if (itemTile.stackCount > 1) {
+                                    thing.stackCount = Rand.Range(1, itemTile.stackCount);
+
+                                    if (thingDef.CanHaveFaction) {
+                                        thing.SetFactionDirect(faction);
+                                    }
+
+                                    //Spoil things that can be spoiled. You shouldn't find a fresh meat an the old ruins.
+                                    CompRottable rottable = thing.TryGetComp<CompRottable>();
+                                    if (rottable != null) {
+                                        //if deterioration degree is > 0.5 you definitely won't find any food.
+                                        //anyway, there is a chance that you also won't get any food even if deterioriation is relatively low. animalr, raiders, you know.
+                                        if (canHaveFood) {
+                                            rottable.RotProgress = (Rand.Value * 0.5f + deteriorationDegree) * (rottable.PropsRot.TicksToRotStart);
+                                        } else {
+                                            rottable.RotProgress = rottable.PropsRot.TicksToRotStart + 1;
+                                        }
+                                    }
                                 }
 
-                                //scavengers more likely will get things that are lighter and more expensive.
-                                float massModifier = 1.0f;
-                                if (thingDef.alwaysHaulable) {
-                                    float mass = thingDef.GetStatValueAbstract(StatDefOf.Mass, stuffDef);
-                                    massModifier = Math.Min(0.8f, (mass / 5.0f * itemTile.stackCount)); 
-                                }
-
-                                float cost = ThingComponentsMarketCost(thingDef, stuffDef) * itemTile.stackCount;
-                                float scavengeModifier = Math.Min(0.95f, scavengeThreshold / cost);
-                                float spawnThreshold = itemsIntegrity[x, z] * scavengeModifier * (1.0f - deteriorationDegree);
-
-
-                                float spawnChance = Rand.Value;
-                                if (spawnChance > spawnThreshold * 1.5) {
-                                    continue; //item deteriorated/scavenged completely
-                                } else { 
-                                    //otherwise there is a chance that player will get some leftovers
-                                    if (!cellIsAlreadyCleared) { //first item to be spawned should also clear place for itself. we can't do it beforehand because we don't know it it will be able and get a chance to be spawned.
-                                        if (!ClearCell(mapLocation, map)) {
-                                            break; //if cell was not cleared successfully -> break things placement cycle and move on to the next item
-                                        } else {
-                                            cellIsAlreadyCleared = true;
-                                        }
-                                    }
-
-                                    if (!thingDef.BuildableByPlayer) {
-                                        if (spawnChance > spawnThreshold) {
-                                            continue; //no leftovers for items, only for buildings
-                                        }
-                                    }
-
-                                    Thing thing = ThingMaker.MakeThing(thingDef, stuffDef);
-
-
-                                    if (thing != null) {
-                                        GenSpawn.Spawn(thing, mapLocation, map, new Rot4(itemTile.rot));
-                                        if (itemTile.stackCount > 1) {
-                                            thing.stackCount = Rand.Range(1, itemTile.stackCount);
-
-                                            if (thingDef.CanHaveFaction) {
-                                                thing.SetFactionDirect(faction);
-                                            }
-
-                                            //Spoil things that can be spoiled. You shouldn't find a fresh meat an the old ruins.
-                                            CompRottable rottable = thing.TryGetComp<CompRottable>();
-                                            if (rottable != null) {
-                                                //if deterioration degree is > 0.5 you definitely won't find any food.
-                                                //anyway, there is a chance that you also won't get any food even if deterioriation is relatively low. animalr, raiders, you know.
-                                                if (canHaveFood) {
-                                                    rottable.RotProgress = (Rand.Value * 0.5f + deteriorationDegree) * (rottable.PropsRot.TicksToRotStart);
-                                                } else {
-                                                    rottable.RotProgress = rottable.PropsRot.TicksToRotStart + 1;
-                                                }
-                                            }
-                                        }
-
-                                        thing.HitPoints = Rand.Range(1, thing.def.BaseMaxHitPoints);
-                                        if (thing.def.EverHaulable) {
-                                            thing.SetForbidden(true, false);
-                                        }
-
-                                        if (spawnChance > spawnThreshold) {
-                                            thing.Destroy(DestroyMode.KillFinalize);
-                                        } else {
-                                        }
-
-                                        didAlterCell = true;
-                                    }
+                                thing.HitPoints = Rand.Range(1, thing.def.BaseMaxHitPoints);
+                                if (thing.def.EverHaulable) {
+                                    thing.SetForbidden(true, false);
                                 }
                             }
                         }
                     }
+                }
+            }
+        }
 
-                    //Add some generic filth to floor. TODO: add optional rotten bodies, blood trails, vomit, whatever
-                    if (didAlterCell && map.terrainGrid.TerrainAt(mapLocation).acceptFilth) {
+        private void AddFilthAndRubble() {
+            //spice up the area with some high quality dirt and trash
 
-                        ThingDef[] filthDef = { ThingDefOf.Filth_Dirt, ThingDefOf.Filth_Trash, ThingDefOf.Filth_Ash };
-                        FilthMaker.MakeFilth(mapLocation, map, filthDef[0], Rand.Range(0, 3));
+            for (int z = minZ; z < maxZ; z++) {
+                for (int x = minX; x < maxX; x++) {
 
-                        while (Rand.Value > 0.7) {
-                            FilthMaker.MakeFilth(mapLocation, map, filthDef[Rand.Range(0, 2)], Rand.Range(1, 5));
-                        }
+                    IntVec3 mapLocation = new IntVec3(x - minX + mapOriginX, 0, z - minZ + mapOriginZ);
+
+                    ThingDef[] filthDef = { ThingDefOf.Filth_Dirt, ThingDefOf.Filth_Trash, ThingDefOf.Filth_Ash };
+                    FilthMaker.MakeFilth(mapLocation, map, filthDef[0], Rand.Range(0, 3));
+
+                    while (Rand.Value > 0.7) {
+                        FilthMaker.MakeFilth(mapLocation, map, filthDef[Rand.Range(0, 2)], Rand.Range(1, 5));
                     }
 
-                    //Pretty low chance to have someone's remainings
+                    if (Rand.Chance(0.01f)) { //chance to spawn slag chunk
+                        List<Thing> things = map.thingGrid.ThingsListAt(mapLocation);
+                        bool canPlace = true;
+                        foreach (Thing t in things) {
+                            if (t.def.fillPercent > 0.5) canPlace = false;
+                        }
+
+                        if (canPlace) {
+                            Thing slag = ThingMaker.MakeThing(ThingDefOf.ChunkSlagSteel);
+                            GenSpawn.Spawn(slag, mapLocation, map, new Rot4(Rand.Range(0, 4)));
+                        }
+                    }
+                }
+            }
+        }
+
+        private void AddSpecials() {
+            //corpses, blood trails, mines and traps, bugs and bees
+            //Pretty low chance to have someone's remainings
+            for (int z = minZ; z < maxZ; z++) {
+                for (int x = minX; x < maxX; x++) {
+
+
+                    IntVec3 mapLocation = new IntVec3(x - minX + mapOriginX, 0, z - minZ + mapOriginZ);
                     if (Rand.Value < 0.0001) {
+
+                        bool canPlace = true;
+                        List<Thing> things = map.thingGrid.ThingsListAt(mapLocation);
+                        foreach (Thing t in things) {
+                            if (t.def.fillPercent > 0.5) canPlace = false;
+                        }
+                        if (!canPlace) continue;
+
                         int timeOfDeath = Find.TickManager.TicksGame - (int)(Rand.Value * 100000000);
                         PawnGenerationRequest request = new PawnGenerationRequest(PawnKindDefOf.WildMan, null, PawnGenerationContext.NonPlayer, -1, false, false, false, false, true, false, 20f, false, true, true, false, false, false, false, null, null, null, null, null, null, null, null);
                         Pawn dweller = PawnGenerator.GeneratePawn(request);
@@ -613,8 +731,50 @@ namespace RealRuins
                         rottable.RotProgress = rottable.PropsRot.TicksToDessicated;
                         dweller.Corpse.timeOfDeath = timeOfDeath + (int)(Rand.Value * 100000);
                     }
+
                 }
             }
+        }
+
+
+
+        //Deterioration degree is unconditional modifier of destruction applied to the ruins bluepring. Degree of 0.5 means that in average each 2nd block in "central" part will be destroyed.
+        //Scavenge threshold is an item price threshold after which the item or terrain is most likely scavenged.
+        public void ScatterRuinsAt(IntVec3 loc, Map map, int referenceRadius, int radiusJitter, float deteriorationDegree, float scavengersActivity, float elapsedTime)
+        {
+
+            Debug.Message("Scattering ruins at ({0}, {1}) of radius {2}+-{3}. Deterioriation degree: {4}, scavengers activity: {5}, age: {6}", loc.x, loc.z, referenceRadius, radiusJitter, deteriorationDegree, scavengersActivity, elapsedTime);
+            DateTime start = DateTime.Now;
+
+            targetPoint = loc;
+            this.map = map;
+
+            this.referenceRadius = referenceRadius;
+            this.scavengersActivity = scavengersActivity;
+            this.elapsedTime = elapsedTime;
+            referenceRadiusJitter = radiusJitter;
+
+            this.deteriorationDegree = deteriorationDegree;
+            //cut and deteriorate:
+            // since the original blueprint can be pretty big, you usually don't want to replicate it as is. You need to cut a small piece and make a smooth transition
+
+            Debug.Message("Loading snapshot...");
+            LoadRandomXMLSnapshot();
+            Debug.Message("Finding rooms...");
+            FindRoomsAndConstructIntegrityMaps();
+            Debug.Message("Processing items...");
+            ProcessItems();
+            Debug.Message("Deteriorating...");
+            Deteriorate();
+            Debug.Message("Scavenging...");
+            RaidAndScavenge();
+            Debug.Message("Transferring blueprint...");
+            TransferBlueprint();
+            Debug.Message("Adding filth and rubble...");
+            AddFilthAndRubble();
+            Debug.Message("Adding something special...");
+            AddSpecials();
+            Debug.Message("Ready");
 
             TimeSpan span = DateTime.Now - start;
             totalWorkTime += (int)span.TotalMilliseconds;

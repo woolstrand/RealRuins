@@ -4,7 +4,8 @@ using System.Reflection;
 
 using Harmony;
 using Verse;
-
+using RimWorld;
+using UnityEngine;
 
 namespace RealRuins
 {
@@ -13,6 +14,20 @@ namespace RealRuins
         static RealRuins() {
             var harmony = HarmonyInstance.Create("com.woolstrand.realruins");
             harmony.PatchAll(Assembly.GetExecutingAssembly());
+        }
+
+        static class SnapshotSaver {
+            public static void SaveSnapshot() {
+                SnapshotGenerator generator = new SnapshotGenerator(Find.CurrentMap);
+                string tmpFilename = generator.Generate();
+
+                if (tmpFilename != null) {
+                    string amazonFilename = DateTime.UtcNow.ToString("yyyyMMdd") + "=" + Find.World.info.persistentRandomValue.ToString() + Find.CurrentMap.uniqueID + "=jeluder.xml";
+
+                    AmazonS3Service uploader = new AmazonS3Service();
+                    uploader.AmazonS3Upload(tmpFilename, "", amazonFilename);
+                }
+            }
         }
 
         [HarmonyPatch(typeof(UIRoot_Entry), "Init", new Type[0])]
@@ -26,15 +41,14 @@ namespace RealRuins
         [HarmonyPatch(typeof(GameDataSaveLoader), "SaveGame")]
         class SaveGame_Patch {
             static void Postfix() {
-                SnapshotGenerator generator = new SnapshotGenerator(Find.CurrentMap);
-                string tmpFilename = generator.Generate();
+                SnapshotSaver.SaveSnapshot();
+            }
+        }
 
-                if (tmpFilename != null) {
-                    string amazonFilename = DateTime.UtcNow.ToString("yyyyMMdd") + "-" + Find.CurrentMap.ConstantRandSeed + "-jeluder.xml";
-
-                    AmazonS3Service uploader = new AmazonS3Service();
-                    uploader.AmazonS3Upload(tmpFilename, "", amazonFilename);
-                }
+        [HarmonyPatch(typeof(GenGameEnd), "EndGameDialogMessage", typeof(string), typeof(bool), typeof(Color))]
+        class GameOver_Patch {
+            static void Postfix() {
+                SnapshotSaver.SaveSnapshot();
             }
         }
     }

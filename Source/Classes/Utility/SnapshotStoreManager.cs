@@ -32,6 +32,31 @@ namespace RealRuins
         }
 
         public void StoreData(string buffer, string filename) {
+            //when storing a file you need to remove older version of snapshots of the same game
+            string[] parts = filename.Split('=');
+            if (parts.Count() > 1) {
+                int date = 0;
+                if (int.TryParse(parts[0], out date)) {
+                    parts[0] = "*";
+                    string mask = string.Join("=", parts);
+                    string[] files = Directory.GetFiles(rootFolder, mask);
+                    foreach (string existingFile in files) {
+                        int existingFileDate = 0;
+                        string[] existingFileParts = existingFile.Split('-');
+                        if (int.TryParse(existingFileParts[0], out existingFileDate)) {
+                            if (existingFileDate > date) {
+                                //there is more fresh file. no need to save this one.
+                                return;
+                            } else {
+                                //remove older files
+                                File.Delete(existingFile);
+                            }
+                        }
+                    }
+                }
+            }
+
+            //writing file in all cases except "newer version available"
             File.WriteAllText(rootFolder + "/" + filename, buffer);
         }
 

@@ -17,10 +17,32 @@ namespace RealRuins
             }
         }
 
+        private void CalculateProximity() {
+            /*
+            int maxDist = MaxDist;
+            List<Settlement> settlements = Find.WorldObjects.Settlements;
+            for (int i = 0; i < settlements.Count; i++) {
+                Settlement settlement = settlements[i];
+                if (settlement.Faction != null && settlement.Faction != Faction.OfPlayer && (!ignorePermanentlyHostile || !settlement.Faction.def.permanentEnemy) && (!ignoreIfAlreadyMinGoodwill || settlement.Faction.PlayerGoodwill != -100)) {
+                    int num = Find.WorldGrid.TraversalDistanceBetween(tile, settlement.Tile, false, maxDist);
+                    if (num != 2147483647) {
+                        int num2 = Mathf.RoundToInt(DiplomacyTuning.Goodwill_PerQuadrumFromSettlementProximity.Evaluate((float)num));
+                        if (num2 != 0) {
+                            outOffsets.Add(new Pair<Settlement, int>(settlement, num2));
+                        }
+                    }
+                }
+            }
+        */
+        }
+
 
         protected override void ScatterAt(IntVec3 loc, Map map, int count = 1) {
-            int floorRadius = Rand.Range(4, 12);
-            new RuinsScatterer().ScatterRuinsAt(loc, map, floorRadius, Rand.Range(0, 3), Rand.Range(floorRadius, floorRadius * 2), Rand.Range(0,3), (Rand.Value * 0.8f) + 0.2f, Rand.Range(30, 300));
+            float scavengersActivity = Rand.Value; //later will be based on other settlements proximity
+            float ruinsAge = Rand.Range(1, 25);
+            float deteriorationDegree = Rand.Value;
+            int referenceRadius = Rand.Range(4, 12);
+            new RuinsScatterer().ScatterRuinsAt(loc, map, referenceRadius, Rand.Range(0, 3), deteriorationDegree, scavengersActivity, ruinsAge);
         }
 
         protected override bool CanScatterAt(IntVec3 loc, Map map) {
@@ -37,8 +59,11 @@ namespace RealRuins
 
 
         protected override void ScatterAt(IntVec3 loc, Map map, int count = 1) {
-            int floorRadius = Rand.Range(16, 32);
-            new RuinsScatterer().ScatterRuinsAt(loc, map, floorRadius, Rand.Range(0, 5), Rand.Range(floorRadius, floorRadius * 2), Rand.Range(0, 3), (Rand.Value * 0.3f) + 0.7f, Rand.Range(10, 50));
+            float scavengersActivity = 0.5f + Rand.Value; //later will be based on other settlements proximity
+            float ruinsAge = Rand.Range(1, 25);
+            float deteriorationDegree = Rand.Value;
+            int referenceRadius = Rand.Range(15, 35);
+            new RuinsScatterer().ScatterRuinsAt(loc, map, referenceRadius, Rand.Range(0, 3), deteriorationDegree, scavengersActivity, ruinsAge);
         }
 
         protected override bool CanScatterAt(IntVec3 loc, Map map) {
