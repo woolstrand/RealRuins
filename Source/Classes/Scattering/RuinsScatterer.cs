@@ -265,6 +265,11 @@ namespace RealRuins
             minX = center.x - radius; maxX = center.x + radius;
             minZ = center.z - radius; maxZ = center.z + radius;
 
+            if (minX < 0) minX = 0;
+            if (minZ < 0) minZ = 0;
+            if (maxX >= blueprintWidth - 1) maxX = blueprintWidth - 1;
+            if (maxZ >= blueprintHeight - 1) maxZ = blueprintHeight - 1;
+
             Debug.Message("Fallback boudaries are: {0}-{1}, {2}-{3} with blueprint size of {4}x{5}", minX, maxX, minZ, maxZ, blueprintWidth, blueprintHeight);
 
             mapOriginX = targetPoint.x - (maxX - minX) / 2;
@@ -380,15 +385,21 @@ namespace RealRuins
 
                 //3. draw a random circle around that room
                 int radius = Rand.Range(referenceRadius - referenceRadiusJitter, referenceRadius + referenceRadiusJitter);
-                if (radius * 2 > blueprintWidth) { radius = blueprintWidth / 2 - 1; }
-                if (radius * 2 > blueprintHeight) { radius = blueprintHeight / 2 - 1; }
-                if (radius > center.x) { center.x = radius; } //shift central point if it's too close to blueprint edge
-                if (radius > center.y) { center.y = radius; }
-                if (center.x + radius > blueprintWidth) { center.x = blueprintWidth - radius; }
-                if (center.y + radius > blueprintHeight) { center.y = blueprintHeight - radius; }
+                if (radius * 2 + 1 > blueprintWidth - 4) { radius = (blueprintWidth - 4) / 2 - 1; }
+                if (radius * 2 + 1 > blueprintHeight - 4) { radius = (blueprintHeight - 4) / 2 - 1; }
+                if (radius > center.x - 1) { center.x = radius + 1; } //shift central point if it's too close to blueprint edge
+                if (radius > center.y - 1) { center.y = radius + 1; }
+                if (center.x + radius > blueprintWidth - 2) { center.x = blueprintWidth - 2 - radius; }
+                if (center.y + radius > blueprintHeight - 2) { center.y = blueprintHeight - 2 - radius; }
 
                 minX = center.x - radius; maxX = center.x + radius;
                 minZ = center.z - radius; maxZ = center.z + radius;
+
+                //Ok, too bad with math at 1:00 am
+                if (minX < 0) minX = 0;
+                if (minZ < 0) minZ = 0;
+                if (maxX >= blueprintWidth - 1) maxX = blueprintWidth - 1;
+                if (maxZ >= blueprintHeight - 1) maxZ = blueprintHeight - 1;
 
                 Debug.Message("Regular boudaries are: {0}-{1}, {2}-{3} with blueprint size of {4}x{5}", minX, maxX, minZ, maxZ, blueprintWidth, blueprintHeight);
 
