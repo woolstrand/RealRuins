@@ -6,7 +6,7 @@ using Harmony;
 using Verse;
 using RimWorld;
 using UnityEngine;
-//https://pastebin.com/LrAb814Z
+//млhttps://pastebin.com/LrAb814Z
 
 namespace RealRuins
 {
@@ -23,7 +23,9 @@ namespace RealRuins
                 string tmpFilename = generator.Generate();
 
                 if (tmpFilename != null) {
-                    string amazonFilename = DateTime.UtcNow.ToString("yyyyMMdd") + "-" + (Math.Abs(Find.World.info.persistentRandomValue)).ToString() + Find.CurrentMap.uniqueID + "-jeluder.xml";
+                    string worldId = (Math.Abs(Find.World.info.persistentRandomValue)).ToString();
+                    //worldId = Rand.Int.ToString();
+                    string amazonFilename = DateTime.UtcNow.ToString("yyyyMMdd") + "-" + worldId + Find.CurrentMap.uniqueID + "-jeluder.xml";
 
                     AmazonS3Service uploader = new AmazonS3Service();
                     uploader.AmazonS3Upload(tmpFilename, "", amazonFilename);

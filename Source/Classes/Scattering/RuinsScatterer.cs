@@ -112,27 +112,40 @@ namespace RealRuins
         //Golden wall is a [Wall] made of [Gold], golden tile is a [GoldenTile] made of default material
         private float ThingComponentsMarketCost(BuildableDef buildable, ThingDef stuffDef = null) {
             float num = 0f;
+            //Debug.active = false;
+            //Debug.Message("Requesting cost for item: {0} made of {1}", buildable, stuffDef);
+
+            if (buildable == null) return 0; //can be for missing subcomponents, i.e. bed from alpha-poly. Bed does exist, but alpha poly does not.
 
             if (buildable.costList != null) {
+            //    Debug.Message("Going through costList");
                 foreach (ThingDefCountClass cost in buildable.costList) {
                     num += (float)cost.count * ThingComponentsMarketCost(cost.thingDef);
                 }
             }
 
             if (buildable.costStuffCount > 0) {
+            //    Debug.Message("Using stuffcount");
                 if (stuffDef == null) {
                     stuffDef = GenStuff.DefaultStuffFor(buildable);
                 }
-                num += (float)buildable.costStuffCount * stuffDef.BaseMarketValue * (1.0f / stuffDef.VolumePerUnit);
+            //    Debug.Message("Stuffdef is now {0}", stuffDef);
+
+                if (stuffDef != null) {
+                    num += (float)buildable.costStuffCount * stuffDef.BaseMarketValue * (1.0f / stuffDef.VolumePerUnit);
+                }
             }
 
             if (num == 0) {
                 if (buildable is ThingDef) {
                     if (((ThingDef)buildable).recipeMaker == null) {
+                //        Debug.Message("Trying to get base market value");
+                //        Debug.active = true;
                         return ((ThingDef)buildable).BaseMarketValue; //on some reason base market value is calculated wrong for, say, golden walls
                     }
                 }
             }
+            //Debug.active = true;
             return num;
         }
 
@@ -204,12 +217,14 @@ namespace RealRuins
                         terrainMap[x, z] = terrain;
                     } else if (cellElement.Name.Equals("item")) {
                         ItemTile tile = new ItemTile(cellElement);
-                        tile.location = new IntVec3(x, 0, z);
-                        itemsMap[x, z].Add(tile);
 
                         ThingDef thingDef = DefDatabase<ThingDef>.GetNamed(tile.defName, false);
-                        if (thingDef != null && thingDef.fillPercent == 1.0f) {
-                            wallMap[x, z] = -1; //place wall
+                        if (thingDef != null) {
+                            if (thingDef.fillPercent == 1.0f) {
+                                wallMap[x, z] = -1; //place wall
+                            }
+                            tile.location = new IntVec3(x, 0, z);
+                            itemsMap[x, z].Add(tile); //save item only if it's def can be loaded.
                         }
                     } else if (cellElement.Name.Equals("roof")) {
                         roofMap[x, z] = true;
@@ -249,6 +264,8 @@ namespace RealRuins
 
             minX = center.x - radius; maxX = center.x + radius;
             minZ = center.z - radius; maxZ = center.z + radius;
+
+            Debug.Message("Fallback boudaries are: {0}-{1}, {2}-{3} with blueprint size of {4}x{5}", minX, maxX, minZ, maxZ, blueprintWidth, blueprintHeight);
 
             mapOriginX = targetPoint.x - (maxX - minX) / 2;
             mapOriginZ = targetPoint.z - (maxZ - minZ) / 2;
@@ -308,6 +325,8 @@ namespace RealRuins
                 }
             }
 
+            Debug.Message("Traversing map");
+
             //For each unmarked point we can interpret our map as a tree with root at current point and branches going to four directions. For this tree (with removed duplicate nodes) we can implement BFS travrsing.
             for (int z = 0; z < blueprintHeight; z++) {
                 for (int x = 0; x < blueprintWidth; x++) {
@@ -317,6 +336,8 @@ namespace RealRuins
                     }
                 }
             }
+
+            Debug.Message("Completed. Found {0} rooms", currentRoomIndex);
 
             if (currentRoomIndex == 1) { //no new rooms were added => blueprint does not have regular rooms or rooms were formed with use of some missing components or materials
                 //fallback plan: construct old-fashioned circular deterioration map from a some random point
@@ -331,6 +352,8 @@ namespace RealRuins
                     }
                 }
 
+                Debug.Message("Found {0} suitable rooms", suitableRoomIndices.Count);
+
                 int selectedRoomIndex = 0;
                 if (suitableRoomIndices.Count == 0) {
                     //1x. no suitable rooms: fallback plan
@@ -340,6 +363,8 @@ namespace RealRuins
                     selectedRoomIndex = suitableRoomIndices[Rand.Range(0, suitableRoomIndices.Count)];
                 }
 
+                Debug.Message("Selected suitable room: {0}", selectedRoomIndex);
+                
                 //2. select a point within this room
                 List<IntVec3> suitablePoints = new List<IntVec3>();
                 for (int z = 0; z < blueprintHeight; z++) {
@@ -351,6 +376,7 @@ namespace RealRuins
                 } //suitable points count is at least 5
                 IntVec3 center = suitablePoints[suitablePoints.Count / 2];
 
+                Debug.Message("Selected center");
 
                 //3. draw a random circle around that room
                 int radius = Rand.Range(referenceRadius - referenceRadiusJitter, referenceRadius + referenceRadiusJitter);
@@ -364,6 +390,8 @@ namespace RealRuins
                 minX = center.x - radius; maxX = center.x + radius;
                 minZ = center.z - radius; maxZ = center.z + radius;
 
+                Debug.Message("Regular boudaries are: {0}-{1}, {2}-{3} with blueprint size of {4}x{5}", minX, maxX, minZ, maxZ, blueprintWidth, blueprintHeight);
+
                 mapOriginX = targetPoint.x - (maxX - minX) / 2;
                 mapOriginZ = targetPoint.z - (maxZ - minZ) / 2;
 
@@ -373,6 +401,8 @@ namespace RealRuins
                 if (mapOriginX + (maxX - minX) > map.info.Size.x) mapOriginX = map.info.Size.x - 10 - (maxX - minX);
                 if (mapOriginZ + (maxZ - minZ) > map.info.Size.z) mapOriginZ = map.info.Size.z - 10 - (maxZ - minZ);
 
+
+                Debug.Message("Checking rooms intersection with border");
 
                 //4. enumerate all rooms in the circle
                 //5. enumerate all rooms intersecting the circle outline
@@ -390,6 +420,8 @@ namespace RealRuins
                         }
                     }
                 }
+
+                Debug.Message("Finished. Setting core integrity values");
 
                 //if all rooms are intersecting circle outline do fallback plan (circular deterioration chance map)
                 if (allRooms.Count == openRooms.Count) {
@@ -414,6 +446,8 @@ namespace RealRuins
                         }
                     }
 
+                    Debug.Message("Expanding core by one cell");
+
                     // - then add one pixel width expansion to cover adjacent wall.
                     for (int x = minX + 1; x < maxX - 1; x++) {
                         for (int z = minZ + 1; z < maxZ - 1; z++) {
@@ -429,6 +463,7 @@ namespace RealRuins
                         }
                     }
 
+                    Debug.Message("Normalizing");
                     // normalize terrain core values which were used for border generation
                     for (int x = minX; x < maxX; x++) {
                         for (int z = minZ; z < maxZ; z++) {
@@ -438,9 +473,12 @@ namespace RealRuins
                         }
                     }
 
+                    Debug.Message("Blurring");
                     BlurIntegrityMap(terrainIntegrity, 7);
                     BlurIntegrityMap(itemsIntegrity, 4);
                     //At this step we have integrity maps, so we can proceed further and simulate deterioration and scavenging
+                    Debug.Message("Finished");
+
                 }
             }
         }
@@ -474,7 +512,17 @@ namespace RealRuins
                     foreach (ItemTile item in items) {
                         ThingDef thingDef = DefDatabase<ThingDef>.GetNamed(item.defName, false);
 
-                        if (thingDef != null && thingDef.terrainAffordanceNeeded != null) {
+                        if (thingDef == null) {
+                            itemsToRemove.Add(item);
+                            continue;
+                        }
+
+                        if (thingDef.IsCorpse || thingDef.Equals(ThingDefOf.MinifiedThing)) { //now corpses are spawned bugged on some reason, so let's ignore. Also we can't handle minified things.
+                            itemsToRemove.Add(item);
+                            continue;
+                        }
+
+                        if (thingDef.terrainAffordanceNeeded != null) {
                             if (terrainDef != null && terrainDef.terrainAffordanceNeeded != null && existingTerrain.affordances.Contains(terrainDef.terrainAffordanceNeeded)) {
                                 if (!terrainDef.affordances.Contains(thingDef.terrainAffordanceNeeded)) { //if new terrain can be placed over existing terrain, checking if an item can be placed over a new terrain
                                     itemsToRemove.Add(item);
@@ -537,7 +585,7 @@ namespace RealRuins
             //word is spread, so each next raid is more destructive than the previous ones
             //to make calculations a bit easier we're going to calculate value per cell, not per item.
 
-            //Log.Clear();
+            Debug.active = false;
             
             List<Tile> tilesByCost = new List<Tile>();
 
@@ -574,7 +622,7 @@ namespace RealRuins
                     Tile topTile = tilesByCost.Pop();
                     String msg = string.Format("Inspecting tile \"{0}\" of cost {1} and weight {2}. ", topTile.defName, topTile.cost, topTile.weight);
 
-                    if (topTile.cost < 25) {
+                    if (topTile.cost < 35) {
                         shouldStop = true; //nothing to do here, everything valueable has already gone
                         msg += "Too cheap, stopping.";
                     } else {
@@ -592,14 +640,17 @@ namespace RealRuins
                     Debug.Message(msg);
                 }
             }
+
+            Debug.active = true;
+
         }
 
         private void TransferBlueprint() {
             //Planting blueprint
 
-            Faction faction = (Rand.Value > 0.5) ? Find.FactionManager.OfAncientsHostile : Find.FactionManager.OfAncients;
-            faction = Find.FactionManager.RandomEnemyFaction();
-            Debug.Message("Setting faction to {0}", faction.def.defName);
+            Faction faction = (Rand.Value > 0.35) ? Find.FactionManager.RandomEnemyFaction() : Find.FactionManager.OfAncients;
+            
+            Debug.Message("Setting ruins faction to {0}", faction.Name);
 
             for (int z = minZ; z < maxZ; z++) {
                 for (int x = minX; x < maxX; x++) {
@@ -643,12 +694,13 @@ namespace RealRuins
 
                             if (thing != null) {
                                 GenSpawn.Spawn(thing, mapLocation, map, new Rot4(itemTile.rot));
+                                if (thingDef.CanHaveFaction) {
+                                    thing.SetFaction(faction);
+                                }
+
                                 if (itemTile.stackCount > 1) {
                                     thing.stackCount = Rand.Range(1, itemTile.stackCount);
 
-                                    if (thingDef.CanHaveFaction) {
-                                        thing.SetFactionDirect(faction);
-                                    }
 
                                     //Spoil things that can be spoiled. You shouldn't find a fresh meat an the old ruins.
                                     CompRottable rottable = thing.TryGetComp<CompRottable>();
@@ -679,6 +731,10 @@ namespace RealRuins
 
             for (int z = minZ; z < maxZ; z++) {
                 for (int x = minX; x < maxX; x++) {
+
+                    if (terrainIntegrity[x, z] < 0.1f) {
+                        continue; //skip generating filth on empty
+                    }
 
                     IntVec3 mapLocation = new IntVec3(x - minX + mapOriginX, 0, z - minZ + mapOriginZ);
 
@@ -713,7 +769,7 @@ namespace RealRuins
 
 
                     IntVec3 mapLocation = new IntVec3(x - minX + mapOriginX, 0, z - minZ + mapOriginZ);
-                    if (Rand.Value < 0.0001) {
+                    if (Rand.Value < 0.001) {
 
                         bool canPlace = true;
                         List<Thing> things = map.thingGrid.ThingsListAt(mapLocation);
