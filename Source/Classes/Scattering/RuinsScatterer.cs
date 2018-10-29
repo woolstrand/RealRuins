@@ -32,6 +32,50 @@ namespace RealRuins
         public string stuffDef;
         public int stackCount;
         public int rot;
+        public bool isWall = false; //is a wall or something as tough and dense as a wall. actually this flag determines if this item can be replaced with a wall if it's impossible to use the original.
+        public bool isDoor = false;
+
+        static public ItemTile CollapsedWallItemTile() {
+            return CollapsedWallItemTile(new IntVec3(0, 0, 0));
+        }
+
+        public static ItemTile CollapsedWallItemTile(IntVec3 location) {
+            ItemTile tile = new ItemTile {
+                defName = ThingDefOf.CollapsedRocks.defName,
+                isDoor = false,
+                isWall = true,
+                stackCount = 1,
+                rot = 0,
+                cost = 0,
+                weight = 1.0f,
+                location = location
+            };
+
+            return tile;
+        }
+
+        static public ItemTile DefaultDoorItemTile() {
+            return DefaultDoorItemTile(new IntVec3(0, 0, 0));
+        }
+
+        static public ItemTile DefaultDoorItemTile(IntVec3 location) {
+                ItemTile tile = new ItemTile();
+
+            tile.defName = ThingDefOf.Door.defName;
+            tile.stuffDef = ThingDefOf.WoodLog.defName;
+            tile.isDoor = true;
+            tile.isWall = false;
+            tile.location = location;
+            tile.stackCount = 1;
+            tile.rot = 0;
+            tile.cost = 0;
+            tile.weight = 1.0f;
+
+            return tile;
+        }
+
+        public ItemTile() {
+        }
 
         public ItemTile(XmlNode node)
         {
@@ -46,6 +90,16 @@ namespace RealRuins
                 stackCount = int.Parse(s: stackCountAttribute.Value);
             } else {
                 stackCount = 1;
+            }
+
+            XmlAttribute doorAttribute = node.Attributes["isDoor"];
+            if (doorAttribute != null || defName.ToLower().Contains("door")) {
+                isDoor = true;
+            }
+
+            XmlAttribute wallAttribute = node.Attributes["actsAsWall"];
+            if (wallAttribute != null || defName.ToLower().Contains("wall") || defName.Equals("Cooler") || defName.Equals("Vent")) { //compatibility
+                isWall = true;
             }
 
             XmlAttribute rotAttribute = node.Attributes["rot"];
@@ -152,6 +206,8 @@ namespace RealRuins
 
         Map map;
         IntVec3 targetPoint;
+        bool canSpawnTraps = true;
+        bool canSpawnEnemies = true;
 
         int blueprintWidth;
         int blueprintHeight;
@@ -225,7 +281,14 @@ namespace RealRuins
                             }
                             tile.location = new IntVec3(x, 0, z);
                             itemsMap[x, z].Add(tile); //save item only if it's def can be loaded.
+                        } else {
+                            if (tile.isDoor) { //replacing unavailable door with abstract default doof
+                                tile.defName = ThingDefOf.Door.defName;
+                            } else if (tile.isWall || tile.defName.ToLower().Contains("wall")) { //replacing unavailable impassable 100% filling block (which was likely a wall) with a wall
+                                tile.defName = ThingDefOf.CollapsedRocks.defName;
+                            }
                         }
+
                     } else if (cellElement.Name.Equals("roof")) {
                         roofMap[x, z] = true;
                     }
@@ -518,6 +581,10 @@ namespace RealRuins
                     }
 
                     TerrainDef existingTerrain = map.terrainGrid.TerrainAt(new IntVec3(x - minX + mapOriginX, 0, z - minZ + mapOriginZ));
+                    if (terrainDef != null && terrainDef.terrainAffordanceNeeded != null && !existingTerrain.affordances.Contains(terrainDef.terrainAffordanceNeeded)) {
+                        terrainDef = null;
+                        terrainMap[x, z] = null; //erase terrain if underlying terrain can't support it.
+                    }
 
                     List<ItemTile> itemsToRemove = new List<ItemTile>();
                     foreach (ItemTile item in items) {
@@ -596,7 +663,7 @@ namespace RealRuins
             //word is spread, so each next raid is more destructive than the previous ones
             //to make calculations a bit easier we're going to calculate value per cell, not per item.
 
-            Debug.active = false;
+            //Debug.active = false;
             
             List<Tile> tilesByCost = new List<Tile>();
 
@@ -633,7 +700,7 @@ namespace RealRuins
                     Tile topTile = tilesByCost.Pop();
                     String msg = string.Format("Inspecting tile \"{0}\" of cost {1} and weight {2}. ", topTile.defName, topTile.cost, topTile.weight);
 
-                    if (topTile.cost < 35) {
+                    if (topTile.cost < 20) {
                         shouldStop = true; //nothing to do here, everything valueable has already gone
                         msg += "Too cheap, stopping.";
                     } else {
@@ -643,12 +710,48 @@ namespace RealRuins
                                 terrainMap[topTile.location.x, topTile.location.z] = null;
                                 msg += "Terrain removed.";
                             } else if (topTile is ItemTile) {
+                                ItemTile itemTile = topTile as ItemTile;
                                 itemsMap[topTile.location.x, topTile.location.z].Remove((ItemTile)topTile);
+                                if (itemTile.isWall) { //if something like a wall removed (vent or aircon) you usually want to cover the hole to keep wall integrity
+                                    ItemTile replacementTile = ItemTile.CollapsedWallItemTile(itemTile.location);
+                                    itemsMap[topTile.location.x, topTile.location.z].Add(replacementTile);
+                                    msg += "Added " + replacementTile.defName + ", original ";
+                                } else if (itemTile.isDoor) {
+                                    ItemTile replacementTile = ItemTile.DefaultDoorItemTile(itemTile.location);
+                                    itemsMap[topTile.location.x, topTile.location.z].Add(replacementTile);
+                                    msg += "Added " + replacementTile.defName + ", original ";
+                                }
                                 msg += "Tile removed.";
                             }
                         }
                     }
                     Debug.Message(msg);
+                }
+            }
+
+            //Check that there are no "hanging doors" left
+            bool HasWallsIn(List<ItemTile> list) {
+                foreach (ItemTile tile in list) {
+                    if (tile.isWall) return true;
+                }
+                return false;
+            }
+
+            for (int z = minZ + 1; z < maxZ - 1; z++) {
+                for (int x = minX + 1; x < maxX - 1; x++) {
+                    ItemTile tileToRemove = null;
+                    foreach (ItemTile tile in itemsMap[x, z]) {
+                        if (tile.isDoor) { //check if a particular door tile has both two vertically adjacent walls (or similar) or two horizintally adjacent walls
+                            if (!(HasWallsIn(itemsMap[x - 1, z]) && HasWallsIn(itemsMap[x + 1, z])) &&
+                                !(HasWallsIn(itemsMap[x, z - 1]) && HasWallsIn(itemsMap[x, z + 1]))) {
+                                tileToRemove = tile;
+                                break;
+                            }
+                        }
+                    }
+                    if (tileToRemove != null) {
+                        itemsMap[x, z].Remove(tileToRemove);
+                    }
                 }
             }
 
@@ -797,6 +900,11 @@ namespace RealRuins
                         CompRottable rottable = dweller.Corpse.TryGetComp<CompRottable>();
                         rottable.RotProgress = rottable.PropsRot.TicksToDessicated;
                         dweller.Corpse.timeOfDeath = timeOfDeath + (int)(Rand.Value * 100000);
+                    } else if (Rand.Value < 0.001) {
+                        ThingDef trapDef = ThingDefOf.TrapSpike;
+                        Thing thing = ThingMaker.MakeThing(trapDef, ThingDefOf.WoodLog);
+                        thing.SetFaction(Find.FactionManager.RandomEnemyFaction());
+                        GenSpawn.Spawn(thing, mapLocation, map);
                     }
 
                 }

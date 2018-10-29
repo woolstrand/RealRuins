@@ -91,6 +91,14 @@ namespace RealRuins {
                                         itemsBuilder.AppendFormat(" rot=\"{0}\"", thing.Rotation.AsByte);
                                     }
 
+                                    if (thing.def.passability == Traversability.Impassable || thing.def.fillPercent > 0.99) {
+                                        itemsBuilder.Append(" actsAsWall=\"1\""); //not always a wall, but should act as a wall
+                                    }
+
+                                    if (thing.def.IsDoor) {
+                                        itemsBuilder.Append(" isDoor=\"1\"");
+                                    }
+
                                     itemsBuilder.Append(" />\n");
                                 }
                             }
