@@ -1,0 +1,7 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<LanguageData>
+	<RealRuins_ModOptions_Category>Real Ruins</RealRuins_ModOptions_Category>
+	<RealRuins_ModOptions_AllowDownloads>Allow downloading ruins from database</RealRuins_ModOptions_AllowDownloads>
+	<RealRuins_ModOptions_AllowUploads>Allow uploading your bases to ruins database</RealRuins_ModOptions_AllowUploads>
+	<RealRuins_ModOptions_CacheSize>Limit local cache size to </RealRuins_ModOptions_CacheSize>
+</LanguageData>

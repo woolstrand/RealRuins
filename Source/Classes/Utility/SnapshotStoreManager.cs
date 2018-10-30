@@ -95,5 +95,22 @@ namespace RealRuins
             return result;
         }
 
+        public void CheckCacheSizeLimits() {
+            var files = Directory.GetFiles(rootFolder);
+            List<string> filesList = files.ToList();
+            filesList.Sort();
+            filesList.Reverse();
+            
+
+            long totalSize = 0;
+            foreach (string file in filesList) {
+                Debug.Message("checking file {0}", file);
+                totalSize += new FileInfo(file).Length;
+                if (totalSize > RealRuins_ModSettings.diskCacheLimit * 1024 * 1024) {
+                    File.Delete(file);
+                }
+            }
+        }
+
     }
 }

@@ -6,7 +6,6 @@ using Harmony;
 using Verse;
 using RimWorld;
 using UnityEngine;
-//млhttps://pastebin.com/LrAb814Z
 
 namespace RealRuins
 {
@@ -19,12 +18,14 @@ namespace RealRuins
 
         static class SnapshotSaver {
             public static void SaveSnapshot() {
+                if (!RealRuins_ModSettings.allowUploads) return;
+
                 SnapshotGenerator generator = new SnapshotGenerator(Find.CurrentMap);
                 string tmpFilename = generator.Generate();
 
                 if (tmpFilename != null) {
                     string worldId = (Math.Abs(Find.World.info.persistentRandomValue)).ToString();
-                    //worldId = Rand.Int.ToString();
+
                     string amazonFilename = DateTime.UtcNow.ToString("yyyyMMdd") + "-" + worldId + Find.CurrentMap.uniqueID + "-jeluder.xml";
 
                     AmazonS3Service uploader = new AmazonS3Service();
@@ -36,8 +37,10 @@ namespace RealRuins
         [HarmonyPatch(typeof(UIRoot_Entry), "Init", new Type[0])]
         static class UIRoot_Entry_Init_Patch {
             static void Postfix() {
-                Debug.Message("real ruins postinit");
-                SnapshotManager.Instance.LoadSomeSnapshots();
+                if (RealRuins_ModSettings.allowDownloads) {
+                    SnapshotManager.Instance.LoadSomeSnapshots();
+                }
+                SnapshotStoreManager.Instance.CheckCacheSizeLimits();
             }
         }
 
