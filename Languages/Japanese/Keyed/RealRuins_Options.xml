@@ -1,0 +1,8 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<LanguageData>
+  <RealRuins_ModOptions_Category>Real Ruins</RealRuins_ModOptions_Category>
+  <RealRuins_ModOptions_AllowDownloads>データベースからの遺跡のダウンロードを許可する</RealRuins_ModOptions_AllowDownloads>
+  <RealRuins_ModOptions_AllowUploads>あなたの拠点を遺跡データベースにアップロードを許可する</RealRuins_ModOptions_AllowUploads>
+  <RealRuins_ModOptions_CacheSize>ローカルキャッシュサイズを限定する</RealRuins_ModOptions_CacheSize>
+
+</LanguageData>
