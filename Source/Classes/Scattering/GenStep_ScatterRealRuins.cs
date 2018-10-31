@@ -38,7 +38,7 @@ namespace RealRuins
 
 
         protected override void ScatterAt(IntVec3 loc, Map map, int count = 1) {
-            float scavengersActivity = Rand.Value; //later will be based on other settlements proximity
+            float scavengersActivity = Rand.Value * 0.5f + 0.5f; //later will be based on other settlements proximity
             float ruinsAge = Rand.Range(1, 25);
             float deteriorationDegree = Rand.Value;
             int referenceRadius = Rand.Range(4, 12);

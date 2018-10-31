@@ -7,8 +7,8 @@
 		<genStep Class="RealRuins.GenStep_ScatterRealRuins">
 			<allowInWaterBiome>false</allowInWaterBiome>
 			<countPer10kCellsRange>
-				<min>0.80</min>
-				<max>2.35</max>
+				<min>20.80</min>
+				<max>22.35</max>
 			</countPer10kCellsRange>
 		</genStep>
 	</GenStepDef>

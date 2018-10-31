@@ -24,15 +24,22 @@ namespace RealRuins
         }
 
         private string rootFolder = "../Snapshots";
+        private long totalFilesSize = 0;
 
-        public SnapshotStoreManager() {
+        private void CheckFolderExistence() {
             if (!Directory.Exists(rootFolder)) {
                 Directory.CreateDirectory(rootFolder);
             }
         }
 
+        public SnapshotStoreManager() {
+            CheckFolderExistence();
+            RecalculateFilesSize();
+        }
+
         public void StoreData(string buffer, string filename) {
             //when storing a file you need to remove older version of snapshots of the same game
+            CheckFolderExistence();
             string[] parts = filename.Split('=');
             if (parts.Count() > 1) {
                 int date = 0;
@@ -58,19 +65,25 @@ namespace RealRuins
 
             //writing file in all cases except "newer version available"
             File.WriteAllText(rootFolder + "/" + filename, buffer);
+            RecalculateFilesSize();
         }
 
         private string DoGetRandomFilenameFromRootFolder() {
             var files = Directory.GetFiles(rootFolder);
+            if (files.Length == 0) return null;
+
             int index = Rand.Range(0, files.Length);
             return files[index];
         }
 
         public string RandomSnapshotFilename() {
+            CheckFolderExistence();
             string filename = null;
             do {
                 filename = DoGetRandomFilenameFromRootFolder();
-                Log.Message(string.Format("found random file {0}", filename));
+                if (filename == null) return null; //no more valid files. sorry, no party.
+
+
                 if (!filename.EndsWith("xml")) {
                     File.Delete(filename);
                     filename = null;
@@ -80,10 +93,13 @@ namespace RealRuins
         }
 
         public int StoredSnapshotsCount() {
+            CheckFolderExistence();
             return Directory.GetFiles(rootFolder).Count();
         }
 
         public List<string> FilterOutExistingItems(List<string> source) {
+            CheckFolderExistence();
+
             List<string> result = new List<string>();
 
             foreach (string item in source) {
@@ -95,7 +111,47 @@ namespace RealRuins
             return result;
         }
 
+        public void CheckCacheContents() {
+            CheckFolderExistence();
+
+            if (RealRuins_ModSettings.offlineMode) {
+                var files = Directory.GetFiles(rootFolder);
+                foreach (string fileName in files) {
+                    if (!fileName.Contains("local")) {
+                        File.Delete(fileName); //delete all remote files in offline mode.
+                    }
+                }
+            }
+            RecalculateFilesSize();
+        }
+
+        public void ClearCache() {
+            CheckFolderExistence();
+
+            Directory.Delete(rootFolder, true);
+            Directory.CreateDirectory(rootFolder);
+            totalFilesSize = 0;
+        }
+
+        public long TotalSize() {
+            return totalFilesSize;
+        }
+
+        private void RecalculateFilesSize() {
+            CheckFolderExistence();
+
+            var filesList = Directory.GetFiles(rootFolder);
+            long totalSize = 0;
+            foreach (string file in filesList) {
+                totalSize += new FileInfo(file).Length;
+            }
+
+            totalFilesSize = totalSize;
+        }
+
         public void CheckCacheSizeLimits() {
+            CheckFolderExistence();
+
             var files = Directory.GetFiles(rootFolder);
             List<string> filesList = files.ToList();
             filesList.Sort();
@@ -104,12 +160,12 @@ namespace RealRuins
 
             long totalSize = 0;
             foreach (string file in filesList) {
-                Debug.Message("checking file {0}", file);
                 totalSize += new FileInfo(file).Length;
                 if (totalSize > RealRuins_ModSettings.diskCacheLimit * 1024 * 1024) {
                     File.Delete(file);
                 }
             }
+            RecalculateFilesSize();
         }
 
     }

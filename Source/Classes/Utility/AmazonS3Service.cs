@@ -183,7 +183,6 @@ namespace RealRuins
             UnityWebRequest request = AmazonS3SignedWebRequest("GET", "", null);
 
             void InternalSuccessHandler(string response) {
-                Debug.Message("Success loading names list, response: {0}", response);
                 XmlDocument filesListDocument = new XmlDocument();
                 filesListDocument.LoadXml(response);
 

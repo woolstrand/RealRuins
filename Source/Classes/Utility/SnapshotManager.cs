@@ -44,7 +44,7 @@ namespace RealRuins {
                 Debug.Message("Shuffled...");
 
 
-                int maxNumberToLoad = 10;
+                int maxNumberToLoad = 15;
                 if (storeManager.StoredSnapshotsCount() < 30) {
                     maxNumberToLoad = 30;
                 }

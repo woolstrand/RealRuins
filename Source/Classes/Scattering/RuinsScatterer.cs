@@ -235,11 +235,18 @@ namespace RealRuins
         float elapsedTime = 0; //ruins age
 
 
-        private void LoadRandomXMLSnapshot() {
-            //Create the XmlDocument.  
+        private bool LoadRandomXMLSnapshot() {
+            //Create the XmlDocument. 
+            string snapshotName = SnapshotStoreManager.Instance.RandomSnapshotFilename();
+            if (snapshotName == null) {
+                return false;
+            }
+
+            Debug.Message("Loading {0}", snapshotName);
+
             XmlDocument snapshot = new XmlDocument();
 
-            snapshot.Load(SnapshotStoreManager.Instance.RandomSnapshotFilename());
+            snapshot.Load(snapshotName);
 
             XmlNodeList elemList = snapshot.GetElementsByTagName("cell");
             blueprintWidth = int.Parse(snapshot.FirstChild.Attributes["width"].Value);
@@ -271,6 +278,7 @@ namespace RealRuins
                         TerrainTile terrain = new TerrainTile(cellElement);
                         terrain.location = new IntVec3(x, 0, z);
                         terrainMap[x, z] = terrain;
+
                     } else if (cellElement.Name.Equals("item")) {
                         ItemTile tile = new ItemTile(cellElement);
 
@@ -294,6 +302,8 @@ namespace RealRuins
                     }
                 }
             }
+
+            return true;
         }
 
         private void BlurIntegrityMap(float[,] map, int stepsCount) {
@@ -562,7 +572,6 @@ namespace RealRuins
             //For each placed item it's cost should be calculated
             for (int x = minX; x < maxX; x++) {
                 for (int z = minZ; z < maxZ; z++) {
-                    //Log.Clear();
 
                     if (itemsMap[x, z] == null) { itemsMap[x, z] = new List<ItemTile>(); }//to make thngs easier add empty list to every cell
 
@@ -574,16 +583,18 @@ namespace RealRuins
                         terrainDef = DefDatabase<TerrainDef>.GetNamed(terrain.defName, false);
                         if (terrainDef != null) {
                             terrain.cost = ThingComponentsMarketCost(terrainDef);
+                            terrain.weight = 5.0f;
                         } else {
-                            terrain.cost = 0.0f;
+                            terrainMap[x, z] = null; //no terrain def means terrain can't be generated.
+                            terrain = null;
                         }
-                        terrain.weight = 5.0f;
                     }
 
                     TerrainDef existingTerrain = map.terrainGrid.TerrainAt(new IntVec3(x - minX + mapOriginX, 0, z - minZ + mapOriginZ));
                     if (terrainDef != null && terrainDef.terrainAffordanceNeeded != null && !existingTerrain.affordances.Contains(terrainDef.terrainAffordanceNeeded)) {
                         terrainDef = null;
                         terrainMap[x, z] = null; //erase terrain if underlying terrain can't support it.
+                        roofMap[x, z] = false; //removing roof as well just in case
                     }
 
                     List<ItemTile> itemsToRemove = new List<ItemTile>();
@@ -604,10 +615,12 @@ namespace RealRuins
                             if (terrainDef != null && terrainDef.terrainAffordanceNeeded != null && existingTerrain.affordances.Contains(terrainDef.terrainAffordanceNeeded)) {
                                 if (!terrainDef.affordances.Contains(thingDef.terrainAffordanceNeeded)) { //if new terrain can be placed over existing terrain, checking if an item can be placed over a new terrain
                                     itemsToRemove.Add(item);
+                                    roofMap[x, z] = false;
                                 }
                             } else {
                                 if (!existingTerrain.affordances.Contains(thingDef.terrainAffordanceNeeded)) {//otherwise checking if the item can be placed over the existing terrain.
                                     itemsToRemove.Add(item);
+                                    roofMap[x, z] = false;
                                 }
                             }
                         }
@@ -642,9 +655,15 @@ namespace RealRuins
                         terrainMap[x, z] = null;
                     }
 
+                    if (terrainMap[x, z] == null) {
+                        roofMap[x, z] = false; //no terrain - no roof. just is case. to be sure there won't be hanging roof islands floating in the air.
+                    }
+
                     float itemsChance = itemsIntegrity[x, z];
                     List<ItemTile> newItems = new List<ItemTile>();
                     if (itemsChance > 0 && itemsChance < 1) {
+                        roofMap[x, z] = Rand.Chance(itemsChance * 0.3f); //roof will most likely collapse everywhere
+
                         foreach (ItemTile item in items) {
                             if (Rand.Chance(itemsChance)) {
                                 newItems.Add(item);
@@ -712,12 +731,14 @@ namespace RealRuins
                             } else if (topTile is ItemTile) {
                                 ItemTile itemTile = topTile as ItemTile;
                                 itemsMap[topTile.location.x, topTile.location.z].Remove((ItemTile)topTile);
-                                if (itemTile.isWall) { //if something like a wall removed (vent or aircon) you usually want to cover the hole to keep wall integrity
+                                if (itemTile.isDoor) { //if door is removed it should be replaced with another door, raiders are very polite and always replace expensive doors with cheaper ones.
+                                    if (Rand.Chance(0.8f)) { //ok, not always.
+                                        ItemTile replacementTile = ItemTile.DefaultDoorItemTile(itemTile.location);
+                                        itemsMap[topTile.location.x, topTile.location.z].Add(replacementTile);
+                                        msg += "Added " + replacementTile.defName + ", original ";
+                                    }
+                                }  else if (itemTile.isWall) { //if something like a wall removed (vent or aircon) you usually want to cover the hole to keep wall integrity
                                     ItemTile replacementTile = ItemTile.CollapsedWallItemTile(itemTile.location);
-                                    itemsMap[topTile.location.x, topTile.location.z].Add(replacementTile);
-                                    msg += "Added " + replacementTile.defName + ", original ";
-                                } else if (itemTile.isDoor) {
-                                    ItemTile replacementTile = ItemTile.DefaultDoorItemTile(itemTile.location);
                                     itemsMap[topTile.location.x, topTile.location.z].Add(replacementTile);
                                     msg += "Added " + replacementTile.defName + ", original ";
                                 }
@@ -783,16 +804,26 @@ namespace RealRuins
                         map.terrainGrid.SetTerrain(mapLocation, blueprintTerrain);
                     }
 
+                    /*if (roofMap[x, z] == true) {
+                        map.roofGrid.SetRoof(mapLocation, RoofDefOf.RoofConstructed);
+                    }*/ //no roof yet
+
+
                     //Add items
                     if (itemsMap[x, z] != null && itemsMap[x, z].Count > 0) {
 
                         bool cellIsAlreadyCleared = false;
                         foreach (ItemTile itemTile in itemsMap[x, z]) {
 
-                            ThingDef thingDef = DefDatabase<ThingDef>.GetNamed(itemTile.defName, false);
-                            ThingDef stuffDef = null;
+                            ThingDef thingDef = DefDatabase<ThingDef>.GetNamed(itemTile.defName, false); //here thingDef is definitely not null because it was checked earlier
+
+                            ThingDef stuffDef = null; //but stuff can still be null, or can be missing, so we have to check and use default just in case.
                             if (itemTile.stuffDef != null) {
                                 stuffDef = DefDatabase<ThingDef>.GetNamed(itemTile.stuffDef, false);
+                            }
+
+                            if (stuffDef == null) {
+                                stuffDef = GenStuff.DefaultStuffFor(thingDef);
                             }
 
                             if (!cellIsAlreadyCleared) { //first item to be spawned should also clear place for itself. we can't do it beforehand because we don't know it it will be able and get a chance to be spawned.
@@ -934,7 +965,10 @@ namespace RealRuins
             // since the original blueprint can be pretty big, you usually don't want to replicate it as is. You need to cut a small piece and make a smooth transition
 
             Debug.Message("Loading snapshot...");
-            LoadRandomXMLSnapshot();
+            if (!LoadRandomXMLSnapshot()) {
+                return; //no valid files to generate ruins.
+            }
+
             Debug.Message("Finding rooms...");
             FindRoomsAndConstructIntegrityMaps();
             Debug.Message("Processing items...");

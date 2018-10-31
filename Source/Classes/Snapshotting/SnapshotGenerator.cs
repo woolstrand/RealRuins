@@ -13,9 +13,12 @@ namespace RealRuins {
             this.map = map;
         }
 
-        public string Generate() {
+        public bool CanGenerate() {
+            if (map.areaManager.Home.ActiveCells.Count() < 300) return false;
+            return true;
+        }
 
-            if (map.areaManager.Home.ActiveCells.Count() < 100) return null;
+        public string Generate() {
 
             int xmin = 10000, xmax = 0, zmin = 10000, zmax = 0;
             foreach (IntVec3 cell in map.areaManager.Home.ActiveCells) {

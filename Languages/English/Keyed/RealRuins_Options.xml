@@ -4,4 +4,14 @@
 	<RealRuins_ModOptions_AllowDownloads>Allow downloading ruins from database</RealRuins_ModOptions_AllowDownloads>
 	<RealRuins_ModOptions_AllowUploads>Allow uploading your bases to ruins database</RealRuins_ModOptions_AllowUploads>
 	<RealRuins_ModOptions_CacheSize>Limit local cache size to </RealRuins_ModOptions_CacheSize>
+	<RealRuins_ModOptions_OfflineMode>Local mode only</RealRuins_ModOptions_OfflineMode>
+
+	<RealRuins_ModOptions_AllowDownloadsTooltip>If you switch this off, it won't remove anything you have already downloaded.</RealRuins_ModOptions_AllowDownloadsTooltip>
+	<RealRuins_ModOptions_AllowUploadsTooltip>It's recommended to keep this on to help populate database with various interesting base designs. This should not consume more than several megabytes per game session.</RealRuins_ModOptions_AllowUploadsTooltip>
+	<RealRuins_ModOptions_CacheSizeTooltip>Even if you reach this limit, the mod will continue downloading new blueprints, removing the older ones.</RealRuins_ModOptions_CacheSizeTooltip>
+	<RealRuins_ModOptions_OfflineModeTooltip>This mode will delete all cached data that was downloaded from the server and prevent any further uploads and downloads. However, your own bases will still be stored locally and used for creating ruins in your game.</RealRuins_ModOptions_OfflineModeTooltip>
+
+	<RealRuins_ModOptions_CurrentCacheSize>Current local cache size: </RealRuins_ModOptions_CurrentCacheSize>
+	<RealRuins_ModOptions_RemoveAll>Clear Cache</RealRuins_ModOptions_RemoveAll>
+
 </LanguageData>
