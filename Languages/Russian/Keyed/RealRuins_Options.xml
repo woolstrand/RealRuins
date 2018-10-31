@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<LanguageData>
+	<RealRuins_ModOptions_Category>Real Ruins</RealRuins_ModOptions_Category>
+	<RealRuins_ModOptions_AllowDownloads>Разрешить загрузку карт с сервера</RealRuins_ModOptions_AllowDownloads>
+	<RealRuins_ModOptions_AllowUploads>Разрешить выгрузку карт на сервер</RealRuins_ModOptions_AllowUploads>
+	<RealRuins_ModOptions_CacheSize>Ограничить размер локального кэша: </RealRuins_ModOptions_CacheSize>
+	<RealRuins_ModOptions_OfflineMode>Оффлайн-режим</RealRuins_ModOptions_OfflineMode>
+
+	<RealRuins_ModOptions_AllowDownloadsTooltip>Если отключить загрузку, то уже загруженные никуда не денутся.</RealRuins_ModOptions_AllowDownloadsTooltip>
+	<RealRuins_ModOptions_AllowUploadsTooltip>Лучше оставить это включенным. Вся суть мода - в картах, загруженных пользователями. Это потребует не больше пары мегабайт за вечер игры.</RealRuins_ModOptions_AllowUploadsTooltip>
+	<RealRuins_ModOptions_CacheSizeTooltip>При превышении максимального размера кэша новые карты все равно будут загружаться, но старые будут удалены.</RealRuins_ModOptions_CacheSizeTooltip>
+	<RealRuins_ModOptions_OfflineModeTooltip>Этот режим полностью удалит все загруженные данные и полностью отключит любое общение с сервером. Тем не менее, мод будет хранить локально снимки ваших баз и добавлять руины на их основе.</RealRuins_ModOptions_OfflineModeTooltip>
+
+	<RealRuins_ModOptions_CurrentCacheSize>Текущий размер локального кэша: </RealRuins_ModOptions_CurrentCacheSize>
+	<RealRuins_ModOptions_RemoveAll>Удалить загруженные данные</RealRuins_ModOptions_RemoveAll>
+
+</LanguageData>
