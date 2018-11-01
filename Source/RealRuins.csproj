@@ -58,10 +58,6 @@
       <HintPath>..\..\..\RimWorldWin64_Data\Managed\UnityEngine.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <None Include="..\About\About-Debug.xml">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="..\About\About-Release.xml" />
     <None Include="..\About\About.xml" />
     <None Include="..\About\Preview.png" />
     <None Include="..\Languages\**" />
@@ -93,7 +89,13 @@
     <StartProgram>$(SolutionDir)..\..\RimWorldWin.exe</StartProgram>
   </PropertyGroup>
   <PropertyGroup>
-    <PostBuildEvent>
-    </PostBuildEvent>
+    <PostBuildEvent>xcopy /T /E /I /Y "$(TargetDir)..\About" "$(TargetDir)..\..\RealRuins\About"
+copy /Y "$(TargetDir)..\About\About-Release.xml" "$(TargetDir)..\..\RealRuins\About\About.xml"
+copy /Y "$(TargetDir)..\About\Preview.png" "$(TargetDir)..\..\RealRuins\About\Preview.png"
+xcopy /E /I /Y "$(TargetDir)..\Assemblies" "$(TargetDir)..\..\RealRuins\Assemblies"
+xcopy /E /I /Y "$(TargetDir)..\Defs" "$(TargetDir)..\..\RealRuins\Defs"
+xcopy /E /I /Y "$(TargetDir)..\Languages" "$(TargetDir)..\..\RealRuins\Languages"
+xcopy /E /I /Y "$(TargetDir)..\Patches" "$(TargetDir)..\..\RealRuins\Patches"
+</PostBuildEvent>
   </PropertyGroup>
 </Project>
