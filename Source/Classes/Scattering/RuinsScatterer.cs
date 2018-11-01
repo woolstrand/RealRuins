@@ -343,7 +343,7 @@ namespace RealRuins
             if (maxX >= blueprintWidth - 1) maxX = blueprintWidth - 1;
             if (maxZ >= blueprintHeight - 1) maxZ = blueprintHeight - 1;
 
-            Debug.Message("Fallback boudaries are: {0}-{1}, {2}-{3} with blueprint size of {4}x{5}", minX, maxX, minZ, maxZ, blueprintWidth, blueprintHeight);
+            //Debug.Message("Fallback boudaries are: {0}-{1}, {2}-{3} with blueprint size of {4}x{5}", minX, maxX, minZ, maxZ, blueprintWidth, blueprintHeight);
 
             mapOriginX = targetPoint.x - (maxX - minX) / 2;
             mapOriginZ = targetPoint.z - (maxZ - minZ) / 2;
@@ -403,7 +403,7 @@ namespace RealRuins
                 }
             }
 
-            Debug.Message("Traversing map");
+            //Debug.Message("Traversing map");
 
             //For each unmarked point we can interpret our map as a tree with root at current point and branches going to four directions. For this tree (with removed duplicate nodes) we can implement BFS travrsing.
             for (int z = 0; z < blueprintHeight; z++) {
@@ -415,7 +415,7 @@ namespace RealRuins
                 }
             }
 
-            Debug.Message("Completed. Found {0} rooms", currentRoomIndex);
+            //Debug.Message("Completed. Found {0} rooms", currentRoomIndex);
 
             if (currentRoomIndex == 1) { //no new rooms were added => blueprint does not have regular rooms or rooms were formed with use of some missing components or materials
                 //fallback plan: construct old-fashioned circular deterioration map from a some random point
@@ -430,7 +430,7 @@ namespace RealRuins
                     }
                 }
 
-                Debug.Message("Found {0} suitable rooms", suitableRoomIndices.Count);
+                //Debug.Message("Found {0} suitable rooms", suitableRoomIndices.Count);
 
                 int selectedRoomIndex = 0;
                 if (suitableRoomIndices.Count == 0) {
@@ -441,7 +441,7 @@ namespace RealRuins
                     selectedRoomIndex = suitableRoomIndices[Rand.Range(0, suitableRoomIndices.Count)];
                 }
 
-                Debug.Message("Selected suitable room: {0}", selectedRoomIndex);
+               // Debug.Message("Selected suitable room: {0}", selectedRoomIndex);
                 
                 //2. select a point within this room
                 List<IntVec3> suitablePoints = new List<IntVec3>();
@@ -454,7 +454,7 @@ namespace RealRuins
                 } //suitable points count is at least 5
                 IntVec3 center = suitablePoints[suitablePoints.Count / 2];
 
-                Debug.Message("Selected center");
+                //Debug.Message("Selected center");
 
                 //3. draw a random circle around that room
                 int radius = Rand.Range(referenceRadius - referenceRadiusJitter, referenceRadius + referenceRadiusJitter);
@@ -474,7 +474,7 @@ namespace RealRuins
                 if (maxX >= blueprintWidth - 1) maxX = blueprintWidth - 1;
                 if (maxZ >= blueprintHeight - 1) maxZ = blueprintHeight - 1;
 
-                Debug.Message("Regular boudaries are: {0}-{1}, {2}-{3} with blueprint size of {4}x{5}", minX, maxX, minZ, maxZ, blueprintWidth, blueprintHeight);
+                //Debug.Message("Regular boudaries are: {0}-{1}, {2}-{3} with blueprint size of {4}x{5}", minX, maxX, minZ, maxZ, blueprintWidth, blueprintHeight);
 
                 mapOriginX = targetPoint.x - (maxX - minX) / 2;
                 mapOriginZ = targetPoint.z - (maxZ - minZ) / 2;
@@ -486,7 +486,7 @@ namespace RealRuins
                 if (mapOriginZ + (maxZ - minZ) > map.info.Size.z) mapOriginZ = map.info.Size.z - 10 - (maxZ - minZ);
 
 
-                Debug.Message("Checking rooms intersection with border");
+                //Debug.Message("Checking rooms intersection with border");
 
                 //4. enumerate all rooms in the circle
                 //5. enumerate all rooms intersecting the circle outline
@@ -505,7 +505,7 @@ namespace RealRuins
                     }
                 }
 
-                Debug.Message("Finished. Setting core integrity values");
+                //Debug.Message("Finished. Setting core integrity values");
 
                 //if all rooms are intersecting circle outline do fallback plan (circular deterioration chance map)
                 if (allRooms.Count == openRooms.Count) {
@@ -530,7 +530,7 @@ namespace RealRuins
                         }
                     }
 
-                    Debug.Message("Expanding core by one cell");
+                    //Debug.Message("Expanding core by one cell");
 
                     // - then add one pixel width expansion to cover adjacent wall.
                     for (int x = minX + 1; x < maxX - 1; x++) {
@@ -547,7 +547,7 @@ namespace RealRuins
                         }
                     }
 
-                    Debug.Message("Normalizing");
+                   // Debug.Message("Normalizing");
                     // normalize terrain core values which were used for border generation
                     for (int x = minX; x < maxX; x++) {
                         for (int z = minZ; z < maxZ; z++) {
@@ -557,11 +557,11 @@ namespace RealRuins
                         }
                     }
 
-                    Debug.Message("Blurring");
+                    //Debug.Message("Blurring");
                     BlurIntegrityMap(terrainIntegrity, 7);
                     BlurIntegrityMap(itemsIntegrity, 4);
                     //At this step we have integrity maps, so we can proceed further and simulate deterioration and scavenging
-                    Debug.Message("Finished");
+                    //Debug.Message("Finished");
 
                 }
             }
@@ -682,7 +682,7 @@ namespace RealRuins
             //word is spread, so each next raid is more destructive than the previous ones
             //to make calculations a bit easier we're going to calculate value per cell, not per item.
 
-            //Debug.active = false;
+            Debug.active = false;
             
             List<Tile> tilesByCost = new List<Tile>();
 
@@ -785,7 +785,7 @@ namespace RealRuins
 
             Faction faction = (Rand.Value > 0.35) ? Find.FactionManager.RandomEnemyFaction() : Find.FactionManager.OfAncients;
             
-            Debug.Message("Setting ruins faction to {0}", faction.Name);
+            //Debug.Message("Setting ruins faction to {0}", faction.Name);
 
             for (int z = minZ; z < maxZ; z++) {
                 for (int x = minX; x < maxX; x++) {
@@ -949,7 +949,7 @@ namespace RealRuins
         public void ScatterRuinsAt(IntVec3 loc, Map map, int referenceRadius, int radiusJitter, float deteriorationDegree, float scavengersActivity, float elapsedTime)
         {
 
-            Debug.Message("Scattering ruins at ({0}, {1}) of radius {2}+-{3}. Deterioriation degree: {4}, scavengers activity: {5}, age: {6}", loc.x, loc.z, referenceRadius, radiusJitter, deteriorationDegree, scavengersActivity, elapsedTime);
+            //Debug.Message("Scattering ruins at ({0}, {1}) of radius {2}+-{3}. Deterioriation degree: {4}, scavengers activity: {5}, age: {6}", loc.x, loc.z, referenceRadius, radiusJitter, deteriorationDegree, scavengersActivity, elapsedTime);
             DateTime start = DateTime.Now;
 
             targetPoint = loc;
@@ -964,26 +964,26 @@ namespace RealRuins
             //cut and deteriorate:
             // since the original blueprint can be pretty big, you usually don't want to replicate it as is. You need to cut a small piece and make a smooth transition
 
-            Debug.Message("Loading snapshot...");
+            //Debug.Message("Loading snapshot...");
             if (!LoadRandomXMLSnapshot()) {
                 return; //no valid files to generate ruins.
             }
 
-            Debug.Message("Finding rooms...");
+            //Debug.Message("Finding rooms...");
             FindRoomsAndConstructIntegrityMaps();
-            Debug.Message("Processing items...");
+            //Debug.Message("Processing items...");
             ProcessItems();
-            Debug.Message("Deteriorating...");
+            //Debug.Message("Deteriorating...");
             Deteriorate();
-            Debug.Message("Scavenging...");
+            //Debug.Message("Scavenging...");
             RaidAndScavenge();
-            Debug.Message("Transferring blueprint...");
+            //Debug.Message("Transferring blueprint...");
             TransferBlueprint();
-            Debug.Message("Adding filth and rubble...");
+            //Debug.Message("Adding filth and rubble...");
             AddFilthAndRubble();
-            Debug.Message("Adding something special...");
+            //Debug.Message("Adding something special...");
             AddSpecials();
-            Debug.Message("Ready");
+            //Debug.Message("Ready");
 
             TimeSpan span = DateTime.Now - start;
             totalWorkTime += (int)span.TotalMilliseconds;

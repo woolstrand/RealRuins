@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Xml;
 
+using System.Reflection;
+
 using RimWorld;
 using Verse;
 
@@ -16,6 +18,8 @@ namespace RealRuins
                 return 74293945;
             }
         }
+
+        private float multiplier = 1.0f;
 
         private void CalculateProximity() {
             /*
@@ -37,15 +41,57 @@ namespace RealRuins
         }
 
 
+
+        public override void Generate(Map map, GenStepParams parms) {
+            Debug.Message("Overridden generate");
+            if (allowInWaterBiome || !map.TileInfo.WaterCovered) {
+
+                if (RealRuins.detectedConfigurableMaps) {
+                    Type t = Type.GetType("ConfigurableMaps.Settings.ThingsSettings,ConfigurableMaps");
+                    FieldInfo fi = t.GetField("ruinsLevel");
+                    object ruinsLevelObject = fi.GetValue(null);
+                    float ruinsLevel = float.Parse(ruinsLevelObject.ToString());
+                    Debug.Message("Original ruins level: {0}", ruinsLevel);
+
+                    if (ruinsLevel > 8.99) {
+                        ruinsLevel = 9.0f * Rand.Value;
+                    } else {
+                        ruinsLevel /= 1.5f; //on some reason Configurable Maps tells that vanilla multiplier is not x1.0, but x1.5 to x2.0. why?
+                        if (ruinsLevel > 2.0) {
+                            ruinsLevel *= 2;//adding a bit of non-linearity lol
+                        }
+                    }
+
+                    multiplier = ruinsLevel;
+                }
+
+                FloatRange per10k = new FloatRange(countPer10kCellsRange.min * multiplier, countPer10kCellsRange.max * multiplier);
+                int num = CountFromPer10kCells(per10k.RandomInRange, map, -1);
+
+                Debug.Message("Spawning {0} ruin chunks", num);
+
+                for (int i = 0; i < num; i++) {
+                    if (!TryFindScatterCell(map, out IntVec3 result)) {
+                        return;
+                    }
+                    ScatterAt(result, map, 1);
+                    usedSpots.Add(result);
+                }
+                usedSpots.Clear();
+            }
+        }
+
+
         protected override void ScatterAt(IntVec3 loc, Map map, int count = 1) {
             float scavengersActivity = Rand.Value * 0.5f + 0.5f; //later will be based on other settlements proximity
             float ruinsAge = Rand.Range(1, 25);
             float deteriorationDegree = Rand.Value;
-            int referenceRadius = Rand.Range(4, 12);
+            int referenceRadius = Rand.Range(4 + (int)(multiplier / 3), 12 + (int)multiplier);
             new RuinsScatterer().ScatterRuinsAt(loc, map, referenceRadius, Rand.Range(0, 3), deteriorationDegree, scavengersActivity, ruinsAge);
         }
 
         protected override bool CanScatterAt(IntVec3 loc, Map map) {
+
             return true;
         }
     }

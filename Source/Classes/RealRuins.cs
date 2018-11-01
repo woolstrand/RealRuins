@@ -14,9 +14,15 @@ namespace RealRuins
     [StaticConstructorOnStartup]
     static class RealRuins {
 
+        public static bool detectedConfigurableMaps;
 
         static RealRuins() {
             var harmony = HarmonyInstance.Create("com.woolstrand.realruins");
+
+            if (ModsConfig.ActiveModsInLoadOrder.Any((ModMetaData mod) => mod.Name.Contains("Configurable Maps"))) {
+                detectedConfigurableMaps = true;
+            }
+
             harmony.PatchAll(Assembly.GetExecutingAssembly());
         }
 
