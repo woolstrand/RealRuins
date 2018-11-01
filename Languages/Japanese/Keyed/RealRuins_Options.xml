@@ -4,15 +4,14 @@
   <RealRuins_ModOptions_AllowDownloads>データベースからの遺跡のダウンロードを許可する</RealRuins_ModOptions_AllowDownloads>
   <RealRuins_ModOptions_AllowUploads>あなたの拠点を遺跡データベースにアップロードを許可する</RealRuins_ModOptions_AllowUploads>
   <RealRuins_ModOptions_CacheSize>ローカルキャッシュサイズを限定する</RealRuins_ModOptions_CacheSize>
-  <RealRuins_ModOptions_OfflineMode>Local mode only</RealRuins_ModOptions_OfflineMode>
+  <RealRuins_ModOptions_OfflineMode>ローカルモード専用</RealRuins_ModOptions_OfflineMode>
 
-  <RealRuins_ModOptions_AllowDownloadsTooltip>If you switch this off, it won't remove anything you have already downloaded.</RealRuins_ModOptions_AllowDownloadsTooltip>
-  <RealRuins_ModOptions_AllowUploadsTooltip>It's recommended to keep this on to help populate database with various interesting base designs. This should not consume more than several megabytes per game session.</RealRuins_ModOptions_AllowUploadsTooltip>
-  <RealRuins_ModOptions_CacheSizeTooltip>Even if you reach this limit, the mod will continue downloading new blueprints, removing the older ones.</RealRuins_ModOptions_CacheSizeTooltip>
-  <RealRuins_ModOptions_OfflineModeTooltip>This mode will delete all cached data that was downloaded from the server and prevent any further uploads and downloads. However, your own bases will still be stored locally and used for creating ruins in your game.</RealRuins_ModOptions_OfflineModeTooltip>
+  <RealRuins_ModOptions_AllowDownloadsTooltip>これをオフにすると、既にダウンロードしたものは削除されません。</RealRuins_ModOptions_AllowDownloadsTooltip>
+  <RealRuins_ModOptions_AllowUploadsTooltip>色々と面白い拠点デザインを使用したデータベースを作成するために、これをオンにすることをお勧めします。これは、1ゲームあたり数Mb(メガバイト)以上を割り当てるべきではありません。</RealRuins_ModOptions_AllowUploadsTooltip>
+  <RealRuins_ModOptions_CacheSizeTooltip>この上限に達しても、MODは新しい拠点設計画像をダウンロードし続け、古い設計画像を削除します。</RealRuins_ModOptions_CacheSizeTooltip>
+  <RealRuins_ModOptions_OfflineModeTooltip>このモードでは、サーバーからダウンロードされてローカルキャッシュされたすべてのデータが削除され、それ以上アップロードやダウンロードができなくなります。しかし、自分の拠点はローカルに保存され続けて、ゲームで遺跡を作るために使用されます。</RealRuins_ModOptions_OfflineModeTooltip>
 
-  <RealRuins_ModOptions_CurrentCacheSize>Current local cache size: </RealRuins_ModOptions_CurrentCacheSize>
-  <RealRuins_ModOptions_RemoveAll>Clear Cache</RealRuins_ModOptions_RemoveAll>
-
+  <RealRuins_ModOptions_CurrentCacheSize>現在のローカルキャッシュ容量：</RealRuins_ModOptions_CurrentCacheSize>
+  <RealRuins_ModOptions_RemoveAll>キャッシュを削除</RealRuins_ModOptions_RemoveAll>
 
 </LanguageData>
