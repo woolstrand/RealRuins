@@ -26,6 +26,8 @@ namespace RealRuins {
         private List<string> snapshotsToLoad = new List<string>();
 
         public void LoadSomeSnapshots() {
+            if (snapshotsToLoad.Count > 0) return; //don't start loader if there is something still to load
+
             AmazonS3Service listLoader = new AmazonS3Service();
 
             Debug.Message("Loading some snapshots...", true);

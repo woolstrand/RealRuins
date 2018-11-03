@@ -26,9 +26,9 @@
   <RealRuins_MapOptions_CostLimit>Limit maximum item cost</RealRuins_MapOptions_CostLimit>
   <RealRuins_MapOptions_DisableHaulables>Disable spawning items</RealRuins_MapOptions_DisableHaulables>
   <RealRuins_MapOptions_WallsAndDoorsOnly>Spawn walls and doors only</RealRuins_MapOptions_WallsAndDoorsOnly>
-  <RealRuins_MapOptions_DisableDecoration>Disable passive specials</RealRuins_MapOptions_DisableDecoration>
-  <RealRuins_MapOptions_DisableTraps>Disable active specials</RealRuins_MapOptions_DisableTraps>
-  <RealRuins_MapOptions_DisableHostiles>Disable hostile units</RealRuins_MapOptions_DisableHostiles>
+  <RealRuins_MapOptions_DisableDecoration>Passive specials amount</RealRuins_MapOptions_DisableDecoration>
+  <RealRuins_MapOptions_DisableTraps>Active specials amount</RealRuins_MapOptions_DisableTraps>
+  <RealRuins_MapOptions_DisableHostiles>Hostile units amount</RealRuins_MapOptions_DisableHostiles>
   <RealRuins_MapOptions_Claimable>Make structures claimable</RealRuins_MapOptions_Claimable>
 
   <RealRuins_MapOptions_DensityTT>Average number of ruins spawned on 100x100 area</RealRuins_MapOptions_DensityTT>

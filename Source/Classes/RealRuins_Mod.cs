@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Reflection;
 
 using Verse;
 using RimWorld;
@@ -11,7 +12,9 @@ namespace RealRuins {
     public class RealRuins_Mod : Mod {
 
 
-        public static string Text_Category = "RealRuins_ModOptions_Category";
+        public static string Text_NetSettings_Category = "RealRuins_ModOptions_Category";
+        public static string Text_MapSettings_Category = "RealRuins_MapOptions_Category";
+
         public static string Text_Option_AllowDownloads = "RealRuins_ModOptions_AllowDownloads";
         public static string Text_Option_AllowUploads = "RealRuins_ModOptions_AllowUploads";
         public static string Text_Option_CacheSize = "RealRuins_ModOptions_CacheSize";
@@ -25,6 +28,34 @@ namespace RealRuins {
         public static string Text_Option_CacheSizeTooltip = "RealRuins_ModOptions_CacheSizeTooltip";
         public static string Text_Option_OfflineModeTooltip = "RealRuins_ModOptions_OfflineModeTooltip";
 
+        public static string Text_Option_DownloadMore = "RealRuins_ModOptions_DownloadMore";
+        public static string Text_Option_CurrentCacheCount = "RealRuins_ModOptions_CurrentCacheCount";
+        public static string Text_Option_Density = "RealRuins_MapOptions_Density";
+        public static string Text_Option_Size = "RealRuins_MapOptions_Size";
+        public static string Text_Option_Deterioration = "RealRuins_MapOptions_Deterioration";
+        public static string Text_Option_Scavengers = "RealRuins_MapOptions_Scavengers";
+        public static string Text_Option_CostLimit = "RealRuins_MapOptions_CostLimit";
+        public static string Text_Option_DisableHaulables = "RealRuins_MapOptions_DisableHaulables";
+        public static string Text_Option_WallsAndDoorsOnly = "RealRuins_MapOptions_WallsAndDoorsOnly";
+        public static string Text_Option_DisableDecoration = "RealRuins_MapOptions_DisableDecoration";
+        public static string Text_Option_DisableTraps = "RealRuins_MapOptions_DisableTraps";
+        public static string Text_Option_DisableHostiles = "RealRuins_MapOptions_DisableHostiles";
+        public static string Text_Option_Claimable = "RealRuins_MapOptions_Claimable";
+
+        public static string Text_Option_DensityTT = "RealRuins_MapOptions_DensityTT";
+        public static string Text_Option_SizeTT = "RealRuins_MapOptions_SizeTT";
+        public static string Text_Option_DeteriorationTT = "RealRuins_MapOptions_DeteriorationTT";
+        public static string Text_Option_ScavengersTT = "RealRuins_MapOptions_ScavengersTT";
+        public static string Text_Option_CostLimitTT = "RealRuins_MapOptions_CostLimitTT";
+        public static string Text_Option_DisableHaulablesTT = "RealRuins_MapOptions_DisableHaulablesTT";
+        public static string Text_Option_WallsAndDoorsOnlyTT = "RealRuins_MapOptions_WallsAndDoorsOnlyTT";
+        public static string Text_Option_DisableDecorationTT = "RealRuins_MapOptions_DisableDecorationTT";
+        public static string Text_Option_DisableTrapsTT = "RealRuins_MapOptions_DisableTrapsTT";
+        public static string Text_Option_DisableHostilesTT = "RealRuins_MapOptions_DisableHostilesTT";
+        public static string Text_Option_ClaimableTT = "RealRuins_MapOptions_ClaimableTT";
+
+        // fast regex from xml:
+        //<RealRuins_M..Options_([^>]*)>[^<]*<\/([^>]*)>     ===>     public static string Text_Option_$1 = "$2";
 
         public RealRuins_Mod(ModContentPack mcp)
         : base(mcp) {
@@ -33,25 +64,27 @@ namespace RealRuins {
         }
 
         public void SetTexts() {
-            Text_Category = Text_Category.Translate();
-            Text_Option_AllowDownloads = Text_Option_AllowDownloads.Translate();
-            Text_Option_AllowUploads = Text_Option_AllowUploads.Translate();
-            Text_Option_CacheSize = Text_Option_CacheSize.Translate();
-            Text_Option_OfflineMode = Text_Option_OfflineMode.Translate();
+            FieldInfo[] fields = GetType().GetFields();
 
-            Text_Option_AllowDownloadsTooltip = Text_Option_AllowDownloadsTooltip.Translate();
-            Text_Option_AllowUploadsTooltip = Text_Option_AllowUploadsTooltip.Translate();
-            Text_Option_CacheSizeTooltip = Text_Option_CacheSizeTooltip.Translate();
-            Text_Option_OfflineModeTooltip = Text_Option_OfflineModeTooltip.Translate();
+            foreach (FieldInfo fi in fields) {
+                if (fi.Name.StartsWith("Text_Option")) {
+                    fi.SetValue(null, ((string)fi.GetValue(null)).Translate());
+                }
+            }
 
-            Text_Option_CurrentCacheSize = Text_Option_CurrentCacheSize.Translate();
-            Text_Option_RemoveAll = Text_Option_RemoveAll.Translate();
+            Text_MapSettings_Category = Text_MapSettings_Category.Translate();
+            Text_NetSettings_Category = Text_NetSettings_Category.Translate();
         }
 
 
 
         public void GetSettings() {
             GetSettings<RealRuins_ModSettings>();
+            if (RealRuins_ModSettings.defaultScatterOptions == null) {
+                Debug.Message("Settings scatter is null! setting default");
+                RealRuins_ModSettings.defaultScatterOptions = ScatterOptions.Default;
+            }
+            //Debug.Message("Settings scatter: {1}", RealRuins_ModSettings.defaultScatterOptions);
         }
 
         public override void WriteSettings() {
@@ -61,31 +94,60 @@ namespace RealRuins {
         }
 
         public override string SettingsCategory() {
-            return Text_Category;
+            return Text_NetSettings_Category;
         }
 
         public override void DoSettingsWindowContents(Rect rect) {
-            Rect rect2 = rect.LeftHalf().Rounded();
-            Rect rect3 = rect.RightHalf().Rounded();
-            Listing_Standard listing_Standard = new Listing_Standard();
-            Listing_Standard listing_Standard2 = new Listing_Standard();
-            listing_Standard.Begin(rect2);
-            listing_Standard.CheckboxLabeled(Text_Option_OfflineMode, ref RealRuins_ModSettings.offlineMode, Text_Option_OfflineModeTooltip);
-            listing_Standard.Gap(12f);
-            listing_Standard.CheckboxLabeled(Text_Option_AllowDownloads, ref RealRuins_ModSettings.allowDownloads, Text_Option_AllowDownloadsTooltip);
-            listing_Standard.Gap(12f);
-            listing_Standard.CheckboxLabeled(Text_Option_AllowUploads, ref RealRuins_ModSettings.allowUploads, Text_Option_AllowUploadsTooltip);
-            listing_Standard.Gap(12f);
-            listing_Standard.Label(Text_Option_CacheSize + "  " + ((int)(RealRuins_ModSettings.diskCacheLimit)).ToString() + " MB", -1f, Text_Option_CacheSizeTooltip);
-            listing_Standard.Label(Text_Option_CurrentCacheSize + " " + SnapshotStoreManager.Instance.TotalSize() / (1024 * 1024) + " MB");
-            listing_Standard.End();
-            listing_Standard2.Begin(rect3);
-            listing_Standard2.Gap(102f);
-            RealRuins_ModSettings.diskCacheLimit = listing_Standard2.Slider(RealRuins_ModSettings.diskCacheLimit, 20.0f, 2048.0f);
-            if (listing_Standard2.ButtonText(Text_Option_RemoveAll, null)) {
+            Rect rect2 = rect.LeftPart(0.45f).Rounded();
+            Rect rect3 = rect.RightPart(0.45f).Rounded();
+            Listing_Standard left = new Listing_Standard();
+            Listing_Standard right = new Listing_Standard();
+
+            left.Begin(rect2);
+            //networking settings
+            left.CheckboxLabeled(Text_Option_OfflineMode, ref RealRuins_ModSettings.offlineMode, Text_Option_OfflineModeTooltip);
+            left.Label(Text_Option_CurrentCacheSize + " " + SnapshotStoreManager.Instance.TotalSize() / (1024 * 1024) + " MB");
+            left.Label(Text_Option_CurrentCacheCount + " " + SnapshotStoreManager.Instance.StoredSnapshotsCount());
+            left.Label(Text_Option_CacheSize + "  " + ((int)(RealRuins_ModSettings.diskCacheLimit)).ToString() + " MB", -1f, Text_Option_CacheSizeTooltip);
+            if (left.ButtonText(Text_Option_DownloadMore, null)) {
+                SnapshotManager.Instance.LoadSomeSnapshots();
+            }
+            left.Gap(25f);
+
+            //generation settings
+            left.Label(Text_Option_Density, -1, Text_Option_DensityTT);
+            left.Label(Text_Option_Size, -1, Text_Option_SizeTT);
+            left.Label(Text_Option_Deterioration, -1, Text_Option_DeteriorationTT);
+            left.Label(Text_Option_Scavengers, -1, Text_Option_ScavengersTT);
+            left.Label(Text_Option_CostLimit, -1, Text_Option_CostLimitTT);
+            left.Label(Text_Option_DisableDecoration, -1, Text_Option_DisableDecorationTT);
+            left.Label(Text_Option_DisableTraps, -1, Text_Option_DisableTrapsTT);
+            left.Label(Text_Option_DisableHostiles, -1, Text_Option_DisableHostilesTT);
+            left.CheckboxLabeled(Text_Option_DisableHaulables, ref RealRuins_ModSettings.defaultScatterOptions.disableSpawnItems, Text_Option_DisableHaulablesTT);
+            left.CheckboxLabeled(Text_Option_WallsAndDoorsOnly, ref RealRuins_ModSettings.defaultScatterOptions.wallsDoorsOnly, Text_Option_WallsAndDoorsOnlyTT);
+            left.CheckboxLabeled(Text_Option_Claimable, ref RealRuins_ModSettings.defaultScatterOptions.claimableBlocks, Text_Option_ClaimableTT);
+            left.End();
+            right.Begin(rect3);
+            right.CheckboxLabeled(Text_Option_AllowDownloads, ref RealRuins_ModSettings.allowDownloads, Text_Option_AllowDownloadsTooltip);
+            right.CheckboxLabeled(Text_Option_AllowUploads, ref RealRuins_ModSettings.allowUploads, Text_Option_AllowUploadsTooltip);
+            right.Gap(25f);
+            RealRuins_ModSettings.diskCacheLimit = right.Slider(RealRuins_ModSettings.diskCacheLimit, 20.0f, 2048.0f);
+            if (right.ButtonText(Text_Option_RemoveAll, null)) {
                 SnapshotStoreManager.Instance.ClearCache();
             }
-            listing_Standard2.End();
+            right.Gap(25);
+
+            //generation settings
+            RealRuins_ModSettings.defaultScatterOptions.densityMultiplier = right.Slider(RealRuins_ModSettings.defaultScatterOptions.densityMultiplier, 0.0f, 20.0f);
+            RealRuins_ModSettings.defaultScatterOptions.referenceRadiusAverage = (int)right.Slider(RealRuins_ModSettings.defaultScatterOptions.referenceRadiusAverage, 4.0f, 64.0f);
+            RealRuins_ModSettings.defaultScatterOptions.deteriorationMultiplier = right.Slider(RealRuins_ModSettings.defaultScatterOptions.deteriorationMultiplier, 0.0f, 5.0f);
+            RealRuins_ModSettings.defaultScatterOptions.scavengingMultiplier = right.Slider(RealRuins_ModSettings.defaultScatterOptions.scavengingMultiplier, 0.0f, 5.0f);
+            RealRuins_ModSettings.defaultScatterOptions.itemCostLimit = (int)right.Slider(RealRuins_ModSettings.defaultScatterOptions.itemCostLimit, 0.0f, 1000.0f);
+            RealRuins_ModSettings.defaultScatterOptions.decorationChance = right.Slider(RealRuins_ModSettings.defaultScatterOptions.decorationChance, 0.0f, 0.01f);
+            RealRuins_ModSettings.defaultScatterOptions.trapChance = right.Slider(RealRuins_ModSettings.defaultScatterOptions.trapChance, 0.0f, 0.01f);
+            RealRuins_ModSettings.defaultScatterOptions.hostileChance = right.Slider(RealRuins_ModSettings.defaultScatterOptions.hostileChance, 0.0f, 1.0f);
+
+            right.End();
         }
     }
 }

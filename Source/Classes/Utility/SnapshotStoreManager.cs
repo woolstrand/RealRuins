@@ -25,6 +25,7 @@ namespace RealRuins
 
         private string rootFolder = "../Snapshots";
         private long totalFilesSize = 0;
+        private int totalFileCount = 0;
 
         private void CheckFolderExistence() {
             if (!Directory.Exists(rootFolder)) {
@@ -91,8 +92,7 @@ namespace RealRuins
         }
 
         public int StoredSnapshotsCount() {
-            CheckFolderExistence();
-            return Directory.GetFiles(rootFolder).Count();
+            return totalFileCount;
         }
 
         public List<string> FilterOutExistingItems(List<string> source) {
@@ -145,6 +145,7 @@ namespace RealRuins
             }
 
             totalFilesSize = totalSize;
+            totalFileCount = filesList.Length;
         }
 
         public void CheckCacheSizeLimits() {
