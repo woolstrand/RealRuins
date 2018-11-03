@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
+using System.IO;
+
 using Verse;
 
 namespace RealRuins {
@@ -18,6 +20,8 @@ namespace RealRuins {
         }
 
         private readonly SnapshotStoreManager storeManager = SnapshotStoreManager.Instance;
+
+        static Dictionary<string, DateTime> snapshotTimestamps = new Dictionary<string, DateTime>();
 
         private List<string> snapshotsToLoad = new List<string>();
 
@@ -44,9 +48,9 @@ namespace RealRuins {
                 Debug.Message("Shuffled...");
 
 
-                int maxNumberToLoad = 15;
-                if (storeManager.StoredSnapshotsCount() < 30) {
-                    maxNumberToLoad = 30;
+                int maxNumberToLoad = 25;
+                if (storeManager.StoredSnapshotsCount() < 50) {
+                    maxNumberToLoad = 50;
                 }
 
                 foreach (string filename in files) {
@@ -69,17 +73,49 @@ namespace RealRuins {
             Debug.Message("Loading snapshot {0}", next);
 
             AmazonS3Service elementLoader = new AmazonS3Service();
-            elementLoader.AmazonS3DownloadSnapshot(next, delegate (string data) {
-                //TODO: check for file is a valid xml
-                if (data != null) {
-                    storeManager.StoreData(data, next);
-                    if (snapshotsToLoad.Count > 0) {
-                        LoadNextSnapshot();
-                    } else {
-                        Debug.Message("Finished loading snapshots");
-                    }
+            elementLoader.AmazonS3DownloadSnapshot(next, delegate (bool success, byte[] data) {
+                if (success) {
+                    storeManager.StoreBinaryData(data, next);
+                }
+                if (snapshotsToLoad.Count > 0) {
+                    LoadNextSnapshot();
                 }
             });
+        }
+
+        public void UploadCurrentMapSnapshot() {
+            string worldId = (Math.Abs(Find.World.info.persistentRandomValue)).ToString();
+            string mapId = Find.CurrentMap.uniqueID.ToString();
+            string snapshotId = worldId + mapId;
+
+            if (snapshotTimestamps.ContainsKey(snapshotId) && (DateTime.Now - snapshotTimestamps[snapshotId]).TotalMinutes < 180) {
+                return; //skip upload if we're trying to do it more frequent than once per three hours.
+            }
+
+            //we actually don't care if something goes wrong. big data, y'know
+            snapshotTimestamps[snapshotId] = DateTime.Now;
+
+            SnapshotGenerator generator = new SnapshotGenerator(Find.CurrentMap);
+            if (!generator.CanGenerate()) return; //skip if generation is not allowed on some reason (too small area, empty area, whatever)
+
+            string tmpFilename = generator.Generate();
+
+            if (tmpFilename != null) {
+                Compressor.ZipFile(tmpFilename);
+
+                if (RealRuins_ModSettings.offlineMode) {
+                    SnapshotStoreManager.Instance.StoreBinaryData(File.ReadAllBytes(tmpFilename), "local-" + snapshotId + ".bp");
+                } else {
+                    int deltaDays = (int)(DateTime.UtcNow - DateTime.FromBinary(-8586606884938459217)).TotalDays;
+                    int now = int.Parse(DateTime.UtcNow.ToString("yyyyMMdd"));
+                    string amazonFilename = (20181030 - deltaDays).ToString() + "-" + worldId + Find.CurrentMap.uniqueID + "-jeluder.bp";
+
+                    Debug.Message("Uploading file {0}", amazonFilename);
+
+                    AmazonS3Service uploader = new AmazonS3Service();
+                    uploader.AmazonS3Upload(tmpFilename, "", amazonFilename);
+                }
+            }
         }
     }
 }

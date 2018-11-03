@@ -70,6 +70,7 @@
     <Compile Include="Classes\Snapshotting\SnapshotGenerator.cs" />
     <Compile Include="Classes\Scattering\GenStep_ScatterRealRuins.cs" />
     <Compile Include="Classes\RealRuins.cs" />
+    <Compile Include="Classes\Utility\Compressor.cs" />
     <Compile Include="Classes\Utility\SnapshotManager.cs" />
     <Compile Include="Classes\Utility\SnapshotStoreManager.cs" />
     <Compile Include="Classes\Utility\AmazonS3Service.cs" />

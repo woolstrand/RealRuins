@@ -5,6 +5,7 @@ using System.Text;
 using RimWorld;
 using Verse;
 using System.Xml;
+using System.IO;
 
 namespace RealRuins
 {
@@ -242,11 +243,23 @@ namespace RealRuins
                 return false;
             }
 
-            Debug.Message("Loading {0}", snapshotName);
+            Debug.Message("Did select file {0} for loading", snapshotName);
+
+            string deflatedName = snapshotName;
+            if (Path.GetExtension(snapshotName).Equals(".bp")) {
+
+                Debug.Message("Unpacking...");
+                deflatedName = snapshotName + ".xml";
+                if (!File.Exists(deflatedName)) {
+                    string data = Compressor.UnzipFile(snapshotName);
+                    File.WriteAllText(deflatedName, data);
+                }
+            }
+
 
             XmlDocument snapshot = new XmlDocument();
 
-            snapshot.Load(snapshotName);
+            snapshot.Load(deflatedName);
 
             XmlNodeList elemList = snapshot.GetElementsByTagName("cell");
             blueprintWidth = int.Parse(snapshot.FirstChild.Attributes["width"].Value);
