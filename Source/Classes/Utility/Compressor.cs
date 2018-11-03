@@ -10,9 +10,10 @@ namespace RealRuins {
         public static void ZipFile(string filename) {
 
             var bytes = File.ReadAllBytes(filename);
+            File.Delete(filename);
 
             using (var msi = new MemoryStream(bytes))
-            using (var mso = File.Open(filename, FileMode.OpenOrCreate)) {
+            using (var mso = File.Open(filename, FileMode.Create)) {
                 mso.Seek(0, SeekOrigin.Begin);
                 using (var gs = new GZipStream(mso, CompressionMode.Compress)) {
                     CopyTo(msi, gs);
