@@ -29,7 +29,7 @@ namespace RealRuins {
 
             Scribe_Values.Look(ref densityMultiplier, "densityMultiplier", 1.0f, false);
             Scribe_Values.Look(ref referenceRadiusAverage, "referenceRadiusAverage", 12, false);
-            Scribe_Values.Look(ref deteriorationMultiplier, "deteriorationMultiplier", 1.0f, false);
+            Scribe_Values.Look(ref deteriorationMultiplier, "deteriorationMultiplier", 0.0f, false);
             Scribe_Values.Look(ref scavengingMultiplier, "scavengingMultiplier", 1.0f, false);
 
             Scribe_Values.Look(ref itemCostLimit, "itemCostLimit", 1000, false);

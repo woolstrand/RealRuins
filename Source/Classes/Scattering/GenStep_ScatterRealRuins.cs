@@ -46,7 +46,7 @@ namespace RealRuins
             Debug.Message("Overridden generate");
             if (allowInWaterBiome || !map.TileInfo.WaterCovered) {
 
-                if (RealRuins.detectedConfigurableMaps) {
+                /*if (RealRuins.detectedConfigurableMaps) {
                     Type t = Type.GetType("ConfigurableMaps.Settings.ThingsSettings,ConfigurableMaps");
                     FieldInfo fi = t.GetField("ruinsLevel");
                     object ruinsLevelObject = fi.GetValue(null);
@@ -63,7 +63,9 @@ namespace RealRuins
                     }
 
                     multiplier = ruinsLevel;
-                }
+                }*/
+
+                float multiplier = RealRuins_ModSettings.defaultScatterOptions.densityMultiplier;
 
                 FloatRange per10k = new FloatRange(countPer10kCellsRange.min * multiplier, countPer10kCellsRange.max * multiplier);
                 int num = CountFromPer10kCells(per10k.RandomInRange, map, -1);
@@ -87,7 +89,8 @@ namespace RealRuins
             float ruinsAge = Rand.Range(1, 25);
             float deteriorationDegree = Rand.Value;
             int referenceRadius = Rand.Range(4 + (int)(multiplier / 3), 12 + (int)multiplier);
-            new RuinsScatterer().ScatterRuinsAt(loc, map, referenceRadius, Rand.Range(0, 3), deteriorationDegree, scavengersActivity, ruinsAge);
+
+            new RuinsScatterer().ScatterRuinsAt(loc, map, RealRuins_ModSettings.defaultScatterOptions);
         }
 
         protected override bool CanScatterAt(IntVec3 loc, Map map) {
@@ -105,11 +108,11 @@ namespace RealRuins
 
 
         protected override void ScatterAt(IntVec3 loc, Map map, int count = 1) {
-            float scavengersActivity = 0.5f + Rand.Value; //later will be based on other settlements proximity
+/*            float scavengersActivity = 0.5f + Rand.Value; //later will be based on other settlements proximity
             float ruinsAge = Rand.Range(1, 25);
             float deteriorationDegree = Rand.Value;
             int referenceRadius = Rand.Range(15, 35);
-            new RuinsScatterer().ScatterRuinsAt(loc, map, referenceRadius, Rand.Range(0, 3), deteriorationDegree, scavengersActivity, ruinsAge);
+            new RuinsScatterer().ScatterRuinsAt(loc, map, referenceRadius, Rand.Range(0, 3), deteriorationDegree, scavengersActivity, ruinsAge);*/
         }
 
         protected override bool CanScatterAt(IntVec3 loc, Map map) {
