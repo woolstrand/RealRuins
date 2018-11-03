@@ -242,6 +242,8 @@ namespace RealRuins
         }
 
 
+        //local copy of hugslib method.
+        //hugslib original method always returns string response, which renders it unusable for downloading binary data.
         public static void AwaitUnityDataWebResponse(UnityWebRequest request, Action<byte[]> onSuccess, Action<Exception> onFailure, HttpStatusCode successStatus = HttpStatusCode.OK, float timeout = 30f) {
             request.Send();
             float timeoutTime = Time.unscaledTime + timeout;
