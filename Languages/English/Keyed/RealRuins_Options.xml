@@ -18,10 +18,9 @@
   <RealRuins_ModOptions_DownloadMore>Download more blueprints</RealRuins_ModOptions_DownloadMore>
   <RealRuins_ModOptions_CurrentCacheCount>Blueprints in cache: </RealRuins_ModOptions_CurrentCacheCount>
 
-  <RealRuins_MapOptions_Category>Real Ruins - Map Generation</RealRuins_MapOptions_Category>
   <RealRuins_MapOptions_Density>Ruins density</RealRuins_MapOptions_Density>
   <RealRuins_MapOptions_Size>Chunk size</RealRuins_MapOptions_Size>
-  <RealRuins_MapOptions_Deterioration>Deterioration degree multiplier</RealRuins_MapOptions_Deterioration>
+  <RealRuins_MapOptions_Deterioration>ADDITIONAL deterioration degree</RealRuins_MapOptions_Deterioration>
   <RealRuins_MapOptions_Scavengers>Scavengers activity multiplier</RealRuins_MapOptions_Scavengers>
   <RealRuins_MapOptions_CostLimit>Limit maximum item cost</RealRuins_MapOptions_CostLimit>
   <RealRuins_MapOptions_DisableHaulables>Disable spawning items</RealRuins_MapOptions_DisableHaulables>
