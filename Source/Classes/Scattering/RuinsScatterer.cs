@@ -117,24 +117,22 @@ namespace RealRuins
     class RuinsScatterer {
 
         static private int totalWorkTime = 0;
+        private ScatterOptions options;
 
         // Clear the cell from other destroyable objects
         private bool ClearCell(IntVec3 location, Map map) {
-            List<Thing> items = map.thingGrid.ThingsListAt(location);
-            if (!CanClearCell(location, map)) return false;
-            for (int index = items.Count - 1; index >= 0; index--) {
-                items[index].Destroy(DestroyMode.Vanish);
-            }
-            return true;
-        }
-
-        // Clear the cell from other destroyable objects
-        private bool CanClearCell(IntVec3 location, Map map) {
             List<Thing> items = map.thingGrid.ThingsListAt(location);
             foreach (Thing item in items) {
                 if (!item.def.destroyable) {
                     return false;
                 }
+                if (item.def.mineable) {//destroying some blocks when intersecting mountains
+                    if (Rand.Chance(0.3f)) return false;
+                }
+            }
+
+            for (int index = items.Count - 1; index >= 0; index--) {
+                items[index].Destroy(DestroyMode.Vanish);
             }
             return true;
         }
@@ -157,10 +155,6 @@ namespace RealRuins
 
         private bool PointInsideCircle(int x, int z, IntVec3 center, int radius) {
             return Math.Pow(center.x - x, 2) + Math.Pow(center.z - z, 2) < Math.Pow(radius, 2);
-        }
-
-        object SL(object o) {
-            return (o != null) ? o : "<NULL>";
         }
 
         //Calculates cost of item made of stuff, or default cost if stuff is null
@@ -207,8 +201,6 @@ namespace RealRuins
 
         Map map;
         IntVec3 targetPoint;
-        bool canSpawnTraps = true;
-        bool canSpawnEnemies = true;
 
         int blueprintWidth;
         int blueprintHeight;
@@ -272,8 +264,8 @@ namespace RealRuins
             wallMap = new int[blueprintWidth, blueprintHeight];
 
 
-            //base deterioration chance mask. will be used in future to create freeform deterioration which is much more fun than just circular
-            //deterioration change also depends on material and cost, but is always based on base chance
+            //base deterioration chance mask. is used to create freeform deterioration which is much more fun than just circular
+            //deterioration chance may depends on material and cost, but is always based on base chance
             terrainIntegrity = new float[blueprintWidth, blueprintHeight]; //integrity of floor tiles
             itemsIntegrity = new float[blueprintWidth, blueprintHeight]; //base integrity of walls, roofs and items
 
@@ -303,7 +295,7 @@ namespace RealRuins
                             tile.location = new IntVec3(x, 0, z);
                             itemsMap[x, z].Add(tile); //save item only if it's def can be loaded.
                         } else {
-                            if (tile.isDoor) { //replacing unavailable door with abstract default doof
+                            if (tile.isDoor) { //replacing unavailable door with abstract default door
                                 tile.defName = ThingDefOf.Door.defName;
                             } else if (tile.isWall || tile.defName.ToLower().Contains("wall")) { //replacing unavailable impassable 100% filling block (which was likely a wall) with a wall
                                 tile.defName = ThingDefOf.CollapsedRocks.defName;
@@ -383,7 +375,6 @@ namespace RealRuins
             BlurIntegrityMap(terrainIntegrity, 10);
             BlurIntegrityMap(itemsIntegrity, 7);
         }
-
 
         private void FindRoomsAndConstructIntegrityMaps() {
             int currentRoomIndex = 1;
@@ -619,6 +610,20 @@ namespace RealRuins
                             continue;
                         }
 
+                        if (options.wallsDoorsOnly) { //eleminate almost everything if "doors & walls" setting is active
+                            if (!thingDef.IsDoor && !item.defName.ToLower().Contains("wall")) {
+                                itemsToRemove.Add(item);
+                                continue;
+                            }
+                        }
+
+                        if (options.disableSpawnItems) { //eleminate haulables if corresponding tich is set
+                            if (thingDef.EverHaulable) {
+                                itemsToRemove.Add(item);
+                                continue;
+                            }
+                        }
+
                         if (thingDef.IsCorpse || thingDef.Equals(ThingDefOf.MinifiedThing)) { //now corpses are spawned bugged on some reason, so let's ignore. Also we can't handle minified things.
                             itemsToRemove.Add(item);
                             continue;
@@ -653,6 +658,16 @@ namespace RealRuins
                         if (item.weight == 0) {
                             item.weight = 0.5f * item.stackCount;
                         }
+
+                        if (options.itemCostLimit < 1000) { //filter too expensive items. limit of 1000 means "no limit" actually
+                            if (item.cost > options.itemCostLimit) {
+                                itemsToRemove.Add(item);
+                            }
+                        }
+                    }
+
+                    foreach (ItemTile item in itemsToRemove) {
+                        items.Remove(item);
                     }
                 }
             }
@@ -672,7 +687,7 @@ namespace RealRuins
                         roofMap[x, z] = false; //no terrain - no roof. just is case. to be sure there won't be hanging roof islands floating in the air.
                     }
 
-                    float itemsChance = itemsIntegrity[x, z];
+                    float itemsChance = itemsIntegrity[x, z] * (1.0f - deteriorationDegree);
                     List<ItemTile> newItems = new List<ItemTile>();
                     if (itemsChance > 0 && itemsChance < 1) {
                         roofMap[x, z] = Rand.Chance(itemsChance * 0.3f); //roof will most likely collapse everywhere
@@ -856,6 +871,7 @@ namespace RealRuins
                                     thing.SetFaction(faction);
                                 }
 
+
                                 if (itemTile.stackCount > 1) {
                                     thing.stackCount = Rand.Range(1, itemTile.stackCount);
 
@@ -927,7 +943,7 @@ namespace RealRuins
 
 
                     IntVec3 mapLocation = new IntVec3(x - minX + mapOriginX, 0, z - minZ + mapOriginZ);
-                    if (Rand.Value < 0.001) {
+                    if (Rand.Value < options.decorationChance) {
 
                         bool canPlace = true;
                         List<Thing> things = map.thingGrid.ThingsListAt(mapLocation);
@@ -944,7 +960,7 @@ namespace RealRuins
                         CompRottable rottable = dweller.Corpse.TryGetComp<CompRottable>();
                         rottable.RotProgress = rottable.PropsRot.TicksToDessicated;
                         dweller.Corpse.timeOfDeath = timeOfDeath + (int)(Rand.Value * 100000);
-                    } else if (Rand.Value < 0.001) {
+                    } else if (Rand.Value < options.trapChance) {
                         ThingDef trapDef = ThingDefOf.TrapSpike;
                         Thing thing = ThingMaker.MakeThing(trapDef, ThingDefOf.WoodLog);
                         thing.SetFaction(Find.FactionManager.RandomEnemyFaction());
@@ -959,21 +975,22 @@ namespace RealRuins
 
         //Deterioration degree is unconditional modifier of destruction applied to the ruins bluepring. Degree of 0.5 means that in average each 2nd block in "central" part will be destroyed.
         //Scavenge threshold is an item price threshold after which the item or terrain is most likely scavenged.
-        public void ScatterRuinsAt(IntVec3 loc, Map map, int referenceRadius, int radiusJitter, float deteriorationDegree, float scavengersActivity, float elapsedTime)
-        {
+        public void ScatterRuinsAt(IntVec3 loc, Map map, ScatterOptions options) {
 
             //Debug.Message("Scattering ruins at ({0}, {1}) of radius {2}+-{3}. Deterioriation degree: {4}, scavengers activity: {5}, age: {6}", loc.x, loc.z, referenceRadius, radiusJitter, deteriorationDegree, scavengersActivity, elapsedTime);
             DateTime start = DateTime.Now;
 
             targetPoint = loc;
             this.map = map;
+            this.options = options;
 
-            this.referenceRadius = referenceRadius;
-            this.scavengersActivity = scavengersActivity;
-            this.elapsedTime = elapsedTime;
-            referenceRadiusJitter = radiusJitter;
 
-            this.deteriorationDegree = deteriorationDegree;
+            referenceRadius = Rand.Range((int)(options.referenceRadiusAverage * 0.5f), (int)(options.referenceRadiusAverage * 1.5f));
+            scavengersActivity = Rand.Value * options.scavengingMultiplier;
+            elapsedTime = (Rand.Value * options.scavengingMultiplier) * 3 + ((options.scavengingMultiplier > 1) ? 3 : 0);
+            referenceRadiusJitter = referenceRadius / 10;
+
+            deteriorationDegree = options.deteriorationMultiplier;
             //cut and deteriorate:
             // since the original blueprint can be pretty big, you usually don't want to replicate it as is. You need to cut a small piece and make a smooth transition
 

@@ -115,17 +115,26 @@ namespace RealRuins {
             left.Gap(25f);
 
             //generation settings
-            left.Label(Text_Option_Density, -1, Text_Option_DensityTT);
-            left.Label(Text_Option_Size, -1, Text_Option_SizeTT);
-            left.Label(Text_Option_Deterioration, -1, Text_Option_DeteriorationTT);
-            left.Label(Text_Option_Scavengers, -1, Text_Option_ScavengersTT);
-            left.Label(Text_Option_CostLimit, -1, Text_Option_CostLimitTT);
+            int sizeMin = RealRuins_ModSettings.defaultScatterOptions.referenceRadiusAverage / 2;
+            int sizeMax = RealRuins_ModSettings.defaultScatterOptions.referenceRadiusAverage * 3 / 2;
+            string costStr = "∞"; if (RealRuins_ModSettings.defaultScatterOptions.itemCostLimit < 1000) {
+                costStr = RealRuins_ModSettings.defaultScatterOptions.itemCostLimit.ToString();
+            }
+
+            left.Label(Text_Option_Density + ": x" + RealRuins_ModSettings.defaultScatterOptions.densityMultiplier, -1, Text_Option_DensityTT);
+            left.Label(Text_Option_Size + ": " + sizeMin + " - " + sizeMax, -1, Text_Option_SizeTT);
+            left.Gap(15);
+            left.Label(Text_Option_Deterioration + ": " + RealRuins_ModSettings.defaultScatterOptions.deteriorationMultiplier, -1, Text_Option_DeteriorationTT);
+            left.Label(Text_Option_Scavengers + ": " + RealRuins_ModSettings.defaultScatterOptions.scavengingMultiplier, -1, Text_Option_ScavengersTT);
+            left.Label(Text_Option_CostLimit + ": " + costStr, -1, Text_Option_CostLimitTT);
+            left.Gap(15);
             left.Label(Text_Option_DisableDecoration, -1, Text_Option_DisableDecorationTT);
             left.Label(Text_Option_DisableTraps, -1, Text_Option_DisableTrapsTT);
             left.Label(Text_Option_DisableHostiles, -1, Text_Option_DisableHostilesTT);
+            left.Gap(15);
             left.CheckboxLabeled(Text_Option_DisableHaulables, ref RealRuins_ModSettings.defaultScatterOptions.disableSpawnItems, Text_Option_DisableHaulablesTT);
             left.CheckboxLabeled(Text_Option_WallsAndDoorsOnly, ref RealRuins_ModSettings.defaultScatterOptions.wallsDoorsOnly, Text_Option_WallsAndDoorsOnlyTT);
-            left.CheckboxLabeled(Text_Option_Claimable, ref RealRuins_ModSettings.defaultScatterOptions.claimableBlocks, Text_Option_ClaimableTT);
+           // left.CheckboxLabeled(Text_Option_Claimable, ref RealRuins_ModSettings.defaultScatterOptions.claimableBlocks, Text_Option_ClaimableTT);
             left.End();
             right.Begin(rect3);
             right.CheckboxLabeled(Text_Option_AllowDownloads, ref RealRuins_ModSettings.allowDownloads, Text_Option_AllowDownloadsTooltip);
@@ -140,9 +149,11 @@ namespace RealRuins {
             //generation settings
             RealRuins_ModSettings.defaultScatterOptions.densityMultiplier = right.Slider(RealRuins_ModSettings.defaultScatterOptions.densityMultiplier, 0.0f, 20.0f);
             RealRuins_ModSettings.defaultScatterOptions.referenceRadiusAverage = (int)right.Slider(RealRuins_ModSettings.defaultScatterOptions.referenceRadiusAverage, 4.0f, 64.0f);
-            RealRuins_ModSettings.defaultScatterOptions.deteriorationMultiplier = right.Slider(RealRuins_ModSettings.defaultScatterOptions.deteriorationMultiplier, 0.0f, 5.0f);
+            right.Gap(15);
+            RealRuins_ModSettings.defaultScatterOptions.deteriorationMultiplier = right.Slider(RealRuins_ModSettings.defaultScatterOptions.deteriorationMultiplier, 0.0f, 1.0f);
             RealRuins_ModSettings.defaultScatterOptions.scavengingMultiplier = right.Slider(RealRuins_ModSettings.defaultScatterOptions.scavengingMultiplier, 0.0f, 5.0f);
             RealRuins_ModSettings.defaultScatterOptions.itemCostLimit = (int)right.Slider(RealRuins_ModSettings.defaultScatterOptions.itemCostLimit, 0.0f, 1000.0f);
+            right.Gap(15);
             RealRuins_ModSettings.defaultScatterOptions.decorationChance = right.Slider(RealRuins_ModSettings.defaultScatterOptions.decorationChance, 0.0f, 0.01f);
             RealRuins_ModSettings.defaultScatterOptions.trapChance = right.Slider(RealRuins_ModSettings.defaultScatterOptions.trapChance, 0.0f, 0.01f);
             RealRuins_ModSettings.defaultScatterOptions.hostileChance = right.Slider(RealRuins_ModSettings.defaultScatterOptions.hostileChance, 0.0f, 1.0f);
