@@ -38,6 +38,10 @@ namespace RealRuins
         }
 
         public void StoreData(string buffer, string filename) {
+            StoreBinaryData(Encoding.UTF8.GetBytes(buffer), filename);
+        }
+
+        public void StoreBinaryData(byte[] buffer, string filename) {
             //when storing a file you need to remove older version of snapshots of the same game
             CheckFolderExistence();
             string[] parts = filename.Split('=');
@@ -64,7 +68,7 @@ namespace RealRuins
             }
 
             //writing file in all cases except "newer version available"
-            File.WriteAllText(rootFolder + "/" + filename, buffer);
+            File.WriteAllBytes(rootFolder + "/" + filename, buffer);
             RecalculateFilesSize();
         }
 
@@ -82,12 +86,6 @@ namespace RealRuins
             do {
                 filename = DoGetRandomFilenameFromRootFolder();
                 if (filename == null) return null; //no more valid files. sorry, no party.
-
-
-                if (!filename.EndsWith("xml")) {
-                    File.Delete(filename);
-                    filename = null;
-                }
             } while (filename == null);
             return filename;
         }

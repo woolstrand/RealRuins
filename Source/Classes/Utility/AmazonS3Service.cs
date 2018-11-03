@@ -4,11 +4,15 @@ using System.Globalization;
 using System.Security.Cryptography;
 using System.Text;
 using System.Xml;
+using System.Net;
+using UnityEngine;
 using UnityEngine.Networking;
 
 using HugsLib.Utils;
+using HugsLib.Core;
 
 using Verse;
+using HugsLib;
 
 namespace RealRuins
 {
@@ -88,11 +92,13 @@ namespace RealRuins
     class AmazonS3Service
     {
 
-        private static readonly string publicKey = "AKIAJ57CCBI6YWOZL5HA";
-        private static readonly string secretKey = "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";
         private static readonly string bucketName = "realruins";
-        private static readonly string s3host = bucketName + ".s3.amazonaws.com";
-        private static readonly string region = "eu-central-1";
+
+        private static readonly string publicKey = "QQJEHNSD5POEM6MNBYIX";
+        private static readonly string secretKey = "pgRLvv+jeDLiVxmD6fBwVRMnHdZycXlYc4Ri763vD4Y";
+        private static readonly string region = "sfo2";
+        private static readonly string s3host = bucketName + "." + region + ".digitaloceanspaces.com";
+
 
         private bool canProcess = false;
 
@@ -158,7 +164,6 @@ namespace RealRuins
         public bool AmazonS3Upload(string localFilePath, string subDirectoryInBucket, string fileNameInS3)
         {
 
-
             byte[] fileBuffer = System.IO.File.ReadAllBytes(localFilePath);
 
             UnityWebRequest request = AmazonS3SignedWebRequest("PUT", fileNameInS3, fileBuffer);
@@ -217,25 +222,63 @@ namespace RealRuins
             return true;
         }
 
-        public bool AmazonS3DownloadSnapshot(string snapshotName, Action<string> successHandler) {
+        public bool AmazonS3DownloadSnapshot(string snapshotName, Action<bool, byte[]> completionHandler) {
 
             UnityWebRequest request = AmazonS3SignedWebRequest("GET", snapshotName, null);
 
-            Action<string> internalSuccessHandler = delegate (string response) {
-                successHandler(response);
+            Action<byte[]> internalSuccessHandler = delegate (byte[] response) {
+                completionHandler(true, response);
             };
 
             void failureHandler(Exception ex) {
                 Log.Message(string.Format("Exception during loading object: {0}", ex), true);
+                completionHandler(false, null);
             }
 
             this.activeRequest = request;
-            HugsLibUtility.AwaitUnityWebResponse(request, successHandler, failureHandler);
+            AwaitUnityDataWebResponse(request, internalSuccessHandler, failureHandler);
 
             return true;
         }
 
-        
+
+        public static void AwaitUnityDataWebResponse(UnityWebRequest request, Action<byte[]> onSuccess, Action<Exception> onFailure, HttpStatusCode successStatus = HttpStatusCode.OK, float timeout = 30f) {
+            request.Send();
+            float timeoutTime = Time.unscaledTime + timeout;
+            Action pollingAction = null;
+            pollingAction = delegate
+            {
+                bool flag = Time.unscaledTime > timeoutTime;
+                try {
+                    if (!request.isDone && !flag) {
+                        HugsLibController.Instance.DoLater.DoNextUpdate(pollingAction);
+                    } else {
+                        if (flag) {
+                            if (!request.isDone) {
+                                request.Abort();
+                            }
+                            throw new Exception("timed out");
+                        }
+                        if (request.isError) {
+                            throw new Exception(request.error);
+                        }
+                        HttpStatusCode httpStatusCode = (HttpStatusCode)request.responseCode;
+                        if (httpStatusCode != successStatus) {
+                            throw new Exception($"{request.url} replied with {httpStatusCode}: {request.downloadHandler.text}");
+                        }
+                        onSuccess?.Invoke(request.downloadHandler.data);
+                    }
+                } catch (Exception ex) {
+                    if (onFailure != null) {
+                        onFailure(ex);
+                    }
+                }
+            };
+            pollingAction();
+        }
+
+
+
     }
 
 }
