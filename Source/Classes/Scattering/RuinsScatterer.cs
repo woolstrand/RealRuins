@@ -733,6 +733,9 @@ namespace RealRuins
             Debug.Message("Enumerated {0} items", tilesByCost.Count());
 
             int raidsCount = (int)(elapsedTime * scavengersActivity);
+            if (options.scavengingMultiplier > 1.0f && raidsCount == 0) {
+                raidsCount = 1; //at least one raid for each ruins in case of normal scavenging activity
+            }
             int ruinsArea = (maxX - minX) * (maxZ - minZ);
             float baseRaidCapacity = Math.Max(10, (ruinsArea / 5) * scavengersActivity);
 
@@ -747,7 +750,7 @@ namespace RealRuins
                     Tile topTile = tilesByCost.Pop();
                     String msg = string.Format("Inspecting tile \"{0}\" of cost {1} and weight {2}. ", topTile.defName, topTile.cost, topTile.weight);
 
-                    if (topTile.cost < 20) {
+                    if (topTile.cost < 15) {
                         shouldStop = true; //nothing to do here, everything valueable has already gone
                         msg += "Too cheap, stopping.";
                     } else {
@@ -846,7 +849,7 @@ namespace RealRuins
                             ThingDef thingDef = DefDatabase<ThingDef>.GetNamed(itemTile.defName, false); //here thingDef is definitely not null because it was checked earlier
 
                             ThingDef stuffDef = null; //but stuff can still be null, or can be missing, so we have to check and use default just in case.
-                            if (itemTile.stuffDef != null) {
+                            if (itemTile.stuffDef != null && thingDef.MadeFromStuff) { //some mods may alter thing and add stuff parameter to it. this will result in a bug on a vanilla, so need to double-check here
                                 stuffDef = DefDatabase<ThingDef>.GetNamed(itemTile.stuffDef, false);
                             }
 
@@ -864,12 +867,19 @@ namespace RealRuins
 
                             Thing thing = ThingMaker.MakeThing(thingDef, stuffDef);
 
-
                             if (thing != null) {
                                 GenSpawn.Spawn(thing, mapLocation, map, new Rot4(itemTile.rot));
                                 if (thingDef.CanHaveFaction) {
                                     thing.SetFaction(faction);
                                 }
+
+                                CompQuality q = thing.TryGetComp<CompQuality>();
+                                if (q != null) {
+                                    byte category = (byte)Math.Abs(Math.Round(Rand.Gaussian(0, 6)));
+                                    if (category > 6) category = 0;
+                                    q.SetQuality((QualityCategory)category, ArtGenerationContext.Outsider);
+                                }
+
 
 
                                 if (itemTile.stackCount > 1) {
