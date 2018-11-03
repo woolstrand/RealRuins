@@ -880,6 +880,12 @@ namespace RealRuins
                                     q.SetQuality((QualityCategory)category, ArtGenerationContext.Outsider);
                                 }
 
+                                CompBreakdownable b = thing.TryGetComp<CompBreakdownable>();
+                                if (b != null) {
+                                    if (Rand.Chance(0.8f)) {
+                                        b.DoBreakdown();
+                                    }
+                                }
 
 
                                 if (itemTile.stackCount > 1) {
