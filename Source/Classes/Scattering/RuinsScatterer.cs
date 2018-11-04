@@ -6,6 +6,8 @@ using RimWorld;
 using Verse;
 using System.Xml;
 using System.IO;
+using RimWorld.BaseGen;
+using Verse.AI.Group;
 
 namespace RealRuins
 {
@@ -227,6 +229,58 @@ namespace RealRuins
         float scavengersActivity = 0; //depends on how far tile is from villages
         float elapsedTime = 0; //ruins age
 
+        //Wall map management: wall map is used to determine which rooms are opened and which are not. Similar to game engine regions, but much simplier and smaller.
+        void MarkRoomAsOpenedAt(int posX, int posZ) {
+            int value = wallMap[posX, posZ];
+            //Debug.Message("Marking room {0} as opened", value);
+            if (value < 2) return; //do not re-mark walls, uncalculated and already marked
+
+            for (int x = minX; x < maxX; x++) {
+                for (int z = minZ; z < maxZ; z++) {
+                    if (wallMap[x, z] == value) wallMap[x, z] = -1;
+                }
+            }
+        }
+
+        void RemoveWall(int posX, int posZ) {
+
+//            Debug.Message("removing wall at {0}, {1}", posX, posZ);
+            if (wallMap[posX, posZ] != -1) return; //alerady no wall there
+            int? newValue = null;
+
+            //determine new value. if we're on the edge, the room will be opened
+            if (posX == minX || posX == maxX - 1 || posZ == minZ || posZ == maxZ - 1) {
+                newValue = 1;
+//                Debug.Message("Room is opening to the wild");
+            }
+
+            List<int> adjacentRoomNumbers = new List<int>();
+            if (posX > 0) adjacentRoomNumbers.Add(wallMap[posX - 1, posZ]);
+            if (posX < maxX - 1) adjacentRoomNumbers.Add(wallMap[posX + 1, posZ]);
+            if (posZ > 0) adjacentRoomNumbers.Add(wallMap[posX, posZ - 1]);
+            if (posZ < maxZ - 1) adjacentRoomNumbers.Add(wallMap[posX, posZ + 1]);
+            adjacentRoomNumbers.RemoveAll((int room) => room == -1);
+            List<int> distinct = adjacentRoomNumbers.Distinct().ToList();
+           // Debug.Message("Combining rooms: {0}", distinct);
+            if (newValue == null && distinct.Count > 0) {
+                if (distinct.Contains(1)) {
+                    distinct.Remove(1);
+                    newValue = 1;
+                } else {
+                    newValue = distinct.Pop();
+                }
+            }
+
+            if (distinct.Count > 0) {
+                for (int x = minX; x < maxX; x++) {
+                    for (int z = minZ; z < maxZ; z++) {
+                        if (distinct.Contains(wallMap[x, z])) wallMap[x, z] = newValue ?? 1;
+                    }
+                }
+            }
+
+        }
+
 
         private bool LoadRandomXMLSnapshot() {
             //Create the XmlDocument. 
@@ -247,10 +301,8 @@ namespace RealRuins
                     File.WriteAllText(deflatedName, data);
                 }
             }
-
-
+            
             XmlDocument snapshot = new XmlDocument();
-
             snapshot.Load(deflatedName);
 
             XmlNodeList elemList = snapshot.GetElementsByTagName("cell");
@@ -409,7 +461,7 @@ namespace RealRuins
 
             //Debug.Message("Traversing map");
 
-            //For each unmarked point we can interpret our map as a tree with root at current point and branches going to four directions. For this tree (with removed duplicate nodes) we can implement BFS travrsing.
+            //For each unmarked point we can interpret our map as a tree with root at current point and branches going to four directions. For this tree (with removed duplicate nodes) we can implement BFS traversing.
             for (int z = 0; z < blueprintHeight; z++) {
                 for (int x = 0; x < blueprintWidth; x++) {
                     if (wallMap[x, z] == 0) {
@@ -502,9 +554,10 @@ namespace RealRuins
                         int sqrDistance = (x - center.x) * (x - center.x) + (z - center.z) * (z - center.z);
                         if (sqrDistance < (radius - 1) * (radius - 1)) {
                             if (!allRooms.Contains(roomIndex)) allRooms.Add(roomIndex);
-                        } else if (sqrDistance < (radius * radius)) { //edge
+                        } else if (sqrDistance < (radius * radius)) { //intersecting edge => room is opened to the wild
                             if (!allRooms.Contains(roomIndex)) allRooms.Add(roomIndex);
                             if (!openRooms.Contains(roomIndex)) openRooms.Add(roomIndex);
+                            MarkRoomAsOpenedAt(x, z);
                         }
                     }
                 }
@@ -512,6 +565,7 @@ namespace RealRuins
                 //Debug.Message("Finished. Setting core integrity values");
 
                 //if all rooms are intersecting circle outline do fallback plan (circular deterioration chance map)
+                Debug.Message("Rooms found: {0}", allRooms);
                 if (allRooms.Count == openRooms.Count) {
                     //fallback
                     FallbackIntegrityMapConstructor(center, radius);
@@ -645,6 +699,10 @@ namespace RealRuins
                     }
 
                     foreach (ItemTile item in itemsToRemove) {
+                        if (item.isWall || item.isDoor) {
+                            RemoveWall(item.location.x, item.location.z);
+                        }
+
                         items.Remove(item);
                     }
 
@@ -667,6 +725,10 @@ namespace RealRuins
                     }
 
                     foreach (ItemTile item in itemsToRemove) {
+                        if (item.isWall || item.isDoor) {
+                            RemoveWall(item.location.x, item.location.z);
+                        }
+
                         items.Remove(item);
                     }
                 }
@@ -675,8 +737,12 @@ namespace RealRuins
 
         private void Deteriorate() {
             //remove everything according do integrity maps
+            //since we have to maintain information about rooms integrity we have to update rooms map accordingly to all changes.
+            
             for (int x = minX; x < maxX; x++) {
                 for (int z = minZ; z < maxZ; z++) {
+                    bool hadWall = false;
+                    bool retainedWall = false;
                     List<ItemTile> items = itemsMap[x, z];
 
                     if (!Rand.Chance(terrainIntegrity[x, z])) {
@@ -693,14 +759,19 @@ namespace RealRuins
                         roofMap[x, z] = Rand.Chance(itemsChance * 0.3f); //roof will most likely collapse everywhere
 
                         foreach (ItemTile item in items) {
+                            if (item.isWall) hadWall = true;
                             if (Rand.Chance(itemsChance)) {
+                                if (item.isWall) retainedWall = true;
                                 newItems.Add(item);
                             }
                         }
                     }
                     if (itemsChance < 1) {
                         itemsMap[x, z] = newItems; //will be empty if chance is 0
+                        if (itemsChance <= 0) RemoveWall(x, z);
                     }
+
+                    if (hadWall && !retainedWall) RemoveWall(x, z);
                 }
             }
         }
@@ -710,7 +781,7 @@ namespace RealRuins
             //word is spread, so each next raid is more destructive than the previous ones
             //to make calculations a bit easier we're going to calculate value per cell, not per item.
 
-            //Debug.active = false;
+            Debug.active = false;
             
             List<Tile> tilesByCost = new List<Tile>();
 
@@ -767,6 +838,8 @@ namespace RealRuins
                                         ItemTile replacementTile = ItemTile.DefaultDoorItemTile(itemTile.location);
                                         itemsMap[topTile.location.x, topTile.location.z].Add(replacementTile);
                                         msg += "Added " + replacementTile.defName + ", original ";
+                                    } else {
+                                        RemoveWall(itemTile.location.x, itemTile.location.z);
                                     }
                                 }  else if (itemTile.isWall) { //if something like a wall removed (vent or aircon) you usually want to cover the hole to keep wall integrity
                                     ItemTile replacementTile = ItemTile.CollapsedWallItemTile(itemTile.location);
@@ -803,6 +876,7 @@ namespace RealRuins
                     }
                     if (tileToRemove != null) {
                         itemsMap[x, z].Remove(tileToRemove);
+                        RemoveWall(x, z);
                     }
                 }
             }
@@ -889,7 +963,7 @@ namespace RealRuins
 
 
                                 if (itemTile.stackCount > 1) {
-                                    thing.stackCount = Rand.Range(1, itemTile.stackCount);
+                                    thing.stackCount = Rand.Range(1, Math.Min(thingDef.stackLimit, itemTile.stackCount));
 
 
                                     //Spoil things that can be spoiled. You shouldn't find a fresh meat an the old ruins.
@@ -983,6 +1057,67 @@ namespace RealRuins
                         GenSpawn.Spawn(thing, mapLocation, map);
                     }
 
+                }
+            }
+
+
+            //enemies
+            if (Rand.Chance(options.hostileChance)) {
+                CellRect rect = new CellRect(mapOriginX, mapOriginZ, maxX - minX, maxZ - minZ);
+                if (!CellFinder.TryFindRandomCellInsideWith(rect, (IntVec3 x) => x.Standable(map) && wallMap[x.x - rect.minX + minX, x.z - rect.minZ + minZ] > 1, out IntVec3 testCell)) {
+                    return; //interrupt if there are no closed cells available
+                }
+
+                PawnKindDef pawnKindDef = null;
+
+                if (Rand.Chance(0.7f)) {
+                    //animals
+                    pawnKindDef = map.Biome.AllWildAnimals.RandomElementByWeight((PawnKindDef def) => (def.RaceProps.foodType == FoodTypeFlags.CarnivoreAnimal || def.RaceProps.foodType == FoodTypeFlags.OmnivoreAnimal) ? 1 : 0);
+                } else {
+                    //mechanoids' kinds are selected for each unit
+                }
+
+                float powerMax = rect.Area / 30.0f;
+                float powerThreshold = (Math.Abs(Rand.Gaussian(0.5f, 1)) * powerMax) + 1;
+
+                Debug.Message("Gathering troops power of {0} (max was {1})", powerThreshold, powerMax);
+
+                float cumulativePower = 0;
+
+                Faction faction = Faction.OfAncientsHostile;
+                Lord lord = LordMaker.MakeNewLord(lordJob: new LordJob_DefendPoint(rect.CenterCell), faction: faction, map: map, startingPawns: null);
+                int tile = map.Tile;
+
+                while (cumulativePower <= powerThreshold) { 
+
+                    PawnKindDef currentPawnKindDef = pawnKindDef;
+                    if (currentPawnKindDef == null) {
+                        currentPawnKindDef = (from kind in DefDatabase<PawnKindDef>.AllDefsListForReading
+                                              where kind.RaceProps.IsMechanoid
+                                              select kind).RandomElementByWeight((PawnKindDef kind) => 1f / kind.combatPower);
+                    }
+
+                    PawnGenerationRequest request =
+                        new PawnGenerationRequest(currentPawnKindDef, faction, PawnGenerationContext.NonPlayer, tile, true, false, false, //allowDead is last
+                        false, true, false, 1f,
+                        false, true, true, false,
+                        false, false, false,
+                        null, null, null, null,
+                        null, null, null, null);
+
+                    if (CellFinder.TryFindRandomCellInsideWith(rect, (IntVec3 x) => x.Standable(map) && wallMap[x.x - rect.minX + minX, x.z - rect.minZ + minZ] > 1, out IntVec3 cell)) {
+                        Pawn pawn = PawnGenerator.GeneratePawn(request);
+
+                        FilthMaker.MakeFilth(cell, map, ThingDefOf.Filth_Blood, 5);
+                        GenSpawn.Spawn(pawn, cell, map, WipeMode.Vanish);
+
+                        lord.AddPawn(pawn);
+                        cumulativePower += pawn.kindDef.combatPower;
+
+                        Debug.Message("Adding combat power for {0}, total is {1}", currentPawnKindDef.defName, cumulativePower);
+                    } else {
+                        break; //no more suitable cells
+                    }
                 }
             }
         }
