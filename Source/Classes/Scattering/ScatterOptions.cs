@@ -9,10 +9,10 @@ namespace RealRuins {
     class ScatterOptions : IExposable {
         public float densityMultiplier = 1.0f;
         public int referenceRadiusAverage = 12;
-        public float deteriorationMultiplier = 1.0f;
+        public float deteriorationMultiplier = 0.0f;
         public float scavengingMultiplier = 1.0f;
 
-        public int itemCostLimit = -1;
+        public int itemCostLimit = 1000;
         public bool disableSpawnItems = false;
         public bool wallsDoorsOnly = false;
         public bool claimableBlocks = true;

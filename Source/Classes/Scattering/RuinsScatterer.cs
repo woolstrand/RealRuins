@@ -659,7 +659,7 @@ namespace RealRuins
                             item.weight = 0.5f * item.stackCount;
                         }
 
-                        if (options.itemCostLimit < 1000) { //filter too expensive items. limit of 1000 means "no limit" actually
+                        if (options.itemCostLimit > 0 && options.itemCostLimit < 1000) { //filter too expensive items. limit of 1000 means "no limit" actually
                             if (item.cost > options.itemCostLimit) {
                                 itemsToRemove.Add(item);
                             }
@@ -710,7 +710,7 @@ namespace RealRuins
             //word is spread, so each next raid is more destructive than the previous ones
             //to make calculations a bit easier we're going to calculate value per cell, not per item.
 
-            Debug.active = false;
+            //Debug.active = false;
             
             List<Tile> tilesByCost = new List<Tile>();
 
@@ -733,7 +733,7 @@ namespace RealRuins
             Debug.Message("Enumerated {0} items", tilesByCost.Count());
 
             int raidsCount = (int)(elapsedTime * scavengersActivity);
-            if (options.scavengingMultiplier > 1.0f && raidsCount == 0) {
+            if (options.scavengingMultiplier > 0.9f && raidsCount == 0) {
                 raidsCount = 1; //at least one raid for each ruins in case of normal scavenging activity
             }
             int ruinsArea = (maxX - minX) * (maxZ - minZ);
@@ -993,7 +993,6 @@ namespace RealRuins
         //Scavenge threshold is an item price threshold after which the item or terrain is most likely scavenged.
         public void ScatterRuinsAt(IntVec3 loc, Map map, ScatterOptions options) {
 
-            //Debug.Message("Scattering ruins at ({0}, {1}) of radius {2}+-{3}. Deterioriation degree: {4}, scavengers activity: {5}, age: {6}", loc.x, loc.z, referenceRadius, radiusJitter, deteriorationDegree, scavengersActivity, elapsedTime);
             DateTime start = DateTime.Now;
 
             targetPoint = loc;
@@ -1002,11 +1001,13 @@ namespace RealRuins
 
 
             referenceRadius = Rand.Range((int)(options.referenceRadiusAverage * 0.5f), (int)(options.referenceRadiusAverage * 1.5f));
-            scavengersActivity = Rand.Value * options.scavengingMultiplier;
-            elapsedTime = (Rand.Value * options.scavengingMultiplier) * 3 + ((options.scavengingMultiplier > 1) ? 3 : 0);
+            scavengersActivity = Rand.Value * options.scavengingMultiplier + (options.scavengingMultiplier) / 3;
+            elapsedTime = (Rand.Value * options.scavengingMultiplier) * 3 + ((options.scavengingMultiplier > 0.95) ? 3 : 0);
             referenceRadiusJitter = referenceRadius / 10;
 
             deteriorationDegree = options.deteriorationMultiplier;
+
+            Debug.Message("Scattering ruins at ({0}, {1}) of radius {2}. scavengers activity: {3}, age: {4}", loc.x, loc.z, referenceRadius, scavengersActivity, elapsedTime);
             //cut and deteriorate:
             // since the original blueprint can be pretty big, you usually don't want to replicate it as is. You need to cut a small piece and make a smooth transition
 
