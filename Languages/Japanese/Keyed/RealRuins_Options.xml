@@ -1,8 +1,8 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <LanguageData>
   <RealRuins_ModOptions_Category>Real Ruins</RealRuins_ModOptions_Category>
-  <RealRuins_ModOptions_AllowDownloads>データベースからの遺跡のダウンロードを許可する</RealRuins_ModOptions_AllowDownloads>
-  <RealRuins_ModOptions_AllowUploads>あなたの拠点を遺跡データベースにアップロードを許可する</RealRuins_ModOptions_AllowUploads>
+  <RealRuins_ModOptions_AllowDownloads>データベースからの遺跡のダウンロードを許可</RealRuins_ModOptions_AllowDownloads>
+  <RealRuins_ModOptions_AllowUploads>自分の拠点を遺跡データベースにアップロードを許可</RealRuins_ModOptions_AllowUploads>
   <RealRuins_ModOptions_CacheSize>ローカルキャッシュサイズを限定する</RealRuins_ModOptions_CacheSize>
   <RealRuins_ModOptions_OfflineMode>ローカルモード専用</RealRuins_ModOptions_OfflineMode>
 
@@ -10,35 +10,36 @@
   <RealRuins_ModOptions_AllowUploadsTooltip>色々と面白い拠点デザインを使用したデータベースを作成するために、これをオンにすることをお勧めします。これは、1ゲームあたり数Mb(メガバイト)以上を割り当てるべきではありません。</RealRuins_ModOptions_AllowUploadsTooltip>
   <RealRuins_ModOptions_CacheSizeTooltip>この上限に達しても、MODは新しい拠点設計画像をダウンロードし続け、古い設計画像を削除します。</RealRuins_ModOptions_CacheSizeTooltip>
   <RealRuins_ModOptions_OfflineModeTooltip>このモードでは、サーバーからダウンロードされてローカルキャッシュされたすべてのデータが削除され、それ以上アップロードやダウンロードができなくなります。しかし、自分の拠点はローカルに保存され続けて、ゲームで遺跡を作るために使用されます。</RealRuins_ModOptions_OfflineModeTooltip>
+  <RealRuins_ModOptions_OfflineModeConfirmation>続行しますか？</RealRuins_ModOptions_OfflineModeConfirmation>
 
   <RealRuins_ModOptions_CurrentCacheSize>現在のローカルキャッシュ容量：</RealRuins_ModOptions_CurrentCacheSize>
   <RealRuins_ModOptions_RemoveAll>キャッシュを削除</RealRuins_ModOptions_RemoveAll>
-  <RealRuins_ModOptions_CurrentCacheCount>Blueprints in cache: </RealRuins_ModOptions_CurrentCacheCount>
 
-  <RealRuins_MapOptions_Density>Ruins density</RealRuins_MapOptions_Density>
-  <RealRuins_MapOptions_Size>Chunk size</RealRuins_MapOptions_Size>
-  <RealRuins_MapOptions_Deterioration>ADDITIONAL deterioration degree</RealRuins_MapOptions_Deterioration>
-  <RealRuins_MapOptions_Scavengers>Scavengers activity multiplier</RealRuins_MapOptions_Scavengers>
-  <RealRuins_MapOptions_CostLimit>Limit maximum item cost</RealRuins_MapOptions_CostLimit>
-  <RealRuins_MapOptions_DisableHaulables>Disable spawning items</RealRuins_MapOptions_DisableHaulables>
-  <RealRuins_MapOptions_WallsAndDoorsOnly>Spawn walls and doors only</RealRuins_MapOptions_WallsAndDoorsOnly>
-  <RealRuins_MapOptions_DisableDecoration>Passive specials amount</RealRuins_MapOptions_DisableDecoration>
-  <RealRuins_MapOptions_DisableTraps>Active specials amount</RealRuins_MapOptions_DisableTraps>
-  <RealRuins_MapOptions_DisableHostiles>Hostile units amount</RealRuins_MapOptions_DisableHostiles>
-  <RealRuins_MapOptions_Claimable>Make structures claimable</RealRuins_MapOptions_Claimable>
+  <RealRuins_ModOptions_DownloadMore>設計図をダウンロードする</RealRuins_ModOptions_DownloadMore>
+  <RealRuins_ModOptions_CurrentCacheCount>キャッシュ内の設計図：</RealRuins_ModOptions_CurrentCacheCount>
 
-  <RealRuins_MapOptions_DensityTT>Average number of ruins spawned on 100x100 area</RealRuins_MapOptions_DensityTT>
-  <RealRuins_MapOptions_SizeTT>Ruins area is selected randomly in range between 50% to 150% of the entered value</RealRuins_MapOptions_SizeTT>
-  <RealRuins_MapOptions_DeteriorationTT>This value determines additional chance for a tile to be destroyed and does not influence remaining hit points amount. Zero is default setting, max will result in no ruins at all.</RealRuins_MapOptions_DeteriorationTT>
-  <RealRuins_MapOptions_ScavengersTT>Zero is pristine blueprints.</RealRuins_MapOptions_ScavengersTT>
-  <RealRuins_MapOptions_CostLimitTT>All items with total cost higher than selected value will be destroyed</RealRuins_MapOptions_CostLimitTT>
-  <RealRuins_MapOptions_DisableHaulablesTT>All haulable items won't spawn, but furniture may still appear</RealRuins_MapOptions_DisableHaulablesTT>
-  <RealRuins_MapOptions_WallsAndDoorsOnlyTT>This setting is pretty aggressive and will remove everything that is not based on a vanilla wall or a door.</RealRuins_MapOptions_WallsAndDoorsOnlyTT>
-  <RealRuins_MapOptions_DisableDecorationTT>Just skeletons for now</RealRuins_MapOptions_DisableDecorationTT>
-  <RealRuins_MapOptions_DisableTrapsTT>Traps and triggers</RealRuins_MapOptions_DisableTrapsTT>
-  <RealRuins_MapOptions_DisableHostilesTT></RealRuins_MapOptions_DisableHostilesTT>
-  <RealRuins_MapOptions_ClaimableTT>Unclaimable structures can't be repaired or deconstructed</RealRuins_MapOptions_ClaimableTT>
+  <RealRuins_MapOptions_Density>遺跡の密度</RealRuins_MapOptions_Density>
+  <RealRuins_MapOptions_Size>遺跡の大きさ</RealRuins_MapOptions_Size>
+  <RealRuins_MapOptions_Deterioration>遺跡の劣化率</RealRuins_MapOptions_Deterioration>
+  <RealRuins_MapOptions_Scavengers>回収業者の活動係数</RealRuins_MapOptions_Scavengers>
+  <RealRuins_MapOptions_CostLimit>アイテム価値の上限を制限</RealRuins_MapOptions_CostLimit>
+  <RealRuins_MapOptions_DisableHaulables>再展示可能なアイテムを無効</RealRuins_MapOptions_DisableHaulables>
+  <RealRuins_MapOptions_WallsAndDoorsOnly>壁と扉だけ配置</RealRuins_MapOptions_WallsAndDoorsOnly>
+  <RealRuins_MapOptions_DisableDecoration>特殊アイテム(骨)を無効</RealRuins_MapOptions_DisableDecoration>
+  <RealRuins_MapOptions_DisableTraps>特殊アイテム(罠)を無効</RealRuins_MapOptions_DisableTraps>
+  <RealRuins_MapOptions_DisableHostiles>敵対アイテム(タレット)を無効</RealRuins_MapOptions_DisableHostiles>
+  <RealRuins_MapOptions_Claimable>建築物を領土主張可能にする</RealRuins_MapOptions_Claimable>
 
-
+  <RealRuins_MapOptions_DensityTT>100x100の範囲に存在する平均的な遺跡数</RealRuins_MapOptions_DensityTT>
+  <RealRuins_MapOptions_SizeTT>遺跡の範囲は、入力値の50％〜150％の範囲でランダムに選択されます</RealRuins_MapOptions_SizeTT>
+  <RealRuins_MapOptions_DeteriorationTT>この値は、床タイルが消えている可能性を高めますが、構造物の残りHPには影響を与えません。0が初期設定ですが、最大値にすると遺跡は完全に消滅します。</RealRuins_MapOptions_DeteriorationTT>
+  <RealRuins_MapOptions_ScavengersTT>0にすると略奪されていないままの設計図になります。</RealRuins_MapOptions_ScavengersTT>
+  <RealRuins_MapOptions_CostLimitTT>選択した値よりも価値が高いアイテムはすべて盗まれて存在しません</RealRuins_MapOptions_CostLimitTT>
+  <RealRuins_MapOptions_DisableHaulablesTT>移動可能なアイテムは全く出現しませんが、家具は引き続き配置されます</RealRuins_MapOptions_DisableHaulablesTT>
+  <RealRuins_MapOptions_WallsAndDoorsOnlyTT>この設定はかなり強制的で、バニラの壁や扉に基づいていないものはすべて削除されます。</RealRuins_MapOptions_WallsAndDoorsOnlyTT>
+  <RealRuins_MapOptions_DisableDecorationTT>今は動物や人の骨だけです</RealRuins_MapOptions_DisableDecorationTT>
+  <RealRuins_MapOptions_DisableTrapsTT>スパイクトラップやIEDトラップなどです</RealRuins_MapOptions_DisableTrapsTT>
+  <RealRuins_MapOptions_DisableHostilesTT>入植者と敵対的なアイテム(タレット)が存在します</RealRuins_MapOptions_DisableHostilesTT>
+  <RealRuins_MapOptions_ClaimableTT>領土を主張していない構造物は修理や分解することができません</RealRuins_MapOptions_ClaimableTT>
 
 </LanguageData>
