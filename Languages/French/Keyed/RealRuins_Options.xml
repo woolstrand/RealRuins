@@ -1,0 +1,39 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<LanguageData>
+  <RealRuins_ModOptions_Category>Vraies Ruines</RealRuins_ModOptions_Category>
+  <RealRuins_ModOptions_AllowDownloads>Autoriser le téléchargement des ruines depuis la base de données </RealRuins_ModOptions_AllowDownloads>
+  <RealRuins_ModOptions_AllowUploads>Autoriser le téléchargement de vos bases sur la base de données </RealRuins_ModOptions_AllowUploads>
+  <RealRuins_ModOptions_CacheSize>Limiter la taille du cache local à </RealRuins_ModOptions_CacheSize>
+  <RealRuins_ModOptions_OfflineMode>Mode local uniquement </RealRuins_ModOptions_OfflineMode>
+  <RealRuins_ModOptions_AllowDownloadsTooltip>Si vous désactivez cette option, les fichiers déjà téléchargés ne seront pas supprimés.</RealRuins_ModOptions_AllowDownloadsTooltip>
+  <RealRuins_ModOptions_AllowUploadsTooltip>Il est recommandé de conserver cette optionpour aider à remplir la base de données avec diverses conceptions de base intéressantes. Cela ne devrait pas prendre plusieurs Mégabytes par session de jeu. </RealRuins_ModOptions_AllowUploadsTooltip>
+  <RealRuins_ModOptions_CacheSizeTooltip>Même si vous atteignez cette limite, vous pouvez télécharger les nouveaux plans, et les supprimer.</RealRuins_ModOptions_CacheSizeTooltip>
+  <RealRuins_ModOptions_OfflineModeTooltip>Ce mode supprime toutes les données mises en cache qui ont été téléchargées depuis le serveur et empêcher tout téléchargement ultérieur. Vos bases personnelles seront toujours stockées et utilisées pour créer des ruines dans votre jeu. .</RealRuins_ModOptions_OfflineModeTooltip>
+  <RealRuins_ModOptions_OfflineModeConfirmation>Êtes-vous sûr de continuer ?</RealRuins_ModOptions_OfflineModeConfirmation>
+  <RealRuins_ModOptions_CurrentCacheSize>Taille du cache local actuel: </RealRuins_ModOptions_CurrentCacheSize>
+  <RealRuins_ModOptions_RemoveAll>Vider le cache</RealRuins_ModOptions_RemoveAll>
+  <RealRuins_ModOptions_DownloadMore>Téléchargez davantage de plans</RealRuins_ModOptions_DownloadMore>
+  <RealRuins_ModOptions_CurrentCacheCount>Plans en cache: </RealRuins_ModOptions_CurrentCacheCount>
+  <RealRuins_MapOptions_Density>Densité des ruines </RealRuins_MapOptions_Density>
+  <RealRuins_MapOptions_Size>Taille du bloc</RealRuins_MapOptions_Size>
+  <RealRuins_MapOptions_Deterioration>Degré de détérioration supplémentaire</RealRuins_MapOptions_Deterioration>
+  <RealRuins_MapOptions_Scavengers>Multiplicateur d'activité des récupérateurs </RealRuins_MapOptions_Scavengers>
+  <RealRuins_MapOptions_CostLimit>Limiter le coût maximum des items </RealRuins_MapOptions_CostLimit>
+  <RealRuins_MapOptions_DisableHaulables>Désactiver les éléments générés </RealRuins_MapOptions_DisableHaulables>
+  <RealRuins_MapOptions_WallsAndDoorsOnly>Créer desmurs et des portes uniquement </RealRuins_MapOptions_WallsAndDoorsOnly>
+  <RealRuins_MapOptions_DisableDecoration>Montant spéciaux passif</RealRuins_MapOptions_DisableDecoration>
+  <RealRuins_MapOptions_DisableTraps>Montant spéciaux actifs</RealRuins_MapOptions_DisableTraps>
+  <RealRuins_MapOptions_DisableHostiles>Quantité d'unités hostiles</RealRuins_MapOptions_DisableHostiles>
+  <RealRuins_MapOptions_Claimable>Rendre les structures revendicables </RealRuins_MapOptions_Claimable>
+  <RealRuins_MapOptions_DensityTT>Nombre moyen de ruines apparaissant sur une zone de 100x100 </RealRuins_MapOptions_DensityTT>
+  <RealRuins_MapOptions_SizeTT>La zone des ruines est sélectionnée de manière aléatoire dans une plage allant de 50% to 150% de la valeur entrée </RealRuins_MapOptions_SizeTT>
+  <RealRuins_MapOptions_DeteriorationTT>Cette valeur détermine les chances supplémentaires pour une tuile d'être détruite et n'influence pas le nombre de points de vie restants. Zéro est le réglage par défaut, MAX n'aboutira à aucune ruine. .</RealRuins_MapOptions_DeteriorationTT>
+  <RealRuins_MapOptions_ScavengersTT>Zero est le plan vierge.</RealRuins_MapOptions_ScavengersTT>
+  <RealRuins_MapOptions_CostLimitTT>Tous les articles avec un coût total plus haut que la valeur choisie seront détruits</RealRuins_MapOptions_CostLimitTT>
+  <RealRuins_MapOptions_DisableHaulablesTT>Tous les objets transportables ne vont pas apparaître, mais des meubles peuvent éventuellement encore apparaître</RealRuins_MapOptions_DisableHaulablesTT>
+  <RealRuins_MapOptions_WallsAndDoorsOnlyTT>Ce paramètre est assez agressif et supprime tout ce qui n’est pas basé sur un mur ou une porte du jeu original ( Vanilla ).</RealRuins_MapOptions_WallsAndDoorsOnlyTT>
+  <RealRuins_MapOptions_DisableDecorationTT>Seulement des squelettes pour l'instant </RealRuins_MapOptions_DisableDecorationTT>
+  <RealRuins_MapOptions_DisableTrapsTT>Pièges et déclencheurs </RealRuins_MapOptions_DisableTrapsTT>
+  <RealRuins_MapOptions_DisableHostilesTT></RealRuins_MapOptions_DisableHostilesTT>
+  <RealRuins_MapOptions_ClaimableTT>Les structures non exigibles ne peuvent pas être réparées ou déconstruites </RealRuins_MapOptions_ClaimableTT>
+</LanguageData>
