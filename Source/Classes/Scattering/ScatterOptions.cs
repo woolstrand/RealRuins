@@ -43,5 +43,23 @@ namespace RealRuins {
 
         }
 
+        public ScatterOptions Copy() {
+            ScatterOptions copy = new ScatterOptions {
+                deteriorationMultiplier = deteriorationMultiplier,
+                claimableBlocks = claimableBlocks,
+                decorationChance = decorationChance,
+                densityMultiplier = densityMultiplier,
+                hostileChance = hostileChance,
+                scavengingMultiplier = scavengingMultiplier,
+                trapChance = trapChance,
+                disableSpawnItems = disableSpawnItems,
+                itemCostLimit = itemCostLimit,
+                referenceRadiusAverage = referenceRadiusAverage,
+                wallsDoorsOnly = wallsDoorsOnly
+            };
+
+            return copy;
+        }
+
     }
 }
