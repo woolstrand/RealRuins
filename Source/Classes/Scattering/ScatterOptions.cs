@@ -16,12 +16,13 @@ namespace RealRuins {
         public bool disableSpawnItems = false;
         public bool wallsDoorsOnly = false;
         public bool claimableBlocks = true;
+        public bool enableProximity = true;
 
         public float decorationChance = 0.0001f; //probability PER CELL
         public float trapChance = 0.001f; //probability PER CELL
         public float hostileChance = 0.1f; //probability PER CHUNK
 
-        public static ScatterOptions Default = new ScatterOptions();
+        public static readonly ScatterOptions Default = new ScatterOptions();
 
 
         public void ExposeData() {
@@ -36,6 +37,7 @@ namespace RealRuins {
             Scribe_Values.Look(ref disableSpawnItems, "disableSpawnItems", false, false);
             Scribe_Values.Look(ref wallsDoorsOnly, "wallsDoorsOnly", false, false);
             Scribe_Values.Look(ref claimableBlocks, "claimableBlocks", true, false);
+            Scribe_Values.Look(ref enableProximity, "enableProximity", true, false);
 
             Scribe_Values.Look(ref decorationChance, "decorationChance", 0.0001f, false);
             Scribe_Values.Look(ref trapChance, "trapChance", 0.001f, false);
@@ -55,7 +57,8 @@ namespace RealRuins {
                 disableSpawnItems = disableSpawnItems,
                 itemCostLimit = itemCostLimit,
                 referenceRadiusAverage = referenceRadiusAverage,
-                wallsDoorsOnly = wallsDoorsOnly
+                wallsDoorsOnly = wallsDoorsOnly,
+                enableProximity = enableProximity
             };
 
             return copy;

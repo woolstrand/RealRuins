@@ -43,4 +43,8 @@
   <RealRuins_MapOptions_DisableHostilesTT></RealRuins_MapOptions_DisableHostilesTT>
   <RealRuins_MapOptions_ClaimableTT>Unclaimable structures can't be repaired or deconstructed</RealRuins_MapOptions_ClaimableTT>
 
+  <RealRuins_MapOptions_EnableProximity>Учитывать близость поселений</RealRuins_MapOptions_EnableProximity>
+  <RealRuins_MapOptions_EnableProximityTT>Расстояние до поселения влияет на параметры генерации: чем ближе к городу, тем плотнее руины, но тем сильнее они разграблены.</RealRuins_MapOptions_EnableProximityTT>
+
+
 </LanguageData>

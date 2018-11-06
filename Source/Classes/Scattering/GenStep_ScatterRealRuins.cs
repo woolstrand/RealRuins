@@ -51,7 +51,7 @@ namespace RealRuins
             List<int> distances = new List<int>();
 
             foreach (WorldObject wo in Find.World.worldObjects.ObjectsAt(map.Tile)) {
-                if (wo is Settlement || wo is Site) return 1.0f; //some default proximity index for bases and sites. not too much, but not flat area.
+                if (wo.Faction != Faction.OfPlayer && (wo is Settlement || wo is Site)) return 1.0f; //some default proximity index for bases and sites. not too much, but not flat area.
             }
             
             Find.WorldFloodFiller.FloodFill(rootTile, (int x) => !Find.World.Impassable(x), delegate(int tile, int traversalDistance)
@@ -86,36 +86,40 @@ namespace RealRuins
         public override void Generate(Map map, GenStepParams parms) {
             Debug.Message("Overridden generate");
             if (allowInWaterBiome || !map.TileInfo.WaterCovered) {
-
-                float proximityFactor = CalculateProximityMultiplier(map);
+                RuinsScatterer.PrepareCellUsageFor(map);
 
                 float densityMultiplier = 1.0f;
                 float scaleMultiplier = 1.0f;
-                
                 float totalDensity = RealRuins_ModSettings.defaultScatterOptions.densityMultiplier;
-                if (proximityFactor < 0.1f && Rand.Chance(0.8f)) {
-                    totalDensity = 0;
-                } else {
-                    totalDensity *= proximityFactor;
-                }
+                currentOptions = RealRuins_ModSettings.defaultScatterOptions.Copy(); //store as instance variable to keep accessible on subsequent ScatterAt calls
 
-                if (totalDensity > 0) {
-                    densityMultiplier = Rand.Value * (totalDensity - 0.1f) + 0.1f; //to ensure it is > 0
-                    scaleMultiplier = (float)Math.Sqrt(totalDensity / densityMultiplier); //to keep scale^2 * density = const
-                } else {
-                    densityMultiplier = 0.0f;
-                }
+                if (RealRuins_ModSettings.defaultScatterOptions.enableProximity) {
+                        
+                    float proximityFactor = CalculateProximityMultiplier(map);
+                    if (proximityFactor < 0.1f && Rand.Chance(0.8f)) {
+                        totalDensity = 0;
+                    } else {
+                        totalDensity *= proximityFactor;
+                    }
+                    
+                    if (totalDensity > 0) {
+                        densityMultiplier = Rand.Value * (totalDensity - 0.1f) + 0.1f; //to ensure it is > 0
+                        scaleMultiplier = (float)Math.Sqrt(totalDensity / densityMultiplier); //to keep scale^2 * density = const
+                    } else {
+                        densityMultiplier = 0.0f;
+                    }
 
-                currentOptions = RealRuins_ModSettings.defaultScatterOptions.Copy();
-                currentOptions.densityMultiplier *= densityMultiplier;
-                currentOptions.referenceRadiusAverage = Math.Min(60, Math.Max(6, (int)(currentOptions.referenceRadiusAverage * scaleMultiplier))); //keep between 6 and 60
-                currentOptions.scavengingMultiplier *= ((float)Math.Pow(proximityFactor, 0.5f) * 3.0f);
-                currentOptions.deteriorationMultiplier += Math.Min(0.2f, (1.0f / proximityFactor) / 40.0f);
-                
+                    currentOptions.densityMultiplier *= densityMultiplier;
+                    currentOptions.referenceRadiusAverage = Math.Min(60, Math.Max(6, (int)(currentOptions.referenceRadiusAverage * scaleMultiplier))); //keep between 6 and 60
+                    currentOptions.scavengingMultiplier *= ((float)Math.Pow(proximityFactor, 0.5f) * 3.0f);
+                    currentOptions.deteriorationMultiplier += Math.Min(0.2f, (1.0f / proximityFactor) / 40.0f);
+
+                }
                 
                 FloatRange per10k = new FloatRange(countPer10kCellsRange.min * totalDensity, countPer10kCellsRange.max * totalDensity);
                 int num = CountFromPer10kCells(per10k.RandomInRange, map, -1);
-                Debug.Message("proximityFactor: {0}, total density: {1}, densityMultiplier: {2}, scaleMultiplier: {3}, new density: {4}. new radius: {5}, new per10k: {6}", proximityFactor, totalDensity, densityMultiplier, scaleMultiplier, currentOptions.densityMultiplier, currentOptions.referenceRadiusAverage, per10k);
+
+                Debug.Message("total density: {0}{1}, densityMultiplier: {2}, scaleMultiplier: {3}, new density: {4}. new radius: {5}, new per10k: {6}", "", totalDensity, densityMultiplier, scaleMultiplier, currentOptions.densityMultiplier, currentOptions.referenceRadiusAverage, per10k);
 
                 Debug.Message("Spawning {0} ruin chunks", num);
 
@@ -127,6 +131,7 @@ namespace RealRuins
                     usedSpots.Add(result);
                 }
                 usedSpots.Clear();
+                RuinsScatterer.FinalizeCellUsage();
             }
         }
 
