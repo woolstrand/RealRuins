@@ -118,18 +118,28 @@ namespace RealRuins
 
     class RuinsScatterer {
 
+        private static bool[,] cellUsed;
+
+        public static void PrepareCellUsageFor(Map map) {
+            cellUsed = new bool[map.Size.x, map.Size.z];
+        }
+
+        public static void FinalizeCellUsage() {
+            cellUsed = null;
+        }
+
         static private int totalWorkTime = 0;
         private ScatterOptions options;
 
         // Clear the cell from other destroyable objects
-        private bool ClearCell(IntVec3 location, Map map) {
+        private bool ClearCell(IntVec3 location, Map map, bool shouldForceClear = true) {
             List<Thing> items = map.thingGrid.ThingsListAt(location);
             foreach (Thing item in items) {
                 if (!item.def.destroyable) {
                     return false;
                 }
-                if (item.def.mineable) {//destroying some blocks when intersecting mountains
-                    if (Rand.Chance(0.3f)) return false;
+                if (item.def.mineable && !shouldForceClear) {//mountain is destroyable only when forcing
+                    return false;
                 }
             }
 
@@ -678,6 +688,10 @@ namespace RealRuins
                             }
                         }
 
+                        if (thingDef.defName.Contains("Animal")) {
+                            itemsToRemove.Add(item);
+                            continue; //remove animal sleeping beds and spots as wild animals tend to concentrate around.
+                        }
                         if (thingDef.IsCorpse || thingDef.Equals(ThingDefOf.MinifiedThing)) { //now corpses are spawned bugged on some reason, so let's ignore. Also we can't handle minified things.
                             itemsToRemove.Add(item);
                             continue;
@@ -915,9 +929,10 @@ namespace RealRuins
 
 
                     //Add items
-                    if (itemsMap[x, z] != null && itemsMap[x, z].Count > 0) {
+                    if (itemsMap[x, z] != null && itemsMap[x, z].Count > 0 && cellUsed[mapLocation.x, mapLocation.z] == false) {
 
                         bool cellIsAlreadyCleared = false;
+                        
                         foreach (ItemTile itemTile in itemsMap[x, z]) {
 
                             ThingDef thingDef = DefDatabase<ThingDef>.GetNamed(itemTile.defName, false); //here thingDef is definitely not null because it was checked earlier
@@ -932,11 +947,17 @@ namespace RealRuins
                             }
 
                             if (!cellIsAlreadyCleared) { //first item to be spawned should also clear place for itself. we can't do it beforehand because we don't know it it will be able and get a chance to be spawned.
-                                if (!ClearCell(mapLocation, map)) {
+                                bool forceCleaning = (wallMap[x, z] > 1) && Rand.Chance(0.9f);
+                                    
+                                if (!ClearCell(mapLocation, map, forceCleaning)) {
                                     break; //if cell was not cleared successfully -> break things placement cycle and move on to the next item
                                 } else {
                                     cellIsAlreadyCleared = true;
                                 }
+                            }
+
+                            if (wallMap[x, z] > 1 && !map.roofGrid.Roofed(mapLocation)) {
+                                map.roofGrid.SetRoof(mapLocation, RoofDefOf.RoofConstructed);
                             }
 
                             Thing thing = ThingMaker.MakeThing(thingDef, stuffDef);
@@ -949,8 +970,8 @@ namespace RealRuins
 
                                 CompQuality q = thing.TryGetComp<CompQuality>();
                                 if (q != null) {
-                                    byte category = (byte)Math.Abs(Math.Round(Rand.Gaussian(0, 6)));
-                                    if (category > 6) category = 0;
+                                    byte category = (byte)Math.Abs(Math.Round(Rand.Gaussian(0, 2)));
+                                    if (category > 6) category = 6; 
                                     q.SetQuality((QualityCategory)category, ArtGenerationContext.Outsider);
                                 }
 
@@ -1122,6 +1143,15 @@ namespace RealRuins
             }
         }
 
+        private void UpdateUsedCells() {
+            for (int z = minZ; z < maxZ; z++) {
+                for (int x = minX; x < maxX; x++) {
+                    IntVec3 mapLocation = new IntVec3(x - minX + mapOriginX, 0, z - minZ + mapOriginZ);
+                    if (wallMap[x, z] != 1) cellUsed[mapLocation.x, mapLocation.z] = true; //mark walls and inner areas as used to prevent overlapping
+                }
+            }
+        }
+
 
 
         //Deterioration degree is unconditional modifier of destruction applied to the ruins bluepring. Degree of 0.5 means that in average each 2nd block in "central" part will be destroyed.
@@ -1135,7 +1165,7 @@ namespace RealRuins
             this.options = options;
 
 
-            referenceRadius = Rand.Range((int)(options.referenceRadiusAverage * 0.5f), (int)(options.referenceRadiusAverage * 1.5f));
+            referenceRadius = Rand.Range((int)(options.referenceRadiusAverage * 0.8f), (int)(options.referenceRadiusAverage * 1.2f));
             scavengersActivity = Rand.Value * options.scavengingMultiplier + (options.scavengingMultiplier) / 3;
             elapsedTime = (Rand.Value * options.scavengingMultiplier) * 3 + ((options.scavengingMultiplier > 0.95) ? 3 : 0);
             referenceRadiusJitter = referenceRadius / 10;
@@ -1166,6 +1196,7 @@ namespace RealRuins
             //Debug.Message("Adding something special...");
             AddSpecials();
             //Debug.Message("Ready");
+            UpdateUsedCells();
 
             TimeSpan span = DateTime.Now - start;
             totalWorkTime += (int)span.TotalMilliseconds;

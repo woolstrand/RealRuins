@@ -42,4 +42,8 @@
   <RealRuins_MapOptions_DisableHostilesTT>入植者と敵対的なアイテム(タレット)が存在します</RealRuins_MapOptions_DisableHostilesTT>
   <RealRuins_MapOptions_ClaimableTT>領土を主張していない構造物は修理や分解することができません</RealRuins_MapOptions_ClaimableTT>
 
+  <RealRuins_MapOptions_EnableProximity>Consider settlement proximity</RealRuins_MapOptions_EnableProximity>
+  <RealRuins_MapOptions_EnableProximityTT>Settlement proximity influences generation parameters: ruins are more dense near cities, but also more empty.</RealRuins_MapOptions_EnableProximityTT>
+
+
 </LanguageData>
