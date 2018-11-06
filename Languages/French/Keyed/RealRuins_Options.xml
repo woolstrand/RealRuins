@@ -36,4 +36,8 @@
   <RealRuins_MapOptions_DisableTrapsTT>Pièges et déclencheurs </RealRuins_MapOptions_DisableTrapsTT>
   <RealRuins_MapOptions_DisableHostilesTT></RealRuins_MapOptions_DisableHostilesTT>
   <RealRuins_MapOptions_ClaimableTT>Les structures non exigibles ne peuvent pas être réparées ou déconstruites </RealRuins_MapOptions_ClaimableTT>
+
+  <RealRuins_MapOptions_EnableProximity>Consider settlement proximity</RealRuins_MapOptions_EnableProximity>
+  <RealRuins_MapOptions_EnableProximityTT>Settlement proximity influences generation parameters: ruins are more dense near cities, but also more empty.</RealRuins_MapOptions_EnableProximityTT>
+
 </LanguageData>
