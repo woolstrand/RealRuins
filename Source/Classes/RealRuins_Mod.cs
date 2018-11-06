@@ -41,6 +41,7 @@ namespace RealRuins {
         public static string Text_Option_DisableTraps = "RealRuins_MapOptions_DisableTraps";
         public static string Text_Option_DisableHostiles = "RealRuins_MapOptions_DisableHostiles";
         public static string Text_Option_Claimable = "RealRuins_MapOptions_Claimable";
+        public static string Text_Option_Proximity = "RealRuins_MapOptions_EnableProximity";
 
         public static string Text_Option_DensityTT = "RealRuins_MapOptions_DensityTT";
         public static string Text_Option_SizeTT = "RealRuins_MapOptions_SizeTT";
@@ -53,6 +54,7 @@ namespace RealRuins {
         public static string Text_Option_DisableTrapsTT = "RealRuins_MapOptions_DisableTrapsTT";
         public static string Text_Option_DisableHostilesTT = "RealRuins_MapOptions_DisableHostilesTT";
         public static string Text_Option_ClaimableTT = "RealRuins_MapOptions_ClaimableTT";
+        public static string Text_Option_ProximityTT = "RealRuins_MapOptions_EnableProximityTT";
 
         // fast regex from xml:
         //<RealRuins_M..Options_([^>]*)>[^<]*<\/([^>]*)>     ===>     public static string Text_Option_$1 = "$2";
@@ -115,8 +117,8 @@ namespace RealRuins {
             left.Gap(25f);
 
             //generation settings
-            int sizeMin = RealRuins_ModSettings.defaultScatterOptions.referenceRadiusAverage / 2;
-            int sizeMax = RealRuins_ModSettings.defaultScatterOptions.referenceRadiusAverage * 3 / 2;
+            int sizeMin = (int)(RealRuins_ModSettings.defaultScatterOptions.referenceRadiusAverage * 0.8f);
+            int sizeMax = (int)(RealRuins_ModSettings.defaultScatterOptions.referenceRadiusAverage * 1.2f);
             string costStr = "∞"; if (RealRuins_ModSettings.defaultScatterOptions.itemCostLimit < 1000) {
                 costStr = RealRuins_ModSettings.defaultScatterOptions.itemCostLimit.ToString();
             }
@@ -134,7 +136,7 @@ namespace RealRuins {
             left.Gap(15);
             left.CheckboxLabeled(Text_Option_DisableHaulables, ref RealRuins_ModSettings.defaultScatterOptions.disableSpawnItems, Text_Option_DisableHaulablesTT);
             left.CheckboxLabeled(Text_Option_WallsAndDoorsOnly, ref RealRuins_ModSettings.defaultScatterOptions.wallsDoorsOnly, Text_Option_WallsAndDoorsOnlyTT);
-           // left.CheckboxLabeled(Text_Option_Claimable, ref RealRuins_ModSettings.defaultScatterOptions.claimableBlocks, Text_Option_ClaimableTT);
+            left.CheckboxLabeled(Text_Option_Proximity, ref RealRuins_ModSettings.defaultScatterOptions.enableProximity, Text_Option_ProximityTT);
             left.End();
             right.Begin(rect3);
             right.CheckboxLabeled(Text_Option_AllowDownloads, ref RealRuins_ModSettings.allowDownloads, Text_Option_AllowDownloadsTooltip);
