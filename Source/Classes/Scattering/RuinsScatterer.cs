@@ -293,12 +293,36 @@ namespace RealRuins
 
 
         private bool LoadRandomXMLSnapshot() {
-            //Create the XmlDocument. 
-            string snapshotName = SnapshotStoreManager.Instance.RandomSnapshotFilename();
-            if (snapshotName == null) {
-                return false;
+
+            int attemptNumber = 0;
+            bool result = false;
+
+            while (attemptNumber < 10 && result != true) {
+
+                string snapshotName = SnapshotStoreManager.Instance.RandomSnapshotFilename();
+                if (snapshotName == null) {
+                    return false;
+                }
+
+                result = DoSanityCheckAndLoad(snapshotName);
+
+                if (!result) { //remove bad snapshots
+                    Debug.Message("DELETING low quality file");
+                    File.Delete(snapshotName);
+                    string deflatedName = snapshotName + ".xml";
+                    if (!File.Exists(deflatedName)) {
+                        File.Delete(deflatedName);
+                    }
+                }
+
             }
 
+            return result;
+        }
+        
+        private bool DoSanityCheckAndLoad(string snapshotName) {
+
+        //Create the XmlDocument. 
             Debug.Message("Did select file {0} for loading", snapshotName);
 
             string deflatedName = snapshotName;
@@ -319,6 +343,11 @@ namespace RealRuins
             blueprintWidth = int.Parse(snapshot.FirstChild.Attributes["width"].Value);
             blueprintHeight = int.Parse(snapshot.FirstChild.Attributes["height"].Value);
 
+            if (blueprintHeight > 350 || blueprintWidth > 350 || blueprintHeight < 10 || blueprintWidth < 10) {
+                Debug.Message("SKIPPED due to size", snapshotName);
+                return false; //wrong size. too small or too large
+            }
+
             terrainMap = new TerrainTile[blueprintWidth, blueprintHeight];
             roofMap = new bool[blueprintWidth, blueprintHeight];
             itemsMap = new List<ItemTile>[blueprintWidth, blueprintHeight];
@@ -334,6 +363,8 @@ namespace RealRuins
 
             //should food ever be spawned for this ruins
             canHaveFood = Rand.Chance((1.0f - deteriorationDegree) / 4);
+            int itemNodes = 0;
+            int terrainNodes = 0;
 
             foreach (XmlNode cellNode in elemList) {
                 int x = int.Parse(cellNode.Attributes["x"].Value);
@@ -342,11 +373,13 @@ namespace RealRuins
 
                 foreach (XmlNode cellElement in cellNode.ChildNodes) {
                     if (cellElement.Name.Equals("terrain")) {
+                        terrainNodes++;
                         TerrainTile terrain = new TerrainTile(cellElement);
                         terrain.location = new IntVec3(x, 0, z);
                         terrainMap[x, z] = terrain;
 
                     } else if (cellElement.Name.Equals("item")) {
+                        itemNodes++;
                         ItemTile tile = new ItemTile(cellElement);
 
                         ThingDef thingDef = DefDatabase<ThingDef>.GetNamed(tile.defName, false);
@@ -368,6 +401,13 @@ namespace RealRuins
                         roofMap[x, z] = true;
                     }
                 }
+            }
+
+            float itemsDensity = (float) (itemNodes + terrainNodes) / (float) (blueprintHeight * blueprintWidth);
+            Debug.Message("Items density: {0}", itemsDensity);
+            if (itemsDensity < 0.1f) {
+                Debug.Message("SKIPPED due to low density");
+                return false; //too empty: less than 1% of area is covered with player constructed items
             }
 
             return true;
@@ -575,7 +615,6 @@ namespace RealRuins
                 //Debug.Message("Finished. Setting core integrity values");
 
                 //if all rooms are intersecting circle outline do fallback plan (circular deterioration chance map)
-                Debug.Message("Rooms found: {0}", allRooms);
                 if (allRooms.Count == openRooms.Count) {
                     //fallback
                     FallbackIntegrityMapConstructor(center, radius);

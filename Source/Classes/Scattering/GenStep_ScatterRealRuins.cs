@@ -23,24 +23,6 @@ namespace RealRuins
         private float multiplier = 1.0f;
         private ScatterOptions currentOptions = RealRuins_ModSettings.defaultScatterOptions;
 
-        private void CalculateProximity() {
-            /*
-            int maxDist = MaxDist;
-            List<Settlement> settlements = Find.WorldObjects.Settlements;
-            for (int i = 0; i < settlements.Count; i++) {
-                Settlement settlement = settlements[i];
-                if (settlement.Faction != null && settlement.Faction != Faction.OfPlayer && (!ignorePermanentlyHostile || !settlement.Faction.def.permanentEnemy) && (!ignoreIfAlreadyMinGoodwill || settlement.Faction.PlayerGoodwill != -100)) {
-                    int num = Find.WorldGrid.TraversalDistanceBetween(tile, settlement.Tile, false, maxDist);
-                    if (num != 2147483647) {
-                        int num2 = Mathf.RoundToInt(DiplomacyTuning.Goodwill_PerQuadrumFromSettlementProximity.Evaluate((float)num));
-                        if (num2 != 0) {
-                            outOffsets.Add(new Pair<Settlement, int>(settlement, num2));
-                        }
-                    }
-                }
-            }
-        */
-        }
 
 
         public float CalculateProximityMultiplier(Map map)
@@ -114,6 +96,10 @@ namespace RealRuins
                     currentOptions.scavengingMultiplier *= ((float)Math.Pow(proximityFactor, 0.5f) * 3.0f);
                     currentOptions.deteriorationMultiplier += Math.Min(0.2f, (1.0f / proximityFactor) / 40.0f);
 
+                    if (densityMultiplier > 20.0f) densityMultiplier = 20.0f;
+                    while (densityMultiplier * currentOptions.referenceRadiusAverage > 800) {
+                        densityMultiplier *= 0.9f;
+                    }
                 }
                 
                 FloatRange per10k = new FloatRange(countPer10kCellsRange.min * totalDensity, countPer10kCellsRange.max * totalDensity);

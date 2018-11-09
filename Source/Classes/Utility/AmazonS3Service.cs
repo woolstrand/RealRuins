@@ -105,7 +105,7 @@ namespace RealRuins
         private UnityWebRequest activeRequest;
 
 
-        private UnityWebRequest AmazonS3SignedWebRequest(string method, string path, byte[] body)
+        private UnityWebRequest AmazonS3SignedWebRequest(string method, string path, string query, byte[] body)
         {
             string contentSHA256 = "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"; //empty data hash
             if (body != null) {
@@ -120,13 +120,14 @@ namespace RealRuins
             string canonicalRequest =
                 method + "\n" +
                 "/" + path + "\n" +
-                "\n" +
+                (query ?? "") + "\n" +
                 "host:" + s3host + "\n" +
                 "x-amz-content-sha256:" + contentSHA256 + "\n" +
                 "x-amz-date:" + amzDate + "\n" +
                 "\n" +
                 headersList + "\n" +
                 contentSHA256;
+
 
             string requestHash = EncryptionHelper.HashEncode(SHA256.Create().ComputeHash(Encoding.UTF8.GetBytes(canonicalRequest)));
 
@@ -144,7 +145,7 @@ namespace RealRuins
             string signature = EncryptionHelper.HashHMACHex(signingKey, stringToSign);
             string headerValue = "AWS4-HMAC-SHA256 Credential=" + publicKey + "/" + shortDate + "/" + region + "/s3/aws4_request,SignedHeaders=" + headersList + ",Signature=" + signature;
 
-            UnityWebRequest request = new UnityWebRequest("https://" + s3host + "/" + path, method);
+            UnityWebRequest request = new UnityWebRequest("https://" + s3host + "/" + path + ((query != null)?("?" + query):""), method);
 
             if (body != null) {
                 request.uploadHandler = new UploadHandlerRaw(body) {
@@ -153,6 +154,10 @@ namespace RealRuins
             }
 
             request.downloadHandler = new DownloadHandlerBuffer();
+
+/*            if (prefix != null) {
+                request.SetRequestHeader("Prefix", prefix);
+            }*/
 
             request.SetRequestHeader("Authorization", headerValue);
             request.SetRequestHeader("x-amz-date", amzDate);
@@ -166,7 +171,7 @@ namespace RealRuins
 
             byte[] fileBuffer = System.IO.File.ReadAllBytes(localFilePath);
 
-            UnityWebRequest request = AmazonS3SignedWebRequest("PUT", fileNameInS3, fileBuffer);
+            UnityWebRequest request = AmazonS3SignedWebRequest("PUT", fileNameInS3, null, fileBuffer);
 
             Action<string> successHandler = delegate (string response) {
                 Log.Message("Map upload completed");
@@ -182,10 +187,14 @@ namespace RealRuins
             return true;
         }
 
-        public bool AmazonS3ListFiles(Action<List<string>> successHandler)
-        {
+        public bool AmazonS3ListFiles(string prefix, Action<List<string>> successHandler) {
 
-            UnityWebRequest request = AmazonS3SignedWebRequest("GET", "", null);
+            string query = null;
+            if (prefix != null) {
+                query = "prefix=" + prefix;
+            }
+            
+            UnityWebRequest request = AmazonS3SignedWebRequest("GET", "", query, null);
 
             void InternalSuccessHandler(string response) {
                 XmlDocument filesListDocument = new XmlDocument();
@@ -224,7 +233,7 @@ namespace RealRuins
 
         public bool AmazonS3DownloadSnapshot(string snapshotName, Action<bool, byte[]> completionHandler) {
 
-            UnityWebRequest request = AmazonS3SignedWebRequest("GET", snapshotName, null);
+            UnityWebRequest request = AmazonS3SignedWebRequest("GET", snapshotName, null, null);
 
             Action<byte[]> internalSuccessHandler = delegate (byte[] response) {
                 completionHandler(true, response);
