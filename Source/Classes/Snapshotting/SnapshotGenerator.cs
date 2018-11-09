@@ -45,6 +45,9 @@ namespace RealRuins {
             StringBuilder fileBuilder = new StringBuilder();
             fileBuilder.AppendFormat("<snapshot width=\"{0}\" height=\"{1}\" biomeDef=\"{2}\">\n", width, height, map.Biome.defName);
 
+            int itemsCount = 0;
+            int averageHP = 0;
+
             for (int z = rect.minZ; z < rect.maxZ; z++) {
                 for (int x = rect.minX; x < rect.maxX; x++) {
 
@@ -79,6 +82,9 @@ namespace RealRuins {
                                 //Use only buildings and items. Ignoring pawns, trees, filth and so on
                                 if (thing.def.category == ThingCategory.Building || thing.def.category == ThingCategory.Item) {
                                     if (thing.def.building != null && thing.def.building.isNaturalRock) continue; //ignoring natural rocks too
+                                    averageHP = (averageHP * itemsCount +
+                                                 thing.HitPoints / Math.Max(thing.MaxHitPoints, 1)) / (itemsCount + 1);
+                                    itemsCount++;
 
                                     itemsBuilder.AppendFormat("\t\t<item def=\"{0}\"", thing.def.defName);
 
@@ -106,6 +112,17 @@ namespace RealRuins {
                                 }
                             }
                         }
+                    }
+
+                    if ((float) itemsCount / ((xmax - xmin) * (zmax - zmin)) < 0.01) {
+                        //too low density of user generated things.
+                        Debug.Message("Too low ruins density. Ignoring.");
+                        return null;
+                    }
+                    if (averageHP < 0.75) {
+                        //average HP < 0.75 means VERY worn base. It's very likely this base is just a bunch of claimed ruins, and we want to prevent recycling ruins as is
+                        Debug.Message("Too low ruins average HP. Ignoring.");
+                        return null;
                     }
 
                     if (terrainBuilder.Length > 0 || itemsBuilder.Length > 0 || roofBuilder.Length > 0) {

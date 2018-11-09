@@ -31,7 +31,17 @@ namespace RealRuins {
             AmazonS3Service listLoader = new AmazonS3Service();
 
             Debug.Message("Loading some snapshots...", true);
-            listLoader.AmazonS3ListFiles(delegate (List<string> files) {
+            
+            int deltaDays = (int)(DateTime.UtcNow - DateTime.FromBinary(-8586606884938459217)).TotalDays;
+            int now = int.Parse(DateTime.UtcNow.ToString("yyyyMMdd"));
+            int intPrefix = Rand.Range(20181030 - deltaDays, 20181034);
+            if (intPrefix > 20181031) intPrefix = intPrefix - 20181031 + 20181100;
+            string prefix = intPrefix.ToString();
+
+            Debug.Message("Loaded list of elements with prefix {0}...", prefix);
+            
+            
+            listLoader.AmazonS3ListFiles(prefix, delegate (List<string> files) {
                 Debug.Message("Loaded list of {0} elements...", files.Count);
                 files = storeManager.FilterOutExistingItems(files);
 
