@@ -27,6 +27,7 @@ namespace RealRuins {
         public int minimumCostRequired = 0;
         public bool shouldKeepDefencesAndPower = false;
         public bool shouldAddSignificantResistance = false;
+        public bool shouldCutBlueprint = true;
 
 
         public bool deleteLowQuality = true;
@@ -73,7 +74,8 @@ namespace RealRuins {
                 minimumCostRequired = minimumCostRequired,
                 deleteLowQuality =deleteLowQuality,
                 shouldKeepDefencesAndPower = shouldKeepDefencesAndPower,
-                shouldAddSignificantResistance = shouldAddSignificantResistance
+                shouldAddSignificantResistance = shouldAddSignificantResistance,
+                shouldCutBlueprint = shouldCutBlueprint
             };
 
             return copy;
