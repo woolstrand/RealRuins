@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+  <IncidentDef>
+		<defName>Quest_PristineRuins</defName>
+		<label>pristine ruins quest</label>
+		<category>WorldQuest</category>
+    <targetTags>
+      <li>World</li>
+    </targetTags>
+		<workerClass>RealRuins.IncidentWorker_RuinsFound</workerClass>
+		<letterLabel>Pristine ruins found</letterLabel>
+		<letterText>{0}, {1} of {2}, has sent us a message.\n\nTheir scouts have discovered an old complex in almost untouched condition. But you should better hurry before other treasure hunters get there.</letterText>
+		<letterDef>PositiveEvent</letterDef>
+		<baseChance>1</baseChance>
+	</IncidentDef>
+</Defs>

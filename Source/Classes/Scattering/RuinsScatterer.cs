@@ -306,7 +306,7 @@ namespace RealRuins
 
                 result = DoSanityCheckAndLoad(snapshotName);
 
-                if (!result) { //remove bad snapshots
+                if (!result && options.deleteLowQuality) { //remove bad snapshots
                     Debug.Message("DELETING low quality file");
                     File.Delete(snapshotName);
                     string deflatedName = snapshotName + ".xml";
@@ -344,8 +344,13 @@ namespace RealRuins
             blueprintHeight = int.Parse(snapshot.FirstChild.Attributes["height"].Value);
 
             if (blueprintHeight > 350 || blueprintWidth > 350 || blueprintHeight < 10 || blueprintWidth < 10) {
-                Debug.Message("SKIPPED due to size", snapshotName);
+                Debug.Message("SKIPPED due to unacceptable linear dimensions", snapshotName);
                 return false; //wrong size. too small or too large
+            }
+
+            if (blueprintHeight * blueprintWidth < options.minimumSizeRequired) {
+                Debug.Message("SKIPPED due to area vs options", snapshotName);
+                return false;
             }
 
             terrainMap = new TerrainTile[blueprintWidth, blueprintHeight];
@@ -405,7 +410,7 @@ namespace RealRuins
 
             float itemsDensity = (float) (itemNodes + terrainNodes) / (float) (blueprintHeight * blueprintWidth);
             Debug.Message("Items density: {0}", itemsDensity);
-            if (itemsDensity < 0.1f) {
+            if (itemsDensity < options.minimumDensityRequired) {
                 Debug.Message("SKIPPED due to low density");
                 return false; //too empty: less than 1% of area is covered with player constructed items
             }
@@ -950,6 +955,8 @@ namespace RealRuins
 
                     //{loc.x, loc.z} should be mapped from blueprint's {floorcenter.x, floorcenter.z}
                     IntVec3 mapLocation = new IntVec3(x - minX + mapOriginX, 0, z - minZ + mapOriginZ);
+                    if (!mapLocation.InBounds(map)) continue;
+                    
 
                     //Check if thepoint is in allowed bounds of the map
                     if (!mapLocation.InBounds(map) || mapLocation.InNoBuildEdgeArea(map)) {
@@ -1061,6 +1068,8 @@ namespace RealRuins
                     }
 
                     IntVec3 mapLocation = new IntVec3(x - minX + mapOriginX, 0, z - minZ + mapOriginZ);
+                    if (!mapLocation.InBounds(map)) continue;
+
 
                     ThingDef[] filthDef = { ThingDefOf.Filth_Dirt, ThingDefOf.Filth_Trash, ThingDefOf.Filth_Ash };
                     FilthMaker.MakeFilth(mapLocation, map, filthDef[0], Rand.Range(0, 3));
@@ -1093,6 +1102,8 @@ namespace RealRuins
 
 
                     IntVec3 mapLocation = new IntVec3(x - minX + mapOriginX, 0, z - minZ + mapOriginZ);
+                    if (!mapLocation.InBounds(map)) continue;
+
                     if (Rand.Value < options.decorationChance) {
 
                         bool canPlace = true;
@@ -1186,6 +1197,8 @@ namespace RealRuins
             for (int z = minZ; z < maxZ; z++) {
                 for (int x = minX; x < maxX; x++) {
                     IntVec3 mapLocation = new IntVec3(x - minX + mapOriginX, 0, z - minZ + mapOriginZ);
+                    if (!mapLocation.InBounds(map)) continue;
+
                     if (wallMap[x, z] != 1) cellUsed[mapLocation.x, mapLocation.z] = true; //mark walls and inner areas as used to prevent overlapping
                 }
             }
