@@ -8,6 +8,7 @@
     <siteTexture>World/WorldObjects/Sites/GenericSite</siteTexture>
     <expandingIconTexture>ruinedbase</expandingIconTexture>
     <forceExitAndRemoveMapCountdownDurationDays>15</forceExitAndRemoveMapCountdownDurationDays>
+    <workerClass>RealRuins.RuinedBaseWorker</workerClass>
   </SiteCoreDef>
 
   <GenStepDef>
@@ -18,5 +19,12 @@
       <nearMapCenter>true</nearMapCenter>
     </genStep>
   </GenStepDef>
+
+  <GenStepDef>
+    <defName>SettlementPower</defName>
+    <order>455</order>
+    <genStep Class="GenStep_Power" />
+  </GenStepDef>
+
 
 </Defs>
