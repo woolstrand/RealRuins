@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+
+  <SiteCoreDef>
+    <defName>RuinedBase</defName>
+    <label>abandoned base with some precious loot still intact</label>
+    <description>Abandoned base which still may contain a lot of useful stuff</description>
+    <siteTexture>World/WorldObjects/Sites/GenericSite</siteTexture>
+    <expandingIconTexture>ruinedbase</expandingIconTexture>
+    <forceExitAndRemoveMapCountdownDurationDays>15</forceExitAndRemoveMapCountdownDurationDays>
+  </SiteCoreDef>
+
+  <GenStepDef>
+    <defName>ScatterBaseRuins</defName>
+    <linkWithSite>RuinedBase</linkWithSite>
+    <order>450</order>
+    <genStep Class="RealRuins.GenStep_ScatterLargeRealRuins">
+      <nearMapCenter>true</nearMapCenter>
+    </genStep>
+  </GenStepDef>
+
+</Defs>

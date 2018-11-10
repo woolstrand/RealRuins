@@ -1,0 +1,21 @@
+<Defs>
+  <WorldObjectDef>
+    <defName>RuinedBase</defName>
+    <label>ruins</label>
+    <description>A ruins of an abandoned outpost</description>
+    <worldObjectClass>MapParent</worldObjectClass>
+    <expandingIcon>true</expandingIcon>
+    <expandingIconPriority>10</expandingIconPriority>
+    <canBePlayerHome>false</canBePlayerHome>
+
+    <IncidentTargetTags>
+      <li>Map_PlayerHome</li>
+    </IncidentTargetTags>
+
+    <comps>
+      <li Class="WorldObjectCompProperties_Timeout" />
+      <li Class="RealRuins.WorldObjectCompProperties_RuinedBase" />
+      <li Class="WorldObjectCompProperties_TimedForcedExit" />
+    </comps>
+  </WorldObjectDef>
+</Defs>

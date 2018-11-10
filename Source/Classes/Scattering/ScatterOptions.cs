@@ -22,6 +22,12 @@ namespace RealRuins {
         public float trapChance = 0.001f; //probability PER CELL
         public float hostileChance = 0.1f; //probability PER CHUNK
 
+        public int minimumSizeRequired = 0;
+        public float minimumDensityRequired = 0.1f;
+        public int minimumCostRequired = 0;
+
+        public bool deleteLowQuality = true;
+
         public static readonly ScatterOptions Default = new ScatterOptions();
 
 
@@ -58,7 +64,11 @@ namespace RealRuins {
                 itemCostLimit = itemCostLimit,
                 referenceRadiusAverage = referenceRadiusAverage,
                 wallsDoorsOnly = wallsDoorsOnly,
-                enableProximity = enableProximity
+                enableProximity = enableProximity,
+                minimumSizeRequired = minimumSizeRequired,
+                minimumDensityRequired = minimumDensityRequired,
+                minimumCostRequired = minimumCostRequired,
+                deleteLowQuality =deleteLowQuality
             };
 
             return copy;

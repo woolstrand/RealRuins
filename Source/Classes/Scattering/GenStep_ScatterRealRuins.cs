@@ -67,6 +67,17 @@ namespace RealRuins
 
         public override void Generate(Map map, GenStepParams parms) {
             Debug.Message("Overridden generate");
+            bool shouldReturn = false;
+            foreach (WorldObject wo in Find.World.worldObjects.ObjectsAt(map.Tile))
+            {
+                Debug.Message("World Object on generation tile: {0} ({1}).", wo.def.defName, wo.GetType().ToString());
+                if (!(wo is Site site)) continue;
+                Debug.Message("Site core: {0}", site.core.def.defName);
+                shouldReturn = true;
+            }
+            
+            if (shouldReturn) return;
+            
             if (allowInWaterBiome || !map.TileInfo.WaterCovered) {
                 RuinsScatterer.PrepareCellUsageFor(map);
 
@@ -138,19 +149,39 @@ namespace RealRuins
     }
 
     class GenStep_ScatterLargeRealRuins : GenStep_Scatterer {
+
+        private ScatterOptions currentOptions;
+        
         public override int SeedPart {
             get {
-                return 74293946;
+                return 74293947;
             }
         }
 
 
+        public override void Generate(Map map, GenStepParams parms) {
+            Debug.Message("Overridden LARGE generate");
+            if (allowInWaterBiome || !map.TileInfo.WaterCovered) {
+                RuinsScatterer.PrepareCellUsageFor(map);
+
+                currentOptions = RealRuins_ModSettings.defaultScatterOptions.Copy(); //store as instance variable to keep accessible on subsequent ScatterAt calls
+
+                currentOptions.referenceRadiusAverage = Rand.Range(50, 90);
+                currentOptions.scavengingMultiplier = 0.1f;
+                currentOptions.deteriorationMultiplier = 0.05f;
+
+                currentOptions.minimumCostRequired = 5000;
+                currentOptions.minimumDensityRequired = 0.3f;
+                currentOptions.minimumSizeRequired = 10000;
+                currentOptions.deleteLowQuality = false; //do not delete since we have much higher requirements for base ruins
+
+                ScatterAt(map.Center, map);
+                RuinsScatterer.FinalizeCellUsage();
+            }
+        }
+
         protected override void ScatterAt(IntVec3 loc, Map map, int count = 1) {
-/*            float scavengersActivity = 0.5f + Rand.Value; //later will be based on other settlements proximity
-            float ruinsAge = Rand.Range(1, 25);
-            float deteriorationDegree = Rand.Value;
-            int referenceRadius = Rand.Range(15, 35);
-            new RuinsScatterer().ScatterRuinsAt(loc, map, referenceRadius, Rand.Range(0, 3), deteriorationDegree, scavengersActivity, ruinsAge);*/
+            new RuinsScatterer().ScatterRuinsAt(loc, map, currentOptions);
         }
 
         protected override bool CanScatterAt(IntVec3 loc, Map map) {
