@@ -8,6 +8,7 @@ using System.Reflection;
 
 using RimWorld;
 using RimWorld.Planet;
+using Verse.AI.Group;
 using Verse;
 using RimWorld.BaseGen;
 
@@ -167,25 +168,49 @@ namespace RealRuins
 
                 currentOptions = RealRuins_ModSettings.defaultScatterOptions.Copy(); //store as instance variable to keep accessible on subsequent ScatterAt calls
 
-                currentOptions.referenceRadiusAverage = Rand.Range(50, 90);
+                currentOptions.referenceRadiusAverage = Rand.Range(90, 120);
                 currentOptions.scavengingMultiplier = 0.1f;
                 currentOptions.deteriorationMultiplier = 0.0f;
+                currentOptions.hostileChance = 1.0f;
 
                 currentOptions.minimumCostRequired = 5000;
-                currentOptions.minimumDensityRequired = 0.3f;
+                currentOptions.minimumDensityRequired = 0.2f;
                 currentOptions.minimumSizeRequired = 10000;
                 currentOptions.deleteLowQuality = false; //do not delete since we have much higher requirements for base ruins
                 currentOptions.shouldKeepDefencesAndPower = true;
                 currentOptions.shouldAddSignificantResistance = true;
+                currentOptions.shouldCutBlueprint = false;
+                
 
                 ScatterAt(map.Center, map);
                 RuinsScatterer.FinalizeCellUsage();
+
+                FloatRange defaultPoints = new FloatRange(200.0f, 3000.0f);
                 
                 ResolveParams resolveParams = default(ResolveParams);
-                resolveParams.rect = new CellRect(10, 10, map.Size.x - 20, map.Size.z - 20);
-                resolveParams.faction = Faction.OfAncientsHostile;
+                resolveParams.rect = CellRect.CenteredOn(map.Center, currentOptions.referenceRadiusAverage);
+                resolveParams.faction = Find.FactionManager.RandomEnemyFaction();
+                resolveParams.singlePawnLord = LordMaker.MakeNewLord(resolveParams.faction, new LordJob_DefendBase(resolveParams.faction, resolveParams.rect.CenterCell), map, null);;
+                resolveParams.pawnGroupKindDef = (resolveParams.pawnGroupKindDef ?? PawnGroupKindDefOf.Settlement);
                 
-                BaseGen.symbolStack.Push("", resolveParams);
+                if (resolveParams.pawnGroupMakerParams == null)
+                {
+                    resolveParams.pawnGroupMakerParams = new PawnGroupMakerParms();
+                    resolveParams.pawnGroupMakerParams.tile = map.Tile;
+                    resolveParams.pawnGroupMakerParams.faction = resolveParams.faction;
+                    PawnGroupMakerParms pawnGroupMakerParams = resolveParams.pawnGroupMakerParams;
+                    pawnGroupMakerParams.points = defaultPoints.RandomInRange;
+                    resolveParams.pawnGroupMakerParams.inhabitants = true;
+                }
+
+                BaseGen.globalSettings.map = map;
+                BaseGen.globalSettings.mainRect = resolveParams.rect;
+                BaseGen.symbolStack.Push("pawnGroup", resolveParams);
+
+                BaseGen.symbolStack.Push("chargeBatteries", resolveParams);
+                BaseGen.symbolStack.Push("refuel", resolveParams);
+                    
+                BaseGen.Generate();
             }
         }
 

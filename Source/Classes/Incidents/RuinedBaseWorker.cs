@@ -13,6 +13,7 @@ namespace RealRuins {
             Pawn t = caravan.PawnsListForReading[0];
             bool flag = site.Faction == null || site.Faction.HostileTo(Faction.OfPlayer);
             Map orGenerateMap = GetOrGenerateMapUtility.GetOrGenerateMap(site.Tile, MapSize, null);
+           // Find.LetterStack.ReceiveLetter("LetterLabelCaravanEnteredMap".Translate(site), "LetterCaravanEnteredMap".Translate(caravan.Label, site).CapitalizeFirst(), LetterDefOf.NeutralEvent, t, null, null);
 
             Map map = orGenerateMap;
             CaravanEnterMode enterMode = CaravanEnterMode.Edge;

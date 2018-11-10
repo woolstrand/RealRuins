@@ -23,7 +23,9 @@
   <GenStepDef>
     <defName>SettlementPower</defName>
     <order>455</order>
-    <genStep Class="GenStep_Power" />
+    <genStep Class="GenStep_Power">
+	
+    </genStep>
   </GenStepDef>
 
 

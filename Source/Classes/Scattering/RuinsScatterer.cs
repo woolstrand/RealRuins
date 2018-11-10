@@ -129,6 +129,7 @@ namespace RealRuins
         }
 
         static private int totalWorkTime = 0;
+        private float totalCost = 0;
         private ScatterOptions options;
 
         // Clear the cell from other destroyable objects
@@ -483,6 +484,30 @@ namespace RealRuins
             BlurIntegrityMap(itemsIntegrity, 7);
         }
 
+        private void UntouchedIntegrityMapConstructor() {
+            minX = 0;
+            minZ = 0;
+            maxX = blueprintWidth - 1;
+            maxZ = blueprintHeight - 1;
+            
+            mapOriginX = targetPoint.x - (maxX - minX) / 2;
+            mapOriginZ = targetPoint.z - (maxZ - minZ) / 2;
+
+            if (mapOriginX < 10) mapOriginX = 10;
+            if (mapOriginZ < 10) mapOriginZ = 10;
+
+            if (mapOriginX + (maxX - minX) > map.info.Size.x) mapOriginX = map.info.Size.x - 10 - (maxX - minX);
+            if (mapOriginZ + (maxZ - minZ) > map.info.Size.z) mapOriginZ = map.info.Size.z - 10 - (maxZ - minZ);
+
+            for (int x = minX; x < maxX; x++) {
+                for (int z = minZ; z < maxZ; z++) {
+                    terrainIntegrity[x, z] = 1.0f - options.deteriorationMultiplier;
+                    itemsIntegrity[x, z] = 1.0f - options.deteriorationMultiplier;
+                }
+            }
+
+        }
+
         private void FindRoomsAndConstructIntegrityMaps() {
             int currentRoomIndex = 1;
             List<int> roomAreas = new List<int>() { 0 }; //we don't have a room indexed zero.
@@ -742,6 +767,8 @@ namespace RealRuins
                         }
 
                         if (thingDef.terrainAffordanceNeeded != null) {
+                            if (thingDef.EverTransmitsPower && options.shouldKeepDefencesAndPower) continue; //ignore affordances for power transmitters if we need to keep defence systems
+
                             if (terrainDef != null && terrainDef.terrainAffordanceNeeded != null && existingTerrain.affordances.Contains(terrainDef.terrainAffordanceNeeded)) {
                                 if (!terrainDef.affordances.Contains(thingDef.terrainAffordanceNeeded)) { //if new terrain can be placed over existing terrain, checking if an item can be placed over a new terrain
                                     itemsToRemove.Add(item);
@@ -951,6 +978,7 @@ namespace RealRuins
         private void TransferBlueprint() {
             //Planting blueprint
 
+            totalCost = 0;
             Faction faction = (Rand.Value > 0.35) ? Find.FactionManager.RandomEnemyFaction() : Find.FactionManager.OfAncients;
             
             //Debug.Message("Setting ruins faction to {0}", faction.Name);
@@ -972,6 +1000,7 @@ namespace RealRuins
                     if (terrainMap[x, z] != null) {
                         TerrainDef blueprintTerrain = TerrainDef.Named(terrainMap[x, z].defName);
                         map.terrainGrid.SetTerrain(mapLocation, blueprintTerrain);
+                        totalCost += terrainMap[x, z].cost;
                     }
 
                     /*if (roofMap[x, z] == true) {
@@ -1007,7 +1036,7 @@ namespace RealRuins
                                 }
                             }
 
-                            if (wallMap[x, z] > 1 && !map.roofGrid.Roofed(mapLocation)) {
+                            if ((wallMap[x, z] > 1 || wallMap[x, z] == -1) && !map.roofGrid.Roofed(mapLocation)) {
                                 map.roofGrid.SetRoof(mapLocation, RoofDefOf.RoofConstructed);
                             }
 
@@ -1051,15 +1080,22 @@ namespace RealRuins
                                     }
                                 }
 
+                                totalCost += itemTile.cost;
+
                                 thing.HitPoints = Rand.Range(1, thing.def.BaseMaxHitPoints);
                                 if (thing.def.EverHaulable) {
                                     thing.SetForbidden(true, false);
+                                    if (map.terrainGrid.TerrainAt(mapLocation).IsWater) {
+                                        thing.HitPoints /= Rand.Range(10, 100); //things in marsh or river are really in bad condition
+                                    }
                                 }
                             }
                         }
                     }
                 }
             }
+            
+            Debug.Message("Transferred blueprint of total cost of approximately {0}", totalCost);
         }
 
         private void AddFilthAndRubble() {
@@ -1146,7 +1182,7 @@ namespace RealRuins
 
                 PawnKindDef pawnKindDef = null;
 
-                if (Rand.Chance(0.7f)) {
+                if (Rand.Chance(0.7f) && !options.shouldAddSignificantResistance) { //no animals in "significant resistance" scenario. Surely animals are not a significant resistance in sane amounts
                     //animals
                     pawnKindDef = map.Biome.AllWildAnimals.RandomElementByWeight((PawnKindDef def) => (def.RaceProps.foodType == FoodTypeFlags.CarnivoreAnimal || def.RaceProps.foodType == FoodTypeFlags.OmnivoreAnimal) ? 1 : 0);
                 } else {
@@ -1155,12 +1191,14 @@ namespace RealRuins
 
                 float powerMax = rect.Area / 30.0f;
                 float powerThreshold = (Math.Abs(Rand.Gaussian(0.5f, 1)) * powerMax) + 1;
+                
 
                 Debug.Message("Gathering troops power of {0} (max was {1})", powerThreshold, powerMax);
 
                 float cumulativePower = 0;
 
                 Faction faction = Faction.OfAncientsHostile;
+                
                 Lord lord = LordMaker.MakeNewLord(lordJob: new LordJob_DefendPoint(rect.CenterCell), faction: faction, map: map, startingPawns: null);
                 int tile = map.Tile;
 
@@ -1250,7 +1288,13 @@ namespace RealRuins
             }
 
             //Debug.Message("Finding rooms...");
-            FindRoomsAndConstructIntegrityMaps();
+            if (options.shouldCutBlueprint) {
+                FindRoomsAndConstructIntegrityMaps();
+            } else {
+                UntouchedIntegrityMapConstructor();
+            }
+            
+
             //Debug.Message("Processing items...");
             ProcessItems();
             //Debug.Message("Deteriorating...");
