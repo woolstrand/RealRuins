@@ -25,6 +25,9 @@ namespace RealRuins {
         public int minimumSizeRequired = 0;
         public float minimumDensityRequired = 0.1f;
         public int minimumCostRequired = 0;
+        public bool shouldKeepDefencesAndPower = false;
+        public bool shouldAddSignificantResistance = false;
+
 
         public bool deleteLowQuality = true;
 
@@ -68,7 +71,9 @@ namespace RealRuins {
                 minimumSizeRequired = minimumSizeRequired,
                 minimumDensityRequired = minimumDensityRequired,
                 minimumCostRequired = minimumCostRequired,
-                deleteLowQuality =deleteLowQuality
+                deleteLowQuality =deleteLowQuality,
+                shouldKeepDefencesAndPower = shouldKeepDefencesAndPower,
+                shouldAddSignificantResistance = shouldAddSignificantResistance
             };
 
             return copy;

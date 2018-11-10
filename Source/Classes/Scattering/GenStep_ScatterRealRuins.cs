@@ -9,6 +9,7 @@ using System.Reflection;
 using RimWorld;
 using RimWorld.Planet;
 using Verse;
+using RimWorld.BaseGen;
 
 namespace RealRuins
 {
@@ -168,15 +169,23 @@ namespace RealRuins
 
                 currentOptions.referenceRadiusAverage = Rand.Range(50, 90);
                 currentOptions.scavengingMultiplier = 0.1f;
-                currentOptions.deteriorationMultiplier = 0.05f;
+                currentOptions.deteriorationMultiplier = 0.0f;
 
                 currentOptions.minimumCostRequired = 5000;
                 currentOptions.minimumDensityRequired = 0.3f;
                 currentOptions.minimumSizeRequired = 10000;
                 currentOptions.deleteLowQuality = false; //do not delete since we have much higher requirements for base ruins
+                currentOptions.shouldKeepDefencesAndPower = true;
+                currentOptions.shouldAddSignificantResistance = true;
 
                 ScatterAt(map.Center, map);
                 RuinsScatterer.FinalizeCellUsage();
+                
+                ResolveParams resolveParams = default(ResolveParams);
+                resolveParams.rect = new CellRect(10, 10, map.Size.x - 20, map.Size.z - 20);
+                resolveParams.faction = Faction.OfAncientsHostile;
+                
+                BaseGen.symbolStack.Push("", resolveParams);
             }
         }
 

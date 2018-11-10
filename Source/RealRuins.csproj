@@ -67,6 +67,7 @@
     <Compile Include="Classes\Debug.cs" />
     <Compile Include="Classes\Incidents\IncidentWorker_RuinsFound.cs" />
     <Compile Include="Classes\Incidents\RuinedBaseComp.cs" />
+    <Compile Include="Classes\Incidents\RuinedBaseWorker.cs" />
     <Compile Include="Classes\Incidents\WorldObjectCompProperties_RuinedBase.cs" />
     <Compile Include="Classes\RealRuins_Mod.cs" />
     <Compile Include="Classes\RealRuins_ModSettings.cs" />

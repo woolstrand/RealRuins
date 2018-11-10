@@ -817,6 +817,11 @@ namespace RealRuins
                         roofMap[x, z] = Rand.Chance(itemsChance * 0.3f); //roof will most likely collapse everywhere
 
                         foreach (ItemTile item in items) {
+                            if (options.shouldKeepDefencesAndPower && item.defName.ToLower().Contains("conduit")) { //do not deteriorate conduits if preparing
+                                newItems.Add(item);
+                                continue;
+                            }
+                            
                             if (item.isWall) hadWall = true;
                             if (Rand.Chance(itemsChance)) {
                                 if (item.isWall) retainedWall = true;
@@ -1204,6 +1209,17 @@ namespace RealRuins
             }
         }
 
+        private void RestoreDefencesAndPower() {
+            foreach (var thing in map.spawnedThings) {
+                if (thing.TryGetComp<CompPowerPlant>() != null || thing.TryGetComp<CompPowerBattery>() != null || (thing.def.building != null && thing.def.building.IsTurret)) {
+                    CompBreakdownable bdcomp = thing.TryGetComp<CompBreakdownable>();
+                    if (bdcomp != null) {
+                        bdcomp.Notify_Repaired();
+                    }
+                }
+            }
+        }
+
 
 
         //Deterioration degree is unconditional modifier of destruction applied to the ruins bluepring. Degree of 0.5 means that in average each 2nd block in "central" part will be destroyed.
@@ -1249,6 +1265,10 @@ namespace RealRuins
             AddSpecials();
             //Debug.Message("Ready");
             UpdateUsedCells();
+
+            if (options.shouldKeepDefencesAndPower) {
+                RestoreDefencesAndPower();
+            }
 
             TimeSpan span = DateTime.Now - start;
             totalWorkTime += (int)span.TotalMilliseconds;
