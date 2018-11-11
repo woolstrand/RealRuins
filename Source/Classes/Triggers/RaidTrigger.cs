@@ -28,7 +28,7 @@ namespace RealRuins {
                     if (thing != null) {
                         triggered = true;
                         ticksLeft = Rand.Range(10, 800);
-                        Debug.Message("Triggered raid at {0}, {1} of value {2} after {3} long ticks ({4} max speed seconds)", base.Position.x, base.Position.z, value, ticksLeft, ticksLeft * 5);
+                        Debug.Message("Triggered raid at {0}, {1} of value {2} after {3} long ticks (approximately max speed seconds)", base.Position.x, base.Position.z, value, ticksLeft);
                     }
                 } else {
 //                    Debug.Message("tick rare: {0}", ticksLeft);

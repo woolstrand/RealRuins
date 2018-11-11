@@ -2,9 +2,9 @@
 <Defs>
 
   <SiteCoreDef>
-    <defName>RuinedBase</defName>
-    <label>abandoned base with some precious loot still intact</label>
-    <description>Abandoned base which still may contain a lot of useful stuff</description>
+    <defName>RuinedBaseSite</defName>
+    <label>abandoned base</label>
+    <description>Nobody knows why former dwellers left this outpost and where did they go, but this place definitely contains tons of valuable stuff and machinery.</description>
     <siteTexture>World/WorldObjects/Sites/GenericSite</siteTexture>
     <expandingIconTexture>ruinedbase</expandingIconTexture>
     <forceExitAndRemoveMapCountdownDurationDays>15</forceExitAndRemoveMapCountdownDurationDays>
@@ -13,7 +13,7 @@
 
   <GenStepDef>
     <defName>ScatterBaseRuins</defName>
-    <linkWithSite>RuinedBase</linkWithSite>
+    <linkWithSite>RuinedBaseSite</linkWithSite>
     <order>450</order>
     <genStep Class="RealRuins.GenStep_ScatterLargeRealRuins">
       <nearMapCenter>true</nearMapCenter>
@@ -22,6 +22,7 @@
 
   <GenStepDef>
     <defName>SettlementPower</defName>
+    <linkWithSite>RuinedBaseSite</linkWithSite>
     <order>455</order>
     <genStep Class="GenStep_Power">
 	

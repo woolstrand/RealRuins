@@ -2,7 +2,7 @@
   <WorldObjectDef>
     <defName>RuinedBase</defName>
     <label>ruins</label>
-    <description>A ruins of an abandoned outpost</description>
+    <description>Ruins of an abandoned outpost</description>
     <worldObjectClass>MapParent</worldObjectClass>
     <expandingIcon>true</expandingIcon>
     <expandingIconPriority>10</expandingIconPriority>
