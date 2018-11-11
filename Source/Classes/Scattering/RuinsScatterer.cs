@@ -1119,7 +1119,7 @@ namespace RealRuins
                     if (!mapLocation.InBounds(map)) continue;
                     TerrainDef td = map.terrainGrid.TerrainAt(mapLocation);
                 
-                    if (!options.shouldCutBlueprint && (td == null || td.Removable)) {
+                    if (!options.shouldCutBlueprint && (td == null || !td.Removable)) {
                         continue; //if base is uncut, scatter filth only on constructed surfaces.
                     }
 
@@ -1129,6 +1129,10 @@ namespace RealRuins
 
                     while (Rand.Value > 0.7) {
                         FilthMaker.MakeFilth(mapLocation, map, filthDef[Rand.Range(0, 2)], Rand.Range(1, 5));
+                    }
+
+                    if (options.shouldKeepDefencesAndPower && Rand.Chance(0.05f)) {
+                        FilthMaker.MakeFilth(mapLocation, map, ThingDefOf.Filth_Blood, Rand.Range(1, 5));
                     }
 
                     if (Rand.Chance(0.01f)) { //chance to spawn slag chunk
@@ -1277,7 +1281,7 @@ namespace RealRuins
 
             float raidMaxPoints = (remainingCost / ratio) / triggersNumber; //to cap max raid size
 
-            Debug.Message("Triggers number: {0}. Cost: {1}", triggersNumber, remainingCost);
+            Debug.Message("Triggers number: {0}. Cost: {1}. Base max points: {2} (absolute max in x2)", triggersNumber, remainingCost, raidMaxPoints);
 
 
             while (addedTriggers < triggersNumber && remainingCost > 0) {
@@ -1292,7 +1296,7 @@ namespace RealRuins
                 RaidTrigger trigger = ThingMaker.MakeThing(raidTriggerDef) as RaidTrigger;
                 trigger.faction= Find.FactionManager.RandomEnemyFaction();
 
-                trigger.value = new FloatRange(250.0f, Math.Max(250.0f, raidMaxPoints)).RandomInRange;
+                trigger.value = new FloatRange(250.0f, Math.Max(250.0f, raidMaxPoints * 2)).RandomInRange;
                 remainingCost -= trigger.value * ratio;
                 
                 Debug.Message("Added trigger at {0}, {1} for {2} points, remaining cost: {3}", mapLocation.x, mapLocation.z, trigger.value, remainingCost);

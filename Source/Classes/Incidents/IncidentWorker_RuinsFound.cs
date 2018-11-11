@@ -18,7 +18,8 @@ namespace RealRuins {
 		}
 		int tile;
 		Faction faction;
-		return Find.FactionManager.RandomNonHostileFaction(false, false, false, TechLevel.Undefined) != null && TryFindTile(out tile) && SiteMakerHelper.TryFindRandomFactionFor(DefDatabase<SiteCoreDef>.GetNamed("RuinedBase"), null, out faction, true, null);
+		
+		return Find.FactionManager.RandomNonHostileFaction(false, false, false, TechLevel.Undefined) != null && TryFindTile(out tile) && SiteMakerHelper.TryFindRandomFactionFor(DefDatabase<SiteCoreDef>.GetNamed("RuinedBaseSite"), null, out faction, true, null);
 	}
 
 	protected override bool TryExecuteWorker(IncidentParms parms)
@@ -36,17 +37,16 @@ namespace RealRuins {
 		{
 			return false;
 		}
-		if (!SiteMakerHelper.TryFindSiteParams_SingleSitePart(DefDatabase<SiteCoreDef>.GetNamed("RuinedBase"), (string) null, out SitePartDef sitePart, out Faction faction2, null, true, null))
+		if (!SiteMakerHelper.TryFindSiteParams_SingleSitePart(DefDatabase<SiteCoreDef>.GetNamed("RuinedBaseSite"), (string) null, out SitePartDef sitePart, out Faction faction2, null, true, null))
 		{
 			return false;
 		}
 		
 		int randomInRange = SiteTuning.QuestSiteTimeoutDaysRange.RandomInRange;
 		Site site = CreateSite(tile, sitePart, randomInRange, faction2);
+
 		
-		//site.GetComponent<RuinedBaseComp>()
-		
-		string letterText = GetLetterText(faction);
+		string letterText = GetLetterText(faction, site.GetComponent<TimeoutComp>().TicksLeft / 60000);
 		Find.LetterStack.ReceiveLetter(def.letterLabel, letterText, def.letterDef, site, faction, null);
 		return true;
 	}
@@ -59,16 +59,16 @@ namespace RealRuins {
 
 	public static Site CreateSite(int tile, SitePartDef sitePart, int days, Faction siteFaction)
 	{
-		Site site = SiteMaker.MakeSite(DefDatabase<SiteCoreDef>.GetNamed("RuinedBase"), sitePart, tile, siteFaction, true, null);
+		Site site = SiteMaker.MakeSite(DefDatabase<SiteCoreDef>.GetNamed("RuinedBaseSite"), sitePart, tile, siteFaction, true, null);
 		site.sitePartsKnown = true;
 		site.GetComponent<TimeoutComp>().StartTimeout(days * 60000);
 		Find.WorldObjects.Add(site);
 		return site;
 	}
 
-	private string GetLetterText(Faction alliedFaction)
+	private string GetLetterText(Faction alliedFaction, int timeoutDays)
 	{
-		string text = string.Format(def.letterText, alliedFaction.leader.LabelShort, alliedFaction.def.leaderTitle, alliedFaction.Name).CapitalizeFirst();
+		string text = string.Format(def.letterText, alliedFaction.leader.LabelShort, alliedFaction.def.leaderTitle, alliedFaction.Name, timeoutDays).CapitalizeFirst();
 		return text;
 	}
     }

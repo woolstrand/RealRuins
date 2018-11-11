@@ -45,5 +45,10 @@
   <RealRuins_MapOptions_EnableProximity>Consider settlement proximity</RealRuins_MapOptions_EnableProximity>
   <RealRuins_MapOptions_EnableProximityTT>Settlement proximity influences generation parameters: ruins are more dense near cities, but also more empty.</RealRuins_MapOptions_EnableProximityTT>
 
+  <!-- Caravan entered map -->
+  <LetterLabelCaravanEnteredRuins>Caravan arrived at ruins</LetterLabelCaravanEnteredRuins>
+  <LetterCaravanEnteredRuins>{0} has arrived at the abandoned base ruins and is ready to begin scavenging.</LetterCaravanEnteredRuins>
+
+
 
 </LanguageData>

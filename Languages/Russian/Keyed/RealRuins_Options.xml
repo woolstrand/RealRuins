@@ -46,5 +46,8 @@
   <RealRuins_MapOptions_EnableProximity>Учитывать близость поселений</RealRuins_MapOptions_EnableProximity>
   <RealRuins_MapOptions_EnableProximityTT>Расстояние до поселения влияет на параметры генерации: чем ближе к городу, тем плотнее руины, но тем сильнее они разграблены.</RealRuins_MapOptions_EnableProximityTT>
 
+  <!-- Caravan entered map -->
+  <LetterLabelCaravanEnteredRuins>Караван прибыл в руины</LetterLabelCaravanEnteredRuins>
+  <LetterCaravanEnteredRuins>{0} прибыл к руинам заброшенной базы и готов сражаться за сокровища.</LetterCaravanEnteredRuins>
 
 </LanguageData>
