@@ -22,12 +22,15 @@ namespace RealRuins {
         public float trapChance = 0.001f; //probability PER CELL
         public float hostileChance = 0.1f; //probability PER CHUNK
 
+        public float uncoveredCost = 0; //output value. consider switching to resolvers and resolver params
+
         public int minimumSizeRequired = 0;
         public float minimumDensityRequired = 0.1f;
         public int minimumCostRequired = 0;
         public bool shouldKeepDefencesAndPower = false;
         public bool shouldAddSignificantResistance = false;
         public bool shouldCutBlueprint = true;
+        public bool shouldAddRaidTriggers = false;
 
 
         public bool deleteLowQuality = true;
@@ -75,7 +78,9 @@ namespace RealRuins {
                 deleteLowQuality =deleteLowQuality,
                 shouldKeepDefencesAndPower = shouldKeepDefencesAndPower,
                 shouldAddSignificantResistance = shouldAddSignificantResistance,
-                shouldCutBlueprint = shouldCutBlueprint
+                shouldCutBlueprint = shouldCutBlueprint,
+                shouldAddRaidTriggers = shouldAddRaidTriggers,
+                uncoveredCost = uncoveredCost
             };
 
             return copy;

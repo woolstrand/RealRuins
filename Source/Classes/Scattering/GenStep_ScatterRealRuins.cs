@@ -180,32 +180,50 @@ namespace RealRuins
                 currentOptions.shouldKeepDefencesAndPower = true;
                 currentOptions.shouldAddSignificantResistance = true;
                 currentOptions.shouldCutBlueprint = false;
+                currentOptions.shouldAddRaidTriggers = true;
                 
 
                 ScatterAt(map.Center, map);
                 RuinsScatterer.FinalizeCellUsage();
 
-                FloatRange defaultPoints = new FloatRange(200.0f, 3000.0f);
-                
-                ResolveParams resolveParams = default(ResolveParams);
-                resolveParams.rect = CellRect.CenteredOn(map.Center, currentOptions.referenceRadiusAverage);
-                resolveParams.faction = Find.FactionManager.RandomEnemyFaction();
-                resolveParams.singlePawnLord = LordMaker.MakeNewLord(resolveParams.faction, new LordJob_DefendBase(resolveParams.faction, resolveParams.rect.CenterCell), map, null);;
-                resolveParams.pawnGroupKindDef = (resolveParams.pawnGroupKindDef ?? PawnGroupKindDefOf.Settlement);
-                
-                if (resolveParams.pawnGroupMakerParams == null)
-                {
-                    resolveParams.pawnGroupMakerParams = new PawnGroupMakerParms();
-                    resolveParams.pawnGroupMakerParams.tile = map.Tile;
-                    resolveParams.pawnGroupMakerParams.faction = resolveParams.faction;
-                    PawnGroupMakerParms pawnGroupMakerParams = resolveParams.pawnGroupMakerParams;
-                    pawnGroupMakerParams.points = defaultPoints.RandomInRange;
-                    resolveParams.pawnGroupMakerParams.inhabitants = true;
+                float uncoveredCost = currentOptions.uncoveredCost;
+                if (uncoveredCost < 0) {
+                    if (Rand.Chance(0.5f)) {
+                        uncoveredCost = -uncoveredCost; //adding really small party
+                    }
                 }
 
+                ResolveParams resolveParams = default(ResolveParams);
+                resolveParams.rect = CellRect.CenteredOn(map.Center, currentOptions.referenceRadiusAverage);
                 BaseGen.globalSettings.map = map;
                 BaseGen.globalSettings.mainRect = resolveParams.rect;
-                BaseGen.symbolStack.Push("pawnGroup", resolveParams);
+
+                if (uncoveredCost > 0) {
+                    float pointsCost = uncoveredCost / 100.0f;
+                    FloatRange defaultPoints = new FloatRange(pointsCost * 0.2f,
+                        Math.Min(3000.0f, pointsCost * 2.0f));
+                    Debug.Message("Adding starting party. Remaining points: {0}. Used points range: {1}",
+                        currentOptions.uncoveredCost, defaultPoints);
+
+                    resolveParams.faction = Find.FactionManager.RandomEnemyFaction();
+//                    resolveParams.singlePawnLord = LordMaker.MakeNewLord(resolveParams.faction,
+//                        new LordJob_DefendBase(resolveParams.faction, resolveParams.rect.CenterCell), map, null);
+                    resolveParams.singlePawnLord = LordMaker.MakeNewLord(resolveParams.faction,
+                        new LordJob_AssaultColony(resolveParams.faction, false, false, true, true), map, null);
+
+                    resolveParams.pawnGroupKindDef = (resolveParams.pawnGroupKindDef ?? PawnGroupKindDefOf.Settlement);
+
+                    if (resolveParams.pawnGroupMakerParams == null) {
+                        resolveParams.pawnGroupMakerParams = new PawnGroupMakerParms();
+                        resolveParams.pawnGroupMakerParams.tile = map.Tile;
+                        resolveParams.pawnGroupMakerParams.faction = resolveParams.faction;
+                        PawnGroupMakerParms pawnGroupMakerParams = resolveParams.pawnGroupMakerParams;
+                        pawnGroupMakerParams.points = defaultPoints.RandomInRange;
+                    }
+
+                    BaseGen.symbolStack.Push("pawnGroup", resolveParams);
+
+                }
 
                 BaseGen.symbolStack.Push("chargeBatteries", resolveParams);
                 BaseGen.symbolStack.Push("refuel", resolveParams);
