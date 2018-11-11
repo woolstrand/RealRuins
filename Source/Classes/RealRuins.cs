@@ -31,7 +31,9 @@ namespace RealRuins
 
             public static void SaveSnapshot() {
                 if (!RealRuins_ModSettings.allowUploads && !RealRuins_ModSettings.offlineMode) return;
-
+                if (Find.CurrentMap != null && !Find.CurrentMap.IsPlayerHome) return;
+               
+                Debug.Message("Notw temp incident, ok");
                 SnapshotManager.Instance.UploadCurrentMapSnapshot();
             }
         }

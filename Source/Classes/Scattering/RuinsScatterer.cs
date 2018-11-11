@@ -7,6 +7,8 @@ using Verse;
 using System.Xml;
 using System.IO;
 using RimWorld.BaseGen;
+using UnityEngine;
+using UnityEngine.Video;
 using Verse.AI.Group;
 
 namespace RealRuins
@@ -712,6 +714,9 @@ namespace RealRuins
 
                     if (itemsMap[x, z] == null) { itemsMap[x, z] = new List<ItemTile>(); }//to make thngs easier add empty list to every cell
 
+                    IntVec3 mapLocation = new IntVec3(x - minX + mapOriginX, 0, z - minZ + mapOriginZ);
+                    if (!mapLocation.InBounds(map)) continue;
+
                     List<ItemTile> items = itemsMap[x, z];
                     TerrainTile terrain = terrainMap[x, z];
                     TerrainDef terrainDef = null;
@@ -727,7 +732,7 @@ namespace RealRuins
                         }
                     }
 
-                    TerrainDef existingTerrain = map.terrainGrid.TerrainAt(new IntVec3(x - minX + mapOriginX, 0, z - minZ + mapOriginZ));
+                    TerrainDef existingTerrain = map.terrainGrid.TerrainAt(mapLocation);
                     if (terrainDef != null && terrainDef.terrainAffordanceNeeded != null && !existingTerrain.affordances.Contains(terrainDef.terrainAffordanceNeeded)) {
                         terrainDef = null;
                         terrainMap[x, z] = null; //erase terrain if underlying terrain can't support it.
@@ -1085,7 +1090,8 @@ namespace RealRuins
                                 thing.HitPoints = Rand.Range(1, thing.def.BaseMaxHitPoints);
                                 if (thing.def.EverHaulable) {
                                     thing.SetForbidden(true, false);
-                                    if (map.terrainGrid.TerrainAt(mapLocation).IsWater) {
+                                    TerrainDef t = map.terrainGrid.TerrainAt(mapLocation);
+                                    if (t != null && t.IsWater) {
                                         thing.HitPoints /= Rand.Range(10, 100); //things in marsh or river are really in bad condition
                                     }
                                 }
@@ -1107,9 +1113,15 @@ namespace RealRuins
                     if (terrainIntegrity[x, z] < 0.1f) {
                         continue; //skip generating filth on empty
                     }
+                    
 
                     IntVec3 mapLocation = new IntVec3(x - minX + mapOriginX, 0, z - minZ + mapOriginZ);
                     if (!mapLocation.InBounds(map)) continue;
+                    TerrainDef td = map.terrainGrid.TerrainAt(mapLocation);
+                
+                    if (!options.shouldCutBlueprint && (td == null || td.Removable)) {
+                        continue; //if base is uncut, scatter filth only on constructed surfaces.
+                    }
 
 
                     ThingDef[] filthDef = { ThingDefOf.Filth_Dirt, ThingDefOf.Filth_Trash, ThingDefOf.Filth_Ash };
@@ -1162,10 +1174,9 @@ namespace RealRuins
                         CompRottable rottable = dweller.Corpse.TryGetComp<CompRottable>();
                         rottable.RotProgress = rottable.PropsRot.TicksToDessicated;
                         dweller.Corpse.timeOfDeath = timeOfDeath + (int)(Rand.Value * 100000);
-                    } else if (Rand.Value < options.trapChance) {
-                        ThingDef trapDef = ThingDefOf.TrapSpike;
-                        Thing thing = ThingMaker.MakeThing(trapDef, ThingDefOf.WoodLog);
-                        thing.SetFaction(Find.FactionManager.RandomEnemyFaction());
+                    } else if (wallMap[x, z] > 1 && Rand.Value < options.trapChance) { //spawn inside rooms only
+                        ThingDef trapDef = ThingDef.Named("TrippingTrigger");
+                        Thing thing = ThingMaker.MakeThing(trapDef);
                         GenSpawn.Spawn(thing, mapLocation, map);
                     }
 
@@ -1258,6 +1269,47 @@ namespace RealRuins
             }
         }
 
+        private void AddRaidTriggers() {
+            int triggersNumber = (int)(Math.Abs(Rand.Gaussian(0, 5))) + 4;
+            int addedTriggers = 0;
+            float ratio = 10;
+            float remainingCost = totalCost * (Rand.Value + 0.5f); //cost estimation as seen by other factions
+
+            float raidMaxPoints = (remainingCost / ratio) / triggersNumber; //to cap max raid size
+
+            Debug.Message("Triggers number: {0}. Cost: {1}", triggersNumber, remainingCost);
+
+
+            while (addedTriggers < triggersNumber && remainingCost > 0) {
+
+                IntVec3 mapLocation = CellRect
+                    .CenteredOn(map.Center, (int) (Math.Sqrt(blueprintHeight * blueprintWidth) / 4.0f)).RandomCell;
+
+                
+                if (!mapLocation.InBounds(map)) continue;
+                
+                ThingDef raidTriggerDef = ThingDef.Named("RaidTrigger");
+                RaidTrigger trigger = ThingMaker.MakeThing(raidTriggerDef) as RaidTrigger;
+                trigger.faction= Find.FactionManager.RandomEnemyFaction();
+
+                trigger.value = new FloatRange(250.0f, Math.Max(250.0f, raidMaxPoints)).RandomInRange;
+                remainingCost -= trigger.value * ratio;
+                
+                Debug.Message("Added trigger at {0}, {1} for {2} points, remaining cost: {3}", mapLocation.x, mapLocation.z, trigger.value, remainingCost);
+                
+                GenSpawn.Spawn(trigger, mapLocation, map);
+                addedTriggers++;
+
+            }
+
+            options.uncoveredCost = remainingCost;
+
+            /*
+            IncidentDef incidentDef = (!parms.faction.HostileTo(Faction.OfPlayer)) ? IncidentDefOf.RaidFriendly : IncidentDefOf.RaidEnemy;
+            incidentDef.Worker.TryExecute(parms);
+            */
+        }
+
 
 
         //Deterioration degree is unconditional modifier of destruction applied to the ruins bluepring. Degree of 0.5 means that in average each 2nd block in "central" part will be destroyed.
@@ -1312,6 +1364,10 @@ namespace RealRuins
 
             if (options.shouldKeepDefencesAndPower) {
                 RestoreDefencesAndPower();
+            }
+
+            if (options.shouldAddRaidTriggers) {
+                AddRaidTriggers();
             }
 
             TimeSpan span = DateTime.Now - start;
