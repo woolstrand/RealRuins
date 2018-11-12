@@ -65,6 +65,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Classes\Debug.cs" />
+    <Compile Include="Classes\Incidents\IncidentWorker_CaravanFoundRuins.cs" />
     <Compile Include="Classes\Incidents\IncidentWorker_RuinsFound.cs" />
     <Compile Include="Classes\Incidents\RuinedBaseComp.cs" />
     <Compile Include="Classes\Incidents\RuinedBaseWorker.cs" />

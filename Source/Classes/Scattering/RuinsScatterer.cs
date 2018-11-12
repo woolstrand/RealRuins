@@ -1049,6 +1049,7 @@ namespace RealRuins
 
                             if (thing != null) {
                                 GenSpawn.Spawn(thing, mapLocation, map, new Rot4(itemTile.rot));
+                                
                                 if (thingDef.CanHaveFaction) {
                                     thing.SetFaction(faction);
                                 }
@@ -1278,13 +1279,14 @@ namespace RealRuins
             int addedTriggers = 0;
             float ratio = 10;
             float remainingCost = totalCost * (Rand.Value + 0.5f); //cost estimation as seen by other factions
+            float initialCost = remainingCost;
 
             float raidMaxPoints = (remainingCost / ratio) / triggersNumber; //to cap max raid size
 
             Debug.Message("Triggers number: {0}. Cost: {1}. Base max points: {2} (absolute max in x2)", triggersNumber, remainingCost, raidMaxPoints);
 
 
-            while (addedTriggers < triggersNumber && remainingCost > 0) {
+            while (remainingCost > 0) {
 
                 IntVec3 mapLocation = CellRect
                     .CenteredOn(map.Center, (int) (Math.Sqrt(blueprintHeight * blueprintWidth) / 4.0f)).RandomCell;
@@ -1296,7 +1298,8 @@ namespace RealRuins
                 RaidTrigger trigger = ThingMaker.MakeThing(raidTriggerDef) as RaidTrigger;
                 trigger.faction= Find.FactionManager.RandomEnemyFaction();
 
-                trigger.value = new FloatRange(250.0f, Math.Max(250.0f, raidMaxPoints * 2)).RandomInRange;
+                trigger.value = Math.Abs(Rand.Gaussian()) * raidMaxPoints + Rand.Value * raidMaxPoints + 250.0f;
+                if (trigger.value > 10000) trigger.value = 10000; //sanity cap. against some beta-poly bases.
                 remainingCost -= trigger.value * ratio;
                 
                 Debug.Message("Added trigger at {0}, {1} for {2} points, remaining cost: {3}", mapLocation.x, mapLocation.z, trigger.value, remainingCost);
@@ -1304,9 +1307,17 @@ namespace RealRuins
                 GenSpawn.Spawn(trigger, mapLocation, map);
                 addedTriggers++;
 
+                options.uncoveredCost = Math.Abs(remainingCost);
+
+                if (addedTriggers > triggersNumber) {
+                    if (remainingCost < initialCost / 2) {
+                        if (Rand.Chance(0.3f)) return;
+                    }
+                }
+
             }
 
-            options.uncoveredCost = remainingCost;
+            
 
             /*
             IncidentDef incidentDef = (!parms.faction.HostileTo(Faction.OfPlayer)) ? IncidentDefOf.RaidFriendly : IncidentDefOf.RaidEnemy;
