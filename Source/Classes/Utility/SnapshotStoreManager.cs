@@ -78,6 +78,7 @@ namespace RealRuins
             if (files.Length == 0) return null;
 
             int index = Rand.Range(0, files.Length);
+            Debug.Message("files length: {0} count {1}, selected: {2}", files.Length, files.Count(), index);
             return files[index];
         }
 
