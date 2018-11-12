@@ -181,6 +181,7 @@ namespace RealRuins
                 currentOptions.shouldAddSignificantResistance = true;
                 currentOptions.shouldCutBlueprint = false;
                 currentOptions.shouldAddRaidTriggers = true;
+                currentOptions.claimableBlocks = false;
                 
 
                 ScatterAt(map.Center, map);
@@ -199,9 +200,9 @@ namespace RealRuins
                 BaseGen.globalSettings.mainRect = resolveParams.rect;
 
                 if (uncoveredCost > 0) {
-                    float pointsCost = uncoveredCost / 100.0f;
+                    float pointsCost = uncoveredCost / 10.0f;
                     FloatRange defaultPoints = new FloatRange(pointsCost * 0.2f,
-                        Math.Min(3000.0f, pointsCost * 2.0f));
+                        Math.Min(10000.0f, pointsCost * 2.0f));
                     Debug.Message("Adding starting party. Remaining points: {0}. Used points range: {1}",
                         currentOptions.uncoveredCost, defaultPoints);
 
