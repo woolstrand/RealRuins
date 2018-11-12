@@ -8,7 +8,9 @@ using System.Reflection;
 
 using RimWorld;
 using RimWorld.Planet;
+using Verse.AI.Group;
 using Verse;
+using RimWorld.BaseGen;
 
 namespace RealRuins
 {
@@ -67,6 +69,17 @@ namespace RealRuins
 
         public override void Generate(Map map, GenStepParams parms) {
             Debug.Message("Overridden generate");
+            bool shouldReturn = false;
+            foreach (WorldObject wo in Find.World.worldObjects.ObjectsAt(map.Tile))
+            {
+                Debug.Message("World Object on generation tile: {0} ({1}).", wo.def.defName, wo.GetType().ToString());
+                if (!(wo is Site site)) continue;
+                Debug.Message("Site core: {0}", site.core.def.defName);
+                shouldReturn = true;
+            }
+            
+            if (shouldReturn) return;
+            
             if (allowInWaterBiome || !map.TileInfo.WaterCovered) {
                 RuinsScatterer.PrepareCellUsageFor(map);
 
@@ -138,19 +151,90 @@ namespace RealRuins
     }
 
     class GenStep_ScatterLargeRealRuins : GenStep_Scatterer {
+
+        private ScatterOptions currentOptions;
+        
         public override int SeedPart {
             get {
-                return 74293946;
+                return 74293947;
             }
         }
 
 
+        public override void Generate(Map map, GenStepParams parms) {
+            Debug.Message("Overridden LARGE generate");
+            if (allowInWaterBiome || !map.TileInfo.WaterCovered) {
+                RuinsScatterer.PrepareCellUsageFor(map);
+
+                currentOptions = RealRuins_ModSettings.defaultScatterOptions.Copy(); //store as instance variable to keep accessible on subsequent ScatterAt calls
+
+                currentOptions.referenceRadiusAverage = Rand.Range(90, 120);
+                currentOptions.scavengingMultiplier = 0.1f;
+                currentOptions.deteriorationMultiplier = 0.0f;
+                currentOptions.hostileChance = 1.0f;
+
+                currentOptions.minimumCostRequired = 5000;
+                currentOptions.minimumDensityRequired = 0.2f;
+                currentOptions.minimumSizeRequired = 10000;
+                currentOptions.deleteLowQuality = false; //do not delete since we have much higher requirements for base ruins
+                currentOptions.shouldKeepDefencesAndPower = true;
+                currentOptions.shouldAddSignificantResistance = true;
+                currentOptions.shouldCutBlueprint = false;
+                currentOptions.shouldAddRaidTriggers = true;
+                currentOptions.claimableBlocks = false;
+                
+
+                ScatterAt(map.Center, map);
+                RuinsScatterer.FinalizeCellUsage();
+
+                float uncoveredCost = currentOptions.uncoveredCost;
+                if (uncoveredCost < 0) {
+                    if (Rand.Chance(0.5f)) {
+                        uncoveredCost = -uncoveredCost; //adding really small party
+                    }
+                }
+
+                ResolveParams resolveParams = default(ResolveParams);
+                resolveParams.rect = CellRect.CenteredOn(map.Center, currentOptions.referenceRadiusAverage);
+                BaseGen.globalSettings.map = map;
+                BaseGen.globalSettings.mainRect = resolveParams.rect;
+
+                if (uncoveredCost > 0) {
+                    float pointsCost = uncoveredCost / 10.0f;
+                    FloatRange defaultPoints = new FloatRange(pointsCost * 0.2f,
+                        Math.Min(10000.0f, pointsCost * 2.0f));
+                    Debug.Message("Adding starting party. Remaining points: {0}. Used points range: {1}",
+                        currentOptions.uncoveredCost, defaultPoints);
+
+                    resolveParams.faction = Find.FactionManager.RandomEnemyFaction();
+//                    resolveParams.singlePawnLord = LordMaker.MakeNewLord(resolveParams.faction,
+//                        new LordJob_DefendBase(resolveParams.faction, resolveParams.rect.CenterCell), map, null);
+                    resolveParams.singlePawnLord = LordMaker.MakeNewLord(resolveParams.faction,
+                        new LordJob_AssaultColony(resolveParams.faction, false, false, true, true), map, null);
+
+                    resolveParams.pawnGroupKindDef = (resolveParams.pawnGroupKindDef ?? PawnGroupKindDefOf.Settlement);
+
+                    if (resolveParams.pawnGroupMakerParams == null) {
+                        resolveParams.pawnGroupMakerParams = new PawnGroupMakerParms();
+                        resolveParams.pawnGroupMakerParams.tile = map.Tile;
+                        resolveParams.pawnGroupMakerParams.faction = resolveParams.faction;
+                        PawnGroupMakerParms pawnGroupMakerParams = resolveParams.pawnGroupMakerParams;
+                        pawnGroupMakerParams.points = defaultPoints.RandomInRange;
+                    }
+
+                    BaseGen.symbolStack.Push("pawnGroup", resolveParams);
+
+                }
+
+                BaseGen.symbolStack.Push("chargeBatteries", resolveParams);
+                BaseGen.symbolStack.Push("refuel", resolveParams);
+                    
+                BaseGen.Generate();
+            }
+        }
+
         protected override void ScatterAt(IntVec3 loc, Map map, int count = 1) {
-/*            float scavengersActivity = 0.5f + Rand.Value; //later will be based on other settlements proximity
-            float ruinsAge = Rand.Range(1, 25);
-            float deteriorationDegree = Rand.Value;
-            int referenceRadius = Rand.Range(15, 35);
-            new RuinsScatterer().ScatterRuinsAt(loc, map, referenceRadius, Rand.Range(0, 3), deteriorationDegree, scavengersActivity, ruinsAge);*/
+            new RuinsScatterer().ScatterRuinsAt(loc, map, currentOptions);
         }
 
         protected override bool CanScatterAt(IntVec3 loc, Map map) {
