@@ -65,12 +65,19 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Classes\Debug.cs" />
+    <Compile Include="Classes\Incidents\IncidentWorker_CaravanFoundRuins.cs" />
+    <Compile Include="Classes\Incidents\IncidentWorker_RuinsFound.cs" />
+    <Compile Include="Classes\Incidents\RuinedBaseComp.cs" />
+    <Compile Include="Classes\Incidents\RuinedBaseWorker.cs" />
+    <Compile Include="Classes\Incidents\WorldObjectCompProperties_RuinedBase.cs" />
     <Compile Include="Classes\RealRuins_Mod.cs" />
     <Compile Include="Classes\RealRuins_ModSettings.cs" />
     <Compile Include="Classes\Scattering\ScatterOptions.cs" />
     <Compile Include="Classes\Snapshotting\SnapshotGenerator.cs" />
     <Compile Include="Classes\Scattering\GenStep_ScatterRealRuins.cs" />
     <Compile Include="Classes\RealRuins.cs" />
+    <Compile Include="Classes\Triggers\RaidTrigger.cs" />
+    <Compile Include="Classes\Triggers\TrippingTrigger.cs" />
     <Compile Include="Classes\Utility\Compressor.cs" />
     <Compile Include="Classes\Utility\SnapshotManager.cs" />
     <Compile Include="Classes\Utility\SnapshotStoreManager.cs" />
