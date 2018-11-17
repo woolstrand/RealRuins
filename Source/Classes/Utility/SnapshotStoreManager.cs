@@ -6,6 +6,7 @@ using System.Text;
 using Verse;
 
 using System.IO;
+using System.Runtime.Remoting.Messaging;
 using System.Security.AccessControl;
 using System.Security.Principal;
 
@@ -23,35 +24,59 @@ namespace RealRuins
             }
         }
 
-        private string rootFolder = "../Snapshots";
+        private string oldRootFolder = "../Snapshots";
         private long totalFilesSize = 0;
         private int totalFileCount = 0;
 
-        private void CheckFolderExistence() {
-            if (!Directory.Exists(rootFolder)) {
-                Directory.CreateDirectory(rootFolder);
-            }
-        }
-
         public SnapshotStoreManager() {
-            CheckFolderExistence();
+            MoveFilesIfNeeded();
+            GetSnapshotsFolderPath();
             RecalculateFilesSize();
         }
 
+        //moving data files to a new folder
+        private void MoveFilesIfNeeded() {
+            if (!Directory.Exists(oldRootFolder)) return;
+            string newFolder = GetSnapshotsFolderPath();
+
+            string[] oldFiles = Directory.GetFiles(oldRootFolder);
+            
+            foreach (string fullPath in oldFiles) {
+                string filename = Path.GetFileName(fullPath);
+                string newPath = Path.Combine(newFolder, filename);
+                     
+                File.Move(fullPath, newPath);
+            }
+            
+            Directory.Delete(oldRootFolder);
+        }
+        
+        private string snapshotsFolderPath = null;
+
+        private string GetSnapshotsFolderPath() {
+            if (snapshotsFolderPath == null) {
+                snapshotsFolderPath = Path.Combine(GenFilePaths.SaveDataFolderPath, "RealRuins");
+                DirectoryInfo directoryInfo = new DirectoryInfo(snapshotsFolderPath);
+                if (!directoryInfo.Exists) {
+                    directoryInfo.Create();
+                }
+            }
+            return snapshotsFolderPath;
+        }
+    
         public void StoreData(string buffer, string filename) {
             StoreBinaryData(Encoding.UTF8.GetBytes(buffer), filename);
         }
 
         public void StoreBinaryData(byte[] buffer, string filename) {
             //when storing a file you need to remove older version of snapshots of the same game
-            CheckFolderExistence();
             string[] parts = filename.Split('=');
             if (parts.Count() > 1) {
                 int date = 0;
                 if (int.TryParse(parts[0], out date)) {
                     parts[0] = "*";
                     string mask = string.Join("=", parts);
-                    string[] files = Directory.GetFiles(rootFolder, mask);
+                    string[] files = Directory.GetFiles(GetSnapshotsFolderPath(), mask);
                     foreach (string existingFile in files) {
                         int existingFileDate = 0;
                         string[] existingFileParts = existingFile.Split('-');
@@ -69,12 +94,12 @@ namespace RealRuins
             }
 
             //writing file in all cases except "newer version available"
-            File.WriteAllBytes(rootFolder + "/" + filename, buffer);
+            File.WriteAllBytes(Path.Combine(GetSnapshotsFolderPath(), filename), buffer);
             RecalculateFilesSize();
         }
 
         private string DoGetRandomFilenameFromRootFolder() {
-            var files = Directory.GetFiles(rootFolder);
+            var files = Directory.GetFiles(GetSnapshotsFolderPath());
             if (files.Length == 0) return null;
 
             int index = Rand.Range(0, files.Length);
@@ -83,7 +108,6 @@ namespace RealRuins
         }
 
         public string RandomSnapshotFilename() {
-            CheckFolderExistence();
             string filename = null;
             do {
                 filename = DoGetRandomFilenameFromRootFolder();
@@ -97,12 +121,11 @@ namespace RealRuins
         }
 
         public List<string> FilterOutExistingItems(List<string> source) {
-            CheckFolderExistence();
 
             List<string> result = new List<string>();
 
             foreach (string item in source) {
-                if (!File.Exists(rootFolder + "/" + item)) {
+                if (!File.Exists(GetSnapshotsFolderPath() + "/" + item)) {
                     result.Add(item);
                 }
             }
@@ -111,10 +134,9 @@ namespace RealRuins
         }
 
         public void CheckCacheContents() {
-            CheckFolderExistence();
 
             if (RealRuins_ModSettings.offlineMode) {
-                var files = Directory.GetFiles(rootFolder);
+                var files = Directory.GetFiles(GetSnapshotsFolderPath());
                 foreach (string fileName in files) {
                     if (!fileName.Contains("local")) {
                         File.Delete(fileName); //delete all remote files in offline mode.
@@ -125,10 +147,9 @@ namespace RealRuins
         }
 
         public void ClearCache() {
-            CheckFolderExistence();
 
-            Directory.Delete(rootFolder, true);
-            Directory.CreateDirectory(rootFolder);
+            Directory.Delete(GetSnapshotsFolderPath(), true);
+            Directory.CreateDirectory(GetSnapshotsFolderPath());
             totalFilesSize = 0;
         }
 
@@ -137,9 +158,8 @@ namespace RealRuins
         }
 
         private void RecalculateFilesSize() {
-            CheckFolderExistence();
 
-            var filesList = Directory.GetFiles(rootFolder);
+            var filesList = Directory.GetFiles(GetSnapshotsFolderPath());
             long totalSize = 0;
             foreach (string file in filesList) {
                 totalSize += new FileInfo(file).Length;
@@ -150,9 +170,8 @@ namespace RealRuins
         }
 
         public void CheckCacheSizeLimits() {
-            CheckFolderExistence();
 
-            var files = Directory.GetFiles(rootFolder);
+            var files = Directory.GetFiles(GetSnapshotsFolderPath());
             List<string> filesList = files.ToList();
             filesList.Sort();
             filesList.Reverse();
