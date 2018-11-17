@@ -37,10 +37,11 @@
   <RealRuins_MapOptions_DisableHostilesTT></RealRuins_MapOptions_DisableHostilesTT>
   <RealRuins_MapOptions_ClaimableTT>Les structures non exigibles ne peuvent pas être réparées ou déconstruites </RealRuins_MapOptions_ClaimableTT>
 
-  <RealRuins_MapOptions_EnableProximity>Consider settlement proximity</RealRuins_MapOptions_EnableProximity>
-  <RealRuins_MapOptions_EnableProximityTT>Settlement proximity influences generation parameters: ruins are more dense near cities, but also more empty.</RealRuins_MapOptions_EnableProximityTT>
+  <RealRuins_MapOptions_EnableProximity>Consideration de proximité des colonies</RealRuins_MapOptions_EnableProximity>
+  <RealRuins_MapOptions_EnableProximityTT>La proximité de peuplement influence les paramètres de génération: les ruines sont plus denses près des villes, mais aussi plus désertes.</RealRuins_MapOptions_EnableProximityTT>
 
   <!-- Caravan entered map -->
-  <LetterLabelCaravanEnteredRuins>Caravan arrived at ruins</LetterLabelCaravanEnteredRuins>
-  <LetterCaravanEnteredRuins>{0} has arrived at the abandoned base ruins and is ready to begin scavenging.</LetterCaravanEnteredRuins>
+  <LetterLabelCaravanEnteredRuins> La caravane est arrivée aux ruines</LetterLabelCaravanEnteredRuins>  
+  <LetterCaravanEnteredRuins>{0} est arrivé aux ruines de la base abandonnée et est prêt à commencer à fouiller.</LetterCaravanEnteredRuins>
+
 </LanguageData>

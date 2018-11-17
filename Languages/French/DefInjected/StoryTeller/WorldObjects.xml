@@ -1,0 +1,9 @@
+﻿<LanguageDef>
+
+	<!-- EN: ruins -->
+	<RuinedBase.label>ruines</RuinedBase.label>
+
+	<!-- EN: Ruins of an abandoned outpost -->
+	<RuinedBase.description>Ruines d'un avant-poste abandonné</RuinedBase.description>
+
+</LanguageDef>
