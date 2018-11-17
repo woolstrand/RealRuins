@@ -149,7 +149,7 @@ namespace RealRuins
 
             if (body != null) {
                 request.uploadHandler = new UploadHandlerRaw(body) {
-                    contentType = "application/xml"
+                    contentType = "binary/octet-stream"
                 };
             }
 
