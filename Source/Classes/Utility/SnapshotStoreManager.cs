@@ -39,16 +39,30 @@ namespace RealRuins
             if (!Directory.Exists(oldRootFolder)) return;
             string newFolder = GetSnapshotsFolderPath();
 
+            if (newFolder == oldRootFolder) return; //can't create new folder on some reason. fallback.
+
             string[] oldFiles = Directory.GetFiles(oldRootFolder);
             
             foreach (string fullPath in oldFiles) {
                 string filename = Path.GetFileName(fullPath);
                 string newPath = Path.Combine(newFolder, filename);
-                     
-                File.Move(fullPath, newPath);
+
+                try {
+                    if (!File.Exists(newPath)) {
+                        File.Move(fullPath, newPath);
+                    } else {
+                        File.Delete(fullPath);
+                    }
+                } catch {
+                    //actually ignore: can't do anything
+                }
             }
-            
-            Directory.Delete(oldRootFolder);
+
+            try {
+                Directory.Delete(oldRootFolder);
+            } catch {
+                //m-kay
+            }
         }
         
         private string snapshotsFolderPath = null;
@@ -58,7 +72,12 @@ namespace RealRuins
                 snapshotsFolderPath = Path.Combine(GenFilePaths.SaveDataFolderPath, "RealRuins");
                 DirectoryInfo directoryInfo = new DirectoryInfo(snapshotsFolderPath);
                 if (!directoryInfo.Exists) {
-                    directoryInfo.Create();
+                    try {
+                        directoryInfo.Create();
+                    }
+                    catch {
+                        snapshotsFolderPath = oldRootFolder;
+                    }
                 }
             }
             return snapshotsFolderPath;
