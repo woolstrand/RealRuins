@@ -22,7 +22,7 @@
       <li>Caravan</li>
       <li>Map_TempIncident</li>
     </targetTags>
-    <workerClass>IncidentWorker_CaravanFoundRuins</workerClass>
+    <workerClass>RealRuins.IncidentWorker_CaravanFoundRuins</workerClass>
     <minRefireDays>0.17</minRefireDays>
 <!--    <tale>SmallRuinsFound</tale>-->
     <mtbDaysByBiome>
@@ -37,7 +37,7 @@
       <ColdBog>25</ColdBog>
 			<ExtremeDesert>25</ExtremeDesert>
       <IceSheet>35</IceSheet>
-      <SeaIce>80</SeaIce>
+      <SeaIce>60</SeaIce>
     </mtbDaysByBiome>
   </IncidentDef>
 
