@@ -1093,7 +1093,7 @@ namespace RealRuins
                                     thing.SetForbidden(true, false);
                                     TerrainDef t = map.terrainGrid.TerrainAt(mapLocation);
                                     if (t != null && t.IsWater) {
-                                        thing.HitPoints /= Rand.Range(10, 100); //things in marsh or river are really in bad condition
+                                        thing.HitPoints = thing.HitPoints / Rand.Range(10, 100) + 1; //things in marsh or river are really in bad condition
                                     }
                                 }
                             }
