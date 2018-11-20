@@ -13,15 +13,7 @@ namespace RealRuins {
             Pawn t = caravan.PawnsListForReading[0];
             bool flag = site.Faction == null || site.Faction.HostileTo(Faction.OfPlayer);
             Map orGenerateMap = GetOrGenerateMapUtility.GetOrGenerateMap(site.Tile, MapSize, null);
-            
-/*            Debug.Message("Caravan arrived at {0}", site); //Caravan arrived at {0_label}  {0} has arrived at {1_definite}.
-            Debug.Message("Caravan arrived at {0}", site.Label); //Caravan arrived at {0_label}  {0} has arrived at {1_definite}.
-            Debug.Message("Caravan arrived at {0_Label}", site); //Caravan arrived at {0_label}  {0} has arrived at {1_definite}.
-            Debug.Message("Caravan arrived at {0_label}", site); //Caravan arrived at {0_label}  {0} has arrived at {1_definite}.
-            Debug.Message("Caravan arrived at {0}", site); //Caravan arrived at {0_label}  {0} has arrived at {1_definite}.
-            Debug.Message("Caravan arrived at {0}", site); //Caravan arrived at {0_label}  {0} has arrived at {1_definite}.
-            Debug.Message("Caravan arrived at {0}", site); //Caravan arrived at {0_label}  {0} has arrived at {1_definite}.*/
-            
+
             Find.LetterStack.ReceiveLetter("LetterLabelCaravanEnteredRuins".Translate(), "LetterCaravanEnteredRuins".Translate(caravan.Label).CapitalizeFirst(), LetterDefOf.ThreatBig, t, null, null);
 
             Map map = orGenerateMap;

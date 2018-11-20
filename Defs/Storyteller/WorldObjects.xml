@@ -18,4 +18,28 @@
       <li Class="WorldObjectCompProperties_TimedForcedExit" />
     </comps>
   </WorldObjectDef>
+
+  <WorldObjectDef>
+    <defName>CaravanSmallRuinsWorldObject</defName>
+    <label>small ruins</label>
+    <description>Small ruins</description>
+    <texture>World/WorldObjects/TribalSettlement</texture>
+    <worldObjectClass>RealRuins.SmallRuinsWorldObject</worldObjectClass>
+    <expandingIcon>false</expandingIcon>
+    <expandingIconPriority>10</expandingIconPriority>
+    <canBePlayerHome>false</canBePlayerHome>
+    <mapGenerator>CaravanRuinsMapGenerator</mapGenerator>
+    <isTempIncidentMapOwner>true</isTempIncidentMapOwner>
+
+    <IncidentTargetTags>
+      <li>Map_TempIncident</li>
+    </IncidentTargetTags>
+
+    <comps>
+      <li Class="WorldObjectCompProperties_FormCaravan" />
+      <li Class="WorldObjectCompProperties_TimedForcedExit" />
+    </comps>
+  </WorldObjectDef>
+
+
 </Defs>
