@@ -49,6 +49,9 @@
   <LetterLabelCaravanEnteredRuins>Caravan arrived at ruins</LetterLabelCaravanEnteredRuins>
   <LetterCaravanEnteredRuins>{0} has arrived at the abandoned base ruins and is ready to begin scavenging.</LetterCaravanEnteredRuins>
 
+  <RealRuins.CaravanFoundRuins>During their travel {0} spotted a bunch of destroyed buildings nearby, which seem to be in a better condition than usual. Probably there still are some valuables left. On the other hand, there might be wild animals lair, mechanoids nest or raiders outpost: there should be a reason why those buildings seem untouched.</RealRuins.CaravanFoundRuins>
+  <RealRuins.CaravanFoundRuins.Investigate>Investigate</RealRuins.CaravanFoundRuins.Investigate>
+  <RealRuins.CaravanFoundRuinsTitle>Small ruins spotted nearby</RealRuins.CaravanFoundRuinsTitle>
 
 
 </LanguageData>

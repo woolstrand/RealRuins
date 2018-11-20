@@ -207,8 +207,6 @@ namespace RealRuins
                         currentOptions.uncoveredCost, defaultPoints);
 
                     resolveParams.faction = Find.FactionManager.RandomEnemyFaction();
-//                    resolveParams.singlePawnLord = LordMaker.MakeNewLord(resolveParams.faction,
-//                        new LordJob_DefendBase(resolveParams.faction, resolveParams.rect.CenterCell), map, null);
                     resolveParams.singlePawnLord = LordMaker.MakeNewLord(resolveParams.faction,
                         new LordJob_AssaultColony(resolveParams.faction, false, false, true, true), map, null);
 
@@ -241,4 +239,79 @@ namespace RealRuins
             return true;
         }
     }
+    
+    class GenStep_ScatterMediumRealRuins : GenStep_Scatterer {
+
+        private ScatterOptions currentOptions;
+        
+        public override int SeedPart {
+            get {
+                return 74293948;
+            }
+        }
+
+
+        public override void Generate(Map map, GenStepParams parms) {
+            if (allowInWaterBiome || !map.TileInfo.WaterCovered) {
+                RuinsScatterer.PrepareCellUsageFor(map);
+
+                currentOptions = RealRuins_ModSettings.defaultScatterOptions.Copy(); //store as instance variable to keep accessible on subsequent ScatterAt calls
+
+                currentOptions.referenceRadiusAverage = Rand.Range(30, 40);
+                currentOptions.scavengingMultiplier = 0.5f;
+                currentOptions.deteriorationMultiplier = 0.1f;
+                currentOptions.hostileChance = 0.8f;
+                currentOptions.itemCostLimit = 800;
+
+                currentOptions.minimumCostRequired = 5000;
+                currentOptions.minimumDensityRequired = 0.2f;
+                currentOptions.minimumSizeRequired = 1000;
+                currentOptions.deleteLowQuality = false; //do not delete since we have much higher requirements for base ruins
+                currentOptions.shouldKeepDefencesAndPower = true;
+
+                ScatterAt(map.Center, map);
+                RuinsScatterer.FinalizeCellUsage();
+
+                ResolveParams resolveParams = default(ResolveParams);
+                resolveParams.rect = CellRect.CenteredOn(map.Center, currentOptions.referenceRadiusAverage);
+                BaseGen.globalSettings.map = map;
+                BaseGen.globalSettings.mainRect = resolveParams.rect;
+
+                if (Rand.Chance(0.2f)) {
+                    float pointsCost = Math.Abs(Rand.Gaussian()) * 500; 
+
+                    resolveParams.faction = Find.FactionManager.RandomEnemyFaction();
+                    resolveParams.singlePawnLord = LordMaker.MakeNewLord(resolveParams.faction,
+                        new LordJob_AssaultColony(resolveParams.faction, false, false, true, true), map, null);
+
+                    resolveParams.pawnGroupKindDef = (resolveParams.pawnGroupKindDef ?? PawnGroupKindDefOf.Settlement);
+
+                    if (resolveParams.pawnGroupMakerParams == null) {
+                        resolveParams.pawnGroupMakerParams = new PawnGroupMakerParms();
+                        resolveParams.pawnGroupMakerParams.tile = map.Tile;
+                        resolveParams.pawnGroupMakerParams.faction = resolveParams.faction;
+                        PawnGroupMakerParms pawnGroupMakerParams = resolveParams.pawnGroupMakerParams;
+                        pawnGroupMakerParams.points = pointsCost;
+                    }
+
+                    BaseGen.symbolStack.Push("pawnGroup", resolveParams);
+
+                }
+
+                BaseGen.symbolStack.Push("chargeBatteries", resolveParams);
+                BaseGen.symbolStack.Push("refuel", resolveParams);
+                    
+                BaseGen.Generate();
+            }
+        }
+
+        protected override void ScatterAt(IntVec3 loc, Map map, int count = 1) {
+            new RuinsScatterer().ScatterRuinsAt(loc, map, currentOptions);
+        }
+
+        protected override bool CanScatterAt(IntVec3 loc, Map map) {
+            return true;
+        }
+    }
+    
 }
