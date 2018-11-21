@@ -45,6 +45,7 @@ namespace RealRuins {
 
             StringBuilder fileBuilder = new StringBuilder();
             fileBuilder.AppendFormat("<snapshot width=\"{0}\" height=\"{1}\" biomeDef=\"{2}\">\n", width, height, map.Biome.defName);
+            fileBuilder.AppendFormat("<world seed=\"{0}\" tile=\"{1}\" />\n", Find.World.info.seedString, map.Parent.Tile);
 
             int itemsCount = 0;
             int averageHP = 0;
