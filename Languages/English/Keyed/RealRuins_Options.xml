@@ -53,5 +53,7 @@
   <RealRuins.CaravanFoundRuins.Investigate>Investigate</RealRuins.CaravanFoundRuins.Investigate>
   <RealRuins.CaravanFoundRuinsTitle>Small ruins spotted nearby</RealRuins.CaravanFoundRuinsTitle>
 
+  <!-- Art -->
+  <DeterioratedArtDescription>This item is too worn and damaged. You can tell for sure it was a beautiful art object once, but now you can hardly guess what it was about.</DeterioratedArtDescription>
 
 </LanguageData>

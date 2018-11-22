@@ -74,6 +74,7 @@
     <Compile Include="Classes\RealRuins_Mod.cs" />
     <Compile Include="Classes\RealRuins_ModSettings.cs" />
     <Compile Include="Classes\Scattering\ScatterOptions.cs" />
+    <Compile Include="Classes\Snapshotting\BakedTaleReference.cs" />
     <Compile Include="Classes\Snapshotting\SnapshotGenerator.cs" />
     <Compile Include="Classes\Scattering\GenStep_ScatterRealRuins.cs" />
     <Compile Include="Classes\RealRuins.cs" />
