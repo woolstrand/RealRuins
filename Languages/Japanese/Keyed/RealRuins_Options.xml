@@ -42,11 +42,16 @@
   <RealRuins_MapOptions_DisableHostilesTT>入植者と敵対的なアイテム(タレット)が存在します</RealRuins_MapOptions_DisableHostilesTT>
   <RealRuins_MapOptions_ClaimableTT>領土を主張していない構造物は修理や分解することができません</RealRuins_MapOptions_ClaimableTT>
 
-  <RealRuins_MapOptions_EnableProximity>Consider settlement proximity</RealRuins_MapOptions_EnableProximity>
-  <RealRuins_MapOptions_EnableProximityTT>Settlement proximity influences generation parameters: ruins are more dense near cities, but also more empty.</RealRuins_MapOptions_EnableProximityTT>
+  <RealRuins_MapOptions_EnableProximity>入植地からの距離による影響</RealRuins_MapOptions_EnableProximity>
+  <RealRuins_MapOptions_EnableProximityTT>コロニーや派閥拠点からの距離は、遺跡の作成条件に影響を及ぼします。遺跡は都市の近くではより密集していますが、荒らされていて何も残っていない率が高くなります。</RealRuins_MapOptions_EnableProximityTT>
 
   <!-- Caravan entered map -->
-  <LetterLabelCaravanEnteredRuins>Caravan arrived at ruins</LetterLabelCaravanEnteredRuins>
-  <LetterCaravanEnteredRuins>{0} has arrived at the abandoned base ruins and is ready to begin scavenging.</LetterCaravanEnteredRuins>
+  <LetterLabelCaravanEnteredRuins>キャラバンは遺跡に到着した</LetterLabelCaravanEnteredRuins>
+  <LetterCaravanEnteredRuins>{0}は放棄された遺跡に到着して、何か残っていないか探索を始める準備ができました。</LetterCaravanEnteredRuins>
+
+  <RealRuins.CaravanFoundRuins>{0}の旅行中、すぐ近くに破壊された建物を沢山見つけました。これは普通の廃墟よりも状態が良いようです。おそらくまだ貴重品がいくらか残っているでしょう。しかし、狂暴化した野生動物の巣やメカノイドのハイブ、または襲撃者の前哨基地が存在する可能性もあります。これらの建物の保存状態が良い理由が何かあるはずです。</RealRuins.CaravanFoundRuins>
+  <RealRuins.CaravanFoundRuins.Investigate>調査する</RealRuins.CaravanFoundRuins.Investigate>
+  <RealRuins.CaravanFoundRuinsTitle>小さな遺跡が近くで見つかった</RealRuins.CaravanFoundRuinsTitle>
+
 
 </LanguageData>
