@@ -31,6 +31,12 @@ namespace RealRuins
         }
     }
 
+    class ItemArt {
+        public string author = "Unknown";
+        public string title = "Unknown";
+        public string text = "";
+    }
+
     //stores information about item in the blueprint
     class ItemTile: Tile
     {
@@ -39,6 +45,8 @@ namespace RealRuins
         public int rot;
         public bool isWall = false; //is a wall or something as tough and dense as a wall. actually this flag determines if this item can be replaced with a wall if it's impossible to use the original.
         public bool isDoor = false;
+
+        public ItemArt art = null;
 
         static public ItemTile CollapsedWallItemTile() {
             return CollapsedWallItemTile(new IntVec3(0, 0, 0));
@@ -113,6 +121,25 @@ namespace RealRuins
             } else {
                 rot = 0;
             }
+            
+            XmlAttribute artTitleAttribute = node.Attributes["artTitle"];
+            if (artTitleAttribute != null) {
+                if (art == null) art = new ItemArt();
+                art.title = Uri.UnescapeDataString(artTitleAttribute.Value);
+            }
+
+            XmlAttribute artAuthorAttribute = node.Attributes["artAuthor"];
+            if (artAuthorAttribute != null) {
+                if (art == null) art = new ItemArt();
+                art.author = Uri.UnescapeDataString(artAuthorAttribute.Value);
+            }
+
+            XmlAttribute artDescriptionAttribute = node.Attributes["artDescription"];
+            if (artDescriptionAttribute != null) {
+                if (art == null) art = new ItemArt();
+                art.text = Uri.UnescapeDataString(artDescriptionAttribute.Value);
+            }
+
 
         }
 
@@ -1057,8 +1084,21 @@ namespace RealRuins
                                 CompQuality q = thing.TryGetComp<CompQuality>();
                                 if (q != null) {
                                     byte category = (byte)Math.Abs(Math.Round(Rand.Gaussian(0, 2)));
-                                    if (category > 6) category = 6; 
-                                    q.SetQuality((QualityCategory)category, ArtGenerationContext.Outsider);
+
+                                    if (itemTile.art != null) {
+                                        category += 4;
+                                        if (category > 6) category = 6; 
+                                        //Debug.Message("Item \"{0}\" at {1}-{2} has quality {3} and art attached.", itemTile.defName, mapLocation.x, mapLocation.z, category);
+                                        q.SetQuality((QualityCategory)category, ArtGenerationContext.Outsider); //setquality resets art, so it should go before actual setting art
+                                        thing.TryGetComp<CompArt>()?.InitializeArt(itemTile.art.author, itemTile.art.title, itemTile.art.text);
+                                    }
+                                    else {
+                                        if (category > 6) category = 6; 
+                                        q.SetQuality((QualityCategory)category, ArtGenerationContext.Outsider);
+                                    }
+
+
+
                                 }
 
                                 CompBreakdownable b = thing.TryGetComp<CompBreakdownable>();

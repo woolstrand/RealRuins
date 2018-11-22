@@ -18,6 +18,8 @@ namespace RealRuins
         public static bool detectedConfigurableMaps;
 
         static RealRuins() {
+            DateTime startTime = DateTime.Now;
+            Debug.Message("RealRuins started patching at {0}", startTime);
             var harmony = HarmonyInstance.Create("com.woolstrand.realruins");
 
             if (ModsConfig.ActiveModsInLoadOrder.Any((ModMetaData mod) => mod.Name.Contains("Configurable Maps"))) {
@@ -25,6 +27,7 @@ namespace RealRuins
             }
 
             harmony.PatchAll(Assembly.GetExecutingAssembly());
+            Debug.Message("RealRuins finished patching at {0} ({1} msec)", DateTime.Now, (DateTime.Now - startTime).TotalMilliseconds);
         }
 
         static class SnapshotSaver {
@@ -62,5 +65,47 @@ namespace RealRuins
             }
         }
 
+        [HarmonyPatch(typeof(TaleReference), "ExposeData")]
+        class TaleReference_ExposeData_Patch {
+            static void Postfix(TaleReference __instance) {
+                if (__instance is BakedTaleReference reference) {
+                    Scribe_Values.Look(ref reference.bakedTale, "bakedTale", "Default Baked Tale Whatever", false);
+                }
+            }
+        }
+        
+        [HarmonyPatch(typeof(TaleReference), "GenerateText")]
+        class TaleReference_GenerateText_Patch {
+            static bool Prefix(TaleReference __instance, ref string __result) {
+                if (!(__instance is BakedTaleReference reference)) return true;
+                __result = reference.bakedTale;
+               // Debug.Message("Set result of generate text to {0}", __result);
+                return false;
+            }
+        }
+
+    }
+    
+    public static class Art_Extensions {
+         
+        public static void InitializeArt(this CompArt art, string author, string title, string bakedTaleData) {
+           // Debug.Message("Initializing custom art");
+            var prop = art.GetType().GetField("taleRef", System.Reflection.BindingFlags.NonPublic
+                                                  | System.Reflection.BindingFlags.Instance);
+           // Debug.Message("Got prop");
+            prop.SetValue(art, new BakedTaleReference(bakedTaleData));
+           // Debug.Message("Set value");
+            
+            var titleProp = art.GetType().GetField("titleInt", System.Reflection.BindingFlags.NonPublic
+                                                               | System.Reflection.BindingFlags.Instance);
+            //Debug.Message("Got title prop");
+            titleProp.SetValue(art, title);
+
+            var authProp = art.GetType().GetField("authorNameInt", System.Reflection.BindingFlags.NonPublic
+                                                               | System.Reflection.BindingFlags.Instance);
+            //Debug.Message("Got author prop");
+            authProp.SetValue(art, author);
+
+        }
     }
 }
