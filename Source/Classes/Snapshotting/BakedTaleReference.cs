@@ -10,7 +10,7 @@ namespace RealRuins {
         }
 
         public BakedTaleReference(string taleDescription) {
-            Debug.Message("Created baked tale reference");
+            //Debug.Message("Created baked tale reference");
             bakedTale = taleDescription;
         }
 

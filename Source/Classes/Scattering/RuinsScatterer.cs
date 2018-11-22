@@ -1086,13 +1086,18 @@ namespace RealRuins
                                     byte category = (byte)Math.Abs(Math.Round(Rand.Gaussian(0, 2)));
 
                                     if (itemTile.art != null) {
-                                        category += 3;
+                                        category += 4;
+                                        if (category > 6) category = 6; 
+                                        //Debug.Message("Item \"{0}\" at {1}-{2} has quality {3} and art attached.", itemTile.defName, mapLocation.x, mapLocation.z, category);
+                                        q.SetQuality((QualityCategory)category, ArtGenerationContext.Outsider); //setquality resets art, so it should go before actual setting art
                                         thing.TryGetComp<CompArt>()?.InitializeArt(itemTile.art.author, itemTile.art.title, itemTile.art.text);
                                     }
+                                    else {
+                                        if (category > 6) category = 6; 
+                                        q.SetQuality((QualityCategory)category, ArtGenerationContext.Outsider);
+                                    }
 
-                                    if (category > 6) category = 6; 
 
-                                    q.SetQuality((QualityCategory)category, ArtGenerationContext.Outsider);
 
                                 }
 
