@@ -36,6 +36,7 @@ namespace RealRuins
 
         //moving data files to a new folder
         private void MoveFilesIfNeeded() {
+
             if (!Directory.Exists(oldRootFolder)) return;
             string newFolder = GetSnapshotsFolderPath();
 
@@ -43,6 +44,9 @@ namespace RealRuins
 
             string[] oldFiles = Directory.GetFiles(oldRootFolder);
             
+            DateTime startTime = DateTime.Now;
+            Debug.Message("RealRuins: Started moving {0} files at {1}", oldFiles.Length, startTime);
+
             foreach (string fullPath in oldFiles) {
                 string filename = Path.GetFileName(fullPath);
                 string newPath = Path.Combine(newFolder, filename);
@@ -57,6 +61,8 @@ namespace RealRuins
                     //actually ignore: can't do anything
                 }
             }
+
+            Debug.Message("RealRuins: finished at {0} ({1} msec)", DateTime.Now, (DateTime.Now - startTime).TotalMilliseconds);
 
             try {
                 Directory.Delete(oldRootFolder);

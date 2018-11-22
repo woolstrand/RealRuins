@@ -102,6 +102,11 @@ namespace RealRuins {
                                         itemsBuilder.AppendFormat(" rot=\"{0}\"", thing.Rotation.AsByte);
                                     }
 
+                                    CompArt a = thing.TryGetComp<CompArt>();
+                                    if (a != null) {
+                                        itemsBuilder.AppendFormat(" artAuthor=\"{0}\" artTitle=\"{1}\" artDescription=\"{2}\"", Uri.EscapeDataString(a.AuthorName), Uri.EscapeDataString(a.Title), Uri.EscapeDataString(a.GenerateImageDescription())); //not always a wall, but should act as a wall)
+                                    }
+
                                     if (thing.def.passability == Traversability.Impassable || thing.def.fillPercent > 0.99) {
                                         itemsBuilder.Append(" actsAsWall=\"1\""); //not always a wall, but should act as a wall
                                     }
