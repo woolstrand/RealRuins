@@ -47,7 +47,9 @@ namespace RealRuins {
             fileBuilder.AppendFormat("<snapshot width=\"{0}\" height=\"{1}\" biomeDef=\"{2}\">\n", width, height, map.Biome.defName);
             fileBuilder.AppendFormat("<world seed=\"{0}\" tile=\"{1}\" />\n", Find.World.info.seedString, map.Parent.Tile);
 
+            int maxHPItemsCount = 0;
             int itemsCount = 0;
+            int terrainCount = 0;
             int averageHP = 0;
 
             for (int z = rect.minZ; z < rect.maxZ; z++) {
@@ -66,6 +68,7 @@ namespace RealRuins {
 
                     if (terrain.BuildableByPlayer) {
                         terrainBuilder.AppendFormat("\t\t<terrain def=\"{0}\" />\n", terrain.defName);
+                        terrainCount++;
                     }
 
 
@@ -84,8 +87,10 @@ namespace RealRuins {
                                 //Use only buildings and items. Ignoring pawns, trees, filth and so on
                                 if (thing.def.category == ThingCategory.Building || thing.def.category == ThingCategory.Item) {
                                     if (thing.def.building != null && thing.def.building.isNaturalRock) continue; //ignoring natural rocks too
-                                    averageHP = (averageHP * itemsCount +
-                                                 thing.HitPoints / Math.Max(thing.MaxHitPoints, 1)) / (itemsCount + 1);
+
+                                    if (thing.HitPoints > thing.MaxHitPoints * 0.9f) {
+                                        maxHPItemsCount++;
+                                    }
                                     itemsCount++;
 
                                     itemsBuilder.AppendFormat("\t\t<item def=\"{0}\"", thing.def.defName);
@@ -103,7 +108,7 @@ namespace RealRuins {
                                     }
 
                                     CompArt a = thing.TryGetComp<CompArt>();
-                                    if (a != null) {
+                                    if (a != null && a.Active) {
                                         itemsBuilder.AppendFormat(" artAuthor=\"{0}\" artTitle=\"{1}\" artDescription=\"{2}\"", Uri.EscapeDataString(a.AuthorName), Uri.EscapeDataString(a.Title), Uri.EscapeDataString(a.GenerateImageDescription())); //not always a wall, but should act as a wall)
                                     }
 
@@ -114,22 +119,11 @@ namespace RealRuins {
                                     if (thing.def.IsDoor) {
                                         itemsBuilder.Append(" isDoor=\"1\"");
                                     }
-
+                                    
                                     itemsBuilder.Append(" />\n");
                                 }
                             }
                         }
-                    }
-
-                    if ((float) itemsCount / ((xmax - xmin) * (zmax - zmin)) < 0.01) {
-                        //too low density of user generated things.
-                        Debug.Message("Too low ruins density. Ignoring.");
-                        return null;
-                    }
-                    if (averageHP < 0.75) {
-                        //average HP < 0.75 means VERY worn base. It's very likely this base is just a bunch of claimed ruins, and we want to prevent recycling ruins as is
-                        Debug.Message("Too low ruins average HP. Ignoring.");
-                        return null;
                     }
 
                     if (terrainBuilder.Length > 0 || itemsBuilder.Length > 0 || roofBuilder.Length > 0) {
@@ -148,6 +142,18 @@ namespace RealRuins {
                         fileBuilder.Append(nodeBuilder.ToString());
                     }
                 }
+            }
+            
+            float density = ((float) (itemsCount + terrainCount)) / ((xmax - xmin) * (zmax - zmin));
+            if (density < 0.01) {
+                //too low density of user generated things.
+                Debug.Message("Too low ruins density: {0}. Ignoring.", density);
+                return null;
+            }
+            if (maxHPItemsCount < itemsCount * 0.25f) {
+                //items with maxhp less than 25% means VERY worn base. It's very likely this base is just a bunch of claimed ruins, and we want to prevent recycling ruins as is
+                Debug.Message("Too low ruins average HP. Ignoring.");
+                return null;
             }
 
             fileBuilder.Append("</snapshot>");

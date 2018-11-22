@@ -79,7 +79,7 @@ namespace RealRuins
             static bool Prefix(TaleReference __instance, ref string __result) {
                 if (!(__instance is BakedTaleReference reference)) return true;
                 __result = reference.bakedTale;
-                Debug.Message("Set result of generate text to {0}", __result);
+               // Debug.Message("Set result of generate text to {0}", __result);
                 return false;
             }
         }
@@ -89,21 +89,21 @@ namespace RealRuins
     public static class Art_Extensions {
          
         public static void InitializeArt(this CompArt art, string author, string title, string bakedTaleData) {
-            Debug.Message("Initializing custom art");
+           // Debug.Message("Initializing custom art");
             var prop = art.GetType().GetField("taleRef", System.Reflection.BindingFlags.NonPublic
                                                   | System.Reflection.BindingFlags.Instance);
-            Debug.Message("Got prop");
+           // Debug.Message("Got prop");
             prop.SetValue(art, new BakedTaleReference(bakedTaleData));
-            Debug.Message("Set value");
+           // Debug.Message("Set value");
             
             var titleProp = art.GetType().GetField("titleInt", System.Reflection.BindingFlags.NonPublic
                                                                | System.Reflection.BindingFlags.Instance);
-            Debug.Message("Got title prop");
+            //Debug.Message("Got title prop");
             titleProp.SetValue(art, title);
 
             var authProp = art.GetType().GetField("authorNameInt", System.Reflection.BindingFlags.NonPublic
                                                                | System.Reflection.BindingFlags.Instance);
-            Debug.Message("Got author prop");
+            //Debug.Message("Got author prop");
             authProp.SetValue(art, author);
 
         }
