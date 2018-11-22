@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LanguageData>
+
+  <RuinedBase.label>前哨基地(放棄)</RuinedBase.label>
+  <RuinedBase.description>放棄された前哨基地</RuinedBase.description>
+
+  <CaravanSmallRuinsWorldObject.label>小さな遺跡</CaravanSmallRuinsWorldObject.label>
+  <CaravanSmallRuinsWorldObject.description>近くで発見した小さな遺跡</CaravanSmallRuinsWorldObject.description>
+
+
+</LanguageData>
