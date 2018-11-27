@@ -1,0 +1,9 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<LanguageData>
+  <Quest_PristineRuins.label>nahegelegene Ruinen entdeckt</Quest_PristineRuins.label>
+  <Quest_PristineRuins.letterText>{0}, {1} von {2}, hat uns eine Nachricht geschickt.
+
+Ihre Späher haben einen alten Komplex in fast unberührtem Zustand entdeckt.  Niemand weiß, wohin und warum die ehemaligen Bewohner gegangen sind, also solltest du auf alles vorbereitet sein. Gerüchte verbreiten sich schnell, so dass Sie höchstwahrscheinlich nicht der Einzige sein werden, der den Schatz in Anspruch nehmen möchte. Und da der Schatz riesig sein kann, können es auch feindliche Kräfte sein. Und bitte beeilen Sie sich, in {3} Tagen werden Sie nichts anderes finden als nackte Wände.</Quest_PristineRuins.letterText>
+  <Quest_PristineRuins.letterLabel>Unberührte Ruinen in der Nähe entdeckt</Quest_PristineRuins.letterLabel>
+  <SmallRuinsFound.label>kleine Ruinen entdeckt</SmallRuinsFound.label>
+</LanguageData>
