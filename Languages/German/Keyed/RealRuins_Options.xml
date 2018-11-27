@@ -1,0 +1,49 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<LanguageData>
+  <RealRuins_ModOptions_Category>Real Ruins</RealRuins_ModOptions_Category>
+  <RealRuins_ModOptions_AllowDownloads>Erlaube das Herunterladen von Ruinen aus der Datenbank.</RealRuins_ModOptions_AllowDownloads>
+  <RealRuins_ModOptions_AllowUploads>Erlaube das hochladen deiner Basen.</RealRuins_ModOptions_AllowUploads>
+  <RealRuins_ModOptions_CacheSize>Beschränken Sie die Größe des lokalen Caches auf </RealRuins_ModOptions_CacheSize>
+  <RealRuins_ModOptions_OfflineMode>Nur lokaler Modus</RealRuins_ModOptions_OfflineMode>
+  <RealRuins_ModOptions_AllowDownloadsTooltip>Wenn Sie dies ausschalten, wird nichts entfernt, was Sie bereits heruntergeladen haben.</RealRuins_ModOptions_AllowDownloadsTooltip>
+  <RealRuins_ModOptions_AllowUploadsTooltip>Es wird empfohlen, dies aktiviert zu lassen, um die Datenbank mit verschiedenen interessanten Basisdesigns zu füllen. Dies sollte nicht mehr als mehrere Megabyte pro Spielsitzung verbrauchen.</RealRuins_ModOptions_AllowUploadsTooltip>
+  <RealRuins_ModOptions_CacheSizeTooltip>Selbst wenn du dieses Limit erreichst, wird der Mod weiterhin neue Blueprints herunterladen und die älteren entfernen.</RealRuins_ModOptions_CacheSizeTooltip>
+  <RealRuins_ModOptions_OfflineModeTooltip>Dieser Modus löscht alle zwischengespeicherten Daten, die vom Server heruntergeladen wurden, und verhindert weitere Uploads und Downloads. Deine eigenen Basen werden jedoch weiterhin lokal gespeichert und für die Schaffung von Ruinen in deinem Spiel verwendet.</RealRuins_ModOptions_OfflineModeTooltip>
+  <RealRuins_ModOptions_OfflineModeConfirmation>Sind Sie sicher, dass Sie fortfahren wollen?</RealRuins_ModOptions_OfflineModeConfirmation>
+  <RealRuins_ModOptions_CurrentCacheSize>Aktuelle lokale Cache-Größe: </RealRuins_ModOptions_CurrentCacheSize>
+  <RealRuins_ModOptions_RemoveAll>Cache leeren</RealRuins_ModOptions_RemoveAll>
+  <RealRuins_ModOptions_DownloadMore>Weitere Blaupausen herunterladen</RealRuins_ModOptions_DownloadMore>
+  <RealRuins_ModOptions_CurrentCacheCount>Blaupausen im Cache: </RealRuins_ModOptions_CurrentCacheCount>
+  <RealRuins_MapOptions_Density>Dichte der Ruinen</RealRuins_MapOptions_Density>
+  <RealRuins_MapOptions_Size>Stückzahl</RealRuins_MapOptions_Size>
+  <RealRuins_MapOptions_Deterioration>ZUSÄTZLICHER Verschlechterungsgrad</RealRuins_MapOptions_Deterioration>
+  <RealRuins_MapOptions_Scavengers>Plünderer Aktivitätsmultiplikator</RealRuins_MapOptions_Scavengers>
+  <RealRuins_MapOptions_CostLimit>Maximaler Itemwert begrenzen</RealRuins_MapOptions_CostLimit>
+  <RealRuins_MapOptions_DisableHaulables>Deaktiviere das spawnen von Gegenständen</RealRuins_MapOptions_DisableHaulables>
+  <RealRuins_MapOptions_WallsAndDoorsOnly>Nur Wände und Türen spawnen</RealRuins_MapOptions_WallsAndDoorsOnly>
+  <RealRuins_MapOptions_DisableDecoration>Passive Spezialmenge</RealRuins_MapOptions_DisableDecoration>
+  <RealRuins_MapOptions_DisableTraps>Aktive Spezialmenge</RealRuins_MapOptions_DisableTraps>
+  <RealRuins_MapOptions_DisableHostiles>Menge feindlicher Einheiten</RealRuins_MapOptions_DisableHostiles>
+  <RealRuins_MapOptions_Claimable>Strukturen "in Besitz nehmen" aktivieren</RealRuins_MapOptions_Claimable>
+  <RealRuins_MapOptions_DensityTT>Durchschnittliche Anzahl der Ruinen, die auf einem 100x100 großen Gebiet spawnen. </RealRuins_MapOptions_DensityTT>
+  <RealRuins_MapOptions_SizeTT>Die Menge der Ruinen liegt zufällig in einem Bereich von 50% und 150% des eingegebenen wertes</RealRuins_MapOptions_SizeTT>
+  <RealRuins_MapOptions_DeteriorationTT>Dieser Wert bestimmt die zusätzliche Chance, dass ein "Tile" zerstört wird und beeinflusst nicht die verbleibende Anzahl der Trefferpunkte. Null ist die Standardeinstellung, max führt zu keinerlei Ruinen.</RealRuins_MapOptions_DeteriorationTT>
+  <RealRuins_MapOptions_ScavengersTT>Null ist eine makellose Blaupause.</RealRuins_MapOptions_ScavengersTT>
+  <RealRuins_MapOptions_CostLimitTT>Alle Gegenstände, deren Gesamtkosten höher als der gewählte Wert sind, werden zerstört.</RealRuins_MapOptions_CostLimitTT>
+  <RealRuins_MapOptions_DisableHaulablesTT>Alle transportfähigen Gegenstände werden nicht spawnen, aber Möbel können trotzdem erscheinen.</RealRuins_MapOptions_DisableHaulablesTT>
+  <RealRuins_MapOptions_WallsAndDoorsOnlyTT>Diese Einstellung ist ziemlich aggressiv und entfernt alles, was nicht auf einer Basisspiel-Wand oder Tür basiert.</RealRuins_MapOptions_WallsAndDoorsOnlyTT>
+  <RealRuins_MapOptions_DisableDecorationTT>Nur Skelette für den Moment.</RealRuins_MapOptions_DisableDecorationTT>
+  <RealRuins_MapOptions_DisableTrapsTT>Fallen und Auslöser</RealRuins_MapOptions_DisableTrapsTT>
+  <RealRuins_MapOptions_DisableHostilesTT></RealRuins_MapOptions_DisableHostilesTT>
+  <RealRuins_MapOptions_ClaimableTT>Nicht "in Besitz nehmbare" Strukturen können nicht repariert oder deinstalliert werden.</RealRuins_MapOptions_ClaimableTT>
+  <RealRuins_MapOptions_EnableProximity>Berücksichtigung der Siedlungsnähe</RealRuins_MapOptions_EnableProximity>
+  <RealRuins_MapOptions_EnableProximityTT>Die Siedlungsnähe beeinflusst die Erzeugungsparameter: Ruinen sind in der Nähe von Städten dichter, aber auch leerer.</RealRuins_MapOptions_EnableProximityTT>
+  <!-- Caravan entered map -->
+  <LetterLabelCaravanEnteredRuins>Die Karawane ist bei den Ruinen angekommen.</LetterLabelCaravanEnteredRuins>
+  <LetterCaravanEnteredRuins>{0} ist bei den verlassenen Basisruinen angekommen und ist bereit, mit dem Plündern zu beginnen.</LetterCaravanEnteredRuins>
+  <RealRuins.CaravanFoundRuins>Während ihrer Reise entdeckten {0} eine Reihe von zerstörten Gebäuden in der Nähe, die in einem besseren Zustand zu sein scheinen als sonst. Wahrscheinlich sind noch ein paar Wertsachen übrig. Auf der anderen Seite könnte es auch ein Nest von wilden Tieren, Mechanoiden oder ein Räuber-Außenposten sein: Es sollte einen Grund geben, warum diese Gebäude unberührt erscheinen.</RealRuins.CaravanFoundRuins>
+  <RealRuins.CaravanFoundRuins.Investigate>Untersuchen</RealRuins.CaravanFoundRuins.Investigate>
+  <RealRuins.CaravanFoundRuinsTitle>Kleine Ruinen in der Nähe entdeckt</RealRuins.CaravanFoundRuinsTitle>
+  <!-- Art -->
+  <DeterioratedArtDescription>Dieser Gegenstand ist zu abgenutzt und beschädigt. Man kann mit Sicherheit sagen, dass es einmal ein schönes Kunstobjekt war, aber jetzt kann man kaum erraten, worum es ging.</DeterioratedArtDescription>
+</LanguageData>
