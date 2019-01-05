@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LanguageData>
 
+  <Quest_PristineRuins.label>未調査の遺跡を発見</Quest_PristineRuins.label>
+  <Quest_PristineRuins.letterText>{0}、{2}の{1}が、我々にメッセージを送ってきました。\n\n彼らの偵察がほとんど手つかずの状態のままの古い拠点施設を発見しました。元の住人たちが何故居なくなったのかを誰も知らないので、隠れた脅威に対してあなたは準備する必要があるでしょう。この噂は速く広がるので、宝の所有権を主張する人は多いでしょう。そして、そこにある宝は莫大なものになる可能性があり、同じ目的の敵対勢力が居る可能性があります。残念ながら迷っている時間は有りません、私たちがしなければ他の勢力が{3}日で遺跡から貴重品を漁り終えるでしょう。</Quest_PristineRuins.letterText>
+  <Quest_PristineRuins.letterLabel>未調査の遺跡を発見</Quest_PristineRuins.letterLabel>
+
   <SmallRuinsFound.label>小さな遺跡の発見</SmallRuinsFound.label>
 
 
