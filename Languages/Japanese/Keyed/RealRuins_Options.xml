@@ -53,5 +53,8 @@
   <RealRuins.CaravanFoundRuins.Investigate>調査する</RealRuins.CaravanFoundRuins.Investigate>
   <RealRuins.CaravanFoundRuinsTitle>小さな遺跡が近くで見つかった</RealRuins.CaravanFoundRuinsTitle>
 
+  <!-- Art -->
+  <DeterioratedArtDescription>このアイテムはあまりにもすり減っており、所どころ壊れています。あなたはそれが美しい芸術品であったと確かに確信できますが、しかし現在、あなたはそれに何があったのか全く推測することもできません。</DeterioratedArtDescription>
+
 
 </LanguageData>
