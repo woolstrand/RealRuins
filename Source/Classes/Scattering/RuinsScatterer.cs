@@ -48,13 +48,14 @@ namespace RealRuins
 
         public ItemArt art = null;
 
-        static public ItemTile CollapsedWallItemTile() {
-            return CollapsedWallItemTile(new IntVec3(0, 0, 0));
+        static public ItemTile WallReplacementItemTile() {
+            return WallReplacementItemTile(new IntVec3(0, 0, 0));
         }
 
-        public static ItemTile CollapsedWallItemTile(IntVec3 location) {
+        public static ItemTile WallReplacementItemTile(IntVec3 location) {
             ItemTile tile = new ItemTile {
-                defName = ThingDefOf.CollapsedRocks.defName,
+                defName = ThingDefOf.Wall.defName,
+                stuffDef = ThingDefOf.WoodLog.defName,
                 isDoor = false,
                 isWall = true,
                 stackCount = 1,
@@ -373,7 +374,7 @@ namespace RealRuins
             blueprintWidth = int.Parse(snapshot.FirstChild.Attributes["width"].Value);
             blueprintHeight = int.Parse(snapshot.FirstChild.Attributes["height"].Value);
 
-            if (blueprintHeight > 350 || blueprintWidth > 350 || blueprintHeight < 10 || blueprintWidth < 10) {
+            if (blueprintHeight > 400 || blueprintWidth > 400 || blueprintHeight < 10 || blueprintWidth < 10) {
                 Debug.Message("SKIPPED due to unacceptable linear dimensions", snapshotName);
                 return false; //wrong size. too small or too large
             }
@@ -518,15 +519,33 @@ namespace RealRuins
             minZ = 0;
             maxX = blueprintWidth - 1;
             maxZ = blueprintHeight - 1;
+
+            if (blueprintWidth > map.Size.x) {
+                int delta = ((blueprintWidth - map.Size.x) / 2) + 4;
+                minX = delta;
+                maxX = blueprintWidth - delta;
+            }
             
+            if (blueprintHeight > map.Size.z) {
+                int delta = ((blueprintHeight - map.Size.z) / 2) + 4;
+                minZ = delta;
+                maxZ = blueprintHeight - delta;
+            }
+
             mapOriginX = targetPoint.x - (maxX - minX) / 2;
             mapOriginZ = targetPoint.z - (maxZ - minZ) / 2;
+            
+            Debug.Message("Spawning whole base. blueprint size: {0} x {1}. target location: {2}, {3}", blueprintWidth, blueprintHeight, targetPoint.x, targetPoint.z);
+            Debug.Message("Selected frame {0}-{1} x {2}-{3}", minX, maxX, minZ, maxZ);
+            Debug.Message("Bottom left base corner is at {0} x {1}.", mapOriginX, mapOriginZ);
 
             if (mapOriginX < 10) mapOriginX = 10;
             if (mapOriginZ < 10) mapOriginZ = 10;
 
             if (mapOriginX + (maxX - minX) > map.info.Size.x) mapOriginX = map.info.Size.x - 10 - (maxX - minX);
             if (mapOriginZ + (maxZ - minZ) > map.info.Size.z) mapOriginZ = map.info.Size.z - 10 - (maxZ - minZ);
+
+            Debug.Message("Bottom left base corner after sanity check is at {0} x {1}.", mapOriginX, mapOriginZ);
 
             for (int x = minX; x < maxX; x++) {
                 for (int z = minZ; z < maxZ; z++) {
@@ -947,7 +966,7 @@ namespace RealRuins
                         shouldStop = true; //nothing to do here, everything valueable has already gone
                         msg += "Too cheap, stopping.";
                     } else {
-                        if (Rand.Chance(0.999f)) { //there is still chance that even the most expensive thing will be left after raid. "Big momma said ya shouldn't touch that golden chair, it's cursed")
+                        if (Rand.Chance(0.999f)) { //there is still chance that even the most expensive thing will be left after raid. ("Big momma said ya shouldn't touch that golden chair, it's cursed")
                             raidCapacity -= topTile.weight; //not counting weight for now.
                             if (topTile is TerrainTile) {
                                 terrainMap[topTile.location.x, topTile.location.z] = null;
@@ -964,7 +983,7 @@ namespace RealRuins
                                         RemoveWall(itemTile.location.x, itemTile.location.z);
                                     }
                                 }  else if (itemTile.isWall) { //if something like a wall removed (vent or aircon) you usually want to cover the hole to keep wall integrity
-                                    ItemTile replacementTile = ItemTile.CollapsedWallItemTile(itemTile.location);
+                                    ItemTile replacementTile = ItemTile.WallReplacementItemTile(itemTile.location);
                                     itemsMap[topTile.location.x, topTile.location.z].Add(replacementTile);
                                     msg += "Added " + replacementTile.defName + ", original ";
                                 }
@@ -1011,7 +1030,7 @@ namespace RealRuins
             //Planting blueprint
 
             totalCost = 0;
-            Faction faction = (Rand.Value > 0.35) ? Find.FactionManager.RandomEnemyFaction() : Find.FactionManager.OfAncients;
+            Faction faction = (Rand.Value > 0.35) ? Find.FactionManager.RandomEnemyFaction() : Find.FactionManager.OfAncientsHostile;
             
             //Debug.Message("Setting ruins faction to {0}", faction.Name);
 
@@ -1031,8 +1050,10 @@ namespace RealRuins
                     //Construct terrain if some specific terrain stored in the blueprint
                     if (terrainMap[x, z] != null) {
                         TerrainDef blueprintTerrain = TerrainDef.Named(terrainMap[x, z].defName);
-                        map.terrainGrid.SetTerrain(mapLocation, blueprintTerrain);
-                        totalCost += terrainMap[x, z].cost;
+                        if (!map.terrainGrid.TerrainAt(mapLocation).IsWater) {
+                            map.terrainGrid.SetTerrain(mapLocation, blueprintTerrain);
+                            totalCost += terrainMap[x, z].cost;
+                        }
                     }
 
                     /*if (roofMap[x, z] == true) {
@@ -1081,6 +1102,7 @@ namespace RealRuins
                                     thing.SetFaction(faction);
                                 }
 
+                                //Check quality and attach art
                                 CompQuality q = thing.TryGetComp<CompQuality>();
                                 if (q != null) {
                                     byte category = (byte)Math.Abs(Math.Round(Rand.Gaussian(0, 2)));
@@ -1088,7 +1110,6 @@ namespace RealRuins
                                     if (itemTile.art != null) {
                                         category += 4;
                                         if (category > 6) category = 6; 
-                                        //Debug.Message("Item \"{0}\" at {1}-{2} has quality {3} and art attached.", itemTile.defName, mapLocation.x, mapLocation.z, category);
                                         q.SetQuality((QualityCategory)category, ArtGenerationContext.Outsider); //setquality resets art, so it should go before actual setting art
                                         thing.TryGetComp<CompArt>()?.InitializeArt(itemTile.art.author, itemTile.art.title, itemTile.art.text);
                                     }
@@ -1096,11 +1117,9 @@ namespace RealRuins
                                         if (category > 6) category = 6; 
                                         q.SetQuality((QualityCategory)category, ArtGenerationContext.Outsider);
                                     }
-
-
-
                                 }
 
+                                //Breakdown breakdownables
                                 CompBreakdownable b = thing.TryGetComp<CompBreakdownable>();
                                 if (b != null) {
                                     if (Rand.Chance(0.8f)) {
@@ -1128,7 +1147,11 @@ namespace RealRuins
 
                                 totalCost += itemTile.cost;
 
-                                thing.HitPoints = Rand.Range(1, thing.def.BaseMaxHitPoints);
+                                //Substract some hit points. Most lilkely below 400 (to make really strudy structures stay almost untouched. No more 1% beta poly walls)
+                                var maxDeltaHP = Math.Min(thing.def.BaseMaxHitPoints - 1, (int)Math.Abs(Rand.Gaussian(0, 200))); 
+                                thing.HitPoints = thing.def.BaseMaxHitPoints - Rand.Range(0, maxDeltaHP);
+
+                                //Forbid haulable stuff
                                 if (thing.def.EverHaulable) {
                                     thing.SetForbidden(true, false);
                                     TerrainDef t = map.terrainGrid.TerrainAt(mapLocation);
@@ -1136,12 +1159,21 @@ namespace RealRuins
                                         thing.HitPoints = thing.HitPoints / Rand.Range(10, 100) + 1; //things in marsh or river are really in bad condition
                                     }
                                 }
+
+                                if (thing is Building_Storage) {
+                                    ((Building_Storage)thing).settings.Priority = StoragePriority.Unstored;
+                                }
                             }
                         }
                     }
                 }
             }
-            
+
+            //Lords are for significant resistance only. Otherwise lords will be spawned for each small ruins chunk.
+            if (options.shouldAddSignificantResistance) {
+                Lord lord = LordMaker.MakeNewLord(faction, new LordJob_DefendBase(faction, new IntVec3(mapOriginX + (maxX - minX) / 2, 0, mapOriginZ + (maxZ - minZ) / 2)), map);
+            }
+
             Debug.Message("Transferred blueprint of total cost of approximately {0}", totalCost);
         }
 
@@ -1232,6 +1264,11 @@ namespace RealRuins
             //enemies
             if (Rand.Chance(options.hostileChance)) {
                 CellRect rect = new CellRect(mapOriginX, mapOriginZ, maxX - minX, maxZ - minZ);
+                
+                if (rect.minX < 15 || rect.minZ < 15 || rect.maxX > map.Size.x - 15 || rect.maxZ > map.Size.z - 15) {
+                    return; //do not add enemies if we're on the map edge
+                }
+
                 if (!CellFinder.TryFindRandomCellInsideWith(rect, (IntVec3 x) => x.Standable(map) && wallMap[x.x - rect.minX + minX, x.z - rect.minZ + minZ] > 1, out IntVec3 testCell)) {
                     return; //interrupt if there are no closed cells available
                 }

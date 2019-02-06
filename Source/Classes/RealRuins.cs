@@ -28,6 +28,12 @@ namespace RealRuins
 
             harmony.PatchAll(Assembly.GetExecutingAssembly());
             Debug.Message("RealRuins finished patching at {0} ({1} msec)", DateTime.Now, (DateTime.Now - startTime).TotalMilliseconds);
+
+            if (RealRuins_ModSettings.allowDownloads) {
+                SnapshotManager.Instance.LoadSomeSnapshots();
+            }
+            SnapshotStoreManager.Instance.CheckCacheSizeLimits();
+
         }
 
         static class SnapshotSaver {
@@ -41,6 +47,7 @@ namespace RealRuins
             }
         }
 
+        /*
         [HarmonyPatch(typeof(UIRoot_Entry), "Init", new Type[0])]
         static class UIRoot_Entry_Init_Patch {
             static void Postfix() {
@@ -50,6 +57,7 @@ namespace RealRuins
                 SnapshotStoreManager.Instance.CheckCacheSizeLimits();
             }
         }
+        */
 
         [HarmonyPatch(typeof(GameDataSaveLoader), "SaveGame")]
         class SaveGame_Patch {
