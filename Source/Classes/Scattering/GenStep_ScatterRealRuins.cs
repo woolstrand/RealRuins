@@ -168,7 +168,7 @@ namespace RealRuins
 
                 currentOptions = RealRuins_ModSettings.defaultScatterOptions.Copy(); //store as instance variable to keep accessible on subsequent ScatterAt calls
 
-                currentOptions.referenceRadiusAverage = Rand.Range(90, 120);
+                currentOptions.referenceRadiusAverage = 200;
                 currentOptions.scavengingMultiplier = 0.1f;
                 currentOptions.deteriorationMultiplier = 0.0f;
                 currentOptions.hostileChance = 1.0f;
@@ -195,7 +195,7 @@ namespace RealRuins
                 }
 
                 ResolveParams resolveParams = default(ResolveParams);
-                resolveParams.rect = CellRect.CenteredOn(map.Center, currentOptions.referenceRadiusAverage);
+                resolveParams.rect = CellRect.CenteredOn(map.Center, Math.Min(map.Size.x, map.Size.z) / 2 - 2);
                 BaseGen.globalSettings.map = map;
                 BaseGen.globalSettings.mainRect = resolveParams.rect;
 
@@ -210,7 +210,7 @@ namespace RealRuins
                     resolveParams.singlePawnLord = LordMaker.MakeNewLord(resolveParams.faction,
                         new LordJob_AssaultColony(resolveParams.faction, false, false, true, true), map, null);
 
-                    resolveParams.pawnGroupKindDef = (resolveParams.pawnGroupKindDef ?? PawnGroupKindDefOf.Settlement);
+                    resolveParams.pawnGroupKindDef = (resolveParams.pawnGroupKindDef ?? PawnGroupKindDefOf.Combat);
 
                     if (resolveParams.pawnGroupMakerParams == null) {
                         resolveParams.pawnGroupMakerParams = new PawnGroupMakerParms();

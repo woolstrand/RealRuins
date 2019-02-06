@@ -10,10 +10,18 @@ namespace RealRuins {
 				return false;
 			}
 
-			return true;
-		}
+            if (parms.target is Map) {
+                return true;
+            }
+            return CaravanIncidentUtility.CanFireIncidentWhichWantsToGenerateMapAt(parms.target.Tile);
 
-		protected override bool TryExecuteWorker(IncidentParms parms) {
+        }
+
+        private bool TryFindEntryCell(Map map, out IntVec3 cell) {
+            return CellFinder.TryFindRandomEdgeCellWith((IntVec3 x) => x.Standable(map) && map.reachability.CanReachColony(x), map, CellFinder.EdgeRoadChance_Hostile, out cell);
+        }
+
+        protected override bool TryExecuteWorker(IncidentParms parms) {
 			if (parms.target is Map) {
 				return IncidentDefOf.TravelerGroup.Worker.TryExecute(parms);
 			}
