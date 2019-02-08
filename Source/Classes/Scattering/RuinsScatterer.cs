@@ -251,7 +251,8 @@ namespace RealRuins
         int minX, maxX, minZ, maxZ; //boundaries of used part of the blueprint
         int mapOriginX, mapOriginZ; //target coordinates for minX, minZ on the map
 
-        int referenceRadius;
+        int minRadius;
+        int maxRadius;
         int referenceRadiusJitter;
 
         TerrainTile[,] terrainMap;
@@ -471,7 +472,8 @@ namespace RealRuins
 
         }
 
-        private void FallbackIntegrityMapConstructor(IntVec3 center, int radius) {
+        private void FallbackIntegrityMapConstructor(IntVec3 center, int minRadius, int maxRadius) {
+            int radius = Rand.Range(minRadius, maxRadius);
             if (center.x == 0 && center.z == 0) {
                 if (radius * 2 > blueprintWidth) { radius = blueprintWidth / 2 - 1; }
                 if (radius * 2 > blueprintHeight) { radius = blueprintHeight / 2 - 1; }
@@ -603,7 +605,7 @@ namespace RealRuins
 
             if (currentRoomIndex == 1) { //no new rooms were added => blueprint does not have regular rooms or rooms were formed with use of some missing components or materials
                 //fallback plan: construct old-fashioned circular deterioration map from a some random point
-                FallbackIntegrityMapConstructor(new IntVec3(0, 0, 0), referenceRadius);
+                FallbackIntegrityMapConstructor(new IntVec3(0, 0, 0), minRadius, maxRadius);
                 return;
             } else {
                 //1. select one random room with suitable area
@@ -619,7 +621,7 @@ namespace RealRuins
                 int selectedRoomIndex = 0;
                 if (suitableRoomIndices.Count == 0) {
                     //1x. no suitable rooms: fallback plan
-                    FallbackIntegrityMapConstructor(new IntVec3(0, 0, 0), referenceRadius);
+                    FallbackIntegrityMapConstructor(new IntVec3(0, 0, 0), minRadius, maxRadius);
                     return;
                 } else {
                     selectedRoomIndex = suitableRoomIndices[Rand.Range(0, suitableRoomIndices.Count)];
@@ -641,7 +643,7 @@ namespace RealRuins
                 //Debug.Message("Selected center");
 
                 //3. draw a random circle around that room
-                int radius = Rand.Range(referenceRadius - referenceRadiusJitter, referenceRadius + referenceRadiusJitter);
+                int radius = Rand.Range(minRadius - referenceRadiusJitter, maxRadius + referenceRadiusJitter);
                 if (radius * 2 + 1 > blueprintWidth - 4) { radius = (blueprintWidth - 4) / 2 - 1; }
                 if (radius * 2 + 1 > blueprintHeight - 4) { radius = (blueprintHeight - 4) / 2 - 1; }
                 if (radius > center.x - 1) { center.x = radius + 1; } //shift central point if it's too close to blueprint edge
@@ -695,7 +697,7 @@ namespace RealRuins
                 //if all rooms are intersecting circle outline do fallback plan (circular deterioration chance map)
                 if (allRooms.Count == openRooms.Count) {
                     //fallback
-                    FallbackIntegrityMapConstructor(center, radius);
+                    FallbackIntegrityMapConstructor(center, radius, radius);
                     return;
                 } else {
                     //otherwise create the following deterioration map: 
@@ -1148,8 +1150,8 @@ namespace RealRuins
                                 totalCost += itemTile.cost;
 
                                 //Substract some hit points. Most lilkely below 400 (to make really strudy structures stay almost untouched. No more 1% beta poly walls)
-                                var maxDeltaHP = Math.Min(thing.def.BaseMaxHitPoints - 1, (int)Math.Abs(Rand.Gaussian(0, 200))); 
-                                thing.HitPoints = thing.def.BaseMaxHitPoints - Rand.Range(0, maxDeltaHP);
+                                var maxDeltaHP = Math.Min(thing.MaxHitPoints - 1, (int)Math.Abs(Rand.Gaussian(0, 200))); 
+                                thing.HitPoints = thing.MaxHitPoints - Rand.Range(0, maxDeltaHP);
 
                                 //Forbid haulable stuff
                                 if (thing.def.EverHaulable) {
@@ -1172,15 +1174,19 @@ namespace RealRuins
             //Lords are for significant resistance only. Otherwise lords will be spawned for each small ruins chunk.
             if (options.shouldAddSignificantResistance) {
                 Lord lord = LordMaker.MakeNewLord(faction, new LordJob_DefendBase(faction, new IntVec3(mapOriginX + (maxX - minX) / 2, 0, mapOriginZ + (maxZ - minZ) / 2)), map);
+            }
 
+            if (options.shouldAddRaidTriggers && !options.enableInstantCaravanReform) { 
 
-                //                Thing thing = ThingMaker.MakeThing(ThingDefOf.PartySpot, null);
-                //                GenSpawn.Spawn(thing, loc, map);
+                //In this case we need to add a virtual thing that prevents instant caravan reforming between raids
+                //Game engine allows caravan reforming always if there is no threat. Game object considered a threat if it is a _building_ of a _hostile_faction_ which can _target_someone_ and _be_targeted_, and the building _is_reachable_
+                //So I place an empty indestructible "hostile" object in no-building-area (to not interfere with player's buildings). There possibly are rare cases when this object could not be reached by a caravan party, but now I can't 
+                //figure out how to add this object at the moment of caravan entry (it causes a crash in mapdrawer and I don't understand why)
                 CellFinder.TryFindRandomEdgeCellWith(
                     (IntVec3 c) => c.SupportsStructureType(map, TerrainAffordanceDefOf.Light) && c.Standable(map) && !map.roofGrid.Roofed(c) && c.GetRoom(map).TouchesMapEdge && !c.Fogged(map),
                     map, 0.5f, out var loc);
 
-                Debug.Message("Spawning spot at {0} - {1}", loc.x, loc.z);
+                Debug.Message("Spawning hostility spot at {0} - {1}", loc.x, loc.z);
 
                 Thing thing = ThingMaker.MakeThing(ThingDef.Named("HostilityGenerator"), null);
                 thing.SetFactionDirect(Find.FactionManager.FirstFactionOfDef(FactionDefOf.AncientsHostile));
@@ -1430,14 +1436,15 @@ namespace RealRuins
             this.options = options;
 
 
-            referenceRadius = Rand.Range((int)(options.referenceRadiusAverage * 0.8f), (int)(options.referenceRadiusAverage * 1.2f));
+            minRadius = options.minRadius;
+            maxRadius = options.maxRadius;
             scavengersActivity = Rand.Value * options.scavengingMultiplier + (options.scavengingMultiplier) / 3;
             elapsedTime = (Rand.Value * options.scavengingMultiplier) * 3 + ((options.scavengingMultiplier > 0.95) ? 3 : 0);
-            referenceRadiusJitter = referenceRadius / 10;
+            referenceRadiusJitter = (maxRadius - minRadius) / 10;
 
             deteriorationDegree = options.deteriorationMultiplier;
 
-            Debug.Message("Scattering ruins at ({0}, {1}) of radius {2}. scavengers activity: {3}, age: {4}", loc.x, loc.z, referenceRadius, scavengersActivity, elapsedTime);
+            Debug.Message("Scattering ruins at ({0}, {1}) of radius from {2} to ??. scavengers activity: {3}, age: {4}", loc.x, loc.z, minRadius, scavengersActivity, elapsedTime);
             //cut and deteriorate:
             // since the original blueprint can be pretty big, you usually don't want to replicate it as is. You need to cut a small piece and make a smooth transition
 

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+	<HugsLib.UpdateFeatureDef Abstract="true" Name="UpdateFeatureBase">
+		<modNameReadable>Real Ruins</modNameReadable>
+		<modIdentifier>RealRuins</modIdentifier>
+		<linkUrl>https://steamcommunity.com/sharedfiles/filedetails/?id=1552146295</linkUrl>
+	</HugsLib.UpdateFeatureDef>
+	
+	<HugsLib.UpdateFeatureDef ParentName="UpdateFeatureBase">
+		<defName>RealRuins_1_2_0</defName>
+		<assemblyVersion>1.2.0</assemblyVersion>
+		<content>
+&lt;b&gt;Hint 1: You can leave any encounter moving your pawns to a green area on map's edge.
+Hint 2: You can use right mouse button to pick up any stuff while looting abandoned base. You can also load your caravan animals the same way.&lt;/b&gt;
+|In this version you can't instantly reform caravan between raids during the abandoned base event. That's what you need the hints above for. On my opinion, during this encounter you should manually explore the ruins, find any valuable stuff, pick it up and leave before a new party arrives. From now on you won't be able to leave automatically once you've defeated the initial defenders. So, pick up all valuables and move to the map's edge. Ok, you can actually turn this feature off in settings, but I won't recommend.
+|
+- Replaced collapsed rocks with various walls
+- During most encounters hostile units won't spawn near map's edge, so you can enter relatively safely
+- Now you're not able to claim turrets in abandoned base encounter
+- Weapon shelves and other storages are spawned with the lowest storage priority, so your pawn won't run across the map to store your weapons
+- Doors and locks compatibility checked
+- Fixed bug with ruins placed on water
+- Rebalanced deterioration (now objects most likely won't lose more than 300-500 hit points, so no more 23/50000 beta-poly walls)
+- Fixed crash on exit
+- Speed up loading (for me the game takes the same 70 seconds to load, but probably it will help for those who report 40 minute loading)
+		</content>                                 
+	</HugsLib.UpdateFeatureDef>
+</Defs>

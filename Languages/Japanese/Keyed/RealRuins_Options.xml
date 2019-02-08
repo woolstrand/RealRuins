@@ -20,6 +20,7 @@
 
   <RealRuins_MapOptions_Density>遺跡の密度</RealRuins_MapOptions_Density>
   <RealRuins_MapOptions_Size>遺跡の大きさ</RealRuins_MapOptions_Size>
+  <RealRuins_MapOptions_Size_Max>Maximum fragment size</RealRuins_MapOptions_Size_Max>
   <RealRuins_MapOptions_Deterioration>遺跡の劣化率</RealRuins_MapOptions_Deterioration>
   <RealRuins_MapOptions_Scavengers>回収業者の活動係数</RealRuins_MapOptions_Scavengers>
   <RealRuins_MapOptions_CostLimit>アイテム価値の上限を制限</RealRuins_MapOptions_CostLimit>
