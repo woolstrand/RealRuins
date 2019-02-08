@@ -16,6 +16,8 @@ Hint 2: You can use right mouse button to pick up any stuff while looting abando
 |
 - Replaced collapsed rocks with various walls
 - During most encounters hostile units won't spawn near map's edge, so you can enter relatively safely
+- Separate settings for minimum and maximum ruins piece radius
+- Reset to defaults function in settings
 - Now you're not able to claim turrets in abandoned base encounter
 - Weapon shelves and other storages are spawned with the lowest storage priority, so your pawn won't run across the map to store your weapons
 - Doors and locks compatibility checked
