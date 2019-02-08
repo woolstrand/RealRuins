@@ -9,22 +9,19 @@ using Verse;
 using RimWorld;
 using UnityEngine;
 using RimWorld.Planet;
+using HugsLib;
 
 namespace RealRuins
 {
     [StaticConstructorOnStartup]
-    static class RealRuins {
+    class RealRuins : ModBase {
 
-        public static bool detectedConfigurableMaps;
+        public override string ModIdentifier => "RealRuins";
 
         static RealRuins() {
             DateTime startTime = DateTime.Now;
             Debug.Message("RealRuins started patching at {0}", startTime);
             var harmony = HarmonyInstance.Create("com.woolstrand.realruins");
-
-            if (ModsConfig.ActiveModsInLoadOrder.Any((ModMetaData mod) => mod.Name.Contains("Configurable Maps"))) {
-                detectedConfigurableMaps = true;
-            }
 
             harmony.PatchAll(Assembly.GetExecutingAssembly());
             Debug.Message("RealRuins finished patching at {0} ({1} msec)", DateTime.Now, (DateTime.Now - startTime).TotalMilliseconds);

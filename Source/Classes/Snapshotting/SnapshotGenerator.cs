@@ -50,7 +50,6 @@ namespace RealRuins {
             int maxHPItemsCount = 0;
             int itemsCount = 0;
             int terrainCount = 0;
-            int averageHP = 0;
 
             for (int z = rect.minZ; z < rect.maxZ; z++) {
                 for (int x = rect.minX; x < rect.maxX; x++) {

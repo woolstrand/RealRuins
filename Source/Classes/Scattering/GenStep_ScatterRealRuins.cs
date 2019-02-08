@@ -106,12 +106,13 @@ namespace RealRuins
                     }
 
                     currentOptions.densityMultiplier *= densityMultiplier;
-                    currentOptions.referenceRadiusAverage = Math.Min(60, Math.Max(6, (int)(currentOptions.referenceRadiusAverage * scaleMultiplier))); //keep between 6 and 60
+                    currentOptions.minRadius = Math.Min(60, Math.Max(6, (int)(currentOptions.minRadius * scaleMultiplier))); //keep between 6 and 60
+                    currentOptions.maxRadius = Math.Min(60, Math.Max(6, (int)(currentOptions.maxRadius * scaleMultiplier))); //keep between 6 and 60
                     currentOptions.scavengingMultiplier *= ((float)Math.Pow(proximityFactor, 0.5f) * 3.0f);
                     currentOptions.deteriorationMultiplier += Math.Min(0.2f, (1.0f / proximityFactor) / 40.0f);
 
                     if (densityMultiplier > 20.0f) densityMultiplier = 20.0f;
-                    while (densityMultiplier * currentOptions.referenceRadiusAverage > 800) {
+                    while (densityMultiplier * currentOptions.maxRadius > 800) {
                         densityMultiplier *= 0.9f;
                     }
                 }
@@ -119,7 +120,7 @@ namespace RealRuins
                 FloatRange per10k = new FloatRange(countPer10kCellsRange.min * totalDensity, countPer10kCellsRange.max * totalDensity);
                 int num = CountFromPer10kCells(per10k.RandomInRange, map, -1);
 
-                Debug.Message("total density: {0}{1}, densityMultiplier: {2}, scaleMultiplier: {3}, new density: {4}. new radius: {5}, new per10k: {6}", "", totalDensity, densityMultiplier, scaleMultiplier, currentOptions.densityMultiplier, currentOptions.referenceRadiusAverage, per10k);
+                Debug.Message("total density: {0}{1}, densityMultiplier: {2}, scaleMultiplier: {3}, new density: {4}. new radius: {5}, new per10k: {6}", "", totalDensity, densityMultiplier, scaleMultiplier, currentOptions.densityMultiplier, currentOptions.minRadius, currentOptions.maxRadius, per10k);
 
                 Debug.Message("Spawning {0} ruin chunks", num);
 
@@ -169,7 +170,8 @@ namespace RealRuins
 
                 currentOptions = RealRuins_ModSettings.defaultScatterOptions.Copy(); //store as instance variable to keep accessible on subsequent ScatterAt calls
 
-                currentOptions.referenceRadiusAverage = 200;
+                currentOptions.minRadius = 200;
+                currentOptions.maxRadius = 200;
                 currentOptions.scavengingMultiplier = 0.1f;
                 currentOptions.deteriorationMultiplier = 0.0f;
                 currentOptions.hostileChance = 1.0f;
@@ -259,7 +261,8 @@ namespace RealRuins
 
                 currentOptions = RealRuins_ModSettings.defaultScatterOptions.Copy(); //store as instance variable to keep accessible on subsequent ScatterAt calls
 
-                currentOptions.referenceRadiusAverage = Rand.Range(30, 40);
+                currentOptions.minRadius = 24;
+                currentOptions.maxRadius = 50;   
                 currentOptions.scavengingMultiplier = 0.5f;
                 currentOptions.deteriorationMultiplier = 0.1f;
                 currentOptions.hostileChance = 0.8f;
@@ -275,7 +278,7 @@ namespace RealRuins
                 RuinsScatterer.FinalizeCellUsage();
 
                 ResolveParams resolveParams = default(ResolveParams);
-                resolveParams.rect = CellRect.CenteredOn(map.Center, currentOptions.referenceRadiusAverage);
+                resolveParams.rect = CellRect.CenteredOn(map.Center, currentOptions.minRadius + (currentOptions.maxRadius - currentOptions.maxRadius) / 2);
                 BaseGen.globalSettings.map = map;
                 BaseGen.globalSettings.mainRect = resolveParams.rect;
 
