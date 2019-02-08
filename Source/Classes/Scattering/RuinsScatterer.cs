@@ -1172,6 +1172,21 @@ namespace RealRuins
             //Lords are for significant resistance only. Otherwise lords will be spawned for each small ruins chunk.
             if (options.shouldAddSignificantResistance) {
                 Lord lord = LordMaker.MakeNewLord(faction, new LordJob_DefendBase(faction, new IntVec3(mapOriginX + (maxX - minX) / 2, 0, mapOriginZ + (maxZ - minZ) / 2)), map);
+
+
+                //                Thing thing = ThingMaker.MakeThing(ThingDefOf.PartySpot, null);
+                //                GenSpawn.Spawn(thing, loc, map);
+                CellFinder.TryFindRandomEdgeCellWith(
+                    (IntVec3 c) => c.SupportsStructureType(map, TerrainAffordanceDefOf.Light) && c.Standable(map) && !map.roofGrid.Roofed(c) && c.GetRoom(map).TouchesMapEdge && !c.Fogged(map),
+                    map, 0.5f, out var loc);
+
+                Debug.Message("Spawning spot at {0} - {1}", loc.x, loc.z);
+
+                Thing thing = ThingMaker.MakeThing(ThingDef.Named("HostilityGenerator"), null);
+                thing.SetFactionDirect(Find.FactionManager.FirstFactionOfDef(FactionDefOf.AncientsHostile));
+                GenSpawn.Spawn(thing, loc, map);
+
+
             }
 
             Debug.Message("Transferred blueprint of total cost of approximately {0}", totalCost);

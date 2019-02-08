@@ -17,11 +17,24 @@ namespace RealRuins {
             Find.LetterStack.ReceiveLetter("LetterLabelCaravanEnteredRuins".Translate(), "LetterCaravanEnteredRuins".Translate(caravan.Label).CapitalizeFirst(), LetterDefOf.ThreatBig, t, null, null);
 
             Map map = orGenerateMap;
+
+
             CaravanEnterMode enterMode = CaravanEnterMode.Edge;
             bool draftColonists = flag;
             CaravanEnterMapUtility.Enter(caravan, map, enterMode, CaravanDropInventoryMode.DoNotDrop, draftColonists, null);
+
+
+
+
+            /*            Debug.Message("pawn at {0}, {1}", t.Position.x, t.Position.z);
+                        HostilityGenerator generator = (HostilityGenerator)ThingMaker.MakeThing(ThingDef.Named("HostilityGenerator"));
+                        generator.SetFaction(Find.FactionManager.FirstFactionOfDef(FactionDefOf.AncientsHostile));
+                        */
+            /*Thing spot = ThingMaker.MakeThing(ThingDefOf.PartySpot);
+            GenSpawn.Spawn(spot, t.Position, map, new Rot4(0));*/
+
         }
-        
+
         protected new void Enter(Caravan caravan, Site site)
         {
             if (!site.HasMap)
