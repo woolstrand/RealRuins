@@ -8,6 +8,7 @@ using System.Reflection;
 
 using RimWorld;
 using RimWorld.Planet;
+using Verse.AI;
 using Verse.AI.Group;
 using Verse;
 using RimWorld.BaseGen;
@@ -228,6 +229,7 @@ namespace RealRuins
                 BaseGen.symbolStack.Push("refuel", resolveParams);
                     
                 BaseGen.Generate();
+
             }
         }
 
