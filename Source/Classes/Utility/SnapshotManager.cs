@@ -20,12 +20,13 @@ namespace RealRuins {
         }
 
         private readonly SnapshotStoreManager storeManager = SnapshotStoreManager.Instance;
+        //private concurrentDownloads = 0;
 
         static Dictionary<string, DateTime> snapshotTimestamps = new Dictionary<string, DateTime>();
 
         private List<string> snapshotsToLoad = new List<string>();
 
-        public void LoadSomeSnapshots() {
+        public void LoadSomeSnapshots(int concurrent = 1) {
             if (snapshotsToLoad.Count > 0) return; //don't start loader if there is something still to load
 
             AmazonS3Service listLoader = new AmazonS3Service();
@@ -34,7 +35,8 @@ namespace RealRuins {
             
             int deltaDays = (int)(DateTime.UtcNow - DateTime.FromBinary(-8586606884938459217)).TotalDays;
             int now = int.Parse(DateTime.UtcNow.ToString("yyyyMMdd"));
-            int intPrefix = Rand.Range(20181030 - deltaDays, 20181034);
+            int random = Math.Abs((int)Rand.Gaussian(0, 10));
+            int intPrefix = Math.Min(20181030 - deltaDays + random, 20181034);
             if (intPrefix > 20181031) intPrefix = intPrefix - 20181031 + 20181100;
             string prefix = intPrefix.ToString();
 
@@ -60,21 +62,25 @@ namespace RealRuins {
                 Debug.Message("Shuffled...");
 
 
-                int maxNumberToLoad = 25;
+                int maxNumberToLoad = 50;
                 if (storeManager.StoredSnapshotsCount() < 50) {
                     maxNumberToLoad = 50;
                 }
 
+                int addedSnapshotsCount = 0;
                 foreach (string filename in files) {
                     snapshotsToLoad.Add(filename);
-                    if (snapshotsToLoad.Count >= maxNumberToLoad) break;
+                    addedSnapshotsCount++;
+                    if (addedSnapshotsCount >= maxNumberToLoad) break;
                 }
 
                 Debug.Message("Loading {0} files...", snapshotsToLoad.Count);
 
 
                 if (snapshotsToLoad.Count > 0) {
-                    LoadNextSnapshot();
+                    for (int i = 0; i < concurrent; i++) {
+                        LoadNextSnapshot();
+                    }
                 }
             });
         }

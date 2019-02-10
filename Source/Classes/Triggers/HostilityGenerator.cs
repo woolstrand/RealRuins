@@ -30,6 +30,8 @@ namespace RealRuins {
 
         }
 
+
+
         internal void SetFaction(Faction faction) {
             if (faction != null) {
                 base.SetFaction(faction);
