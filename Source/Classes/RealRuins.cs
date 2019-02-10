@@ -43,17 +43,6 @@ namespace RealRuins
             }
         }
 
-        /*
-        [HarmonyPatch(typeof(UIRoot_Entry), "Init", new Type[0])]
-        static class UIRoot_Entry_Init_Patch {
-            static void Postfix() {
-                if (RealRuins_ModSettings.allowDownloads) {
-                    SnapshotManager.Instance.LoadSomeSnapshots();
-                }
-                SnapshotStoreManager.Instance.CheckCacheSizeLimits();
-            }
-        }
-        */
 
         [HarmonyPatch(typeof(GameDataSaveLoader), "SaveGame")]
         class SaveGame_Patch {
@@ -88,8 +77,22 @@ namespace RealRuins
             }
         }
 
+        [HarmonyPatch(typeof(GenHostility), "AnyHostileActiveThreatToPlayer", typeof(Map))]
+        class PlayerThreat_Patch {
+            static bool Prefix(ref bool __result, Map map) {
+               // Debug.Message("HostileCheckerPrefix. name {0}", ((Site)(map.Parent)).core.def.defName);
+                if (((Site)(map.Parent))?.core?.def?.defName == "RuinedBaseSite") {
+                    __result = true; //Always think there is something hostile in an abandoned base event
+                    return false; //prevent original method execution
+                } else {
+                    return true;
+                }
+            }
+        }
+
+
     }
-    
+
     public static class Art_Extensions {
          
         public static void InitializeArt(this CompArt art, string author, string title, string bakedTaleData) {

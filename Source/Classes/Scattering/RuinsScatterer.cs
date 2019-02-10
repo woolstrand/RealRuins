@@ -1514,7 +1514,9 @@ namespace RealRuins
                 //Game engine allows caravan reforming always if there is no threat. Game object considered a threat if it is a _building_ of a _hostile_faction_ which can _target_someone_ and _be_targeted_, and the building _is_reachable_
                 //So I place an empty indestructible "hostile" object in no-building-area (to not interfere with player's buildings). There possibly are rare cases when this object could not be reached by a caravan party, but now I can't 
                 //figure out how to add this object at the moment of caravan entry (it causes a crash in mapdrawer and I don't understand why)
-                CellFinder.TryFindRandomEdgeCellWith(
+
+                //Does not work because AI pawns are attacking this thing. Unfortunately, have to make one more patch.
+/*                CellFinder.TryFindRandomEdgeCellWith(
                     (IntVec3 c) => c.SupportsStructureType(map, TerrainAffordanceDefOf.Light) && c.Standable(map) && !map.roofGrid.Roofed(c) && c.GetRoom(map).TouchesMapEdge && !c.Fogged(map),
                     map, 0.5f, out var loc);
 
@@ -1522,7 +1524,7 @@ namespace RealRuins
 
                 Thing thing = ThingMaker.MakeThing(ThingDef.Named("HostilityGenerator"), null);
                 thing.SetFactionDirect(Find.FactionManager.FirstFactionOfDef(FactionDefOf.AncientsHostile));
-                GenSpawn.Spawn(thing, loc, map);
+                GenSpawn.Spawn(thing, loc, map);*/
             }
 
             Debug.Message("Transferred blueprint of total cost of approximately {0}", totalCost);

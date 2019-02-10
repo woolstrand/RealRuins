@@ -136,8 +136,13 @@ namespace RealRuins {
             left.Label(Text_Option_CurrentCacheSize + " " + SnapshotStoreManager.Instance.TotalSize() / (1024 * 1024) + " MB");
             left.Label(Text_Option_CurrentCacheCount + " " + SnapshotStoreManager.Instance.StoredSnapshotsCount());
             left.Label(Text_Option_CacheSize + "  " + ((int)(RealRuins_ModSettings.diskCacheLimit)).ToString() + " MB", -1f, Text_Option_CacheSizeTooltip);
-            if (left.ButtonText(Text_Option_DownloadMore, null)) {
-                SnapshotManager.Instance.LoadSomeSnapshots();
+            if (left.ButtonText(Text_Option_DownloadMore + " (50)", null)) {//one five-threaded loader to load single subset on 50 blueprints
+                SnapshotManager.Instance.LoadSomeSnapshots(5);
+            }
+            if (left.ButtonText(Text_Option_DownloadMore + "(500)", null)) {
+                for (int i = 0; i < 10; i++) {//ten single-threaded loaders to load ten subsets of 50 blueprints
+                    SnapshotManager.Instance.LoadSomeSnapshots();
+                }
             }
             left.Gap(25f);
 
