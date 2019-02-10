@@ -1,14 +1,14 @@
 <Defs>
   <ThingDef ParentName="EtherealThingBase">
     <defName>RaidTrigger</defName>
-    <label></label>
+    <label>rough floor</label>
     <thingClass>RealRuins.RaidTrigger</thingClass>
     <tickerType>Normal</tickerType>
   </ThingDef>
 
   <ThingDef ParentName="EtherealThingBase">
     <defName>TrippingTrigger</defName>
-    <label></label>
+    <label>rough floor</label>
     <thingClass>RealRuins.TrippingTrigger</thingClass>
     <tickerType>Normal</tickerType>
   </ThingDef>
