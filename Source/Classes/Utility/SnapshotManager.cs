@@ -115,7 +115,9 @@ namespace RealRuins {
             if (tmpFilename != null) {
                 Compressor.ZipFile(tmpFilename);
 
-                if (RealRuins_ModSettings.offlineMode) {
+                if (SnapshotStoreManager.SingleFile) {
+                    SnapshotStoreManager.Instance.StoreBinaryData(File.ReadAllBytes(tmpFilename), "jeluder.bp");
+                } else if (RealRuins_ModSettings.offlineMode) {
                     SnapshotStoreManager.Instance.StoreBinaryData(File.ReadAllBytes(tmpFilename), "local-" + snapshotId + ".bp");
                 } else {
                     int deltaDays = (int)(DateTime.UtcNow - DateTime.FromBinary(-8586606884938459217)).TotalDays;

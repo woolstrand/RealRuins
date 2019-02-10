@@ -39,7 +39,6 @@ namespace RealRuins
                 if (!RealRuins_ModSettings.allowUploads && !RealRuins_ModSettings.offlineMode) return;
                 if (Find.CurrentMap != null && !Find.CurrentMap.IsPlayerHome) return;
                
-                Debug.Message("Not a temp incident, ok");
                 SnapshotManager.Instance.UploadCurrentMapSnapshot();
             }
         }
