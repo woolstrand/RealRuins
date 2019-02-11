@@ -18,8 +18,10 @@
   <RealRuins_ModOptions_DownloadMore>設計図をダウンロードする</RealRuins_ModOptions_DownloadMore>
   <RealRuins_ModOptions_CurrentCacheCount>キャッシュ内の設計図：</RealRuins_ModOptions_CurrentCacheCount>
 
+
   <RealRuins_MapOptions_Density>遺跡の密度</RealRuins_MapOptions_Density>
-  <RealRuins_MapOptions_Size>遺跡の大きさ</RealRuins_MapOptions_Size>
+  <RealRuins_MapOptions_Size>最小遺跡断片サイズ</RealRuins_MapOptions_Size>
+  <RealRuins_MapOptions_Size_Max>最大遺跡断片サイズ</RealRuins_MapOptions_Size_Max>
   <RealRuins_MapOptions_Deterioration>遺跡の劣化率</RealRuins_MapOptions_Deterioration>
   <RealRuins_MapOptions_Scavengers>回収業者の活動係数</RealRuins_MapOptions_Scavengers>
   <RealRuins_MapOptions_CostLimit>アイテム価値の上限を制限</RealRuins_MapOptions_CostLimit>
@@ -55,6 +57,10 @@
 
   <!-- Art -->
   <DeterioratedArtDescription>このアイテムはあまりにもすり減っており、所どころ壊れています。あなたはそれが美しい芸術品であったと確かに確信できますが、しかし現在、あなたはそれに何があったのか全く推測することもできません。</DeterioratedArtDescription>
+
+  <RealRuins_ModOptions_Reset>Mod設定を初期化</RealRuins_ModOptions_Reset>
+  <RealRuins_MapOptions_CaravanReforming>襲撃中でもキャラバン隊の編成可能</RealRuins_MapOptions_CaravanReforming>
+  <RealRuins_MapOptions_CaravanReformingTT>通常、未調査の遺跡を発見イベント中は、最初の敵対勢力が敗北した直後にはキャラバン隊を即座に編成することはできません。これは意図的に戦利品を手動で検索して、敵対的なポーンを殲滅しても、アイテムを拾ってマップの隅に移動してマップから出なければなりません。ただし、強力な即時編成機能を使用した古い方法を好む場合は、この設定を有効にできます。</RealRuins_MapOptions_CaravanReformingTT>
 
 
 </LanguageData>
