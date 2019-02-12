@@ -20,7 +20,8 @@
   <RealRuins_ModOptions_CurrentCacheCount>Планов в кэше: </RealRuins_ModOptions_CurrentCacheCount>
 
   <RealRuins_MapOptions_Density>Плотность руин</RealRuins_MapOptions_Density>
-  <RealRuins_MapOptions_Size>Размер</RealRuins_MapOptions_Size>
+  <RealRuins_MapOptions_Size>Минимальный размер фрагмента</RealRuins_MapOptions_Size>
+  <RealRuins_MapOptions_Size_Max>Максималный размер фрагмента</RealRuins_MapOptions_Size_Max>
   <RealRuins_MapOptions_Deterioration>Дополнительная степень разрушения</RealRuins_MapOptions_Deterioration>
   <RealRuins_MapOptions_Scavengers>Активность мародеров</RealRuins_MapOptions_Scavengers>
   <RealRuins_MapOptions_CostLimit>Установить максимальную стоимость находок</RealRuins_MapOptions_CostLimit>

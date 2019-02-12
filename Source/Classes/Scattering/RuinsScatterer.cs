@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using RimWorld;
 using Verse;
 using System.Xml;
@@ -24,7 +25,6 @@ namespace RealRuins
 
     class TerrainTile: Tile
     {
-
         public TerrainTile(XmlNode node)
         {
             defName = node.Attributes["def"].Value;
@@ -35,6 +35,19 @@ namespace RealRuins
         public string author = "Unknown";
         public string title = "Unknown";
         public string text = "";
+
+        public string TextWithDatesShiftedBy(int shift) {
+            string initialText = text;
+            try {
+                Match match = Regex.Match(initialText, "[5-9]\\d\\d\\d");
+                string yearString = match.Value;
+                if (yearString == null) return initialText;
+                int resultingYear = int.Parse(yearString) + shift;
+                return initialText.Replace(yearString, resultingYear.ToString());
+            } catch (Exception) {
+                return initialText;
+            }
+        }
     }
 
     //stores information about item in the blueprint
@@ -42,11 +55,16 @@ namespace RealRuins
     {
         public string stuffDef;
         public int stackCount;
+        public long corpseDeathTime;
         public int rot;
         public bool isWall = false; //is a wall or something as tough and dense as a wall. actually this flag determines if this item can be replaced with a wall if it's impossible to use the original.
         public bool isDoor = false;
 
         public ItemArt art = null;
+
+        public List<ItemTile> innerItems;
+
+        public string itemXml;
 
         static public ItemTile WallReplacementItemTile() {
             return WallReplacementItemTile(new IntVec3(0, 0, 0));
@@ -94,10 +112,14 @@ namespace RealRuins
         public ItemTile(XmlNode node)
         {
             defName = node.Attributes["def"].Value;
+            itemXml = node.OuterXml;
+
             XmlAttribute stuffDefAttribute = node.Attributes["stuffDef"];
             if (stuffDefAttribute != null) {
                 stuffDef = stuffDefAttribute.Value;
             }
+
+            corpseDeathTime = long.Parse(node.Attributes["timeOfDeath"]?.Value ?? "0");
 
             XmlAttribute stackCountAttribute = node.Attributes["stackCount"];
             if (stackCountAttribute != null) {
@@ -141,13 +163,24 @@ namespace RealRuins
                 art.text = Uri.UnescapeDataString(artDescriptionAttribute.Value);
             }
 
-
+            if (node.HasChildNodes) {
+                List<ItemTile> innerItems = new List<ItemTile>();
+                foreach (XmlNode childNode in node.ChildNodes) {
+                    if (childNode.Name.Equals("item")) {
+                        ItemTile innerTile = new ItemTile(childNode);
+                        innerItems.Add(innerTile);
+                    }
+                }
+                
+                if (innerItems.Count > 0) {
+                    this.innerItems = innerItems;
+                }
+            }
         }
-
     }
 
     class RuinsScatterer {
-
+        private const long ticksInYear = 3600000;
         private static bool[,] cellUsed;
 
         public static void PrepareCellUsageFor(Map map) {
@@ -247,12 +280,19 @@ namespace RealRuins
 
         int blueprintWidth;
         int blueprintHeight;
+        Version blueprintVersion;
+
+        private int snapshotYear;
+        private int dateShift;
 
         int minX, maxX, minZ, maxZ; //boundaries of used part of the blueprint
         int mapOriginX, mapOriginZ; //target coordinates for minX, minZ on the map
 
-        int referenceRadius;
+        int minRadius;
+        int maxRadius;
         int referenceRadiusJitter;
+
+        Faction faction;
 
         TerrainTile[,] terrainMap;
         bool[,] roofMap;
@@ -327,6 +367,7 @@ namespace RealRuins
 
             int attemptNumber = 0;
             bool result = false;
+            bool forceDelete = false;
 
             while (attemptNumber < 10 && result != true) {
 
@@ -335,9 +376,15 @@ namespace RealRuins
                     return false;
                 }
 
-                result = DoSanityCheckAndLoad(snapshotName);
+                try {
+                    result = DoSanityCheckAndLoad(snapshotName);
+                    forceDelete = false;
+                } catch (Exception e) {
+                    Debug.Message("Corrupted file, removing. Error: {0}", e.ToString());
+                    forceDelete = true;
+                }
 
-                if (!result && options.deleteLowQuality) { //remove bad snapshots
+                if (!result && (options.deleteLowQuality || forceDelete)) { //remove bad snapshots
                     Debug.Message("DELETING low quality file");
                     File.Delete(snapshotName);
                     string deflatedName = snapshotName + ".xml";
@@ -373,6 +420,12 @@ namespace RealRuins
             XmlNodeList elemList = snapshot.GetElementsByTagName("cell");
             blueprintWidth = int.Parse(snapshot.FirstChild.Attributes["width"].Value);
             blueprintHeight = int.Parse(snapshot.FirstChild.Attributes["height"].Value);
+            blueprintVersion = new Version(snapshot.FirstChild?.Attributes["version"]?.Value ?? "0.0.0.0");
+
+            //Snapshot year is an in-game year when snapshot was taken. Thus, all corpse ages, death times, art events and so on are in between of 5500 and [snapshotYear]
+            snapshotYear = int.Parse(snapshot.FirstChild.Attributes["inGameYear"]?.Value ?? "5600");
+            //To prevent artifacts from future we need to shift all dates by some number to the past by _at_least_ (snaphotYear - 5500) years
+            dateShift = -(snapshotYear - 5500) - Rand.Range(5, 500);
 
             if (blueprintHeight > 400 || blueprintWidth > 400 || blueprintHeight < 10 || blueprintWidth < 10) {
                 Debug.Message("SKIPPED due to unacceptable linear dimensions", snapshotName);
@@ -408,33 +461,45 @@ namespace RealRuins
                 itemsMap[x, z] = new List<ItemTile>();
 
                 foreach (XmlNode cellElement in cellNode.ChildNodes) {
-                    if (cellElement.Name.Equals("terrain")) {
-                        terrainNodes++;
-                        TerrainTile terrain = new TerrainTile(cellElement);
-                        terrain.location = new IntVec3(x, 0, z);
-                        terrainMap[x, z] = terrain;
+                    try {
+                        if (cellElement.Name.Equals("terrain")) {
+                            terrainNodes++;
+                            TerrainTile terrain = new TerrainTile(cellElement);
+                            terrain.location = new IntVec3(x, 0, z);
+                            terrainMap[x, z] = terrain;
 
-                    } else if (cellElement.Name.Equals("item")) {
-                        itemNodes++;
-                        ItemTile tile = new ItemTile(cellElement);
+                        } else if (cellElement.Name.Equals("item")) {
+                            itemNodes++;
+                            ItemTile tile = new ItemTile(cellElement);
+                            //if (!tile.defName.ToLower().Contains("wall")) Debug.Message("Loaded Item Tile {0}", tile.defName);
 
-                        ThingDef thingDef = DefDatabase<ThingDef>.GetNamed(tile.defName, false);
-                        if (thingDef != null) {
-                            if (thingDef.fillPercent == 1.0f) {
-                                wallMap[x, z] = -1; //place wall
+                            ThingDef thingDef = DefDatabase<ThingDef>.GetNamed(tile.defName, false);
+                            if (thingDef != null) {
+                                if (thingDef.fillPercent == 1.0f) {
+                                    wallMap[x, z] = -1; //place wall
+                                }
+                                tile.location = new IntVec3(x, 0, z);
+                                itemsMap[x, z].Add(tile); //save item only if it's def can be loaded.
+                            } else {
+                                if (tile.isDoor) { //replacing unavailable door with abstract default door
+                                    tile.defName = ThingDefOf.Door.defName;
+                                    tile.location = new IntVec3(x, 0, z);
+                                    itemsMap[x, z].Add(tile); //replacement door is ok
+                                } else if (tile.isWall || tile.defName.ToLower().Contains("wall")) { //replacing unavailable impassable 100% filling block (which was likely a wall) with a wall
+                                    tile.defName = ThingDefOf.Wall.defName;
+                                    tile.location = new IntVec3(x, 0, z);
+                                    itemsMap[x, z].Add(tile); //now it's a wall
+                                } else if (tile.defName == "Corpse") {
+                                    tile.location = new IntVec3(x, 0, z);
+                                    itemsMap[x, z].Add(tile); // corpse is ok
+                                }
                             }
-                            tile.location = new IntVec3(x, 0, z);
-                            itemsMap[x, z].Add(tile); //save item only if it's def can be loaded.
-                        } else {
-                            if (tile.isDoor) { //replacing unavailable door with abstract default door
-                                tile.defName = ThingDefOf.Door.defName;
-                            } else if (tile.isWall || tile.defName.ToLower().Contains("wall")) { //replacing unavailable impassable 100% filling block (which was likely a wall) with a wall
-                                tile.defName = ThingDefOf.CollapsedRocks.defName;
-                            }
+
+                        } else if (cellElement.Name.Equals("roof")) {
+                            roofMap[x, z] = true;
                         }
-
-                    } else if (cellElement.Name.Equals("roof")) {
-                        roofMap[x, z] = true;
+                    } catch (Exception) {
+                        //ignore invalid or unloadable cells
                     }
                 }
             }
@@ -471,7 +536,8 @@ namespace RealRuins
 
         }
 
-        private void FallbackIntegrityMapConstructor(IntVec3 center, int radius) {
+        private void FallbackIntegrityMapConstructor(IntVec3 center, int minRadius, int maxRadius) {
+            int radius = Rand.Range(minRadius, maxRadius);
             if (center.x == 0 && center.z == 0) {
                 if (radius * 2 > blueprintWidth) { radius = blueprintWidth / 2 - 1; }
                 if (radius * 2 > blueprintHeight) { radius = blueprintHeight / 2 - 1; }
@@ -603,7 +669,7 @@ namespace RealRuins
 
             if (currentRoomIndex == 1) { //no new rooms were added => blueprint does not have regular rooms or rooms were formed with use of some missing components or materials
                 //fallback plan: construct old-fashioned circular deterioration map from a some random point
-                FallbackIntegrityMapConstructor(new IntVec3(0, 0, 0), referenceRadius);
+                FallbackIntegrityMapConstructor(new IntVec3(blueprintWidth / 2, 0, blueprintHeight / 2), minRadius, maxRadius);
                 return;
             } else {
                 //1. select one random room with suitable area
@@ -619,7 +685,7 @@ namespace RealRuins
                 int selectedRoomIndex = 0;
                 if (suitableRoomIndices.Count == 0) {
                     //1x. no suitable rooms: fallback plan
-                    FallbackIntegrityMapConstructor(new IntVec3(0, 0, 0), referenceRadius);
+                    FallbackIntegrityMapConstructor(new IntVec3(blueprintWidth / 2, 0, blueprintHeight / 2), minRadius, maxRadius);
                     return;
                 } else {
                     selectedRoomIndex = suitableRoomIndices[Rand.Range(0, suitableRoomIndices.Count)];
@@ -641,16 +707,17 @@ namespace RealRuins
                 //Debug.Message("Selected center");
 
                 //3. draw a random circle around that room
-                int radius = Rand.Range(referenceRadius - referenceRadiusJitter, referenceRadius + referenceRadiusJitter);
-                if (radius * 2 + 1 > blueprintWidth - 4) { radius = (blueprintWidth - 4) / 2 - 1; }
-                if (radius * 2 + 1 > blueprintHeight - 4) { radius = (blueprintHeight - 4) / 2 - 1; }
+                int radius = Rand.Range(minRadius - referenceRadiusJitter, maxRadius + referenceRadiusJitter);
+                Debug.Message("Selected point {0}, {1}, radius {2}", center.x, center.x, radius);
+                /*if (radius * 2 + 1 > blueprintWidth - 4) { radius = (blueprintWidth - 4) / 2 - 1; }
+                if (radius * 2 + 1 > blueprintHeight - 4) { radius = (blueprintHeight - 4) / 2 - 1; } 
                 if (radius > center.x - 1) { center.x = radius + 1; } //shift central point if it's too close to blueprint edge
                 if (radius > center.y - 1) { center.y = radius + 1; }
                 if (center.x + radius > blueprintWidth - 2) { center.x = blueprintWidth - 2 - radius; }
                 if (center.y + radius > blueprintHeight - 2) { center.y = blueprintHeight - 2 - radius; }
-
-                minX = center.x - radius; maxX = center.x + radius;
-                minZ = center.z - radius; maxZ = center.z + radius;
+                */
+                minX = Math.Max(0, center.x - radius); maxX = Math.Min(blueprintWidth - 1, center.x + radius);
+                minZ = Math.Max(0, center.z - radius); maxZ = Math.Min(blueprintHeight - 1, center.z + radius);
 
                 //Ok, too bad with math at 1:00 am
                 if (minX < 0) minX = 0;
@@ -658,7 +725,7 @@ namespace RealRuins
                 if (maxX >= blueprintWidth - 1) maxX = blueprintWidth - 1;
                 if (maxZ >= blueprintHeight - 1) maxZ = blueprintHeight - 1;
 
-                //Debug.Message("Regular boudaries are: {0}-{1}, {2}-{3} with blueprint size of {4}x{5}", minX, maxX, minZ, maxZ, blueprintWidth, blueprintHeight);
+                Debug.Message("Regular boudaries are: {0}-{1}, {2}-{3} with blueprint size of {4}x{5}", minX, maxX, minZ, maxZ, blueprintWidth, blueprintHeight);
 
                 mapOriginX = targetPoint.x - (maxX - minX) / 2;
                 mapOriginZ = targetPoint.z - (maxZ - minZ) / 2;
@@ -695,7 +762,7 @@ namespace RealRuins
                 //if all rooms are intersecting circle outline do fallback plan (circular deterioration chance map)
                 if (allRooms.Count == openRooms.Count) {
                     //fallback
-                    FallbackIntegrityMapConstructor(center, radius);
+                    FallbackIntegrityMapConstructor(center, radius, radius);
                     return;
                 } else {
                     //otherwise create the following deterioration map: 
@@ -787,9 +854,18 @@ namespace RealRuins
 
                     List<ItemTile> itemsToRemove = new List<ItemTile>();
                     foreach (ItemTile item in items) {
+                        if (item.defName == "Corpse") continue; //TODO: make some better way of handling corpses
+                        //We can't move further with corpse item, because this item's thingDef is always null (actual corpse's def name depends on it's kind)
+
                         ThingDef thingDef = DefDatabase<ThingDef>.GetNamed(item.defName, false);
 
                         if (thingDef == null) {
+                            itemsToRemove.Add(item);
+                            continue;
+                        }
+
+                        //remove items we don't want to see in the ruins
+                        if (thingDef == ThingDefOf.Campfire || thingDef == ThingDefOf.TorchLamp) {
                             itemsToRemove.Add(item);
                             continue;
                         }
@@ -812,9 +888,11 @@ namespace RealRuins
                             itemsToRemove.Add(item);
                             continue; //remove animal sleeping beds and spots as wild animals tend to concentrate around.
                         }
-                        if (thingDef.IsCorpse || thingDef.Equals(ThingDefOf.MinifiedThing)) { //now corpses are spawned bugged on some reason, so let's ignore. Also we can't handle minified things.
-                            itemsToRemove.Add(item);
-                            continue;
+                        if (thingDef.IsCorpse || thingDef.Equals(ThingDefOf.MinifiedThing)) { //check if corpses and minified things contain inner data, otherwise ignore
+                            if (item.innerItems == null && item.itemXml == null) {
+                                itemsToRemove.Add(item);
+                                continue;
+                            }
                         }
 
                         if (thingDef.terrainAffordanceNeeded != null) {
@@ -846,6 +924,7 @@ namespace RealRuins
                     foreach (ItemTile item in items) {
                         ThingDef thingDef = DefDatabase<ThingDef>.GetNamed(item.defName, false);
                         ThingDef stuffDef = (item.stuffDef != null)?DefDatabase<ThingDef>.GetNamed(item.stuffDef, false):null;
+                        if (thingDef == null) continue; //to handle corpses
 
                         item.cost = ThingComponentsMarketCost(thingDef, stuffDef) * item.stackCount;
                         item.weight = thingDef.GetStatValueAbstract(StatDefOf.Mass, stuffDef) * item.stackCount;
@@ -1026,11 +1105,322 @@ namespace RealRuins
 
         }
 
+        private Pawn MakePawnWithRawXml(string xml) {
+            try {
+       
+                XmlDocument document = new XmlDocument();
+                document.LoadXml(xml);
+                //Debug.Message("Pawn xml: {0}", xml);
+                XmlNode root = document.FirstChild;
+
+                string pawnKind = root.SelectSingleNode("kind").InnerText;
+                PawnKindDef kindDef = PawnKindDef.Named(pawnKind);
+                if (kindDef == null) {
+                    kindDef = PawnKindDefOf.AncientSoldier;
+                }
+
+                Pawn p = PawnGenerator.GeneratePawn(kindDef, faction);
+
+                // ==== NAME AND AGE ====
+                Name name = null;
+                var nameNode = root.SelectSingleNode("name");
+                var attrFirst = nameNode.Attributes.GetNamedItem("first");
+                var attrLast = nameNode.Attributes.GetNamedItem("last");
+                var attrNick = nameNode.Attributes.GetNamedItem("nick");
+                if (attrFirst != null && attrLast != null) {
+                    name = new NameTriple(attrFirst.Value, attrNick?.Value ?? "", attrLast.Value);
+                } else {
+                    name = new NameSingle(attrFirst?.Value ?? "Unknown");
+                }
+                p.Name = name;
+                //Debug.Message("got name");
+
+                string gender = root.SelectSingleNode("gender")?.InnerText;
+                if (gender == "Male") {
+                    p.gender = Gender.Male;
+                } else if (gender == "Female") {
+                    p.gender = Gender.Female;
+                }
+
+                string bioAgeString = root.SelectSingleNode("biologicalAge")?.InnerText;
+                string chronoAgeString = root.SelectSingleNode("chronologicalAge")?.InnerText;
+                if (bioAgeString != null && chronoAgeString != null) {
+                    long result = 0;
+                    Int64.TryParse(bioAgeString, out result);
+                    p.ageTracker.AgeBiologicalTicks = result;
+                    Int64.TryParse(chronoAgeString, out result);
+                    p.ageTracker.AgeChronologicalTicks = result + 3600000 * (-dateShift); //+dateShift for dates, -dateShift for ages
+                }
+                //Debug.Message("got age");
+
+
+                // ==== STORY AND APPEARANCE ====
+                var storyNode = root.SelectSingleNode("saveable[@Class='Pawn_StoryTracker']");
+                if (storyNode != null) {
+                    Backstory bs = null;
+                    string childhoodDef = storyNode.SelectSingleNode("childhood")?.InnerText;
+                    if (BackstoryDatabase.TryGetWithIdentifier(childhoodDef, out bs)) {
+                        p.story.childhood = bs;
+                    }
+                    string adulthoodDef = storyNode.SelectSingleNode("adulthood")?.InnerText;
+                    if (BackstoryDatabase.TryGetWithIdentifier(adulthoodDef, out bs)) {
+                        p.story.adulthood = bs;
+                    }
+
+                    string bodyTypeDefName = storyNode.SelectSingleNode("bodyType")?.InnerText;
+                    if (bodyTypeDefName != null) {
+                        BodyTypeDef def = DefDatabase<BodyTypeDef>.GetNamedSilentFail(bodyTypeDefName);
+                        if (def != null) { p.story.bodyType = def; }
+
+                        try {
+                            string crownTypeName = storyNode.SelectSingleNode("crownType")?.InnerText;
+                            p.story.crownType = (CrownType)Enum.Parse(typeof(CrownType), crownTypeName);
+                        } catch (Exception) { }
+
+                        string hairDefName = storyNode.SelectSingleNode("hairDef")?.InnerText;
+                        HairDef hairDef = DefDatabase<HairDef>.GetNamedSilentFail(hairDefName);
+                        if (hairDef != null) { p.story.hairDef = hairDef; }
+
+                        float melanin = 0;
+                        if (float.TryParse(storyNode.SelectSingleNode("melanin")?.InnerText, out melanin)) {
+                            p.story.melanin = melanin;
+                        }
+
+                        string hairColorString = storyNode.SelectSingleNode("hairColor")?.InnerText;
+                        Color hairColor = (Color)ParseHelper.FromString(hairColorString, typeof(Color));
+                        if (hairColor != null) {
+                            p.story.hairColor = hairColor;
+                        }
+                    }
+                    XmlNodeList traitsList = storyNode.SelectNodes("traits/allTraits/li");
+                    if (traitsList != null) {
+                        p.story.traits.allTraits.RemoveAll(_ => true);
+                        foreach (XmlNode traitNode in traitsList) {
+                            string traitDefName = traitNode.SelectSingleNode("def")?.InnerText;
+                            int traitDegree = 0;
+                            int.TryParse(traitNode.SelectSingleNode("degree")?.InnerText, out traitDegree);
+
+                            TraitDef traitDef = DefDatabase<TraitDef>.GetNamedSilentFail(traitDefName);
+                            if (traitDef == null) continue;
+
+                            Trait t = new Trait(traitDef, traitDegree);
+                            if (t == null) continue;
+
+                            p.story.traits.allTraits.Add(t);
+                        }
+                    }
+                }
+
+                // ==== SKILLS ====
+                var skills = root.SelectSingleNode("saveable[@Class='Pawn_SkillTracker']");
+                if (skills != null) {
+                    XmlNodeList skillsList = storyNode.SelectNodes("skills/li");
+
+                    foreach (XmlNode skillNode in skillsList) {
+                        string skillDefName = skillNode.SelectSingleNode("def")?.InnerText;
+                        int level = 0;
+                        int.TryParse(skillNode.SelectSingleNode("level")?.InnerText, out level);
+
+                        float xp = 0;
+                        float.TryParse(skillNode.SelectSingleNode("xpSinceLastLevel")?.InnerText, out xp);
+
+                        SkillDef skillDef = DefDatabase<SkillDef>.GetNamedSilentFail(skillDefName);
+                        if (skillDef == null) continue;
+
+                        SkillRecord skillRecord = p.skills.GetSkill(skillDef);
+                        if (skillRecord == null) {
+                            skillRecord = new SkillRecord(p, skillDef);
+                        }
+
+                        skillRecord.Level = level;
+                        skillRecord.xpSinceLastLevel = xp;
+
+                        try {
+                            string passionTypeName = skillNode.SelectSingleNode("passion")?.InnerText;
+                            if (passionTypeName != null) {
+                                skillRecord.passion = (Passion)Enum.Parse(typeof(Passion), passionTypeName);
+                            }
+                        } catch (Exception) { }
+                    }
+                }
+                //Debug.Message("got traits and skills");
+
+                // ==== HEALTH ====
+                var healthNode = root.SelectSingleNode("saveable[@Class='Pawn_HealthTracker']");
+                if (healthNode != null) {
+                    XmlNodeList hediffsList = healthNode.SelectNodes("hediffSet/hediffs/li");
+                    if (hediffsList != null) {
+
+                        Scribe.mode = LoadSaveMode.LoadingVars;
+                        p.health?.hediffSet?.hediffs?.RemoveAll(_ => true);
+                        foreach (XmlNode hediffNode in hediffsList) {
+
+                            try {
+                                Hediff hediff = ScribeExtractor.SaveableFromNode<Hediff>(hediffNode, null);
+                                if (hediff != null) {
+                                    p.health.AddHediff(hediff);
+                                }
+                            } catch (Exception e) {
+                            }
+                        }
+                        Scribe.mode = LoadSaveMode.Inactive;
+                    }
+                }
+                //Debug.Message("got health");
+
+                // ==== APPAREL ====
+                var apparelNode = root.SelectSingleNode("apparel");
+                if (apparelNode != null) {
+                    XmlNodeList apparelList = apparelNode.SelectNodes("item");
+                    foreach (XmlNode item in apparelList) {
+                        string defName = item.Attributes?.GetNamedItem("def")?.Value;
+                        string stuffDefName = item.Attributes?.GetNamedItem("stuffDef")?.Value;
+
+                        ThingDef stuffDef = null;
+                        ThingDef thingDef = DefDatabase<ThingDef>.GetNamedSilentFail(defName);
+                        if (stuffDefName != null) {
+                            stuffDef = DefDatabase<ThingDef>.GetNamedSilentFail(stuffDefName);
+                        }
+
+                        if (thingDef != null) {
+                            Apparel apparel = (Apparel)ThingMaker.MakeThing(thingDef, stuffDef);
+                            if (apparel is Apparel) {
+                                p.apparel.Wear(apparel, false);
+                            }
+                        }
+                    }
+                }
+                return p;
+
+
+            } catch (Exception e) {
+                Debug.Message("Exception while creating pawn: {0}", e);
+                return PawnGenerator.GeneratePawn(PawnKindDefOf.AncientSoldier, faction);
+            }
+        }
+
+        private Thing MakeThingFromItemTile(ItemTile itemTile, bool enableLogging = false) {
+
+            try {
+                if (enableLogging) {
+                    //Debug.Message("Trying to create new inner item {0}", itemTile.defName);
+                }
+
+                if (itemTile.defName == "Pawn") {
+                    //Debug.Message("Now need to instantiate pawn");
+                    return MakePawnWithRawXml(itemTile.itemXml);
+                }
+
+                if (itemTile.defName == "Corpse") {
+                    if (itemTile.innerItems != null) {
+                        //Debug.Message("Creating corpse");
+                        Pawn p = (Pawn)MakeThingFromItemTile(itemTile.innerItems.First());
+                        Corpse corpse = null;
+                        if (p.Corpse != null) {
+                            corpse = p.Corpse;
+                        } else {
+                            corpse = (Corpse)ThingMaker.MakeThing(p.RaceProps.corpseDef);
+                            corpse.InnerPawn = p;
+                        }
+                        corpse.timeOfDeath = (int)(itemTile.corpseDeathTime + (ticksInYear * dateShift));
+                        CompRottable rottable = corpse.TryGetComp<CompRottable>();
+                        if (rottable != null) rottable.RotProgress = ticksInYear * (-dateShift);
+                        return corpse;
+                    }
+                    return null;
+                }
+
+                if (itemTile.defName.Contains("Corpse") || itemTile.defName.Contains("Minified")) { //should bypass older minified things and corpses
+                    if (itemTile.innerItems == null) return null;
+                }
+
+                ThingDef thingDef = DefDatabase<ThingDef>.GetNamed(itemTile.defName, false); //here thingDef is definitely not null because it was checked earlier
+
+                ThingDef stuffDef = null; //but stuff can still be null, or can be missing, so we have to check and use default just in case.
+                if (itemTile.stuffDef != null && thingDef.MadeFromStuff) { //some mods may alter thing and add stuff parameter to it. this will result in a bug on a vanilla, so need to double-check here
+                    stuffDef = DefDatabase<ThingDef>.GetNamed(itemTile.stuffDef, false);
+                }
+
+                if (stuffDef == null) {
+                    stuffDef = GenStuff.DefaultStuffFor(thingDef);
+                }
+
+                Thing thing = ThingMaker.MakeThing(thingDef, stuffDef);
+
+                if (thing != null) {
+                    if (itemTile.innerItems != null && thing is IThingHolder) {
+                        //Debug.Message("Found inners");
+                        foreach (ItemTile innerTile in itemTile.innerItems) {
+                            Thing innerThing = MakeThingFromItemTile(innerTile, true);
+                            ((IThingHolder)thing).GetDirectlyHeldThings().TryAdd(innerThing);
+                        }
+                    }
+
+                    if (thingDef.CanHaveFaction) {
+                        thing.SetFaction(faction);
+                    }
+
+                    //Check quality and attach art
+                    CompQuality q = thing.TryGetComp<CompQuality>();
+                    if (q != null) {
+                        byte category = (byte)Math.Abs(Math.Round(Rand.Gaussian(0, 2)));
+
+                        if (itemTile.art != null) {
+                            category += 4;
+                            if (category > 6) category = 6;
+                            q.SetQuality((QualityCategory)category, ArtGenerationContext.Outsider); //setquality resets art, so it should go before actual setting art
+                            thing.TryGetComp<CompArt>()?.InitializeArt(itemTile.art.author, itemTile.art.title, itemTile.art.TextWithDatesShiftedBy(dateShift));
+                        } else {
+                            if (category > 6) category = 6;
+                            q.SetQuality((QualityCategory)category, ArtGenerationContext.Outsider);
+                        }
+                    }
+
+                    
+                    if (itemTile.stackCount > 1) {
+                        thing.stackCount = Rand.Range(1, Math.Min(thingDef.stackLimit, itemTile.stackCount));
+
+
+                        //Spoil things that can be spoiled. You shouldn't find a fresh meat an the old ruins.
+                        CompRottable rottable = thing.TryGetComp<CompRottable>();
+                        if (rottable != null) {
+                            //if deterioration degree is > 0.5 you definitely won't find any food.
+                            //anyway, there is a chance that you also won't get any food even if deterioriation is relatively low. animalr, raiders, you know.
+                            if (canHaveFood) {
+                                rottable.RotProgress = (Rand.Value * 0.5f + deteriorationDegree) * (rottable.PropsRot.TicksToRotStart);
+                            } else {
+                                rottable.RotProgress = rottable.PropsRot.TicksToRotStart + 1;
+                            }
+                        }
+                    }
+
+                    totalCost += itemTile.cost;
+
+                    //Substract some hit points. Most lilkely below 400 (to make really strudy structures stay almost untouched. No more 1% beta poly walls)
+                    var maxDeltaHP = Math.Min(thing.MaxHitPoints - 1, (int)Math.Abs(Rand.Gaussian(0, 200)));
+                    thing.HitPoints = thing.MaxHitPoints - Rand.Range(0, maxDeltaHP);
+
+                    //Forbid haulable stuff
+                    if (thing.def.EverHaulable) {
+                        thing.SetForbidden(true, false);
+                    }
+
+                    if (thing is Building_Storage) {
+                        ((Building_Storage)thing).settings.Priority = StoragePriority.Unstored;
+                    }
+                }
+                return thing;
+            } catch (Exception e) {
+                Debug.Message("Failed to spawn item {0} because of {1}", itemTile.defName, e);
+                return null;
+            }
+        }
+
         private void TransferBlueprint() {
             //Planting blueprint
 
             totalCost = 0;
-            Faction faction = (Rand.Value > 0.35) ? Find.FactionManager.RandomEnemyFaction() : Find.FactionManager.OfAncientsHostile;
+            faction = (Rand.Value > 0.35) ? Find.FactionManager.RandomEnemyFaction() : Find.FactionManager.OfAncientsHostile;
             
             //Debug.Message("Setting ruins faction to {0}", faction.Name);
 
@@ -1067,21 +1457,11 @@ namespace RealRuins
                         bool cellIsAlreadyCleared = false;
                         
                         foreach (ItemTile itemTile in itemsMap[x, z]) {
-
-                            ThingDef thingDef = DefDatabase<ThingDef>.GetNamed(itemTile.defName, false); //here thingDef is definitely not null because it was checked earlier
-
-                            ThingDef stuffDef = null; //but stuff can still be null, or can be missing, so we have to check and use default just in case.
-                            if (itemTile.stuffDef != null && thingDef.MadeFromStuff) { //some mods may alter thing and add stuff parameter to it. this will result in a bug on a vanilla, so need to double-check here
-                                stuffDef = DefDatabase<ThingDef>.GetNamed(itemTile.stuffDef, false);
-                            }
-
-                            if (stuffDef == null) {
-                                stuffDef = GenStuff.DefaultStuffFor(thingDef);
-                            }
+                            //if (!itemTile.defName.ToLower().Contains("wall")) { Debug.Message("Processing item {0} at {1}, {2}", itemTile.defName, x, z); }
 
                             if (!cellIsAlreadyCleared) { //first item to be spawned should also clear place for itself. we can't do it beforehand because we don't know it it will be able and get a chance to be spawned.
                                 bool forceCleaning = (wallMap[x, z] > 1) && Rand.Chance(0.9f);
-                                    
+
                                 if (!ClearCell(mapLocation, map, forceCleaning)) {
                                     break; //if cell was not cleared successfully -> break things placement cycle and move on to the next item
                                 } else {
@@ -1093,77 +1473,38 @@ namespace RealRuins
                                 map.roofGrid.SetRoof(mapLocation, RoofDefOf.RoofConstructed);
                             }
 
-                            Thing thing = ThingMaker.MakeThing(thingDef, stuffDef);
+                            Thing thing = MakeThingFromItemTile(itemTile);
 
-                            if (thing != null) {
-                                GenSpawn.Spawn(thing, mapLocation, map, new Rot4(itemTile.rot));
-                                
-                                if (thingDef.CanHaveFaction) {
-                                    thing.SetFaction(faction);
-                                }
+                            if (thing == null) {
+                                Debug.Message("Null thing at {0}, {1}", x + minX, z + minZ);
+                                continue;
+                            }
 
-                                //Check quality and attach art
-                                CompQuality q = thing.TryGetComp<CompQuality>();
-                                if (q != null) {
-                                    byte category = (byte)Math.Abs(Math.Round(Rand.Gaussian(0, 2)));
-
-                                    if (itemTile.art != null) {
-                                        category += 4;
-                                        if (category > 6) category = 6; 
-                                        q.SetQuality((QualityCategory)category, ArtGenerationContext.Outsider); //setquality resets art, so it should go before actual setting art
-                                        thing.TryGetComp<CompArt>()?.InitializeArt(itemTile.art.author, itemTile.art.title, itemTile.art.text);
-                                    }
-                                    else {
-                                        if (category > 6) category = 6; 
-                                        q.SetQuality((QualityCategory)category, ArtGenerationContext.Outsider);
-                                    }
-                                }
-
-                                //Breakdown breakdownables
-                                CompBreakdownable b = thing.TryGetComp<CompBreakdownable>();
-                                if (b != null) {
-                                    if (Rand.Chance(0.8f)) {
-                                        b.DoBreakdown();
-                                    }
-                                }
-
-
-                                if (itemTile.stackCount > 1) {
-                                    thing.stackCount = Rand.Range(1, Math.Min(thingDef.stackLimit, itemTile.stackCount));
-
-
-                                    //Spoil things that can be spoiled. You shouldn't find a fresh meat an the old ruins.
-                                    CompRottable rottable = thing.TryGetComp<CompRottable>();
-                                    if (rottable != null) {
-                                        //if deterioration degree is > 0.5 you definitely won't find any food.
-                                        //anyway, there is a chance that you also won't get any food even if deterioriation is relatively low. animalr, raiders, you know.
-                                        if (canHaveFood) {
-                                            rottable.RotProgress = (Rand.Value * 0.5f + deteriorationDegree) * (rottable.PropsRot.TicksToRotStart);
-                                        } else {
-                                            rottable.RotProgress = rottable.PropsRot.TicksToRotStart + 1;
-                                        }
-                                    }
-                                }
-
-                                totalCost += itemTile.cost;
-
-                                //Substract some hit points. Most lilkely below 400 (to make really strudy structures stay almost untouched. No more 1% beta poly walls)
-                                var maxDeltaHP = Math.Min(thing.def.BaseMaxHitPoints - 1, (int)Math.Abs(Rand.Gaussian(0, 200))); 
-                                thing.HitPoints = thing.def.BaseMaxHitPoints - Rand.Range(0, maxDeltaHP);
-
-                                //Forbid haulable stuff
-                                if (thing.def.EverHaulable) {
-                                    thing.SetForbidden(true, false);
-                                    TerrainDef t = map.terrainGrid.TerrainAt(mapLocation);
-                                    if (t != null && t.IsWater) {
-                                        thing.HitPoints = thing.HitPoints / Rand.Range(10, 100) + 1; //things in marsh or river are really in bad condition
-                                    }
-                                }
-
-                                if (thing is Building_Storage) {
-                                    ((Building_Storage)thing).settings.Priority = StoragePriority.Unstored;
+                            //reduce HP for haulable things in water
+                            if (thing.def.EverHaulable) {
+                                TerrainDef t = map.terrainGrid.TerrainAt(mapLocation);
+                                if (t != null && t.IsWater) {
+                                    thing.HitPoints = (thing.HitPoints - 10) / Rand.Range(5, 20) + Rand.Range(1, 10); //things in marsh or river are really in bad condition
                                 }
                             }
+
+                            if (thing != null) {
+                                try {
+                                    GenSpawn.Spawn(thing, mapLocation, map, new Rot4(itemTile.rot));
+                                    
+                                    //Breakdown breakdownables: it't yet impossible to silently breakdown an item which is not spawned.
+                                    CompBreakdownable b = thing.TryGetComp<CompBreakdownable>();
+                                    if (b != null) {
+                                        if (Rand.Chance(0.8f)) {
+                                            b.DoBreakdown();
+                                        }
+                                    }
+                                } catch (Exception e) {
+                                    Debug.Message("Failed to spawn item {0} because of {1}", thing, e);
+                                    //ignore
+                                }
+                            }
+
                         }
                     }
                 }
@@ -1172,6 +1513,25 @@ namespace RealRuins
             //Lords are for significant resistance only. Otherwise lords will be spawned for each small ruins chunk.
             if (options.shouldAddSignificantResistance) {
                 Lord lord = LordMaker.MakeNewLord(faction, new LordJob_DefendBase(faction, new IntVec3(mapOriginX + (maxX - minX) / 2, 0, mapOriginZ + (maxZ - minZ) / 2)), map);
+            }
+
+            if (options.shouldAddRaidTriggers && !options.enableInstantCaravanReform) { 
+
+                //In this case we need to add a virtual thing that prevents instant caravan reforming between raids
+                //Game engine allows caravan reforming always if there is no threat. Game object considered a threat if it is a _building_ of a _hostile_faction_ which can _target_someone_ and _be_targeted_, and the building _is_reachable_
+                //So I place an empty indestructible "hostile" object in no-building-area (to not interfere with player's buildings). There possibly are rare cases when this object could not be reached by a caravan party, but now I can't 
+                //figure out how to add this object at the moment of caravan entry (it causes a crash in mapdrawer and I don't understand why)
+
+                //Does not work because AI pawns are attacking this thing. Unfortunately, have to make one more patch.
+/*                CellFinder.TryFindRandomEdgeCellWith(
+                    (IntVec3 c) => c.SupportsStructureType(map, TerrainAffordanceDefOf.Light) && c.Standable(map) && !map.roofGrid.Roofed(c) && c.GetRoom(map).TouchesMapEdge && !c.Fogged(map),
+                    map, 0.5f, out var loc);
+
+                Debug.Message("Spawning hostility spot at {0} - {1}", loc.x, loc.z);
+
+                Thing thing = ThingMaker.MakeThing(ThingDef.Named("HostilityGenerator"), null);
+                thing.SetFactionDirect(Find.FactionManager.FirstFactionOfDef(FactionDefOf.AncientsHostile));
+                GenSpawn.Spawn(thing, loc, map);*/
             }
 
             Debug.Message("Transferred blueprint of total cost of approximately {0}", totalCost);
@@ -1410,19 +1770,22 @@ namespace RealRuins
 
             DateTime start = DateTime.Now;
 
+            options.deteriorationMultiplier = 0;
+
             targetPoint = loc;
             this.map = map;
             this.options = options;
 
 
-            referenceRadius = Rand.Range((int)(options.referenceRadiusAverage * 0.8f), (int)(options.referenceRadiusAverage * 1.2f));
+            minRadius = options.minRadius;
+            maxRadius = options.maxRadius;
             scavengersActivity = Rand.Value * options.scavengingMultiplier + (options.scavengingMultiplier) / 3;
             elapsedTime = (Rand.Value * options.scavengingMultiplier) * 3 + ((options.scavengingMultiplier > 0.95) ? 3 : 0);
-            referenceRadiusJitter = referenceRadius / 10;
+            referenceRadiusJitter = (minRadius + (maxRadius - minRadius) / 2) / 10;
 
             deteriorationDegree = options.deteriorationMultiplier;
 
-            Debug.Message("Scattering ruins at ({0}, {1}) of radius {2}. scavengers activity: {3}, age: {4}", loc.x, loc.z, referenceRadius, scavengersActivity, elapsedTime);
+            Debug.Message("Scattering ruins at ({0}, {1}) of radius from {2} to {5}. scavengers activity: {3}, age: {4}", loc.x, loc.z, minRadius, scavengersActivity, elapsedTime, maxRadius);
             //cut and deteriorate:
             // since the original blueprint can be pretty big, you usually don't want to replicate it as is. You need to cut a small piece and make a smooth transition
 
@@ -1461,6 +1824,9 @@ namespace RealRuins
             if (options.shouldAddRaidTriggers) {
                 AddRaidTriggers();
             }
+
+//            RoofCollapseCellsFinder.RemoveBulkCollapsingRoofs(new List<IntVec3>{ targetPoint }, map);
+            RoofCollapseCellsFinder.CheckCollapseFlyingRoofs(new CellRect(minX, minZ, maxX - minX, maxZ - minZ), map, true);
 
             TimeSpan span = DateTime.Now - start;
             totalWorkTime += (int)span.TotalMilliseconds;

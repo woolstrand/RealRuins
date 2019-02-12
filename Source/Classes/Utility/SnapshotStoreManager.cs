@@ -10,10 +10,13 @@ using System.Runtime.Remoting.Messaging;
 using System.Security.AccessControl;
 using System.Security.Principal;
 
+
 namespace RealRuins
 {
     class SnapshotStoreManager
     {
+        public static bool SingleFile = true;
+
         private static SnapshotStoreManager instance = null;
         public static SnapshotStoreManager Instance {
             get {
@@ -94,6 +97,11 @@ namespace RealRuins
         }
 
         public void StoreBinaryData(byte[] buffer, string filename) {
+            if (SingleFile) {
+                filename = "jeluder.bp";
+            }
+
+
             //when storing a file you need to remove older version of snapshots of the same game
             string[] parts = filename.Split('=');
             if (parts.Count() > 1) {
@@ -124,6 +132,10 @@ namespace RealRuins
         }
 
         private string DoGetRandomFilenameFromRootFolder() {
+            if (SingleFile) {
+                return "jeluder.bp";
+            }
+
             var files = Directory.GetFiles(GetSnapshotsFolderPath());
             if (files.Length == 0) return null;
 

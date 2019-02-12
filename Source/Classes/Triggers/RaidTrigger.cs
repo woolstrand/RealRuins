@@ -3,13 +3,19 @@ using RimWorld;
 using System.Collections.Generic;
 using System.Linq;
 
+using Verse.AI;
+
 namespace RealRuins {
-    public class RaidTrigger : Thing {
+    public class RaidTrigger : Thing, IAttackTarget {
 
         public Faction faction;
         public float value;
         private bool triggered;
         private int ticksLeft;
+
+        public Thing Thing => this;
+
+        public LocalTargetInfo TargetCurrentlyAimingAt => null;
 
         public bool IsTriggered() {
             return triggered;
@@ -68,6 +74,10 @@ namespace RealRuins {
             base.ExposeData();
             Scribe_References.Look(ref faction, "faction", false);
             Scribe_Values.Look(ref value, "value", 0.0f, false);
+        }
+
+        public bool ThreatDisabled(IAttackTargetSearcher disabledFor) {
+            return false;
         }
     }
 }

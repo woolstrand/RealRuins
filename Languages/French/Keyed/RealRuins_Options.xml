@@ -16,6 +16,7 @@
   <RealRuins_ModOptions_CurrentCacheCount>Plans en cache: </RealRuins_ModOptions_CurrentCacheCount>
   <RealRuins_MapOptions_Density>Densité des ruines </RealRuins_MapOptions_Density>
   <RealRuins_MapOptions_Size>Taille du bloc</RealRuins_MapOptions_Size>
+  <RealRuins_MapOptions_Size_Max>Maximum fragment size</RealRuins_MapOptions_Size_Max>
   <RealRuins_MapOptions_Deterioration>Degré de détérioration supplémentaire</RealRuins_MapOptions_Deterioration>
   <RealRuins_MapOptions_Scavengers>Multiplicateur d'activité des récupérateurs </RealRuins_MapOptions_Scavengers>
   <RealRuins_MapOptions_CostLimit>Limiter le coût maximum des items </RealRuins_MapOptions_CostLimit>

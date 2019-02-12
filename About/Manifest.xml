@@ -6,7 +6,6 @@
         <li>HugsLib</li>
     </dependencies>
     <incompatibleWith>
-        <li>SomeOtherMod</li>
     </incompatibleWith>
     <loadBefore>
     </loadBefore>
