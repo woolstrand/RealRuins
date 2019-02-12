@@ -80,13 +80,15 @@ namespace RealRuins
         [HarmonyPatch(typeof(GenHostility), "AnyHostileActiveThreatToPlayer", typeof(Map))]
         class PlayerThreat_Patch {
             static bool Prefix(ref bool __result, Map map) {
-               // Debug.Message("HostileCheckerPrefix. name {0}", ((Site)(map.Parent)).core.def.defName);
-                if (((Site)(map.Parent))?.core?.def?.defName == "RuinedBaseSite") {
-                    __result = true; //Always think there is something hostile in an abandoned base event
-                    return false; //prevent original method execution
-                } else {
-                    return true;
+                if (RealRuins_ModSettings.allowInstantCaravanReform) {
+                    return true; //ignore if setting is off
+                } else if (map.Parent is Site) {
+                    if (((Site)(map.Parent))?.core?.def?.defName == "RuinedBaseSite") {
+                        __result = true; //Always think there is something hostile in an abandoned base event
+                        return false; //prevent original method execution
+                    }
                 }
+                return true;
             }
         }
 

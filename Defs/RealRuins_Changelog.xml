@@ -36,4 +36,13 @@ So if you open a cryptosleep pod and find a fatally infected colonist, you can b
 - Speed up loading (for me the game takes the same 70 seconds to load as before, but probably it will help for those who report 40 minutes loading)
 		</content>                                 
 	</HugsLib.UpdateFeatureDef>
+
+	<HugsLib.UpdateFeatureDef ParentName="UpdateFeatureBase">
+		<defName>RealRuins_1_2_1</defName>
+		<assemblyVersion>1.2.1</assemblyVersion>
+		<content>
+Quick fixes of some annoying ruins event bugs.
+		</content>                                 
+	</HugsLib.UpdateFeatureDef>
+
 </Defs>
