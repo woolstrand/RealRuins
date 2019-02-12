@@ -9,22 +9,19 @@ using Verse;
 using RimWorld;
 using UnityEngine;
 using RimWorld.Planet;
+using HugsLib;
 
 namespace RealRuins
 {
     [StaticConstructorOnStartup]
-    static class RealRuins {
+    class RealRuins : ModBase {
 
-        public static bool detectedConfigurableMaps;
+        public override string ModIdentifier => "RealRuins";
 
         static RealRuins() {
             DateTime startTime = DateTime.Now;
             Debug.Message("RealRuins started patching at {0}", startTime);
             var harmony = HarmonyInstance.Create("com.woolstrand.realruins");
-
-            if (ModsConfig.ActiveModsInLoadOrder.Any((ModMetaData mod) => mod.Name.Contains("Configurable Maps"))) {
-                detectedConfigurableMaps = true;
-            }
 
             harmony.PatchAll(Assembly.GetExecutingAssembly());
             Debug.Message("RealRuins finished patching at {0} ({1} msec)", DateTime.Now, (DateTime.Now - startTime).TotalMilliseconds);
@@ -42,22 +39,10 @@ namespace RealRuins
                 if (!RealRuins_ModSettings.allowUploads && !RealRuins_ModSettings.offlineMode) return;
                 if (Find.CurrentMap != null && !Find.CurrentMap.IsPlayerHome) return;
                
-                Debug.Message("Not a temp incident, ok");
                 SnapshotManager.Instance.UploadCurrentMapSnapshot();
             }
         }
 
-        /*
-        [HarmonyPatch(typeof(UIRoot_Entry), "Init", new Type[0])]
-        static class UIRoot_Entry_Init_Patch {
-            static void Postfix() {
-                if (RealRuins_ModSettings.allowDownloads) {
-                    SnapshotManager.Instance.LoadSomeSnapshots();
-                }
-                SnapshotStoreManager.Instance.CheckCacheSizeLimits();
-            }
-        }
-        */
 
         [HarmonyPatch(typeof(GameDataSaveLoader), "SaveGame")]
         class SaveGame_Patch {
@@ -92,8 +77,24 @@ namespace RealRuins
             }
         }
 
+        [HarmonyPatch(typeof(GenHostility), "AnyHostileActiveThreatToPlayer", typeof(Map))]
+        class PlayerThreat_Patch {
+            static bool Prefix(ref bool __result, Map map) {
+                if (RealRuins_ModSettings.allowInstantCaravanReform) {
+                    return true; //ignore if setting is off
+                } else if (map.Parent is Site) {
+                    if (((Site)(map.Parent))?.core?.def?.defName == "RuinedBaseSite") {
+                        __result = true; //Always think there is something hostile in an abandoned base event
+                        return false; //prevent original method execution
+                    }
+                }
+                return true;
+            }
+        }
+
+
     }
-    
+
     public static class Art_Extensions {
          
         public static void InitializeArt(this CompArt art, string author, string title, string bakedTaleData) {

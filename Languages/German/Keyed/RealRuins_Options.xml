@@ -16,6 +16,7 @@
   <RealRuins_ModOptions_CurrentCacheCount>Blaupausen im Cache: </RealRuins_ModOptions_CurrentCacheCount>
   <RealRuins_MapOptions_Density>Dichte der Ruinen</RealRuins_MapOptions_Density>
   <RealRuins_MapOptions_Size>Stückzahl</RealRuins_MapOptions_Size>
+  <RealRuins_MapOptions_Size_Max>Maximum fragment size</RealRuins_MapOptions_Size_Max>
   <RealRuins_MapOptions_Deterioration>ZUSÄTZLICHER Verschlechterungsgrad</RealRuins_MapOptions_Deterioration>
   <RealRuins_MapOptions_Scavengers>Plünderer Aktivitätsmultiplikator</RealRuins_MapOptions_Scavengers>
   <RealRuins_MapOptions_CostLimit>Maximaler Itemwert begrenzen</RealRuins_MapOptions_CostLimit>

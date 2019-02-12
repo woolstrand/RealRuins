@@ -8,7 +8,8 @@ using Verse;
 namespace RealRuins {
     class ScatterOptions : IExposable {
         public float densityMultiplier = 1.0f;
-        public int referenceRadiusAverage = 12;
+        public int minRadius = 8;
+        public int maxRadius = 16;
         public float deteriorationMultiplier = 0.0f;
         public float scavengingMultiplier = 1.0f;
 
@@ -31,6 +32,7 @@ namespace RealRuins {
         public bool shouldAddSignificantResistance = false;
         public bool shouldCutBlueprint = true;
         public bool shouldAddRaidTriggers = false;
+        public bool enableInstantCaravanReform = false; //only for large events
 
 
         public bool deleteLowQuality = true;
@@ -42,7 +44,8 @@ namespace RealRuins {
             //Regex: public [a-z]* ([a-zA-Z]*) = [^;]*;     =>     Scribe_Values.Look(ref $1, "$1", 0.0f, false);
 
             Scribe_Values.Look(ref densityMultiplier, "densityMultiplier", 1.0f, false);
-            Scribe_Values.Look(ref referenceRadiusAverage, "referenceRadiusAverage", 12, false);
+            Scribe_Values.Look(ref minRadius, "minRadius", 8, false);
+            Scribe_Values.Look(ref maxRadius, "maxRadius", 16, false);
             Scribe_Values.Look(ref deteriorationMultiplier, "deteriorationMultiplier", 0.0f, false);
             Scribe_Values.Look(ref scavengingMultiplier, "scavengingMultiplier", 1.0f, false);
 
@@ -55,6 +58,7 @@ namespace RealRuins {
             Scribe_Values.Look(ref decorationChance, "decorationChance", 0.0001f, false);
             Scribe_Values.Look(ref trapChance, "trapChance", 0.001f, false);
             Scribe_Values.Look(ref hostileChance, "hostileChance", 0.1f, false);
+            Scribe_Values.Look(ref enableInstantCaravanReform, "enableInstantCaravanReform", false, false);
 
         }
 
@@ -69,7 +73,8 @@ namespace RealRuins {
                 trapChance = trapChance,
                 disableSpawnItems = disableSpawnItems,
                 itemCostLimit = itemCostLimit,
-                referenceRadiusAverage = referenceRadiusAverage,
+                minRadius = minRadius,
+                maxRadius = maxRadius,
                 wallsDoorsOnly = wallsDoorsOnly,
                 enableProximity = enableProximity,
                 minimumSizeRequired = minimumSizeRequired,
@@ -80,7 +85,8 @@ namespace RealRuins {
                 shouldAddSignificantResistance = shouldAddSignificantResistance,
                 shouldCutBlueprint = shouldCutBlueprint,
                 shouldAddRaidTriggers = shouldAddRaidTriggers,
-                uncoveredCost = uncoveredCost
+                uncoveredCost = uncoveredCost,
+                enableInstantCaravanReform = enableInstantCaravanReform
             };
 
             return copy;
