@@ -367,6 +367,7 @@ namespace RealRuins
 
             int attemptNumber = 0;
             bool result = false;
+            bool forceDelete = false;
 
             while (attemptNumber < 10 && result != true) {
 
@@ -375,9 +376,15 @@ namespace RealRuins
                     return false;
                 }
 
-                result = DoSanityCheckAndLoad(snapshotName);
+                try {
+                    result = DoSanityCheckAndLoad(snapshotName);
+                    forceDelete = false;
+                } catch (Exception e) {
+                    Debug.Message("Corrupted file, removing. Error: {0}", e.ToString());
+                    forceDelete = true;
+                }
 
-                if (!result && options.deleteLowQuality) { //remove bad snapshots
+                if (!result && (options.deleteLowQuality || forceDelete)) { //remove bad snapshots
                     Debug.Message("DELETING low quality file");
                     File.Delete(snapshotName);
                     string deflatedName = snapshotName + ".xml";
