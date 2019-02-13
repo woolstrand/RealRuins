@@ -178,12 +178,12 @@ namespace RealRuins {
             right.Begin(rect3);
             right.CheckboxLabeled(Text_Option_AllowDownloads, ref RealRuins_ModSettings.allowDownloads, Text_Option_AllowDownloadsTooltip);
             right.CheckboxLabeled(Text_Option_AllowUploads, ref RealRuins_ModSettings.allowUploads, Text_Option_AllowUploadsTooltip);
-            right.Gap(65f);
+            right.Gap(25f);
             RealRuins_ModSettings.diskCacheLimit = right.Slider(RealRuins_ModSettings.diskCacheLimit, 20.0f, 2048.0f);
             if (right.ButtonText(Text_Option_RemoveAll, null)) {
                 SnapshotStoreManager.Instance.ClearCache();
             }
-            right.Gap(25);
+            right.Gap(64);
 
             if (RealRuins_ModSettings.defaultScatterOptions.minRadius > RealRuins_ModSettings.defaultScatterOptions.maxRadius) {
                 RealRuins_ModSettings.defaultScatterOptions.minRadius = RealRuins_ModSettings.defaultScatterOptions.maxRadius;

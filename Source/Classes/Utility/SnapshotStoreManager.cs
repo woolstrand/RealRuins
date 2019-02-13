@@ -15,7 +15,7 @@ namespace RealRuins
 {
     class SnapshotStoreManager
     {
-        public static bool SingleFile = true;
+        public static bool SingleFile = false;
 
         private static SnapshotStoreManager instance = null;
         public static SnapshotStoreManager Instance {
