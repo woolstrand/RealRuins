@@ -77,7 +77,7 @@ namespace RealRuins {
         }
 
         public bool ThreatDisabled(IAttackTargetSearcher disabledFor) {
-            return false;
+            return true;
         }
     }
 }
