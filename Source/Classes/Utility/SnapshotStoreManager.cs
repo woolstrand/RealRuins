@@ -11,6 +11,9 @@ using System.Security.AccessControl;
 using System.Security.Principal;
 
 
+//Snapshot manager operates with blueprint identifiers, which do not have .bp extensions. Only SnapshotStoreManager (this class) is aware of extensions
+//So you should not use .bp extension explicitly outside of this class.
+
 namespace RealRuins
 {
     class SnapshotStoreManager
@@ -91,11 +94,12 @@ namespace RealRuins
             return snapshotsFolderPath;
         }
     
-        public void StoreData(string buffer, string filename) {
-            StoreBinaryData(Encoding.UTF8.GetBytes(buffer), filename);
+        public void StoreData(string buffer, string blueprintName) {
+            StoreBinaryData(Encoding.UTF8.GetBytes(buffer), blueprintName);
         }
 
-        public void StoreBinaryData(byte[] buffer, string filename) {
+        public void StoreBinaryData(byte[] buffer, string blueprintName) {
+            string filename = blueprintName + ".bp";
             if (RealRuins.SingleFile) {
                 filename = "jeluder.bp";
             }
@@ -161,7 +165,7 @@ namespace RealRuins
             List<string> result = new List<string>();
 
             foreach (string item in source) {
-                if (!File.Exists(GetSnapshotsFolderPath() + "/" + item)) {
+                if (!File.Exists(GetSnapshotsFolderPath() + "/" + item + ".bp")) { 
                     result.Add(item);
                 }
             }

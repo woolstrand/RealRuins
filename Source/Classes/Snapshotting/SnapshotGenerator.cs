@@ -139,6 +139,9 @@ namespace RealRuins {
 
                 StringBuilder itemBuilder = new StringBuilder();
 
+                Type CompTextClass = Type.GetType("SaM.CompText, Signs_and_Memorials");
+
+
                 if (thing.HitPoints > thing.MaxHitPoints * 0.9f) {
                     maxHPItemsCount++;
                 }
@@ -164,10 +167,7 @@ namespace RealRuins {
                 }
 
                 ThingWithComps thingWithComps = thing as ThingWithComps;
-                if (thingWithComps != null) {
-                    Debug.Message("Processing thing with comps {0}", thing);
-                    Type CompTextClass = Type.GetType("SaM.CompText, Signs_and_Memorials");
-                    Debug.Message("Comp class {0}", CompTextClass);
+                if (thingWithComps != null && CompTextClass != null) {
                     Object textComp = null;
                     for (int i = 0; i < thingWithComps.AllComps.Count; i++) {
                         var val = thingWithComps.AllComps[i];
@@ -175,10 +175,8 @@ namespace RealRuins {
                             textComp = val;
                         }
                     }
-                    Debug.Message("Found text comp {0}", textComp);
                     if (textComp != null) {
                         string text = (string)(textComp?.GetType()?.GetField("text")?.GetValue(textComp));
-                        Debug.Message("Got string {0}", text);
                         if (text != null) {
                             itemBuilder.AppendFormat(" text = \"{0}\" ", SecurityElement.Escape(text));
                         }
@@ -308,6 +306,7 @@ namespace RealRuins {
 
             string tmpPath = System.IO.Path.GetTempFileName();
             System.IO.File.WriteAllText(tmpPath, fileBuilder.ToString());
+            Debug.Message("Capture finished successfully and passed all checks.");
 
             return tmpPath;
         }
