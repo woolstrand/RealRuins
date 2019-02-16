@@ -74,7 +74,7 @@ namespace RealRuins
         public static ItemTile WallReplacementItemTile(IntVec3 location) {
             ItemTile tile = new ItemTile {
                 defName = ThingDefOf.Wall.defName,
-                stuffDef = ThingDefOf.WoodLog.defName,
+                stuffDef = ThingDefOf.BlocksGranite.defName,
                 isDoor = false,
                 isWall = true,
                 stackCount = 1,
@@ -478,6 +478,11 @@ namespace RealRuins
                             itemNodes++;
                             ItemTile tile = new ItemTile(cellElement);
                             //if (!tile.defName.ToLower().Contains("wall")) Debug.Message("Loaded Item Tile {0}", tile.defName);
+
+                            //replace all collapsed rocks with walls
+                            if (tile.defName == ThingDefOf.CollapsedRocks.defName) {
+                                tile = ItemTile.WallReplacementItemTile(tile.location);
+                            }
 
                             ThingDef thingDef = DefDatabase<ThingDef>.GetNamed(tile.defName, false);
                             if (thingDef != null) {
@@ -1350,7 +1355,11 @@ namespace RealRuins
                 }
 
                 if (stuffDef == null) {
-                    stuffDef = GenStuff.DefaultStuffFor(thingDef);
+                    if (itemTile.isWall) {
+                        stuffDef = ThingDefOf.BlocksGranite; //walls from modded materials becomes granite walls.
+                    } else {
+                        stuffDef = GenStuff.DefaultStuffFor(thingDef);
+                    }
                 }
 
                 Thing thing = ThingMaker.MakeThing(thingDef, stuffDef);
