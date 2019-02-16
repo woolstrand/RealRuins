@@ -18,6 +18,10 @@ namespace RealRuins
 
         public override string ModIdentifier => "RealRuins";
 
+        public static bool SingleFile = false;
+//        public static bool SingleFile = true;
+
+
         static RealRuins() {
             DateTime startTime = DateTime.Now;
             Debug.Message("RealRuins started patching at {0}", startTime);
