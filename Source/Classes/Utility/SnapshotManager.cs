@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 
 using System.IO;
 
 using Verse;
+using UnityEngine;
 
 namespace RealRuins {
     class SnapshotManager {
@@ -26,56 +28,61 @@ namespace RealRuins {
 
         private List<string> snapshotsToLoad = new List<string>();
 
-        public void LoadSomeSnapshots(int concurrent = 1) {
-            if (snapshotsToLoad.Count > 0) return; //don't start loader if there is something still to load
+        //try to load snapshots until your guts are out
+        public void AggressiveLoadSnapshots() {
+            APIService service = new APIService();
 
-            AmazonS3Service listLoader = new AmazonS3Service();
+            Debug.Message("Snapshot pool is almost empty, doing some aggressive loading...", true);
 
-            Debug.Message("Loading some snapshots...", true);
-            
-            int deltaDays = (int)(DateTime.UtcNow - DateTime.FromBinary(-8586606884938459217)).TotalDays;
-            int now = int.Parse(DateTime.UtcNow.ToString("yyyyMMdd"));
-            int random = Math.Abs((int)Rand.Gaussian(0, 10));
-            int intPrefix = Math.Min(20181030 - deltaDays + random, 20181034);
-            if (intPrefix > 20181031) intPrefix = intPrefix - 20181031 + 20181100;
-            string prefix = intPrefix.ToString();
+            service.LoadRandomMapsList(delegate (bool success, List<string> files) {
+                if (!success) {
+                    Debug.Message("Failed loading list of random maps. Rescheduling after 10 seconds");
+                    Thread.Sleep(10000);
+                    AggressiveLoadSnapshots();
+                    return;
+                }
 
-            Debug.Message("Loaded list of elements with prefix {0}...", prefix);
-            
-            
-            listLoader.AmazonS3ListFiles(prefix, delegate (List<string> files) {
                 Debug.Message("Loaded list of {0} elements...", files.Count);
                 files = storeManager.FilterOutExistingItems(files);
 
-                Debug.Message("Filtered down to list of {0} elements...", files.Count);
-
-                Random rng = new Random();
-                int n = files.Count;
-                while (n > 1) {
-                    n--;
-                    int k = rng.Next(n + 1);
-                    var value = files[k];
-                    files[k] = files[n];
-                    files[n] = value;
-                }
-
-                Debug.Message("Shuffled...");
-
-
-                int maxNumberToLoad = 50;
-                if (storeManager.StoredSnapshotsCount() < 50) {
-                    maxNumberToLoad = 50;
-                }
-
-                int addedSnapshotsCount = 0;
                 foreach (string filename in files) {
                     snapshotsToLoad.Add(filename);
-                    addedSnapshotsCount++;
-                    if (addedSnapshotsCount >= maxNumberToLoad) break;
                 }
 
                 Debug.Message("Loading {0} files...", snapshotsToLoad.Count);
 
+                if (snapshotsToLoad.Count > 0) {
+                    for (int i = 0; i < 10; i++) {
+                        LoadNextSnapshot();
+                    }
+                }
+            });
+        }
+
+        public void LoadSomeSnapshots(int concurrent = 1, int retries = 10) {
+            if (snapshotsToLoad.Count > 0) return; //don't start loader if there is something still to load
+
+            //AmazonS3Service listLoader = new AmazonS3Service();
+            APIService service = new APIService();
+
+            Debug.Message("Loading some snapshots...", true);
+
+            service.LoadRandomMapsList(delegate (bool success, List<string> files) {
+                if (!success) {
+                    Debug.Message("Failed loading list of random maps");
+                    Thread.Sleep(20000);
+                    LoadSomeSnapshots(concurrent, retries - 1);
+                    return;
+                }
+
+                Debug.Message("Loaded list of {0} elements...", files.Count);
+                files = storeManager.FilterOutExistingItems(files);
+            
+                foreach (string filename in files) {
+                    snapshotsToLoad.Add(filename);
+                }
+
+                Debug.Message("Loading {0} files...", snapshotsToLoad.Count);
 
                 if (snapshotsToLoad.Count > 0) {
                     for (int i = 0; i < concurrent; i++) {
@@ -90,8 +97,8 @@ namespace RealRuins {
 
             Debug.Message("Loading snapshot {0}", next);
 
-            AmazonS3Service elementLoader = new AmazonS3Service();
-            elementLoader.AmazonS3DownloadSnapshot(next, delegate (bool success, byte[] data) {
+            APIService service = new APIService();
+            service.LoadMap(next, delegate (bool success, byte[] data) {
                 if (success) {
                     storeManager.StoreBinaryData(data, next);
                 }
@@ -126,14 +133,11 @@ namespace RealRuins {
                 } else if (RealRuins_ModSettings.offlineMode) {
                     SnapshotStoreManager.Instance.StoreBinaryData(File.ReadAllBytes(tmpFilename), "local-" + snapshotId + ".bp");
                 } else {
-                    int deltaDays = (int)(DateTime.UtcNow - DateTime.FromBinary(-8586606884938459217)).TotalDays;
-                    int now = int.Parse(DateTime.UtcNow.ToString("yyyyMMdd"));
-                    string amazonFilename = (20181030 - deltaDays).ToString() + "-" + worldId + Find.CurrentMap.uniqueID + "-jeluder.bp";
-
-                    Debug.Message("Uploading file {0}", amazonFilename);
-
-                    AmazonS3Service uploader = new AmazonS3Service();
-                    uploader.AmazonS3Upload(tmpFilename, "", amazonFilename);
+                    Debug.Message("Uploading file {0}", tmpFilename);
+                    APIService service = new APIService();
+                    service.UploadMap(tmpFilename, delegate (bool success) {
+                        File.Delete(tmpFilename);
+                    });
                 }
             }
         }
