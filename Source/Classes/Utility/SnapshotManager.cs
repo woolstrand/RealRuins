@@ -121,7 +121,7 @@ namespace RealRuins {
             if (tmpFilename != null) {
                 Compressor.ZipFile(tmpFilename);
 
-                if (SnapshotStoreManager.SingleFile) {
+                if (RealRuins.SingleFile) {
                     SnapshotStoreManager.Instance.StoreBinaryData(File.ReadAllBytes(tmpFilename), "jeluder.bp");
                 } else if (RealRuins_ModSettings.offlineMode) {
                     SnapshotStoreManager.Instance.StoreBinaryData(File.ReadAllBytes(tmpFilename), "local-" + snapshotId + ".bp");

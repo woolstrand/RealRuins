@@ -61,6 +61,7 @@ namespace RealRuins
         public bool isDoor = false;
 
         public ItemArt art = null;
+        public string attachedText = null;
 
         public List<ItemTile> innerItems;
 
@@ -131,6 +132,11 @@ namespace RealRuins
             XmlAttribute doorAttribute = node.Attributes["isDoor"];
             if (doorAttribute != null || defName.ToLower().Contains("door")) {
                 isDoor = true;
+            }
+
+            XmlAttribute textAttribute = node.Attributes["text"];
+            if (textAttribute != null) {
+                attachedText = textAttribute.Value;
             }
 
             XmlAttribute wallAttribute = node.Attributes["actsAsWall"];
@@ -427,12 +433,12 @@ namespace RealRuins
             //To prevent artifacts from future we need to shift all dates by some number to the past by _at_least_ (snaphotYear - 5500) years
             dateShift = -(snapshotYear - 5500) - Rand.Range(5, 500);
 
-            if (blueprintHeight > 400 || blueprintWidth > 400 || blueprintHeight < 10 || blueprintWidth < 10) {
+            if (!RealRuins.SingleFile && (blueprintHeight > 400 || blueprintWidth > 400 || blueprintHeight < 10 || blueprintWidth < 10)) {
                 Debug.Message("SKIPPED due to unacceptable linear dimensions", snapshotName);
                 return false; //wrong size. too small or too large
             }
 
-            if (blueprintHeight * blueprintWidth < options.minimumSizeRequired) {
+            if (!RealRuins.SingleFile && blueprintHeight * blueprintWidth < options.minimumSizeRequired) {
                 Debug.Message("SKIPPED due to area vs options", snapshotName);
                 return false;
             }
@@ -506,7 +512,7 @@ namespace RealRuins
 
             float itemsDensity = (float) (itemNodes + terrainNodes) / (float) (blueprintHeight * blueprintWidth);
             Debug.Message("Items density: {0}", itemsDensity);
-            if (itemsDensity < options.minimumDensityRequired) {
+            if (!RealRuins.SingleFile && itemsDensity < options.minimumDensityRequired) {
                 Debug.Message("SKIPPED due to low density");
                 return false; //too empty: less than 1% of area is covered with player constructed items
             }
@@ -1334,6 +1340,8 @@ namespace RealRuins
                     if (itemTile.innerItems == null) return null;
                 }
 
+                if (itemTile.defName == "Hive") return null; //Ignore hives, probably should add more comprehensive ignore list here.
+
                 ThingDef thingDef = DefDatabase<ThingDef>.GetNamed(itemTile.defName, false); //here thingDef is definitely not null because it was checked earlier
 
                 ThingDef stuffDef = null; //but stuff can still be null, or can be missing, so we have to check and use default just in case.
@@ -1391,6 +1399,26 @@ namespace RealRuins
                             } else {
                                 rottable.RotProgress = rottable.PropsRot.TicksToRotStart + 1;
                             }
+                        }
+                    }
+
+                    if (itemTile.attachedText != null && thing is ThingWithComps) {
+                        ThingWithComps thingWithComps = thing as ThingWithComps;
+                        Type CompTextClass = Type.GetType("SaM.CompText, Signs_and_Memorials");
+                        if (CompTextClass != null) {
+                            System.Object textComp = null;
+                            for (int i = 0; i < thingWithComps.AllComps.Count; i++) {
+                                var val = thingWithComps.AllComps[i];
+                                if (val.GetType() == CompTextClass) {
+                                    textComp = val;
+                                }
+                            }
+
+                            //var textComp = Activator.CreateInstance(CompTextClass);
+                            if (textComp != null) {
+                                textComp?.GetType()?.GetField("text").SetValue(textComp, itemTile.attachedText);
+                            }
+                            //thingWithComps.
                         }
                     }
 
@@ -1504,7 +1532,6 @@ namespace RealRuins
                                     //ignore
                                 }
                             }
-
                         }
                     }
                 }

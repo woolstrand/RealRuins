@@ -163,6 +163,28 @@ namespace RealRuins {
                     itemBuilder.AppendFormat(" artAuthor=\"{0}\" artTitle=\"{1}\" artDescription=\"{2}\"", Uri.EscapeDataString(a.AuthorName), Uri.EscapeDataString(a.Title), Uri.EscapeDataString(a.GenerateImageDescription())); //not always a wall, but should act as a wall)
                 }
 
+                ThingWithComps thingWithComps = thing as ThingWithComps;
+                if (thingWithComps != null) {
+                    Debug.Message("Processing thing with comps {0}", thing);
+                    Type CompTextClass = Type.GetType("SaM.CompText, Signs_and_Memorials");
+                    Debug.Message("Comp class {0}", CompTextClass);
+                    Object textComp = null;
+                    for (int i = 0; i < thingWithComps.AllComps.Count; i++) {
+                        var val = thingWithComps.AllComps[i];
+                        if (val.GetType() == CompTextClass) {
+                            textComp = val;
+                        }
+                    }
+                    Debug.Message("Found text comp {0}", textComp);
+                    if (textComp != null) {
+                        string text = (string)(textComp?.GetType()?.GetField("text")?.GetValue(textComp));
+                        Debug.Message("Got string {0}", text);
+                        if (text != null) {
+                            itemBuilder.AppendFormat(" text = \"{0}\" ", SecurityElement.Escape(text));
+                        }
+                    }
+                }
+
                 if (thing.def.passability == Traversability.Impassable || thing.def.fillPercent > 0.99) {
                     itemBuilder.Append(" actsAsWall=\"1\""); //not always a wall, but should act as a wall
                 }
@@ -214,7 +236,7 @@ namespace RealRuins {
 
             StringBuilder fileBuilder = new StringBuilder();
             fileBuilder.AppendFormat("<snapshot version=\"{3}\" width=\"{0}\" height=\"{1}\" biomeDef=\"{2}\" inGameYear=\"{4}\">\n", width, height, map.Biome.defName, typeof(RealRuins).Assembly.GetName().Version, Find.TickManager.StartingYear + Find.TickManager.TicksGame / 3600000);
-            fileBuilder.AppendFormat("<world seed=\"{0}\" tile=\"{1}\" gameId=\"{2}\"/>\n", Find.World.info.seedString, map.Parent.Tile, Math.Abs(Find.World.info.persistentRandomValue));
+            fileBuilder.AppendFormat("<world seed=\"{0}\" tile=\"{1}\" gameId=\"{2}\"/>\n", SecurityElement.Escape(Find.World.info.seedString), map.Parent.Tile, Math.Abs(Find.World.info.persistentRandomValue));
 
             for (int z = rect.minZ; z < rect.maxZ; z++) {
                 for (int x = rect.minX; x < rect.maxX; x++) {
@@ -238,14 +260,12 @@ namespace RealRuins {
 
 
                     if (roof != null) {
-                        if (!roof.isNatural) {
-                            roofBuilder.AppendFormat("\t\t<roof />\n");
-                        }
+                        roofBuilder.AppendFormat("\t\t<roof />\n");
                     }
 
                     if (things.Count > 0) {
                         foreach (Thing thing in things) {
-                            if (thing.Position.Equals(cellVec)) {//store multicell object only if we're looking at it's origin point.
+                            if (!(thing is Pawn) && thing.Position.Equals(cellVec)) {//ignore alive pawns, store multicell object only if we're looking at it's origin point.
                                 string encoded = EncodeThing(thing);
                                 if (encoded != null) {
                                     itemsBuilder.Append(encoded);

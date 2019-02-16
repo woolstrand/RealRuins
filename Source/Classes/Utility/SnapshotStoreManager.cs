@@ -15,7 +15,6 @@ namespace RealRuins
 {
     class SnapshotStoreManager
     {
-        public static bool SingleFile = false;
 
         private static SnapshotStoreManager instance = null;
         public static SnapshotStoreManager Instance {
@@ -97,7 +96,7 @@ namespace RealRuins
         }
 
         public void StoreBinaryData(byte[] buffer, string filename) {
-            if (SingleFile) {
+            if (RealRuins.SingleFile) {
                 filename = "jeluder.bp";
             }
 
@@ -132,7 +131,7 @@ namespace RealRuins
         }
 
         private string DoGetRandomFilenameFromRootFolder() {
-            if (SingleFile) {
+            if (RealRuins.SingleFile) {
                 return "jeluder.bp";
             }
 
