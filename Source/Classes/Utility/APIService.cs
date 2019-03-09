@@ -16,7 +16,7 @@ using System.IO;
 namespace RealRuins {
     class APIService {
 
-        private const string APIRoot = "http://woolstrand.art:9000/";
+        private const string APIRoot = "https://woolstrand.art/";
         //private const string APIRoot = "http://173.23.44.32/"; //for testing unresponsive host
         private const string BucketRoot = "https://realruinsv2.sfo2.digitaloceanspaces.com/";
 
