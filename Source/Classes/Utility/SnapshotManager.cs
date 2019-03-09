@@ -10,7 +10,25 @@ using Verse;
 using UnityEngine;
 
 namespace RealRuins {
+
+
     class SnapshotManager {
+
+        private static HashSet<Timer> timers = new HashSet<Timer>();
+        private static void ExecuteAfter(Action action, TimeSpan delay) {
+            Timer timer = null;
+            timer = new System.Threading.Timer(s =>
+            {
+                action();
+                timer.Dispose();
+                lock (timers)
+                    timers.Remove(timer);
+            }, null, (long)delay.TotalMilliseconds, Timeout.Infinite);
+            lock (timers)
+                timers.Add(timer);
+        }
+
+
         private static SnapshotManager instance = null;
         public static SnapshotManager Instance {
             get {
@@ -28,6 +46,7 @@ namespace RealRuins {
 
         private List<string> snapshotsToLoad = new List<string>();
 
+
         //try to load snapshots until your guts are out
         public void AggressiveLoadSnapshots() {
             APIService service = new APIService();
@@ -37,8 +56,9 @@ namespace RealRuins {
             service.LoadRandomMapsList(delegate (bool success, List<string> files) {
                 if (!success) {
                     Debug.Message("Failed loading list of random maps. Rescheduling after 10 seconds");
-                    Thread.Sleep(10000);
-                    AggressiveLoadSnapshots();
+                    ExecuteAfter(delegate () {
+                        AggressiveLoadSnapshots();
+                    }, new TimeSpan(0, 0, 20));
                     return;
                 }
 
@@ -70,8 +90,9 @@ namespace RealRuins {
             service.LoadRandomMapsList(delegate (bool success, List<string> files) {
                 if (!success) {
                     Debug.Message("Failed loading list of random maps");
-                    Thread.Sleep(20000);
-                    LoadSomeSnapshots(concurrent, retries - 1);
+                    ExecuteAfter(delegate () {
+                        LoadSomeSnapshots(concurrent, retries - 1);
+                    }, new TimeSpan(0, 0, 20));
                     return;
                 }
 

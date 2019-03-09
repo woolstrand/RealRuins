@@ -136,7 +136,7 @@ namespace RealRuins
 
         private string DoGetRandomFilenameFromRootFolder() {
             if (RealRuins.SingleFile) {
-                return "jeluder.bp";
+                return RealRuins.SingleFileName;
             }
 
             var files = Directory.GetFiles(GetSnapshotsFolderPath());
@@ -227,5 +227,22 @@ namespace RealRuins
             RecalculateFilesSize();
         }
 
+        public bool CanFireMediumEvent() {
+            if (StoredSnapshotsCount() > 0) {
+                if (RealRuins_ModSettings.offlineMode) return true;
+                else return StoredSnapshotsCount() > 30;
+            } else {
+                return false;
+            }
+        }
+
+        public bool CanFireLargeEvent() {
+            if (StoredSnapshotsCount() > 0) {
+                if (RealRuins_ModSettings.offlineMode) return true;
+                else return StoredSnapshotsCount() > 250;
+            } else {
+                return false;
+            }
+        }
     }
 }

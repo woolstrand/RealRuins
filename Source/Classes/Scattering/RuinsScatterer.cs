@@ -1259,17 +1259,40 @@ namespace RealRuins
                 // ==== HEALTH ====
                 var healthNode = root.SelectSingleNode("saveable[@Class='Pawn_HealthTracker']");
                 if (healthNode != null) {
+
+                    
+                    XmlNode healthState = healthNode.SelectSingleNode("healthState");
+                    if (healthState?.InnerText == "Dead") {
+                        p.health.SetDead();
+                    }
+
                     XmlNodeList hediffsList = healthNode.SelectNodes("hediffSet/hediffs/li");
                     if (hediffsList != null) {
 
                         Scribe.mode = LoadSaveMode.LoadingVars;
                         p.health?.hediffSet?.hediffs?.RemoveAll(_ => true);
+                        //probably should pre-analyze hediffs prior to instantiating
                         foreach (XmlNode hediffNode in hediffsList) {
-
+                            var sourceNode = hediffNode.SelectSingleNode("source");
+                            var source = sourceNode?.InnerText;
+                            //Debug.Message("Source is {0} in hediff {1}", source, hediffNode.OuterXml);
+                            if (source != null) {
+                                ThingDef sourceThingDef = DefDatabase<ThingDef>.GetNamedSilentFail(source);
+                                //Debug.Message("Found non-null source node: {0}. Def: {1}", sourceNode.OuterXml, sourceThingDef);
+                                if (sourceThingDef == null) {
+                                    hediffNode.RemoveChild(sourceNode);
+                                    //Debug.Message("def not found, removing node, result: {0}", hediffNode.OuterXml);
+                                    //continue; //skip hediffs with unknown source
+                                //} else {
+                                    //Debug.Message("def found: {0}", sourceThingDef);
+                                }
+                            }
                             try {
                                 Hediff hediff = ScribeExtractor.SaveableFromNode<Hediff>(hediffNode, null);
                                 if (hediff != null) {
-                                    p.health.AddHediff(hediff);
+                                    if (hediff.source != null && hediff.Part != null) {
+                                        p.health.AddHediff(hediff);
+                                    }
                                 }
                             } catch (Exception e) {
                             }
@@ -1334,6 +1357,7 @@ namespace RealRuins
                             corpse.InnerPawn = p;
                         }
                         corpse.timeOfDeath = (int)(itemTile.corpseDeathTime + (ticksInYear * dateShift));
+                        
                         CompRottable rottable = corpse.TryGetComp<CompRottable>();
                         if (rottable != null) rottable.RotProgress = ticksInYear * (-dateShift);
                         return corpse;
@@ -1355,7 +1379,7 @@ namespace RealRuins
                 }
 
                 if (stuffDef == null) {
-                    if (itemTile.isWall) {
+                    if (itemTile.isWall && thingDef.MadeFromStuff) {
                         stuffDef = ThingDefOf.BlocksGranite; //walls from modded materials becomes granite walls.
                     } else {
                         stuffDef = GenStuff.DefaultStuffFor(thingDef);
@@ -1363,6 +1387,9 @@ namespace RealRuins
                 }
 
                 Thing thing = ThingMaker.MakeThing(thingDef, stuffDef);
+                if (thing.def.defName.Contains("AJO")) {
+                    Debug.Message("Added new thing: {0}", thing);
+                }
 
                 if (thing != null) {
                     if (itemTile.innerItems != null && thing is IThingHolder) {
@@ -1511,29 +1538,45 @@ namespace RealRuins
                             }
 
                             Thing thing = MakeThingFromItemTile(itemTile);
-
-                            if (thing == null) {
-                                Debug.Message("Null thing at {0}, {1}", x + minX, z + minZ);
-                                continue;
-                            }
-
-                            //reduce HP for haulable things in water
-                            if (thing.def.EverHaulable) {
-                                TerrainDef t = map.terrainGrid.TerrainAt(mapLocation);
-                                if (t != null && t.IsWater) {
-                                    thing.HitPoints = (thing.HitPoints - 10) / Rand.Range(5, 20) + Rand.Range(1, 10); //things in marsh or river are really in bad condition
-                                }
-                            }
-
                             if (thing != null) {
                                 try {
-                                    GenSpawn.Spawn(thing, mapLocation, map, new Rot4(itemTile.rot));
-                                    
+                                   GenSpawn.Spawn(thing, mapLocation, map, new Rot4(itemTile.rot));
+                                   try {
+                                        switch (thing.def.tickerType) {
+                                            case TickerType.Never:
+                                                break;
+                                            case TickerType.Normal:
+                                                thing.Tick();
+                                                break;
+                                            case TickerType.Long:
+                                                thing.TickLong();
+                                                break;
+                                            case TickerType.Rare:
+                                                thing.TickRare();
+                                                break;
+                                        }
+                                        //Debug.Message("Ticked");
+
+                                    } catch (Exception e) {
+                                        Debug.Message("Exception while tried to perform tick for {0}", thing.def.defName);
+                                        thing.Destroy();
+                                        throw e;
+                                    }
+
+                                   //Debug.Message("Setting up props");
                                     //Breakdown breakdownables: it't yet impossible to silently breakdown an item which is not spawned.
                                     CompBreakdownable b = thing.TryGetComp<CompBreakdownable>();
                                     if (b != null) {
                                         if (Rand.Chance(0.8f)) {
                                             b.DoBreakdown();
+                                        }
+                                    }
+
+                                    //reduce HP for haulable things in water
+                                    if (thing.def.EverHaulable) {
+                                        TerrainDef t = map.terrainGrid.TerrainAt(mapLocation);
+                                        if (t != null && t.IsWater) {
+                                            thing.HitPoints = (thing.HitPoints - 10) / Rand.Range(5, 20) + Rand.Range(1, 10); //things in marsh or river are really in bad condition
                                         }
                                     }
                                 } catch (Exception e) {
@@ -1549,25 +1592,6 @@ namespace RealRuins
             //Lords are for significant resistance only. Otherwise lords will be spawned for each small ruins chunk.
             if (options.shouldAddSignificantResistance) {
                 Lord lord = LordMaker.MakeNewLord(faction, new LordJob_DefendBase(faction, new IntVec3(mapOriginX + (maxX - minX) / 2, 0, mapOriginZ + (maxZ - minZ) / 2)), map);
-            }
-
-            if (options.shouldAddRaidTriggers && !options.enableInstantCaravanReform) { 
-
-                //In this case we need to add a virtual thing that prevents instant caravan reforming between raids
-                //Game engine allows caravan reforming always if there is no threat. Game object considered a threat if it is a _building_ of a _hostile_faction_ which can _target_someone_ and _be_targeted_, and the building _is_reachable_
-                //So I place an empty indestructible "hostile" object in no-building-area (to not interfere with player's buildings). There possibly are rare cases when this object could not be reached by a caravan party, but now I can't 
-                //figure out how to add this object at the moment of caravan entry (it causes a crash in mapdrawer and I don't understand why)
-
-                //Does not work because AI pawns are attacking this thing. Unfortunately, have to make one more patch.
-/*                CellFinder.TryFindRandomEdgeCellWith(
-                    (IntVec3 c) => c.SupportsStructureType(map, TerrainAffordanceDefOf.Light) && c.Standable(map) && !map.roofGrid.Roofed(c) && c.GetRoom(map).TouchesMapEdge && !c.Fogged(map),
-                    map, 0.5f, out var loc);
-
-                Debug.Message("Spawning hostility spot at {0} - {1}", loc.x, loc.z);
-
-                Thing thing = ThingMaker.MakeThing(ThingDef.Named("HostilityGenerator"), null);
-                thing.SetFactionDirect(Find.FactionManager.FirstFactionOfDef(FactionDefOf.AncientsHostile));
-                GenSpawn.Spawn(thing, loc, map);*/
             }
 
             Debug.Message("Transferred blueprint of total cost of approximately {0}", totalCost);
