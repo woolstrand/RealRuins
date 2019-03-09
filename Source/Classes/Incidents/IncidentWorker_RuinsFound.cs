@@ -16,6 +16,11 @@ namespace RealRuins {
 		{
 			return false;
 		}
+
+        if (!SnapshotStoreManager.Instance.CanFireLargeEvent()) {
+                return false;
+        }
+
 		int tile;
 		Faction faction;
 		

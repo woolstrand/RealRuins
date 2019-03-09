@@ -18,9 +18,13 @@ namespace RealRuins
 
         public override string ModIdentifier => "RealRuins";
 
-        public static bool SingleFile = false;
-//        public static bool SingleFile = true;
+        public static string SingleFileName = null;
+        //public static string SingleFileName = "C:/Users/dieworld/AppData/LocalLow/Ludeon Studios/RimWorld by Ludeon Studios\\RealRuins\\9900A83A-1DFA-433F-8441-E4E22077059C.bp";
+        //public static string SingleFileName = "C:/Users/dieworld/AppData/LocalLow/Ludeon Studios/RimWorld by Ludeon Studios\\RealRuins\\20180936-13488551490-jeluder.bp";
 
+
+
+        public static bool SingleFile = SingleFileName != null;
 
         static RealRuins() {
             DateTime startTime = DateTime.Now;

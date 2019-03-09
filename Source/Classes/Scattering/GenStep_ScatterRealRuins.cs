@@ -48,14 +48,14 @@ namespace RealRuins
 
                 if (traversalDistance > 0) {
                     foreach (WorldObject wo in Find.World.worldObjects.ObjectsAt(tile)) {
-                        Debug.Message("Found object {0} at distance of {1}", wo.def.defName, traversalDistance);
+                        //Debug.Message("Found object {0} at distance of {1}", wo.def.defName, traversalDistance);
                         if (wo.Faction != Faction.OfPlayer) {
                             if (wo is Settlement) {
-                                proximityFactor += 8.0f / (float)Math.Pow(traversalDistance, 1.5f);
-                                Debug.Message("This is a settlement, proximity factor is now {0}!", proximityFactor);
+                                proximityFactor += 6.0f / (float)Math.Pow(traversalDistance, 1.5f);
+                                //Debug.Message("This is a settlement, proximity factor is now {0}!", proximityFactor);
                             } else if (wo is Site) {
-                                proximityFactor += 4.0f / (traversalDistance*traversalDistance);
-                                Debug.Message("This is a site, proximity factor is now {0}!", proximityFactor);
+                                proximityFactor += 2.0f / (traversalDistance*traversalDistance);
+                                //Debug.Message("This is a site, proximity factor is now {0}!", proximityFactor);
                             }
                         }
                     }
@@ -69,13 +69,20 @@ namespace RealRuins
 
 
         public override void Generate(Map map, GenStepParams parms) {
-            Debug.Message("Overridden generate");
+            //Debug.Message("Overridden generate");
+
+            //skip generation due to low blueprints count
+            if (SnapshotStoreManager.Instance.StoredSnapshotsCount() < 10) {
+                Debug.Message("Skipping ruins gerenation due to low blueprints count.");
+                return;
+            }
+
             bool shouldReturn = false;
             foreach (WorldObject wo in Find.World.worldObjects.ObjectsAt(map.Tile))
             {
-                Debug.Message("World Object on generation tile: {0} ({1}).", wo.def.defName, wo.GetType().ToString());
+                //Debug.Message("World Object on generation tile: {0} ({1}).", wo.def.defName, wo.GetType().ToString());
                 if (!(wo is Site site)) continue;
-                Debug.Message("Site core: {0}", site.core.def.defName);
+                //Debug.Message("Site core: {0}", site.core.def.defName);
                 shouldReturn = true;
             }
             
@@ -124,6 +131,13 @@ namespace RealRuins
 
                 Debug.Message("Spawning {0} ruin chunks", num);
 
+
+                bool shouldUnpause = false;
+                Find.TickManager.Pause();
+                if (!Find.TickManager.Paused) {
+                    Find.TickManager.TogglePaused();
+                    shouldUnpause = true;
+                }
                 for (int i = 0; i < num; i++) {
                     if (!TryFindScatterCell(map, out IntVec3 result)) {
                         return;
@@ -133,6 +147,10 @@ namespace RealRuins
                 }
                 usedSpots.Clear();
                 RuinsScatterer.FinalizeCellUsage();
+                if (shouldUnpause) {
+                    Debug.Message("Finished spawning, unpausing");
+                    Find.TickManager.TogglePaused();
+                }
             }
         }
 
@@ -164,6 +182,7 @@ namespace RealRuins
 
 
         public override void Generate(Map map, GenStepParams parms) {
+            Find.TickManager.Pause();
             Debug.Message("Overridden LARGE generate");
             if (allowInWaterBiome || !map.TileInfo.WaterCovered) {
                 RuinsScatterer.PrepareCellUsageFor(map);
@@ -219,6 +238,7 @@ namespace RealRuins
                         resolveParams.pawnGroupMakerParams = new PawnGroupMakerParms();
                         resolveParams.pawnGroupMakerParams.tile = map.Tile;
                         resolveParams.pawnGroupMakerParams.faction = resolveParams.faction;
+                        
                         PawnGroupMakerParms pawnGroupMakerParams = resolveParams.pawnGroupMakerParams;
                         pawnGroupMakerParams.points = defaultPoints.RandomInRange;
                     }
@@ -257,6 +277,7 @@ namespace RealRuins
 
         public override void Generate(Map map, GenStepParams parms) {
             if (allowInWaterBiome || !map.TileInfo.WaterCovered) {
+                Find.TickManager.Pause();
                 RuinsScatterer.PrepareCellUsageFor(map);
 
                 currentOptions = RealRuins_ModSettings.defaultScatterOptions.Copy(); //store as instance variable to keep accessible on subsequent ScatterAt calls
