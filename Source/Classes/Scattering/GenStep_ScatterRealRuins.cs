@@ -228,22 +228,53 @@ namespace RealRuins
                     Debug.Message("Adding starting party. Remaining points: {0}. Used points range: {1}",
                         currentOptions.uncoveredCost, defaultPoints);
 
-                    resolveParams.faction = Find.FactionManager.RandomEnemyFaction();
-                    resolveParams.singlePawnLord = LordMaker.MakeNewLord(resolveParams.faction,
-                        new LordJob_AssaultColony(resolveParams.faction, false, false, true, true), map, null);
-
-                    resolveParams.pawnGroupKindDef = (resolveParams.pawnGroupKindDef ?? PawnGroupKindDefOf.Combat);
-
-                    if (resolveParams.pawnGroupMakerParams == null) {
-                        resolveParams.pawnGroupMakerParams = new PawnGroupMakerParms();
-                        resolveParams.pawnGroupMakerParams.tile = map.Tile;
-                        resolveParams.pawnGroupMakerParams.faction = resolveParams.faction;
-                        
-                        PawnGroupMakerParms pawnGroupMakerParams = resolveParams.pawnGroupMakerParams;
-                        pawnGroupMakerParams.points = defaultPoints.RandomInRange;
+                    if (currentOptions.allowFriendlyRaids) {
+                        if (Rand.Chance(0.1f)) {
+                            resolveParams.faction = Find.FactionManager.RandomNonHostileFaction();
+                        } else {
+                            resolveParams.faction = Find.FactionManager.RandomEnemyFaction();
+                        }
+                    } else {
+                        resolveParams.faction = Find.FactionManager.RandomEnemyFaction();
                     }
 
-                    BaseGen.symbolStack.Push("pawnGroup", resolveParams);
+
+                    PawnGroupMakerParms pawnGroupMakerParms = new PawnGroupMakerParms();
+                    pawnGroupMakerParms.groupKind = PawnGroupKindDefOf.Combat;
+                    pawnGroupMakerParms.tile = map.Tile;
+                    pawnGroupMakerParms.points = pointsCost;
+                    pawnGroupMakerParms.faction = resolveParams.faction;
+                    pawnGroupMakerParms.generateFightersOnly = true;
+                    pawnGroupMakerParms.raidStrategy = RaidStrategyDefOf.ImmediateAttack;
+                    pawnGroupMakerParms.forceOneIncap = false;
+                    pawnGroupMakerParms.seed = Rand.Int;
+
+                    List<Pawn> pawns = PawnGroupMakerUtility.GeneratePawns(pawnGroupMakerParms).ToList();
+                    CellRect rect = currentOptions.blueprintRect;
+
+                    Debug.Message("Rect: {0}, {1} - {2}, {3}", rect.BottomLeft.x, rect.BottomLeft.z, rect.TopRight.x, rect.TopRight.z);
+                    Debug.Message("corner: {0}, {1} size: {2}, {3}", currentOptions.topLeft.x, currentOptions.topLeft.z, currentOptions.roomMap.GetLength(0), currentOptions.roomMap.GetLength(1));
+
+                    CellRect spawnRect = new CellRect(10, 10, map.Size.x - 20, map.Size.y - 20);
+                    //CellRect mapRect = new CellRect(currentOptions.topLeft.x, currentOptions.topLeft.z, currentOptions.)
+
+                    foreach (Pawn p in pawns) {
+
+                        IntVec3 location = CellFinder.RandomNotEdgeCell(10, map);
+                        bool result = CellFinder.TryFindRandomSpawnCellForPawnNear(location, map, out location);
+                        
+                        if ( result ) { 
+                            GenSpawn.Spawn(p, location, map, Rot4.Random);
+                            Debug.Message("Spawned at {0}, {1}", p.Position.x, p.Position.z);
+                        } else {
+                            Debug.Message("Failed to find a new position");
+                        }
+                    }
+
+                    LordJob lordJob = new LordJob_AssaultColony(resolveParams.faction, canKidnap: false, canTimeoutOrFlee: Rand.Chance(0.5f));
+                    if (lordJob != null) {
+                        LordMaker.MakeNewLord(resolveParams.faction, lordJob, map, pawns);
+                    }
 
                 }
 
