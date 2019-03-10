@@ -1772,15 +1772,15 @@ namespace RealRuins
         }
 
         private void AddRaidTriggers() {
-            int triggersNumber = (int)(Math.Abs(Rand.Gaussian(0, 5))) + 4;
             int addedTriggers = 0;
             float ratio = 10;
             float remainingCost = totalCost * (Rand.Value + 0.5f); //cost estimation as seen by other factions
+            
             float initialCost = remainingCost;
 
-            float raidMaxPoints = (remainingCost / ratio) / triggersNumber; //to cap max raid size
+            int triggersAbsoluteMaximum = 100;
 
-            Debug.Message("Triggers number: {0}. Cost: {1}. Base max points: {2} (absolute max in x2)", triggersNumber, remainingCost, raidMaxPoints);
+            Debug.Message("Triggers number: {0}. Cost: {1}. Base max points: {2} (absolute max in x2)", 0, remainingCost, 0);
 
 
             while (remainingCost > 0) {
@@ -1793,10 +1793,20 @@ namespace RealRuins
                 
                 ThingDef raidTriggerDef = ThingDef.Named("RaidTrigger");
                 RaidTrigger trigger = ThingMaker.MakeThing(raidTriggerDef) as RaidTrigger;
-                trigger.faction= Find.FactionManager.RandomEnemyFaction();
 
+                if (options.allowFriendlyRaids) {
+                    if (Rand.Chance(0.2f)) {
+                        trigger.faction = Find.FactionManager.RandomNonHostileFaction();
+                    } else {
+                        trigger.faction = Find.FactionManager.RandomEnemyFaction();
+                    }
+                } else {
+                    trigger.faction = Find.FactionManager.RandomEnemyFaction();
+                }
+
+                int raidMaxPoints = (int)(remainingCost / ratio);
                 trigger.value = Math.Abs(Rand.Gaussian()) * raidMaxPoints + Rand.Value * raidMaxPoints + 250.0f;
-                if (trigger.value > 10000) trigger.value = 10000; //sanity cap. against some beta-poly bases.
+                if (trigger.value > 10000) trigger.value = Rand.Range(8000, 11000); //sanity cap. against some beta-poly bases.
                 remainingCost -= trigger.value * ratio;
                 
                 Debug.Message("Added trigger at {0}, {1} for {2} points, remaining cost: {3}", mapLocation.x, mapLocation.z, trigger.value, remainingCost);
@@ -1806,9 +1816,14 @@ namespace RealRuins
 
                 options.uncoveredCost = Math.Abs(remainingCost);
 
-                if (addedTriggers > triggersNumber) {
-                    if (remainingCost < initialCost / 2) {
-                        if (Rand.Chance(0.3f)) return;
+                if (addedTriggers > triggersAbsoluteMaximum) {
+                    if (remainingCost < initialCost * 0.2f) {
+                        if (Rand.Chance(0.1f)) {
+                            if (remainingCost > 100000) {
+                                remainingCost = Rand.Range(80000, 110000);
+                            }
+                            return;
+                        }
                     }
                 }
 
@@ -1884,6 +1899,10 @@ namespace RealRuins
             if (options.shouldAddRaidTriggers) {
                 AddRaidTriggers();
             }
+
+            options.roomMap = wallMap;
+            options.topLeft = new IntVec3(mapOriginX, 0, mapOriginZ);
+            options.blueprintRect = new CellRect(mapOriginX, mapOriginZ, maxX - minX, maxZ - minZ);
 
 //            RoofCollapseCellsFinder.RemoveBulkCollapsingRoofs(new List<IntVec3>{ targetPoint }, map);
             RoofCollapseCellsFinder.CheckCollapseFlyingRoofs(new CellRect(minX, minZ, maxX - minX, maxZ - minZ), map, true);

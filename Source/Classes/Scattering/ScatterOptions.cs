@@ -24,6 +24,9 @@ namespace RealRuins {
         public float hostileChance = 0.1f; //probability PER CHUNK
 
         public float uncoveredCost = 0; //output value. consider switching to resolvers and resolver params
+        public int[,] roomMap; // output value. room traversal map.
+        public IntVec3 topLeft;
+        public CellRect blueprintRect;
 
         public int minimumSizeRequired = 0;
         public float minimumDensityRequired = 0.1f;
@@ -33,6 +36,7 @@ namespace RealRuins {
         public bool shouldCutBlueprint = true;
         public bool shouldAddRaidTriggers = false;
         public bool enableInstantCaravanReform = false; //only for large events
+        public bool allowFriendlyRaids = true; // friendlt factions histile to environment, but friendly to you
 
 
         public bool deleteLowQuality = true;
