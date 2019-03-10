@@ -130,7 +130,7 @@ namespace RealRuins
                 Debug.Message("total density: {0}{1}, densityMultiplier: {2}, scaleMultiplier: {3}, new density: {4}. new radius: {5}, new per10k: {6}", "", totalDensity, densityMultiplier, scaleMultiplier, currentOptions.densityMultiplier, currentOptions.minRadius, currentOptions.maxRadius, per10k);
 
                 Debug.Message("Spawning {0} ruin chunks", num);
-
+                BaseGen.globalSettings.map = map;
 
                 bool shouldUnpause = false;
                 Find.TickManager.Pause();
@@ -139,14 +139,13 @@ namespace RealRuins
                     shouldUnpause = true;
                 }
                 for (int i = 0; i < num; i++) {
-                    if (!TryFindScatterCell(map, out IntVec3 result)) {
-                        return;
-                    }
-                    ScatterAt(result, map, 1);
-                    usedSpots.Add(result);
+                    ResolveParams rp = default(ResolveParams);
+                    rp.SetCustom<ScatterOptions>(Constants.ScatterOptions, currentOptions);
+                    rp.faction = Find.FactionManager.OfAncientsHostile;
+                    BaseGen.symbolStack.Push("scatterRuins", rp);
                 }
-                usedSpots.Clear();
-                RuinsScatterer.FinalizeCellUsage();
+                BaseGen.Generate();
+
                 if (shouldUnpause) {
                     Debug.Message("Finished spawning, unpausing");
                     Find.TickManager.TogglePaused();
@@ -204,11 +203,15 @@ namespace RealRuins
                 currentOptions.shouldCutBlueprint = false;
                 currentOptions.shouldAddRaidTriggers = true;
                 currentOptions.claimableBlocks = false;
+
+
+                ResolveParams rp = default(ResolveParams);
+                BaseGen.globalSettings.map = map;
+                rp.SetCustom<ScatterOptions>(Constants.ScatterOptions, currentOptions);
+                rp.faction = Find.FactionManager.OfAncientsHostile;
+                BaseGen.symbolStack.Push("scatterRuins", rp);
+
                 
-
-                ScatterAt(map.Center, map);
-                RuinsScatterer.FinalizeCellUsage();
-
                 float uncoveredCost = currentOptions.uncoveredCost;
                 if (uncoveredCost < 0) {
                     if (Rand.Chance(0.5f)) {
@@ -253,7 +256,7 @@ namespace RealRuins
                     CellRect rect = currentOptions.blueprintRect;
 
                     Debug.Message("Rect: {0}, {1} - {2}, {3}", rect.BottomLeft.x, rect.BottomLeft.z, rect.TopRight.x, rect.TopRight.z);
-                    Debug.Message("corner: {0}, {1} size: {2}, {3}", currentOptions.topLeft.x, currentOptions.topLeft.z, currentOptions.roomMap.GetLength(0), currentOptions.roomMap.GetLength(1));
+                    Debug.Message("corner: {0}, {1} size: {2}, {3}", currentOptions.bottomLeft.x, currentOptions.bottomLeft.z, currentOptions.roomMap.GetLength(0), currentOptions.roomMap.GetLength(1));
 
                     CellRect spawnRect = new CellRect(10, 10, map.Size.x - 20, map.Size.y - 20);
                     //CellRect mapRect = new CellRect(currentOptions.topLeft.x, currentOptions.topLeft.z, currentOptions.)
@@ -326,8 +329,12 @@ namespace RealRuins
                 currentOptions.deleteLowQuality = false; //do not delete since we have much higher requirements for base ruins
                 currentOptions.shouldKeepDefencesAndPower = true;
 
-                ScatterAt(map.Center, map);
-                RuinsScatterer.FinalizeCellUsage();
+                ResolveParams rp = default(ResolveParams);
+                BaseGen.globalSettings.map = map;
+                rp.SetCustom<ScatterOptions>(Constants.ScatterOptions, currentOptions);
+                rp.faction = Find.FactionManager.OfAncientsHostile;
+                BaseGen.symbolStack.Push("scatterRuins", rp);
+
 
                 ResolveParams resolveParams = default(ResolveParams);
                 resolveParams.rect = CellRect.CenteredOn(map.Center, currentOptions.minRadius + (currentOptions.maxRadius - currentOptions.maxRadius) / 2);

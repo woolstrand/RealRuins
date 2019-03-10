@@ -73,7 +73,16 @@
     <Compile Include="Classes\Incidents\WorldObjectCompProperties_RuinedBase.cs" />
     <Compile Include="Classes\RealRuins_Mod.cs" />
     <Compile Include="Classes\RealRuins_ModSettings.cs" />
+    <Compile Include="Classes\Scattering\Constants.cs" />
+    <Compile Include="Classes\Scattering\Internal\Art.cs" />
+    <Compile Include="Classes\Scattering\Internal\Blueprint.cs" />
+    <Compile Include="Classes\Scattering\Internal\BlueprintLoader.cs" />
+    <Compile Include="Classes\Scattering\Internal\BlueprintTransferUtility.cs" />
+    <Compile Include="Classes\Scattering\Internal\DeteriorationProcessor.cs" />
+    <Compile Include="Classes\Scattering\Internal\ScavengingProcessor.cs" />
+    <Compile Include="Classes\Scattering\Internal\Tiles.cs" />
     <Compile Include="Classes\Scattering\ScatterOptions.cs" />
+    <Compile Include="Classes\Scattering\SymbolResolver_RuinsScatterer.cs" />
     <Compile Include="Classes\Snapshotting\BakedTaleReference.cs" />
     <Compile Include="Classes\Snapshotting\SnapshotGenerator.cs" />
     <Compile Include="Classes\Scattering\GenStep_ScatterRealRuins.cs" />

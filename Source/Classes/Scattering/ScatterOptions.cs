@@ -25,7 +25,7 @@ namespace RealRuins {
 
         public float uncoveredCost = 0; //output value. consider switching to resolvers and resolver params
         public int[,] roomMap; // output value. room traversal map.
-        public IntVec3 topLeft;
+        public IntVec3 bottomLeft;
         public CellRect blueprintRect;
 
         public int minimumSizeRequired = 0;
@@ -36,7 +36,10 @@ namespace RealRuins {
         public bool shouldCutBlueprint = true;
         public bool shouldAddRaidTriggers = false;
         public bool enableInstantCaravanReform = false; //only for large events
-        public bool allowFriendlyRaids = true; // friendlt factions histile to environment, but friendly to you
+        public bool allowFriendlyRaids = true; // friendly factions hostile to environment, but friendly to you
+        public bool enableDeterioration = true;
+        public bool canHaveFood = true;
+        public string blueprintFileName = null;
 
 
         public bool deleteLowQuality = true;
