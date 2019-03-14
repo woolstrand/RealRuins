@@ -14,47 +14,55 @@ namespace RealRuins {
             ScatterOptions options = rp.GetCustom<ScatterOptions>(Constants.ScatterOptions);
             if (options == null) return;
 
+            Debug.Message("Loading blueprint of size {0} - {1}", options.minRadius, options.maxRadius);
+
             Blueprint bp = null;
             Map map = BaseGen.globalSettings.map;
 
             //probably should split scattering options into several distinct objects
-
-            if (options.blueprintFileName != null) {
-                if (options.shouldCutBlueprint) {
-                    bp = BlueprintLoader.LoadWholeBlueprintAtPath(options.blueprintFileName, options);
-                } else {
-                    int radius = Rand.Range(options.minRadius, options.maxRadius);
-                    bp = BlueprintLoader.LoadRandomBlueprintPartAtPath(options.blueprintFileName, new IntVec3(radius * 2, 0, radius * 2), options);
+            string filename = options.blueprintFileName;
+            if (filename == null) {
+                BlueprintFinder.FindRandomBlueprintWithParameters(options.minimumAreaRequired, options.minimumDensityRequired, out filename, 15);
+                if (filename == null) {
+                    //still null = no suitable blueprints, fail.
+                    return;
                 }
-            } else if (options.shouldCutBlueprint) {
-                bp = FindAndLoadRandomBlueprint(new IntVec3(0, 0, 0), options);
+            }
+
+            if (!options.shouldLoadPartOnly) { //should not cut => load whole
+                bp = BlueprintLoader.LoadWholeBlueprintAtPath(filename);
             } else {
                 int radius = Rand.Range(options.minRadius, options.maxRadius);
-                bp = FindAndLoadRandomBlueprint(new IntVec3(radius * 2, 0, radius * 2), options);
+                bp = BlueprintLoader.LoadRandomBlueprintPartAtPath(filename, new IntVec3(radius * 2, 0, radius * 2));
             }
 
             if (bp == null) return;
+            bp.CutIfExceedsBounds(map.Size);
 
-            if (options.shouldCutBlueprint) {
-                IntVec3 random = CellFinder.RandomNotEdgeCell(4 + Math.Max(bp.width / 2, bp.height / 2), map);
-                rp.rect = new CellRect(random.x - bp.width / 2, random.z - bp.height / 2, bp.width, bp.height);
-            } else {
-                rp.rect = new CellRect(map.Size.x / 2 - bp.width / 2, map.Size.z / 2 - bp.height / 2, bp.width, bp.height);
-            }
+            // Here we have our blueprint loaded and ready to action. Doing stuff:
+            BlueprintPreprocessor.ProcessBlueprint(bp, options); //Preprocess: remove missing and unnecessary items according to options
+            bp.FindRooms(); //Traverse blueprint and construct rooms map
+            options.roomMap = bp.wallMap;
+            bp.UpdateBlueprintStats(); //Update total cost, items count, etc
 
-            BlueprintTransferUtility btu = new BlueprintTransferUtility(bp, map, rp);
-            btu.RemoveIncompatibleItems();
+            Debug.PrintIntMap(bp.wallMap, delta: 1);
 
-            DeteriorationProcessor.Process(bp, options);
+            BlueprintTransferUtility btu = new BlueprintTransferUtility(bp, map, rp); //prepare blueprint transferrer
+            btu.RemoveIncompatibleItems(); //remove incompatible items 
 
-            ScavengingProcessor.RaidAndScavenge(bp, options);
+            DeteriorationProcessor.Process(bp, options); //create deterioration maps and do deterioration
 
-            btu.Transfer();
+            ScavengingProcessor.RaidAndScavenge(bp, options); //scavenge remaining items according to scavenge options
 
-            btu.AddFilthAndRubble();
+            btu.Transfer(); //transfer blueprint
+            btu.ScatterMobs();
+            btu.ScatterRaidTriggers();
+
+            btu.AddFilthAndRubble(); //add filth and rubble
             
         }
 
+        /*
         private Blueprint FindAndLoadRandomBlueprint(IntVec3 size, ScatterOptions options) {
             Blueprint result = null;
             int attemptNumber = 0;
@@ -70,9 +78,9 @@ namespace RealRuins {
 
                 try {
                     if (size.x * size.z != 0) {
-                        result = BlueprintLoader.LoadRandomBlueprintPartAtPath(snapshotName, size, options);
+                        result = BlueprintLoader.LoadRandomBlueprintPartAtPath(snapshotName, size);
                     } else {
-                        result = BlueprintLoader.LoadWholeBlueprintAtPath(snapshotName, options);
+                        result = BlueprintLoader.LoadWholeBlueprintAtPath(snapshotName);
                     }
                     forceDelete = false;
                 } catch (Exception e) {
@@ -90,6 +98,6 @@ namespace RealRuins {
                 }
             }
             return result;
-        }
+        }*/
     }
 }

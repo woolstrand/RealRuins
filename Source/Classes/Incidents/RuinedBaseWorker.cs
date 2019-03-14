@@ -6,7 +6,7 @@ using RimWorld.Planet;
 
 namespace RealRuins {
     public class RuinedBaseWorker : SiteCoreWorker {
-        public static readonly IntVec3 MapSize = new IntVec3(240, 1, 240);
+        public static new readonly IntVec3 MapSize = new IntVec3(240, 1, 240);
         
         private void DoEnter(Caravan caravan, Site site)
         {
@@ -22,16 +22,6 @@ namespace RealRuins {
             CaravanEnterMode enterMode = CaravanEnterMode.Edge;
             bool draftColonists = flag;
             CaravanEnterMapUtility.Enter(caravan, map, enterMode, CaravanDropInventoryMode.DoNotDrop, draftColonists, null);
-
-
-
-
-            /*            Debug.Message("pawn at {0}, {1}", t.Position.x, t.Position.z);
-                        HostilityGenerator generator = (HostilityGenerator)ThingMaker.MakeThing(ThingDef.Named("HostilityGenerator"));
-                        generator.SetFaction(Find.FactionManager.FirstFactionOfDef(FactionDefOf.AncientsHostile));
-                        */
-            /*Thing spot = ThingMaker.MakeThing(ThingDefOf.PartySpot);
-            GenSpawn.Spawn(spot, t.Position, map, new Rot4(0));*/
 
         }
 
@@ -52,7 +42,6 @@ namespace RealRuins {
         
         public override void VisitAction(Caravan caravan, Site site)
         {
-            Debug.Message("Entering visit action overriden");
             Enter(caravan, site);
         }
 

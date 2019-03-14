@@ -15,11 +15,12 @@ namespace RealRuins {
     class Blueprint {
 
         // ------------ blueprint internal data structures --------------
-        public readonly int width;
-        public readonly int height;
+        public int width { get; private set; }
+        public int height { get; private set; }
         public readonly Version version;
 
         public float totalCost { get; private set; }
+        public float itemsDensity { get; private set; }
 
         //rooms info. used to create deterioration maps.
         //earlier it was used by deterioration processor only, but now I hsve a few more places where I need this data, so I moved it to the blueprint level
@@ -57,6 +58,11 @@ namespace RealRuins {
             terrainMap = new TerrainTile[width, height];
         }
 
+        public void CutIfExceedsBounds(IntVec3 size) {
+            if (width > size.x) width = size.x;
+            if (height > size.z) height = size.z;
+        }
+
         // -------------------- cost related methods --------------------
 
         //Calculates cost of item made of stuff, or default cost if stuff is null
@@ -92,8 +98,9 @@ namespace RealRuins {
             return num;
         }
 
-        public void UpdateCostData() {
+        public void UpdateBlueprintStats() {
             totalCost = 0;
+            int itemsCount = 0;
             for (int x = 0; x < width; x ++) {
                 for (int z = 0; z < height; z ++) {
                     var items = itemsMap[x, z];
@@ -110,6 +117,7 @@ namespace RealRuins {
                         }
 
                         totalCost += item.cost * item.stackCount;
+                        itemsCount++;
                     }
 
                     var terrainTile = terrainMap[x, z];
@@ -122,6 +130,7 @@ namespace RealRuins {
                     }
                 }
             }
+            itemsDensity = (float)itemsCount / (width * height);
         }
 
         // -------------- walls processing ------------
@@ -139,7 +148,7 @@ namespace RealRuins {
 
         //This method affects wall map only, it does not actually remove a wall
         public void RemoveWall(int posX, int posZ) {
-
+            if (posX < 0 || posZ < 0 || posX >= width || posZ >= height) return;
             if (wallMap[posX, posZ] != -1) return; //alerady no wall there
             int? newValue = null;
 
@@ -174,7 +183,7 @@ namespace RealRuins {
             }
         }
 
-        private void FindRooms() {
+        public void FindRooms() {
             int currentRoomIndex = 1;
             roomAreas = new List<int>() { 0 }; //we don't have a room indexed zero, so place it here as if it were processed already
 

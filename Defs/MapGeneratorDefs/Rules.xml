@@ -1,4 +1,5 @@
 <Defs>
+
   <RuleDef>
     <defName>ScatterRuins</defName>
     <symbol>scatterRuins</symbol>
@@ -6,5 +7,6 @@
       <li Class="RealRuins.SymbolResolver_RuinsScatterer" />
     </resolvers>
   </RuleDef>
+
 </Defs>
 
