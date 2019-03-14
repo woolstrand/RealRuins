@@ -1,4 +1,4 @@
-﻿
+﻿using System;
 using Verse;
 
 namespace RealRuins {
@@ -18,6 +18,52 @@ namespace RealRuins {
 
             string message = string.Format(format, safeArgs);
             Log.Message(message, true);
+        }
+
+        public static void PrintIntMap(int[,] map, string charMap = "#._23456789ABCDEFGHIJKLMNOPQRSTU", int delta = 0) {
+
+            if (!active) return;
+
+            string output = "============== INT MAP ============= \r\n";
+
+            for (int i = 0; i < map.GetLength(0); i++) {
+                for (int j = 0; j < map.GetLength(1); j++) {
+                    int val = map[i, j] + delta;
+                    if (val < 0 || val >= charMap.Length) {
+                        output += '!';
+                    } else {
+                        char character = charMap[val];
+                        output += character;
+                    }
+                }
+                output += "\r\n";
+            }
+
+            Log.Message(output, true);
+        }
+
+        public static void PrintNormalizedFloatMap(float[,] map, string charMap = " .,oO8") {
+
+            if (!active) return;
+
+            int scaleLength = charMap.Length;
+            
+            string output = "============== FLOAT MAP ============= \r\n";
+
+            for (int i = 0; i < map.GetLength(0); i++) {
+                for (int j = 0; j < map.GetLength(1); j++) {
+                    float val = map[i, j];
+                    int index = (int)Math.Round(val * scaleLength);
+                    if (index >= charMap.Length) {
+                        index = charMap.Length - 1;
+                    }
+                    char character = charMap[index];
+                    output += character;
+                }
+                output += "\r\n";
+            }
+
+            Log.Message(output, true);
         }
     }
 }

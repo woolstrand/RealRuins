@@ -7,6 +7,9 @@ using Verse;
 
 namespace RealRuins {
     class ScatterOptions : IExposable {
+        // Those options are accessible from settings and are taken from settings for regular ruins generation. 
+        // For special event ruins generation those settings are overrided
+        // Those options should be saved in Scribe subsystem to keep a record of a default template object which is represented on the settings page
         public float densityMultiplier = 1.0f;
         public int minRadius = 8;
         public int maxRadius = 16;
@@ -23,17 +26,19 @@ namespace RealRuins {
         public float trapChance = 0.001f; //probability PER CELL
         public float hostileChance = 0.1f; //probability PER CHUNK
 
-        public float uncoveredCost = 0; //output value. consider switching to resolvers and resolver params
-        public int[,] roomMap; // output value. room traversal map.
-        public IntVec3 bottomLeft;
-        public CellRect blueprintRect;
+        // Those settings are either internal settings not accessible for user, or internal blueprint trasferring/processing state representation
 
-        public int minimumSizeRequired = 0;
+        public float uncoveredCost = 0; //Cost uncovered by any raid triggers
+        public int[,] roomMap; // Room traversal map.
+        public IntVec3 bottomLeft = new IntVec3(-1000,0,-1000);
+        public CellRect blueprintRect = new CellRect();
+
+        public int minimumAreaRequired = 0;
         public float minimumDensityRequired = 0.1f;
         public int minimumCostRequired = 0;
         public bool shouldKeepDefencesAndPower = false;
-        public bool shouldAddSignificantResistance = false;
-        public bool shouldCutBlueprint = true;
+//        public bool shouldAddSignificantResistance = false;
+        public bool shouldLoadPartOnly = true; //indicates if the loader should load only a part of the blueprint or the whole one
         public bool shouldAddRaidTriggers = false;
         public bool enableInstantCaravanReform = false; //only for large events
         public bool allowFriendlyRaids = true; // friendly factions hostile to environment, but friendly to you
@@ -84,17 +89,24 @@ namespace RealRuins {
                 maxRadius = maxRadius,
                 wallsDoorsOnly = wallsDoorsOnly,
                 enableProximity = enableProximity,
-                minimumSizeRequired = minimumSizeRequired,
+                minimumAreaRequired = minimumAreaRequired,
                 minimumDensityRequired = minimumDensityRequired,
                 minimumCostRequired = minimumCostRequired,
-                deleteLowQuality =deleteLowQuality,
+                deleteLowQuality = deleteLowQuality,
                 shouldKeepDefencesAndPower = shouldKeepDefencesAndPower,
-                shouldAddSignificantResistance = shouldAddSignificantResistance,
-                shouldCutBlueprint = shouldCutBlueprint,
+//                shouldAddSignificantResistance = shouldAddSignificantResistance,
+                shouldLoadPartOnly = shouldLoadPartOnly,
                 shouldAddRaidTriggers = shouldAddRaidTriggers,
                 uncoveredCost = uncoveredCost,
-                enableInstantCaravanReform = enableInstantCaravanReform
-            };
+                enableInstantCaravanReform = enableInstantCaravanReform,
+                roomMap = roomMap,
+                bottomLeft = bottomLeft,
+                blueprintRect = blueprintRect,
+                allowFriendlyRaids = allowFriendlyRaids,
+                enableDeterioration = enableDeterioration,
+                canHaveFood = canHaveFood,
+                blueprintFileName = blueprintFileName
+    };
 
             return copy;
         }

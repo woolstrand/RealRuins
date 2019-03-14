@@ -73,9 +73,11 @@
     <Compile Include="Classes\Incidents\WorldObjectCompProperties_RuinedBase.cs" />
     <Compile Include="Classes\RealRuins_Mod.cs" />
     <Compile Include="Classes\RealRuins_ModSettings.cs" />
+    <Compile Include="Classes\Scattering\Internal\BlueprintPreprocessor.cs" />
     <Compile Include="Classes\Scattering\Constants.cs" />
     <Compile Include="Classes\Scattering\Internal\Art.cs" />
     <Compile Include="Classes\Scattering\Internal\Blueprint.cs" />
+    <Compile Include="Classes\Scattering\Internal\BlueprintFinder.cs" />
     <Compile Include="Classes\Scattering\Internal\BlueprintLoader.cs" />
     <Compile Include="Classes\Scattering\Internal\BlueprintTransferUtility.cs" />
     <Compile Include="Classes\Scattering\Internal\DeteriorationProcessor.cs" />
@@ -96,7 +98,6 @@
     <Compile Include="Classes\Utility\SnapshotManager.cs" />
     <Compile Include="Classes\Utility\SnapshotStoreManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Classes\Scattering\RuinsScatterer.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="MapGenerators_RealRuins.xml" />

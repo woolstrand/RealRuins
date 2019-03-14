@@ -232,7 +232,7 @@ namespace RealRuins {
                                         p.health.AddHediff(hediff);
                                     }
                                 }
-                            } catch (Exception e) {
+                            } catch (Exception) {
                             }
                         }
                         Scribe.mode = LoadSaveMode.Inactive;
@@ -421,9 +421,21 @@ namespace RealRuins {
             this.blueprint = blueprint;
             this.map = map;
             this.rp = rp;
-            mapOriginX = rp.rect.BottomLeft.x;
-            mapOriginZ = rp.rect.BottomLeft.z;
-            this.options = rp.GetCustom<ScatterOptions>(Constants.ScatterOptions);
+            mapOriginX = rp.rect.minX + rp.rect.Width / 2 - blueprint.width / 2;
+            mapOriginZ = rp.rect.minZ + rp.rect.Height / 2 - blueprint.height / 2;
+
+            if (mapOriginX < 0) mapOriginX = 0;
+            if (mapOriginZ < 0) mapOriginZ = 0;
+
+            if (mapOriginX + blueprint.width >= map.Size.x) {
+                mapOriginX = map.Size.x - blueprint.width - 1;
+            }
+
+            if (mapOriginZ + blueprint.height >= map.Size.z) {
+                mapOriginZ = map.Size.z - blueprint.height - 1;
+            }
+
+            options = rp.GetCustom<ScatterOptions>(Constants.ScatterOptions);
         }
 
         public void RemoveIncompatibleItems() {
@@ -496,6 +508,9 @@ namespace RealRuins {
         public void Transfer() {
             //Planting blueprint
             float totalCost = 0;
+
+            //update rect to actual placement rect using width and height
+            rp.rect = new CellRect(mapOriginX, mapOriginZ, blueprint.width, blueprint.height);
 
             for (int z = 0; z < blueprint.height; z++) {
                 for (int x = 0; x < blueprint.width; x++) {
@@ -595,11 +610,11 @@ namespace RealRuins {
                         }
                     }
                 }
-            }
 
-            //Lords are for significant resistance only. Otherwise lords will be spawned for each small ruins chunk.
-            if (options.shouldAddSignificantResistance) {
-                Lord lord = LordMaker.MakeNewLord(rp.faction, new LordJob_DefendBase(rp.faction, new IntVec3(mapOriginX + (blueprint.width) / 2, 0, mapOriginZ + (blueprint.height) / 2)), map);
+                if (options.shouldKeepDefencesAndPower) {
+                    RestoreDefencesAndPower();
+                }
+                options.uncoveredCost = totalCost;
             }
 
             Debug.Message("Transferred blueprint of total cost of approximately {0}", totalCost);
@@ -614,7 +629,7 @@ namespace RealRuins {
                     if (!mapLocation.InBounds(map)) continue;
                     TerrainDef td = map.terrainGrid.TerrainAt(mapLocation);
 
-                    if (!options.shouldCutBlueprint && (td == null || !td.Removable)) {
+                    if (!options.shouldLoadPartOnly && (td == null || !td.Removable)) {
                         continue; //if base is uncut, scatter filth only on constructed surfaces.
                     }
 
@@ -641,6 +656,172 @@ namespace RealRuins {
                             Thing slag = ThingMaker.MakeThing(ThingDefOf.ChunkSlagSteel);
                             GenSpawn.Spawn(slag, mapLocation, map, new Rot4(Rand.Range(0, 4)));
                         }
+                    }
+                }
+            }
+        }
+
+        public void ScatterMobs() {
+            ScatterOptions options = rp.GetCustom<ScatterOptions>(Constants.ScatterOptions);
+            if (options == null) return;
+            Map map = BaseGen.globalSettings.map;
+
+            //corpses, blood trails, mines and traps, bugs and bees
+            //Pretty low chance to have someone's remainings
+            for (int z = 0; z < rp.rect.Height; z++) {
+                for (int x = 0; x < rp.rect.Width; x++) {
+                    IntVec3 mapLocation = new IntVec3(x + rp.rect.minX, 0, z + rp.rect.minZ);
+                    if (!mapLocation.InBounds(map)) continue;
+
+                    if (options.roomMap[x, z] > 1 && Rand.Value < options.trapChance) { //spawn inside rooms only
+                        ThingDef trapDef = ThingDef.Named("TrippingTrigger");
+                        if (trapDef != null) {
+                            Thing thing = ThingMaker.MakeThing(trapDef);
+                            if (thing != null) {
+                                GenSpawn.Spawn(thing, mapLocation, map);
+                            }
+                        }
+                    }
+                }
+            }
+
+            Debug.Message("Added tripping triggers");
+            //enemies
+            if (Rand.Chance(options.hostileChance)) {
+                CellRect rect = rp.rect;
+
+                if (rect.minX < 15 || rect.minZ < 15 || rect.maxX > map.Size.x - 15 || rect.maxZ > map.Size.z - 15) {
+                    return; //do not add enemies if we're on the map edge
+                }
+
+                if (!CellFinder.TryFindRandomCellInsideWith(rect, (IntVec3 x) => x.Standable(map) && options.roomMap[x.x - rect.BottomLeft.x, x.z - rect.BottomLeft.z] > 1, out IntVec3 testCell)) {
+                    return; //interrupt if there are no closed cells available
+                }
+
+                PawnKindDef pawnKindDef = null;
+
+                if (Rand.Chance(0.7f)) { //no animals in "significant resistance" scenario. Surely animals are not a significant resistance in sane amounts
+                    pawnKindDef = map.Biome.AllWildAnimals.RandomElementByWeight((PawnKindDef def) => (def.RaceProps.foodType == FoodTypeFlags.CarnivoreAnimal || def.RaceProps.foodType == FoodTypeFlags.OmnivoreAnimal) ? 1 : 0);
+                } else {
+                    //mechanoids' kinds are selected for each unit
+                }
+
+                float powerMax = rect.Area / 30.0f;
+                float powerThreshold = (Math.Abs(Rand.Gaussian(0.5f, 1)) * powerMax) + 1;
+
+
+                Debug.Message("Gathering troops power of {0} (max was {1})", powerThreshold, powerMax);
+
+                float cumulativePower = 0;
+
+                Faction faction = Faction.OfAncientsHostile;
+
+                Lord lord = LordMaker.MakeNewLord(lordJob: new LordJob_DefendPoint(rect.CenterCell), faction: faction, map: map, startingPawns: null);
+                int tile = map.Tile;
+
+                while (cumulativePower <= powerThreshold) {
+
+                    PawnKindDef currentPawnKindDef = pawnKindDef;
+                    if (currentPawnKindDef == null) {
+                        currentPawnKindDef = (from kind in DefDatabase<PawnKindDef>.AllDefsListForReading
+                                              where kind.RaceProps.IsMechanoid
+                                              select kind).RandomElementByWeight((PawnKindDef kind) => 1f / kind.combatPower);
+                    }
+
+                    PawnGenerationRequest request =
+                        new PawnGenerationRequest(currentPawnKindDef, faction, PawnGenerationContext.NonPlayer, tile, true, false, false, //allowDead is last
+                        false, true, false, 1f,
+                        false, true, true, false,
+                        false, false, false,
+                        null, null, null, null,
+                        null, null, null, null);
+
+                    if (CellFinder.TryFindRandomCellInsideWith(rect, (IntVec3 x) => x.Standable(map) && options.roomMap[x.x - rect.minX, x.z - rect.minZ] > 1, out IntVec3 cell)) {
+                        Pawn pawn = PawnGenerator.GeneratePawn(request);
+
+                        FilthMaker.MakeFilth(cell, map, ThingDefOf.Filth_Blood, 5);
+                        GenSpawn.Spawn(pawn, cell, map, WipeMode.Vanish);
+
+                        lord.AddPawn(pawn);
+                        cumulativePower += pawn.kindDef.combatPower;
+
+                        Debug.Message("Adding combat power for {0}, total is {1}", currentPawnKindDef.defName, cumulativePower);
+                    } else {
+                        break; //no more suitable cells
+                    }
+                }
+            }
+
+        }
+
+        public void ScatterRaidTriggers() {
+
+            ScatterOptions options = rp.GetCustom<ScatterOptions>(Constants.ScatterOptions);
+            if (options == null) return;
+            Map map = BaseGen.globalSettings.map;
+
+
+            int addedTriggers = 0;
+            float ratio = 10;
+            float remainingCost = options.uncoveredCost * (Rand.Value + 0.5f); //cost estimation as seen by other factions
+
+            float initialCost = remainingCost;
+
+            int triggersAbsoluteMaximum = 100;
+
+            Debug.Message("Triggers number: {0}. Cost: {1}. Base max points: {2} (absolute max in x2)", 0, remainingCost, 0);
+
+
+            while (remainingCost > 0) {
+
+                IntVec3 mapLocation = rp.rect.RandomCell;
+                if (!mapLocation.InBounds(map)) continue;
+
+                ThingDef raidTriggerDef = ThingDef.Named("RaidTrigger");
+                RaidTrigger trigger = ThingMaker.MakeThing(raidTriggerDef) as RaidTrigger;
+
+                if (options.allowFriendlyRaids) {
+                    if (Rand.Chance(0.2f)) {
+                        trigger.faction = Find.FactionManager.RandomNonHostileFaction();
+                    } else {
+                        trigger.faction = Find.FactionManager.RandomEnemyFaction();
+                    }
+                } else {
+                    trigger.faction = Find.FactionManager.RandomEnemyFaction();
+                }
+
+                int raidMaxPoints = (int)(remainingCost / ratio);
+                trigger.value = Math.Abs(Rand.Gaussian()) * raidMaxPoints + Rand.Value * raidMaxPoints + 250.0f;
+                if (trigger.value > 10000) trigger.value = Rand.Range(8000, 11000); //sanity cap. against some beta-poly bases.
+                remainingCost -= trigger.value * ratio;
+
+                Debug.Message("Added trigger at {0}, {1} for {2} points, remaining cost: {3}", mapLocation.x, mapLocation.z, trigger.value, remainingCost);
+
+                GenSpawn.Spawn(trigger, mapLocation, map);
+                addedTriggers++;
+
+                options.uncoveredCost = Math.Abs(remainingCost);
+
+                if (addedTriggers > triggersAbsoluteMaximum) {
+                    if (remainingCost < initialCost * 0.2f) {
+                        if (Rand.Chance(0.1f)) {
+                            if (remainingCost > 100000) {
+                                remainingCost = Rand.Range(80000, 110000);
+                            }
+                            return;
+                        }
+                    }
+                }
+            }
+        }
+
+
+        private void RestoreDefencesAndPower() {
+            foreach (var thing in map.spawnedThings) {
+                if (thing.TryGetComp<CompPowerPlant>() != null || thing.TryGetComp<CompPowerBattery>() != null || (thing.def.building != null && thing.def.building.IsTurret)) {
+                    CompBreakdownable bdcomp = thing.TryGetComp<CompBreakdownable>();
+                    if (bdcomp != null) {
+                        bdcomp.Notify_Repaired();
                     }
                 }
             }
