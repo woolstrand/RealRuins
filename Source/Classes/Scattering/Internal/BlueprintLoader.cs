@@ -91,6 +91,10 @@ namespace RealRuins {
                                 tile = ItemTile.WallReplacementItemTile(tile.location);
                             }
 
+                            if (tile.defName == ThingDefOf.MinifiedThing.defName && (tile.innerItems?.Count() ?? 0) == 0) {
+                                continue; //skip minified things with no inner items
+                            }
+
                             //Trying to load corresponding definition to check if the object is accessible
                             ThingDef thingDef = DefDatabase<ThingDef>.GetNamed(tile.defName, false);
                             if (thingDef != null) {

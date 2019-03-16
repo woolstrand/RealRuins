@@ -74,8 +74,9 @@ namespace RealRuins {
                             continue; //remove animal sleeping beds and spots as wild animals tend to concentrate around. remove wedding, butchering and party spots, caravan spots as well
                         }
 
+
                         if (thingDef.IsCorpse || thingDef.Equals(ThingDefOf.MinifiedThing)) { //check if corpses and minified things contain inner data, otherwise ignore
-                            if (item.innerItems == null && item.itemXml == null) {
+                            if ((item.innerItems?.Count() ?? 0) == 0 && item.itemXml == null) {
                                 itemsToRemove.Add(item);
                                 continue;
                             }
@@ -94,7 +95,7 @@ namespace RealRuins {
             }
 
             //Recalculate cost data after removing some items (should speed up, as cost calculation seems to be cpu-expensive process)
-            blueprint.UpdateBlueprintStats();
+            blueprint.UpdateBlueprintStats(true);
 
             //Perform removing all items exceeding maximum cost
             for (int x = 0; x < blueprint.width; x++) {

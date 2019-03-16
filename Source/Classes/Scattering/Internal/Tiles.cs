@@ -14,7 +14,7 @@ namespace RealRuins {
     class Tile {
         public string defName;
         public float cost = 0.0f; //populated later
-        public float weight = 0.0f;
+        public float weight = 1.0f;
         public IntVec3 location;
     }
 
@@ -78,6 +78,17 @@ namespace RealRuins {
             tile.weight = 1.0f;
 
             return tile;
+        }
+
+        public override string ToString() {
+            string ofWhat = "";
+            string cnt = "";
+            if (stuffDef != null) ofWhat = " of " + stuffDef;
+            if (stackCount > 1) cnt = " (" + stackCount + " pcs)";
+            string result = "Tile \"" + defName + "\"" + ofWhat + cnt + ", $" + cost + ", " + weight + "kg";
+            if (isWall) result += ", wall";
+            if (isDoor) result += ", door";
+            return result;
         }
 
         public ItemTile() {

@@ -13,7 +13,7 @@ namespace RealRuins {
             //word is spread, so each next raid is more destructive than the previous ones
             //to make calculations a bit easier we're going to calculate value per cell, not per item.
 
-            Debug.active = false;
+            Debug.active = true;
 
             float scavengersActivity = Rand.Value * options.scavengingMultiplier + (options.scavengingMultiplier) / 3;
             float elapsedTime = (Rand.Value * options.scavengingMultiplier) * 3 + ((options.scavengingMultiplier > 0.95) ? 3 : 0);
@@ -38,18 +38,20 @@ namespace RealRuins {
             });
 
             Debug.Message("Enumerated {0} items", tilesByCost.Count());
+            Debug.PrintArray(tilesByCost.ToArray());
 
-            int raidsCount = (int)(elapsedTime * scavengersActivity);
-            if (options.scavengingMultiplier > 0.9f && raidsCount == 0) {
+            int raidsCount = (int)((30 * scavengersActivity) - Math.Exp(1500 / (elapsedTime + 450)));
+            if (raidsCount > 50) raidsCount = 50;
+            if (options.scavengingMultiplier > 0.9f && raidsCount <= 0) {
                 raidsCount = 1; //at least one raid for each ruins in case of normal scavenging activity
             }
             int ruinsArea = blueprint.width * blueprint.height;
-            float baseRaidCapacity = Math.Max(10, (ruinsArea / 5) * scavengersActivity);
+            float baseRaidCapacity = ruinsArea / 10 * scavengersActivity;
 
             Debug.Message("Performing {0} raids. Base capacity: {1}", raidsCount, baseRaidCapacity);
 
             for (int i = 0; i < raidsCount; i++) {
-                float raidCapacity = baseRaidCapacity * (float)Math.Pow(1.2, i);
+                float raidCapacity = baseRaidCapacity * (float)Math.Pow(1.05, i);
                 bool shouldStop = false;
                 Debug.Message("Performing raid {0} of capacity {1}", i, raidCapacity);
 
@@ -62,7 +64,7 @@ namespace RealRuins {
                         msg += "Too cheap, stopping.";
                     } else {
                         if (Rand.Chance(0.999f)) { //there is still chance that even the most expensive thing will be left after raid. ("Big momma said ya shouldn't touch that golden chair, it's cursed")
-                            raidCapacity -= topTile.weight; //not counting weight for now.
+                            raidCapacity -= topTile.weight; 
                             if (topTile is TerrainTile) {
                                 blueprint.terrainMap[topTile.location.x, topTile.location.z] = null;
                                 msg += "Terrain removed.";
@@ -87,6 +89,7 @@ namespace RealRuins {
                         }
                     }
                     Debug.Message(msg);
+                    if (shouldStop) break;
                 }
             }
 
