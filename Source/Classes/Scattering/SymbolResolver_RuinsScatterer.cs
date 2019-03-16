@@ -14,7 +14,7 @@ namespace RealRuins {
             ScatterOptions options = rp.GetCustom<ScatterOptions>(Constants.ScatterOptions);
             if (options == null) return;
 
-            Debug.Message("Loading blueprint of size {0} - {1}", options.minRadius, options.maxRadius);
+            Debug.Message("Loading blueprint of size {0} - {1} to deploy at {2}, {3}", options.minRadius, options.maxRadius, rp.rect.minX, rp.rect.minZ);
 
             Blueprint bp = null;
             Map map = BaseGen.globalSettings.map;
@@ -22,7 +22,7 @@ namespace RealRuins {
             //probably should split scattering options into several distinct objects
             string filename = options.blueprintFileName;
             if (filename == null) {
-                BlueprintFinder.FindRandomBlueprintWithParameters(options.minimumAreaRequired, options.minimumDensityRequired, out filename, 15);
+                BlueprintFinder.FindRandomBlueprintWithParameters(out filename, options.minimumAreaRequired, options.minimumDensityRequired, 15);
                 if (filename == null) {
                     //still null = no suitable blueprints, fail.
                     return;
@@ -43,20 +43,25 @@ namespace RealRuins {
             BlueprintPreprocessor.ProcessBlueprint(bp, options); //Preprocess: remove missing and unnecessary items according to options
             bp.FindRooms(); //Traverse blueprint and construct rooms map
             options.roomMap = bp.wallMap;
-            bp.UpdateBlueprintStats(); //Update total cost, items count, etc
 
             Debug.PrintIntMap(bp.wallMap, delta: 1);
 
             BlueprintTransferUtility btu = new BlueprintTransferUtility(bp, map, rp); //prepare blueprint transferrer
             btu.RemoveIncompatibleItems(); //remove incompatible items 
+            bp.UpdateBlueprintStats(true); //Update total cost, items count, etc
 
             DeteriorationProcessor.Process(bp, options); //create deterioration maps and do deterioration
 
             ScavengingProcessor.RaidAndScavenge(bp, options); //scavenge remaining items according to scavenge options
 
             btu.Transfer(); //transfer blueprint
-            btu.ScatterMobs();
-            btu.ScatterRaidTriggers();
+            if (!options.shouldAddRaidTriggers) {
+                btu.ScatterMobs();
+            }
+
+            if (options.shouldAddRaidTriggers) {
+                btu.ScatterRaidTriggers();
+            }
 
             btu.AddFilthAndRubble(); //add filth and rubble
             

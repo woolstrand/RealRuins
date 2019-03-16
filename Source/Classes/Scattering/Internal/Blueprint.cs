@@ -98,7 +98,7 @@ namespace RealRuins {
             return num;
         }
 
-        public void UpdateBlueprintStats() {
+        public void UpdateBlueprintStats(bool includeCost = false) {
             totalCost = 0;
             int itemsCount = 0;
             for (int x = 0; x < width; x ++) {
@@ -110,23 +110,37 @@ namespace RealRuins {
                         ThingDef stuffDef = (item.stuffDef != null) ? DefDatabase<ThingDef>.GetNamed(item.stuffDef, false) : null;
                         if (thingDef == null) continue; //to handle corpses
 
-                        item.cost = ThingComponentsMarketCost(thingDef, stuffDef) * item.stackCount;
-                        item.weight = thingDef.GetStatValueAbstract(StatDefOf.Mass, stuffDef) * item.stackCount;
-                        if (item.weight == 0) {
-                            item.weight = 0.5f * item.stackCount;
+                        if (includeCost) {
+                            try {
+                                //Since at this moment we don't have filtered all things, we can't be sure that cost for all items can be calculated
+                                item.cost = ThingComponentsMarketCost(thingDef, stuffDef) * item.stackCount;
+                                totalCost += item.cost * item.stackCount;
+                            } catch (Exception) { } //just ignore items with uncalculatable cost
                         }
 
-                        totalCost += item.cost * item.stackCount;
+                        item.weight = thingDef.GetStatValueAbstract(StatDefOf.Mass, stuffDef);
+                        //Debug.Message("Getting weight of {0} made of {1} : {2}", thingDef.defName, stuffDef?.defName, item.weight);
+                        if (item.stackCount != 0) item.weight *= item.stackCount;
+                        if (item.weight == 0) {
+                            if (item.stackCount != 0) {
+                                item.weight = 0.5f * item.stackCount;
+                            } else {
+                                item.weight = 1.0f;
+                            }
+                        }
+
                         itemsCount++;
                     }
 
                     var terrainTile = terrainMap[x, z];
                     if (terrainTile != null) {
                         TerrainDef terrainDef = DefDatabase<TerrainDef>.GetNamed(terrainTile.defName, false);
-                        if (terrainDef != null) {
-                            terrainTile.cost = ThingComponentsMarketCost(terrainDef);
+                        if (terrainDef != null && includeCost) {
+                            try {
+                                terrainTile.cost = ThingComponentsMarketCost(terrainDef);
+                                totalCost += terrainTile.cost;
+                            } catch (Exception) { }
                         }
-                        totalCost += terrainTile.cost;
                     }
                 }
             }

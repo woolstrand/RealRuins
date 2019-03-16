@@ -4,6 +4,11 @@ using Verse;
 
 using RimWorld.Planet;
 
+/** 
+ * This class overrides standard SiteCoreWorker because there is no other way to generate encounter map of an arbitrary size. Encounter map is always
+ * 120x120 which is way too small for some ruins.
+ * */
+
 namespace RealRuins {
     public class RuinedBaseWorker : SiteCoreWorker {
         public static new readonly IntVec3 MapSize = new IntVec3(240, 1, 240);
@@ -39,7 +44,7 @@ namespace RealRuins {
                 DoEnter(caravan, site);
             }
         }
-        
+
         public override void VisitAction(Caravan caravan, Site site)
         {
             Enter(caravan, site);

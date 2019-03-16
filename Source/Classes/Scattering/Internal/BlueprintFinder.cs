@@ -9,7 +9,7 @@ using System.Text;
 
 namespace RealRuins {
     class BlueprintFinder {
-        public static Blueprint FindRandomBlueprintWithParameters(int minArea, float minDensity, out string filename, int maxAttemptsCount = 5) {
+        public static Blueprint FindRandomBlueprintWithParameters(out string filename, int minArea = 100, float minDensity = 0.01f, int minCost = 0, int maxAttemptsCount = 5) {
             Blueprint bp = null;
             filename = null;
             int attemptCount = 0;
@@ -28,7 +28,7 @@ namespace RealRuins {
 
                 Debug.Message("size: {0}x{1} (needed {2}). density {3} (needed {4})", bp.width, bp.height, minArea, bp.itemsDensity, minDensity);
 
-                if (bp.height * bp.width > minArea && bp.itemsDensity > minDensity) {
+                if (bp.height * bp.width > minArea && bp.itemsDensity > minDensity && bp.totalCost > minCost) {
                     Debug.Message("Success");
                     return bp;
                 }

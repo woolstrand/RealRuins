@@ -65,5 +65,14 @@ namespace RealRuins {
 
             Log.Message(output, true);
         }
+
+        public static void PrintArray(object[] list) {
+            var s = "";
+            foreach (object o in list) {
+                s += o.ToString();
+                s += "\r\n";
+            }
+            Log.Message(s);
+        }
     }
 }

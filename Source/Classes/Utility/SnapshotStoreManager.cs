@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 
 using Verse;
 
@@ -32,6 +33,7 @@ namespace RealRuins
         private string oldRootFolder = "../Snapshots";
         private long totalFilesSize = 0;
         private int totalFileCount = 0;
+        private Thread ioThread;
 
         public SnapshotStoreManager() {
             MoveFilesIfNeeded();
@@ -99,39 +101,42 @@ namespace RealRuins
         }
 
         public void StoreBinaryData(byte[] buffer, string blueprintName) {
-            string filename = blueprintName + ".bp";
-            if (RealRuins.SingleFile) {
-                filename = "jeluder.bp";
-            }
+            
+                string filename = blueprintName + ".bp";
+                if (RealRuins.SingleFile) {
+                    filename = "jeluder.bp";
+                }
 
 
-            //when storing a file you need to remove older version of snapshots of the same game
-            string[] parts = filename.Split('=');
-            if (parts.Count() > 1) {
-                int date = 0;
-                if (int.TryParse(parts[0], out date)) {
-                    parts[0] = "*";
-                    string mask = string.Join("=", parts);
-                    string[] files = Directory.GetFiles(GetSnapshotsFolderPath(), mask);
-                    foreach (string existingFile in files) {
-                        int existingFileDate = 0;
-                        string[] existingFileParts = existingFile.Split('-');
-                        if (int.TryParse(existingFileParts[0], out existingFileDate)) {
-                            if (existingFileDate > date) {
-                                //there is more fresh file. no need to save this one.
-                                return;
-                            } else {
-                                //remove older files
-                                File.Delete(existingFile);
+                //when storing a file you need to remove older version of snapshots of the same game
+                string[] parts = filename.Split('=');
+                if (parts.Count() > 1) {
+                    int date = 0;
+                    if (int.TryParse(parts[0], out date)) {
+                        parts[0] = "*";
+                        string mask = string.Join("=", parts);
+                        string[] files = Directory.GetFiles(GetSnapshotsFolderPath(), mask);
+                        foreach (string existingFile in files) {
+                            int existingFileDate = 0;
+                            string[] existingFileParts = existingFile.Split('-');
+                            if (int.TryParse(existingFileParts[0], out existingFileDate)) {
+                                if (existingFileDate > date) {
+                                    //there is more fresh file. no need to save this one.
+                                    return;
+                                } else {
+                                    //remove older files
+                                    File.Delete(existingFile);
+                                }
                             }
                         }
                     }
                 }
-            }
+                //writing file in all cases except "newer version available"
+                File.WriteAllBytes(Path.Combine(GetSnapshotsFolderPath(), filename), buffer);
+                RecalculateFilesSize();
 
-            //writing file in all cases except "newer version available"
-            File.WriteAllBytes(Path.Combine(GetSnapshotsFolderPath(), filename), buffer);
-            RecalculateFilesSize();
+            
+
         }
 
         private string DoGetRandomFilenameFromRootFolder() {

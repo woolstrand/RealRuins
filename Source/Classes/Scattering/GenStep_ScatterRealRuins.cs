@@ -25,12 +25,11 @@ namespace RealRuins
 
         private ScatterOptions currentOptions = RealRuins_ModSettings.defaultScatterOptions;
 
-        public float CalculateProximityMultiplier(Map map)
+        public float CalculateDistanceToNearestSettlement(Map map)
         {
             int rootTile = map.Tile;
             int proximityLimit = 16;
-            float proximityFactor = 0.05f;
-            List<int> distances = new List<int>();
+            int minDistance = proximityLimit;
 
             foreach (WorldObject wo in Find.World.worldObjects.ObjectsAt(map.Tile)) {
                 if (wo.Faction != Faction.OfPlayer && (wo is Settlement || wo is Site)) return 1.0f; //some default proximity index for bases and sites. not too much, but not flat area.
@@ -43,16 +42,14 @@ namespace RealRuins
                     return true;
                 }
 
+                //TODO: Check how traversing is done. If it's some kind of BFS, probably I should stop at the first settlement reached.
                 if (traversalDistance > 0) {
                     foreach (WorldObject wo in Find.World.worldObjects.ObjectsAt(tile)) {
-                        //Debug.Message("Found object {0} at distance of {1}", wo.def.defName, traversalDistance);
                         if (wo.Faction != Faction.OfPlayer) {
                             if (wo is Settlement) {
-                                proximityFactor += 6.0f / (float)Math.Pow(traversalDistance, 1.5f);
-                                //Debug.Message("This is a settlement, proximity factor is now {0}!", proximityFactor);
+                                if (traversalDistance < minDistance) minDistance = traversalDistance;
                             } else if (wo is Site) {
-                                proximityFactor += 2.0f / (traversalDistance*traversalDistance);
-                                //Debug.Message("This is a site, proximity factor is now {0}!", proximityFactor);
+                                if (traversalDistance * 2 < minDistance) minDistance = traversalDistance * 2; //site has twice less influence
                             }
                         }
                     }
@@ -61,7 +58,7 @@ namespace RealRuins
                 return false;
             }, 2147483647, null);
 
-            return proximityFactor;
+            return minDistance;
         }
 
 
@@ -85,21 +82,20 @@ namespace RealRuins
 
                 float densityMultiplier = 1.0f;
                 float scaleMultiplier = 1.0f;
+                float distanceToSettlement = 0.0f;
                 float totalDensity = RealRuins_ModSettings.defaultScatterOptions.densityMultiplier;
                 currentOptions = RealRuins_ModSettings.defaultScatterOptions.Copy(); //store as instance variable to keep accessible on subsequent ScatterAt calls
 
                 if (RealRuins_ModSettings.defaultScatterOptions.enableProximity) {
                         
-                    float proximityFactor = CalculateProximityMultiplier(map);
-                    if (proximityFactor < 0.1f && Rand.Chance(0.8f)) {
+                    distanceToSettlement = CalculateDistanceToNearestSettlement(map);
+                    if (distanceToSettlement >= 16 && Rand.Chance(0.5f)) {
                         totalDensity = 0;
-                    } else {
-                        totalDensity *= proximityFactor;
                     }
                     
                     if (totalDensity > 0) {
-                        densityMultiplier = Rand.Value * (totalDensity - 0.1f) + 0.1f; //to ensure it is > 0
-                        scaleMultiplier = (float)Math.Sqrt(totalDensity / densityMultiplier); //to keep scale^2 * density = const
+                        densityMultiplier = (float)(Math.Exp(1.0 / (distanceToSettlement / 5.0 + 0.3)) - 0.5);
+                        scaleMultiplier = (float)(Math.Exp(1 / (distanceToSettlement / 5 + 0.5)) - 0.3);
                     } else {
                         densityMultiplier = 0.0f;
                     }
@@ -107,19 +103,21 @@ namespace RealRuins
                     currentOptions.densityMultiplier *= densityMultiplier;
                     currentOptions.minRadius = Math.Min(60, Math.Max(6, (int)(currentOptions.minRadius * scaleMultiplier))); //keep between 6 and 60
                     currentOptions.maxRadius = Math.Min(60, Math.Max(6, (int)(currentOptions.maxRadius * scaleMultiplier))); //keep between 6 and 60
-                    currentOptions.scavengingMultiplier *= ((float)Math.Pow(proximityFactor, 0.5f) * 3.0f);
-                    currentOptions.deteriorationMultiplier += Math.Min(0.2f, (1.0f / proximityFactor) / 40.0f);
+                    currentOptions.scavengingMultiplier *= scaleMultiplier * densityMultiplier;
+                    currentOptions.deteriorationMultiplier += Math.Min(0.2f, (1.0f / (scaleMultiplier * densityMultiplier * 3)));
+
 
                     if (densityMultiplier > 20.0f) densityMultiplier = 20.0f;
                     while (densityMultiplier * currentOptions.maxRadius > 800) {
-                        densityMultiplier *= 0.9f;
+                        densityMultiplier *= 0.9f; //WHAT? Why not 800/radius?
                     }
+
                 }
 
                 //number of ruins based on density settings
                 var num = (int)((float)map.Area / 10000.0f) * Rand.Range(1 * totalDensity, 2 * totalDensity);
 
-                Debug.Message("total density: {0}{1}, densityMultiplier: {2}, scaleMultiplier: {3}, new density: {4}. new radius: {5}, new per10k: {6}", "", totalDensity, densityMultiplier, scaleMultiplier, currentOptions.densityMultiplier, currentOptions.minRadius, currentOptions.maxRadius, 1);
+                Debug.Message("dist {0}, dens {1} (x{2}), scale x{3} ({4}-{5}), scav {6}, deter {7}", distanceToSettlement, currentOptions.densityMultiplier, densityMultiplier, scaleMultiplier, currentOptions.minRadius, currentOptions.maxRadius, currentOptions.scavengingMultiplier, currentOptions.deteriorationMultiplier);
                 Debug.Message("Spawning {0} ruin chunks", num);
                 BaseGen.globalSettings.map = map;
 
@@ -142,8 +140,8 @@ namespace RealRuins
                     rp.rect = new CellRect(center.x, center.z, 1, 1); //after generation will be extended to a real size
                     Debug.Message("rect before {0}", rp.rect);
                     BaseGen.symbolStack.Push("scatterRuins", rp);
-                    Debug.Message("rect after {0}", rp.rect);
-                    BaseGen.symbolStack.Push("scatterRuinsMobs", rp);
+                    //Debug.Message("rect after {0}", rp.rect);
+                    //BaseGen.symbolStack.Push("scatterRuinsMobs", rp);
                 }
                 BaseGen.Generate();
 
@@ -173,6 +171,9 @@ namespace RealRuins
             Debug.Message("Overridden LARGE generate");
             if (!map.TileInfo.WaterCovered) {
 
+                string filename = map.Parent.GetComponent<RuinedBaseComp>()?.blueprintFileName;
+                Debug.Message("Preselected file name is {0}", filename);
+
                 currentOptions = RealRuins_ModSettings.defaultScatterOptions.Copy(); //store as instance variable to keep accessible on subsequent ScatterAt calls
 
                 currentOptions.minRadius = 200;
@@ -181,6 +182,7 @@ namespace RealRuins
                 currentOptions.deteriorationMultiplier = 0.0f;
                 currentOptions.hostileChance = 1.0f;
 
+                currentOptions.blueprintFileName = filename;
                 currentOptions.minimumCostRequired = 5000;
                 currentOptions.minimumDensityRequired = 0.15f;
                 currentOptions.minimumAreaRequired = 6400;

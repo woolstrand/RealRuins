@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 using Verse.AI;
+using System;
 
 namespace RealRuins {
     public class RaidTrigger : Thing, IAttackTarget {
@@ -38,21 +39,12 @@ namespace RealRuins {
                     if (thing != null) {
                         RuinedBaseComp parentComponent = base.Map.Parent.GetComponent<RuinedBaseComp>();
 
-                        ticksLeft = Rand.Range(10, 400);
-                        
-                        if (parentComponent != null) {
-                            Debug.Message("Found parent ruins comp");
-                            if (!parentComponent.isTriggeredForRaidAlready) {
-                                parentComponent.isTriggeredForRaidAlready = true;
-                                ticksLeft = Rand.Range(0, 100);
-                            }
-                        }
+                        ticksLeft = (int)Math.Abs(Rand.Gaussian(0, 200));
                         
                         triggered = true;
                         Debug.Message("Triggered raid at {0}, {1} of value {2} after {3} long ticks (approximately max speed seconds)", base.Position.x, base.Position.z, value, ticksLeft);
                     }
                 } else { 
-//                    Debug.Message("tick rare: {0}", ticksLeft);
                     ticksLeft--;
                     if (ticksLeft < 0) {
                         IncidentDef incidentDef = IncidentDefOf.RaidEnemy;
@@ -74,6 +66,8 @@ namespace RealRuins {
             base.ExposeData();
             Scribe_References.Look(ref faction, "faction", false);
             Scribe_Values.Look(ref value, "value", 0.0f, false);
+            Scribe_Values.Look(ref triggered, "triggered", false);
+            Scribe_Values.Look(ref ticksLeft, "ticksLeft", 0, false);
         }
 
         public bool ThreatDisabled(IAttackTargetSearcher disabledFor) {
