@@ -16,24 +16,20 @@ using RimWorld.BaseGen;
 namespace RealRuins
 {
 
-    class GenStep_ScatterRealRuins : GenStep_Scatterer {
+    class GenStep_ScatterRealRuins : GenStep {
         public override int SeedPart {
             get {
                 return 74293945;
             }
         }
 
-        private float multiplier = 1.0f;
         private ScatterOptions currentOptions = RealRuins_ModSettings.defaultScatterOptions;
 
-
-
-        public float CalculateProximityMultiplier(Map map)
+        public float CalculateDistanceToNearestSettlement(Map map)
         {
             int rootTile = map.Tile;
             int proximityLimit = 16;
-            float proximityFactor = 0.05f;
-            List<int> distances = new List<int>();
+            int minDistance = proximityLimit;
 
             foreach (WorldObject wo in Find.World.worldObjects.ObjectsAt(map.Tile)) {
                 if (wo.Faction != Faction.OfPlayer && (wo is Settlement || wo is Site)) return 1.0f; //some default proximity index for bases and sites. not too much, but not flat area.
@@ -46,16 +42,14 @@ namespace RealRuins
                     return true;
                 }
 
+                //TODO: Check how traversing is done. If it's some kind of BFS, probably I should stop at the first settlement reached.
                 if (traversalDistance > 0) {
                     foreach (WorldObject wo in Find.World.worldObjects.ObjectsAt(tile)) {
-                        //Debug.Message("Found object {0} at distance of {1}", wo.def.defName, traversalDistance);
                         if (wo.Faction != Faction.OfPlayer) {
                             if (wo is Settlement) {
-                                proximityFactor += 6.0f / (float)Math.Pow(traversalDistance, 1.5f);
-                                //Debug.Message("This is a settlement, proximity factor is now {0}!", proximityFactor);
+                                if (traversalDistance < minDistance) minDistance = traversalDistance;
                             } else if (wo is Site) {
-                                proximityFactor += 2.0f / (traversalDistance*traversalDistance);
-                                //Debug.Message("This is a site, proximity factor is now {0}!", proximityFactor);
+                                if (traversalDistance * 2 < minDistance) minDistance = traversalDistance * 2; //site has twice less influence
                             }
                         }
                     }
@@ -64,13 +58,11 @@ namespace RealRuins
                 return false;
             }, 2147483647, null);
 
-            return proximityFactor;
+            return minDistance;
         }
 
 
         public override void Generate(Map map, GenStepParams parms) {
-            //Debug.Message("Overridden generate");
-
             //skip generation due to low blueprints count
             if (SnapshotStoreManager.Instance.StoredSnapshotsCount() < 10) {
                 Debug.Message("Skipping ruins gerenation due to low blueprints count.");
@@ -80,34 +72,30 @@ namespace RealRuins
             bool shouldReturn = false;
             foreach (WorldObject wo in Find.World.worldObjects.ObjectsAt(map.Tile))
             {
-                //Debug.Message("World Object on generation tile: {0} ({1}).", wo.def.defName, wo.GetType().ToString());
                 if (!(wo is Site site)) continue;
-                //Debug.Message("Site core: {0}", site.core.def.defName);
                 shouldReturn = true;
             }
             
             if (shouldReturn) return;
             
-            if (allowInWaterBiome || !map.TileInfo.WaterCovered) {
-                RuinsScatterer.PrepareCellUsageFor(map);
+            if (!map.TileInfo.WaterCovered) {
 
                 float densityMultiplier = 1.0f;
                 float scaleMultiplier = 1.0f;
+                float distanceToSettlement = 0.0f;
                 float totalDensity = RealRuins_ModSettings.defaultScatterOptions.densityMultiplier;
                 currentOptions = RealRuins_ModSettings.defaultScatterOptions.Copy(); //store as instance variable to keep accessible on subsequent ScatterAt calls
 
                 if (RealRuins_ModSettings.defaultScatterOptions.enableProximity) {
                         
-                    float proximityFactor = CalculateProximityMultiplier(map);
-                    if (proximityFactor < 0.1f && Rand.Chance(0.8f)) {
+                    distanceToSettlement = CalculateDistanceToNearestSettlement(map);
+                    if (distanceToSettlement >= 16 && Rand.Chance(0.5f)) {
                         totalDensity = 0;
-                    } else {
-                        totalDensity *= proximityFactor;
                     }
                     
                     if (totalDensity > 0) {
-                        densityMultiplier = Rand.Value * (totalDensity - 0.1f) + 0.1f; //to ensure it is > 0
-                        scaleMultiplier = (float)Math.Sqrt(totalDensity / densityMultiplier); //to keep scale^2 * density = const
+                        densityMultiplier = (float)(Math.Exp(1.0 / (distanceToSettlement / 5.0 + 0.3)) - 0.5);
+                        scaleMultiplier = (float)(Math.Exp(1 / (distanceToSettlement / 5 + 0.5)) - 0.3);
                     } else {
                         densityMultiplier = 0.0f;
                     }
@@ -115,22 +103,23 @@ namespace RealRuins
                     currentOptions.densityMultiplier *= densityMultiplier;
                     currentOptions.minRadius = Math.Min(60, Math.Max(6, (int)(currentOptions.minRadius * scaleMultiplier))); //keep between 6 and 60
                     currentOptions.maxRadius = Math.Min(60, Math.Max(6, (int)(currentOptions.maxRadius * scaleMultiplier))); //keep between 6 and 60
-                    currentOptions.scavengingMultiplier *= ((float)Math.Pow(proximityFactor, 0.5f) * 3.0f);
-                    currentOptions.deteriorationMultiplier += Math.Min(0.2f, (1.0f / proximityFactor) / 40.0f);
+                    currentOptions.scavengingMultiplier *= scaleMultiplier * densityMultiplier;
+                    currentOptions.deteriorationMultiplier += Math.Min(0.2f, (1.0f / (scaleMultiplier * densityMultiplier * 3)));
+
 
                     if (densityMultiplier > 20.0f) densityMultiplier = 20.0f;
                     while (densityMultiplier * currentOptions.maxRadius > 800) {
-                        densityMultiplier *= 0.9f;
+                        densityMultiplier *= 0.9f; //WHAT? Why not 800/radius?
                     }
+
                 }
-                
-                FloatRange per10k = new FloatRange(countPer10kCellsRange.min * totalDensity, countPer10kCellsRange.max * totalDensity);
-                int num = CountFromPer10kCells(per10k.RandomInRange, map, -1);
 
-                Debug.Message("total density: {0}{1}, densityMultiplier: {2}, scaleMultiplier: {3}, new density: {4}. new radius: {5}, new per10k: {6}", "", totalDensity, densityMultiplier, scaleMultiplier, currentOptions.densityMultiplier, currentOptions.minRadius, currentOptions.maxRadius, per10k);
+                //number of ruins based on density settings
+                var num = (int)((float)map.Area / 10000.0f) * Rand.Range(1 * totalDensity, 2 * totalDensity);
 
+                Debug.Message("dist {0}, dens {1} (x{2}), scale x{3} ({4}-{5}), scav {6}, deter {7}", distanceToSettlement, currentOptions.densityMultiplier, densityMultiplier, scaleMultiplier, currentOptions.minRadius, currentOptions.maxRadius, currentOptions.scavengingMultiplier, currentOptions.deteriorationMultiplier);
                 Debug.Message("Spawning {0} ruin chunks", num);
-
+                BaseGen.globalSettings.map = map;
 
                 bool shouldUnpause = false;
                 Find.TickManager.Pause();
@@ -138,15 +127,24 @@ namespace RealRuins
                     Find.TickManager.TogglePaused();
                     shouldUnpause = true;
                 }
+
+
+
                 for (int i = 0; i < num; i++) {
-                    if (!TryFindScatterCell(map, out IntVec3 result)) {
-                        return;
-                    }
-                    ScatterAt(result, map, 1);
-                    usedSpots.Add(result);
+                    //We use copy of scatteroptions because each scatteroptions represents separate chunk with separate location, size, maps, etc.
+                    //should use struct instead? is it compatible with IExposable?
+                    ResolveParams rp = default(ResolveParams);
+                    rp.SetCustom<ScatterOptions>(Constants.ScatterOptions, currentOptions.Copy());
+                    rp.faction = Find.FactionManager.OfAncientsHostile;
+                    var center = CellFinder.RandomNotEdgeCell(10, map);
+                    rp.rect = new CellRect(center.x, center.z, 1, 1); //after generation will be extended to a real size
+                    Debug.Message("rect before {0}", rp.rect);
+                    BaseGen.symbolStack.Push("scatterRuins", rp);
+                    //Debug.Message("rect after {0}", rp.rect);
+                    //BaseGen.symbolStack.Push("scatterRuinsMobs", rp);
                 }
-                usedSpots.Clear();
-                RuinsScatterer.FinalizeCellUsage();
+                BaseGen.Generate();
+
                 if (shouldUnpause) {
                     Debug.Message("Finished spawning, unpausing");
                     Find.TickManager.TogglePaused();
@@ -155,22 +153,9 @@ namespace RealRuins
         }
 
 
-        protected override void ScatterAt(IntVec3 loc, Map map, int count = 1) {
-            float scavengersActivity = Rand.Value * 0.5f + 0.5f; //later will be based on other settlements proximity
-            float ruinsAge = Rand.Range(1, 25);
-            float deteriorationDegree = Rand.Value;
-            int referenceRadius = Rand.Range(4 + (int)(multiplier / 3), 12 + (int)multiplier);
-
-            new RuinsScatterer().ScatterRuinsAt(loc, map, currentOptions);
-        }
-
-        protected override bool CanScatterAt(IntVec3 loc, Map map) {
-
-            return true;
-        }
     }
 
-    class GenStep_ScatterLargeRealRuins : GenStep_Scatterer {
+    class GenStep_ScatterLargeRealRuins : GenStep {
 
         private ScatterOptions currentOptions;
         
@@ -184,8 +169,10 @@ namespace RealRuins
         public override void Generate(Map map, GenStepParams parms) {
             Find.TickManager.Pause();
             Debug.Message("Overridden LARGE generate");
-            if (allowInWaterBiome || !map.TileInfo.WaterCovered) {
-                RuinsScatterer.PrepareCellUsageFor(map);
+            if (!map.TileInfo.WaterCovered) {
+
+                string filename = map.Parent.GetComponent<RuinedBaseComp>()?.blueprintFileName;
+                Debug.Message("Preselected file name is {0}", filename);
 
                 currentOptions = RealRuins_ModSettings.defaultScatterOptions.Copy(); //store as instance variable to keep accessible on subsequent ScatterAt calls
 
@@ -195,19 +182,26 @@ namespace RealRuins
                 currentOptions.deteriorationMultiplier = 0.0f;
                 currentOptions.hostileChance = 1.0f;
 
+                currentOptions.blueprintFileName = filename;
                 currentOptions.minimumCostRequired = 5000;
-                currentOptions.minimumDensityRequired = 0.2f;
-                currentOptions.minimumSizeRequired = 10000;
+                currentOptions.minimumDensityRequired = 0.15f;
+                currentOptions.minimumAreaRequired = 6400;
                 currentOptions.deleteLowQuality = false; //do not delete since we have much higher requirements for base ruins
                 currentOptions.shouldKeepDefencesAndPower = true;
-                currentOptions.shouldAddSignificantResistance = true;
-                currentOptions.shouldCutBlueprint = false;
+                currentOptions.shouldLoadPartOnly = false;
                 currentOptions.shouldAddRaidTriggers = true;
                 currentOptions.claimableBlocks = false;
-                
 
-                ScatterAt(map.Center, map);
-                RuinsScatterer.FinalizeCellUsage();
+
+                ResolveParams resolveParams = default(ResolveParams);
+                BaseGen.globalSettings.map = map;
+                resolveParams.SetCustom<ScatterOptions>(Constants.ScatterOptions, currentOptions);
+                resolveParams.faction = Find.FactionManager.OfAncientsHostile;
+                resolveParams.rect = new CellRect(0, 0, map.Size.x, map.Size.z);
+                BaseGen.symbolStack.Push("scatterRuins", resolveParams);
+                BaseGen.symbolStack.Push("scatterRaidTriggers", resolveParams);
+
+                BaseGen.globalSettings.mainRect = resolveParams.rect;
 
                 float uncoveredCost = currentOptions.uncoveredCost;
                 if (uncoveredCost < 0) {
@@ -216,10 +210,9 @@ namespace RealRuins
                     }
                 }
 
-                ResolveParams resolveParams = default(ResolveParams);
-                resolveParams.rect = CellRect.CenteredOn(map.Center, Math.Min(map.Size.x, map.Size.z) / 2 - 2);
-                BaseGen.globalSettings.map = map;
-                BaseGen.globalSettings.mainRect = resolveParams.rect;
+                
+                //adding starting party
+                //don't doing it via basegen because of uh oh i don't remember, something with pawn location control
 
                 if (uncoveredCost > 0) {
                     float pointsCost = uncoveredCost / 10.0f;
@@ -250,10 +243,10 @@ namespace RealRuins
                     pawnGroupMakerParms.seed = Rand.Int;
 
                     List<Pawn> pawns = PawnGroupMakerUtility.GeneratePawns(pawnGroupMakerParms).ToList();
-                    CellRect rect = currentOptions.blueprintRect;
+                    CellRect rect = resolveParams.rect;
 
                     Debug.Message("Rect: {0}, {1} - {2}, {3}", rect.BottomLeft.x, rect.BottomLeft.z, rect.TopRight.x, rect.TopRight.z);
-                    Debug.Message("corner: {0}, {1} size: {2}, {3}", currentOptions.topLeft.x, currentOptions.topLeft.z, currentOptions.roomMap.GetLength(0), currentOptions.roomMap.GetLength(1));
+                    Debug.Message("corner: {0}, {1} size: {2}, {3}", currentOptions.bottomLeft.x, currentOptions.bottomLeft.z, currentOptions.roomMap.GetLength(0), currentOptions.roomMap.GetLength(1));
 
                     CellRect spawnRect = new CellRect(10, 10, map.Size.x - 20, map.Size.y - 20);
                     //CellRect mapRect = new CellRect(currentOptions.topLeft.x, currentOptions.topLeft.z, currentOptions.)
@@ -280,22 +273,15 @@ namespace RealRuins
 
                 BaseGen.symbolStack.Push("chargeBatteries", resolveParams);
                 BaseGen.symbolStack.Push("refuel", resolveParams);
-                    
+
                 BaseGen.Generate();
 
             }
         }
 
-        protected override void ScatterAt(IntVec3 loc, Map map, int count = 1) {
-            new RuinsScatterer().ScatterRuinsAt(loc, map, currentOptions);
-        }
-
-        protected override bool CanScatterAt(IntVec3 loc, Map map) {
-            return true;
-        }
     }
     
-    class GenStep_ScatterMediumRealRuins : GenStep_Scatterer {
+    class GenStep_ScatterMediumRealRuins : GenStep {
 
         private ScatterOptions currentOptions;
         
@@ -307,9 +293,8 @@ namespace RealRuins
 
 
         public override void Generate(Map map, GenStepParams parms) {
-            if (allowInWaterBiome || !map.TileInfo.WaterCovered) {
+            if (!map.TileInfo.WaterCovered) {
                 Find.TickManager.Pause();
-                RuinsScatterer.PrepareCellUsageFor(map);
 
                 currentOptions = RealRuins_ModSettings.defaultScatterOptions.Copy(); //store as instance variable to keep accessible on subsequent ScatterAt calls
 
@@ -322,12 +307,16 @@ namespace RealRuins
 
                 currentOptions.minimumCostRequired = 5000;
                 currentOptions.minimumDensityRequired = 0.2f;
-                currentOptions.minimumSizeRequired = 1000;
+                currentOptions.minimumAreaRequired = 1000;
                 currentOptions.deleteLowQuality = false; //do not delete since we have much higher requirements for base ruins
                 currentOptions.shouldKeepDefencesAndPower = true;
 
-                ScatterAt(map.Center, map);
-                RuinsScatterer.FinalizeCellUsage();
+                ResolveParams rp = default(ResolveParams);
+                BaseGen.globalSettings.map = map;
+                rp.SetCustom<ScatterOptions>(Constants.ScatterOptions, currentOptions);
+                rp.faction = Find.FactionManager.OfAncientsHostile;
+                BaseGen.symbolStack.Push("scatterRuins", rp);
+
 
                 ResolveParams resolveParams = default(ResolveParams);
                 resolveParams.rect = CellRect.CenteredOn(map.Center, currentOptions.minRadius + (currentOptions.maxRadius - currentOptions.maxRadius) / 2);
@@ -362,13 +351,6 @@ namespace RealRuins
             }
         }
 
-        protected override void ScatterAt(IntVec3 loc, Map map, int count = 1) {
-            new RuinsScatterer().ScatterRuinsAt(loc, map, currentOptions);
-        }
-
-        protected override bool CanScatterAt(IntVec3 loc, Map map) {
-            return true;
-        }
     }
     
 }

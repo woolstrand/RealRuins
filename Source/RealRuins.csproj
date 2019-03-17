@@ -73,7 +73,18 @@
     <Compile Include="Classes\Incidents\WorldObjectCompProperties_RuinedBase.cs" />
     <Compile Include="Classes\RealRuins_Mod.cs" />
     <Compile Include="Classes\RealRuins_ModSettings.cs" />
+    <Compile Include="Classes\Scattering\Internal\BlueprintPreprocessor.cs" />
+    <Compile Include="Classes\Scattering\Constants.cs" />
+    <Compile Include="Classes\Scattering\Internal\Art.cs" />
+    <Compile Include="Classes\Scattering\Internal\Blueprint.cs" />
+    <Compile Include="Classes\Scattering\Internal\BlueprintFinder.cs" />
+    <Compile Include="Classes\Scattering\Internal\BlueprintLoader.cs" />
+    <Compile Include="Classes\Scattering\Internal\BlueprintTransferUtility.cs" />
+    <Compile Include="Classes\Scattering\Internal\DeteriorationProcessor.cs" />
+    <Compile Include="Classes\Scattering\Internal\ScavengingProcessor.cs" />
+    <Compile Include="Classes\Scattering\Internal\Tiles.cs" />
     <Compile Include="Classes\Scattering\ScatterOptions.cs" />
+    <Compile Include="Classes\Scattering\SymbolResolver_RuinsScatterer.cs" />
     <Compile Include="Classes\Snapshotting\BakedTaleReference.cs" />
     <Compile Include="Classes\Snapshotting\SnapshotGenerator.cs" />
     <Compile Include="Classes\Scattering\GenStep_ScatterRealRuins.cs" />
@@ -83,11 +94,11 @@
     <Compile Include="Classes\Triggers\TrippingTrigger.cs" />
     <Compile Include="Classes\Utility\APIService.cs" />
     <Compile Include="Classes\Utility\Compressor.cs" />
+    <Compile Include="Classes\Utility\Extensions.cs" />
     <Compile Include="Classes\Utility\SimpleJSON.cs" />
     <Compile Include="Classes\Utility\SnapshotManager.cs" />
     <Compile Include="Classes\Utility\SnapshotStoreManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Classes\Scattering\RuinsScatterer.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="MapGenerators_RealRuins.xml" />
