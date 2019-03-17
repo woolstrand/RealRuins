@@ -26,9 +26,9 @@ namespace RealRuins {
 
                 bp.UpdateBlueprintStats();
 
-                Debug.Message("size: {0}x{1} (needed {2}). density {3} (needed {4})", bp.width, bp.height, minArea, bp.itemsDensity, minDensity);
+                Debug.Message("size: {0}x{1} (needed {2}). density {3} (needed {4}). cost {5} (needed {6})", bp.width, bp.height, minArea, bp.itemsDensity, minDensity, bp.totalCost, minCost);
 
-                if (bp.height * bp.width > minArea && bp.itemsDensity > minDensity && bp.totalCost > minCost) {
+                if (bp.height * bp.width > minArea && bp.itemsDensity > minDensity && bp.totalCost >= minCost) {
                     Debug.Message("Success");
                     return bp;
                 }

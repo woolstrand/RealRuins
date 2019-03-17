@@ -94,6 +94,7 @@
     <Compile Include="Classes\Triggers\TrippingTrigger.cs" />
     <Compile Include="Classes\Utility\APIService.cs" />
     <Compile Include="Classes\Utility\Compressor.cs" />
+    <Compile Include="Classes\Utility\Extensions.cs" />
     <Compile Include="Classes\Utility\SimpleJSON.cs" />
     <Compile Include="Classes\Utility\SnapshotManager.cs" />
     <Compile Include="Classes\Utility\SnapshotStoreManager.cs" />

@@ -617,24 +617,30 @@ namespace RealRuins {
                 options.uncoveredCost = totalCost;
             }
 
-            Debug.Message("Transferred blueprint of total cost of approximately {0}", totalCost);
+            Debug.Message("Transferred blueprint of size {0}x{1}, age {2}, total cost of approximately {3}", blueprint.width, blueprint.height, blueprint.dateShift, totalCost);
         }
 
         public void AddFilthAndRubble() {
+            ThingDef[] filthDef = { ThingDefOf.Filth_Dirt, ThingDefOf.Filth_Trash, ThingDefOf.Filth_Ash };
+
+            float[,] filthMap = new float[blueprint.width, blueprint.height];
             for (int z = 0; z < blueprint.height; z++) {
                 for (int x = 0; x < blueprint.width; x++) {
+                    if (blueprint.itemsMap[x,z].Count() > 0 || blueprint.terrainMap[x, z] != null) {
+                        filthMap[x, z] = 1;
+                    }
+                }
+            }
+            filthMap.Blur(2);
 
 
+            for (int z = 0; z < blueprint.height; z++) {
+                for (int x = 0; x < blueprint.width; x++) {
                     IntVec3 mapLocation = new IntVec3(x + mapOriginX, 0, z + mapOriginZ);
                     if (!mapLocation.InBounds(map)) continue;
-                    TerrainDef td = map.terrainGrid.TerrainAt(mapLocation);
 
-                    if (!options.shouldLoadPartOnly && (td == null || !td.Removable)) {
-                        continue; //if base is uncut, scatter filth only on constructed surfaces.
-                    }
+                    if (filthMap[x, z] <= 0 || Rand.Chance(0.2f)) continue;
 
-
-                    ThingDef[] filthDef = { ThingDefOf.Filth_Dirt, ThingDefOf.Filth_Trash, ThingDefOf.Filth_Ash };
                     FilthMaker.MakeFilth(mapLocation, map, filthDef[0], Rand.Range(0, 3));
 
                     while (Rand.Value > 0.7) {

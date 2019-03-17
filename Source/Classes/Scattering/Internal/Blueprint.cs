@@ -27,7 +27,7 @@ namespace RealRuins {
         public int roomsCount { get; private set; }
         public List<int> roomAreas { get; private set; }
 
-        //year of the snapshot. used to calculate offset to make things look realistic (no corpses and art from the future)
+        //Real year of the snapshot (5500 + X). used to calculate random offset to make things look realistic (no corpses and art from the future)
         private int snapshotYearInt;
         public int snapshotYear {
             get => snapshotYearInt;
@@ -63,7 +63,7 @@ namespace RealRuins {
             if (height > size.z) height = size.z;
         }
 
-        // -------------------- cost related methods --------------------
+        // -------------------- cost and weight related methods --------------------
 
         //Calculates cost of item made of stuff, or default cost if stuff is null
         //Golden wall is a [Wall] made of [Gold], golden tile is a [GoldenTile] made of default material
@@ -98,6 +98,22 @@ namespace RealRuins {
             return num;
         }
 
+        private float ThingWeight(ThingDef thing, ThingDef stuffDef) {
+            float weight = thing.GetStatValueAbstract(StatDefOf.Mass, stuffDef);
+            if (weight != 0 && weight != 1.0f) return weight;
+            if (thing.costList == null) return 1.0f; //weight is either 1 or 0, no way to calculate real weight, weight 0 is invalid => returning 1.
+
+            //Debug.Message("Weight of {0} was {1}, calculating resursively based on list", thing.defName, weight);
+            //Debug.PrintArray(thing.costList.ToArray());
+            weight = 0;
+            foreach (ThingDefCountClass part in thing.costList) {
+                weight += part.count * ThingWeight(part.thingDef, null);
+            }
+            //Debug.Message("Result: {0}", weight);
+           
+            return weight != 0?weight:1.0f;
+        }
+
         public void UpdateBlueprintStats(bool includeCost = false) {
             totalCost = 0;
             int itemsCount = 0;
@@ -118,8 +134,10 @@ namespace RealRuins {
                             } catch (Exception) { } //just ignore items with uncalculatable cost
                         }
 
-                        item.weight = thingDef.GetStatValueAbstract(StatDefOf.Mass, stuffDef);
-                        //Debug.Message("Getting weight of {0} made of {1} : {2}", thingDef.defName, stuffDef?.defName, item.weight);
+                        if (item.defName.Contains("Wall")) item.weight = 5; //walls are on some reason always have weight of 1, which is obviously not correct. The game itself does not need walls weight, so that's ok, but we need.
+
+                        item.weight = ThingWeight(thingDef, stuffDef);
+                        
                         if (item.stackCount != 0) item.weight *= item.stackCount;
                         if (item.weight == 0) {
                             if (item.stackCount != 0) {

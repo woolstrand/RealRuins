@@ -20,15 +20,23 @@ namespace RealRuins {
     class BlueprintLoader {
         public static Blueprint LoadWholeBlueprintAtPath(string path) {
             BlueprintLoader loader = new BlueprintLoader(path);
-            loader.LoadBlueprint();
-            return loader.blueprint;
+            try {
+                loader.LoadBlueprint();
+                return loader.blueprint;
+            } catch (Exception) {
+                return null;
+            }
         }
 
         public static Blueprint LoadRandomBlueprintPartAtPath(string path, IntVec3 size) {
             BlueprintLoader loader = new BlueprintLoader(path);
-            loader.LoadBlueprint();
-            loader.CutRandomRectOfSize(size);
-            return loader.blueprint;
+            try {
+                loader.LoadBlueprint();
+                loader.CutRandomRectOfSize(size);
+                return loader.blueprint;
+            } catch (Exception) {
+                return null;
+            }
         }
 
 
