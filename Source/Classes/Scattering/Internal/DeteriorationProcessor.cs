@@ -15,28 +15,6 @@ namespace RealRuins {
         ScatterOptions options;
 
 
-        private void BlurIntegrityMap(float[,] map, int stepsCount) {
-            float[,] delta = new float[blueprint.width, blueprint.height]; //delta integrity for making blur
-                                                                         // - then blur the map to create gradient deterioration around the intact area.
-            for (int steps = 0; steps < stepsCount; steps++) { //terrain map
-                for (int x = 1; x < blueprint.width - 1; x++) {
-                    for (int z = 1; z < blueprint.height - 1; z++) {
-                        delta[x, z] = (map[x - 1, z - 1] + map[x, z - 1] + map[x + 1, z - 1] +
-                            map[x - 1, z] + map[x, z] + map[x + 1, z] +
-                            map[x - 1, z + 1] + map[x, z + 1] + map[x + 1, z + 1]) / 9.0f;
-                    }
-                }
-                for (int x = 1; x < blueprint.width - 1; x++) {
-                    for (int z = 1; z < blueprint.height - 1; z++) {
-                        if (map[x, z] < 1) {
-                            map[x, z] = delta[x, z] * (0.9f + Rand.Value * 0.1f);
-                        }
-                    }
-                }
-            }
-
-        }
-
         //Constructs default circular integrity map if something goes wrong with the room based one creation.
         private void ConstructFallbackIntegrityMaps() {
 
@@ -57,8 +35,8 @@ namespace RealRuins {
                 }
             }
 
-            BlurIntegrityMap(terrainIntegrity, 10);
-            BlurIntegrityMap(itemsIntegrity, 7);
+            terrainIntegrity.Blur(10);
+            itemsIntegrity.Blur(7);
         }
 
         private void ConstructRoomBasedIntegrityMap() {
@@ -139,8 +117,8 @@ namespace RealRuins {
                     }
 
                     //Debug.Message("Blurring");
-                    BlurIntegrityMap(terrainIntegrity, 7);
-                    BlurIntegrityMap(itemsIntegrity, 4);
+                    terrainIntegrity.Blur(7);
+                    itemsIntegrity.Blur(4);
                     //At this step we have integrity maps, so we can proceed further and simulate deterioration and scavenging
                     //Debug.Message("Finished");
                 }

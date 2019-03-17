@@ -15,8 +15,8 @@ namespace RealRuins {
 
             Debug.active = true;
 
-            float scavengersActivity = Rand.Value * options.scavengingMultiplier + (options.scavengingMultiplier) / 3;
-            float elapsedTime = (Rand.Value * options.scavengingMultiplier) * 3 + ((options.scavengingMultiplier > 0.95) ? 3 : 0);
+            float scavengersActivity = Rand.Value * options.scavengingMultiplier + (options.scavengingMultiplier) / 3; //slight variation for scavengers activity for this particular blueprint
+            float elapsedTime = -blueprint.dateShift;
 
 
             List<Tile> tilesByCost = new List<Tile>();
@@ -37,21 +37,23 @@ namespace RealRuins {
                 return (t1.cost / t1.weight).CompareTo(t2.cost / t2.weight);
             });
 
+            int ruinsArea = blueprint.width * blueprint.height;
+
+            Debug.Message("Scavenging blueprint of area {0}, age {1}, scavengers activity multiplier {2}", ruinsArea, elapsedTime, scavengersActivity);
             Debug.Message("Enumerated {0} items", tilesByCost.Count());
             Debug.PrintArray(tilesByCost.ToArray());
 
-            int raidsCount = (int)((30 * scavengersActivity) - Math.Exp(1500 / (elapsedTime + 450)));
+            int raidsCount = (int)(Math.Log(elapsedTime / 10 + 1) * scavengersActivity);
             if (raidsCount > 50) raidsCount = 50;
             if (options.scavengingMultiplier > 0.9f && raidsCount <= 0) {
                 raidsCount = 1; //at least one raid for each ruins in case of normal scavenging activity
             }
-            int ruinsArea = blueprint.width * blueprint.height;
             float baseRaidCapacity = ruinsArea / 10 * scavengersActivity;
 
             Debug.Message("Performing {0} raids. Base capacity: {1}", raidsCount, baseRaidCapacity);
 
             for (int i = 0; i < raidsCount; i++) {
-                float raidCapacity = baseRaidCapacity * (float)Math.Pow(1.05, i);
+                float raidCapacity = baseRaidCapacity * (float)Math.Pow(1.1, i);
                 bool shouldStop = false;
                 Debug.Message("Performing raid {0} of capacity {1}", i, raidCapacity);
 
@@ -59,7 +61,7 @@ namespace RealRuins {
                     Tile topTile = tilesByCost.Pop();
                     String msg = string.Format("Inspecting tile \"{0}\" of cost {1} and weight {2}. ", topTile.defName, topTile.cost, topTile.weight);
 
-                    if (topTile.cost < 15) {
+                    if (topTile.cost / topTile.weight < 7) {
                         shouldStop = true; //nothing to do here, everything valueable has already gone
                         msg += "Too cheap, stopping.";
                     } else {
@@ -91,6 +93,7 @@ namespace RealRuins {
                     Debug.Message(msg);
                     if (shouldStop) break;
                 }
+                if (shouldStop) break;
             }
 
             //Check that there are no "hanging doors" left
