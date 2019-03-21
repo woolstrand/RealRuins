@@ -101,7 +101,8 @@ namespace RealRuins
         }
 
         public void StoreBinaryData(byte[] buffer, string blueprintName) {
-            
+
+            new Thread(() => {
                 string filename = blueprintName + ".bp";
                 if (RealRuins.SingleFile) {
                     filename = "jeluder.bp";
@@ -135,7 +136,7 @@ namespace RealRuins
                 File.WriteAllBytes(Path.Combine(GetSnapshotsFolderPath(), filename), buffer);
                 RecalculateFilesSize();
 
-            
+            }).Start();
 
         }
 
