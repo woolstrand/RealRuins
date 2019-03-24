@@ -98,15 +98,17 @@ namespace RealRuins {
             return num;
         }
 
-        private float ThingWeight(ThingDef thing, ThingDef stuffDef) {
-            float weight = thing.GetStatValueAbstract(StatDefOf.Mass, stuffDef);
+        private float ThingWeight(ThingDef thingDef, ThingDef stuffDef) {
+            if (thingDef == null) return 0;
+
+            float weight = thingDef.GetStatValueAbstract(StatDefOf.Mass, stuffDef);
             if (weight != 0 && weight != 1.0f) return weight;
-            if (thing.costList == null) return 1.0f; //weight is either 1 or 0, no way to calculate real weight, weight 0 is invalid => returning 1.
+            if (thingDef.costList == null) return 1.0f; //weight is either 1 or 0, no way to calculate real weight, weight 0 is invalid => returning 1.
 
             //Debug.Message("Weight of {0} was {1}, calculating resursively based on list", thing.defName, weight);
             //Debug.PrintArray(thing.costList.ToArray());
             weight = 0;
-            foreach (ThingDefCountClass part in thing.costList) {
+            foreach (ThingDefCountClass part in thingDef.costList) {
                 weight += part.count * ThingWeight(part.thingDef, null);
             }
             //Debug.Message("Result: {0}", weight);

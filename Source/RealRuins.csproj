@@ -93,7 +93,6 @@
     <Compile Include="Classes\Triggers\RaidTrigger.cs" />
     <Compile Include="Classes\Triggers\TrippingTrigger.cs" />
     <Compile Include="Classes\Utility\APIService.cs" />
-    <Compile Include="Classes\Utility\AsyncQueue.cs" />
     <Compile Include="Classes\Utility\Compressor.cs" />
     <Compile Include="Classes\Utility\Extensions.cs" />
     <Compile Include="Classes\Utility\SimpleJSON.cs" />

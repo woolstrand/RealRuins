@@ -13,7 +13,7 @@ namespace RealRuins {
             //word is spread, so each next raid is more destructive than the previous ones
             //to make calculations a bit easier we're going to calculate value per cell, not per item.
 
-            Debug.active = true;
+            Debug.active = false;
 
             float scavengersActivity = Rand.Value * options.scavengingMultiplier + (options.scavengingMultiplier) / 3; //slight variation for scavengers activity for this particular blueprint
             float elapsedTime = -blueprint.dateShift;
@@ -39,9 +39,9 @@ namespace RealRuins {
 
             int ruinsArea = blueprint.width * blueprint.height;
 
-            Debug.Message("Scavenging blueprint of area {0}, age {1}, scavengers activity multiplier {2}", ruinsArea, elapsedTime, scavengersActivity);
-            Debug.Message("Enumerated {0} items", tilesByCost.Count());
-            Debug.PrintArray(tilesByCost.ToArray());
+            //Debug.Message("Scavenging blueprint of area {0}, age {1}, scavengers activity multiplier {2}", ruinsArea, elapsedTime, scavengersActivity);
+            //Debug.Message("Enumerated {0} items", tilesByCost.Count());
+            //Debug.PrintArray(tilesByCost.ToArray());
 
             int raidsCount = (int)(Math.Log(elapsedTime / 10 + 1) * scavengersActivity);
             if (raidsCount > 50) raidsCount = 50;

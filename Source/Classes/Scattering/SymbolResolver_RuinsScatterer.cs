@@ -44,7 +44,7 @@ namespace RealRuins {
             bp.FindRooms(); //Traverse blueprint and construct rooms map
             options.roomMap = bp.wallMap;
 
-            Debug.PrintIntMap(bp.wallMap, delta: 1);
+            //Debug.PrintIntMap(bp.wallMap, delta: 1);
 
             BlueprintTransferUtility btu = new BlueprintTransferUtility(bp, map, rp); //prepare blueprint transferrer
             btu.RemoveIncompatibleItems(); //remove incompatible items 

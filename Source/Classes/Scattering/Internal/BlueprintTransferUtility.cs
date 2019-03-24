@@ -266,7 +266,7 @@ namespace RealRuins {
 
 
             } catch (Exception e) {
-                Debug.Message("Exception while creating pawn: {0}", e);
+                //Debug.Message("Exception while creating pawn: {0}", e);
                 return PawnGenerator.GeneratePawn(PawnKindDefOf.AncientSoldier, rp.faction);
             }
         }
@@ -325,9 +325,6 @@ namespace RealRuins {
                 }
 
                 Thing thing = ThingMaker.MakeThing(thingDef, stuffDef);
-                if (thing.def.defName.Contains("AJO")) {
-                    Debug.Message("Added new thing: {0}", thing);
-                }
 
                 if (thing != null) {
                     if (itemTile.innerItems != null && thing is IThingHolder) {
@@ -411,7 +408,7 @@ namespace RealRuins {
                 }
                 return thing;
             } catch (Exception e) {
-                Debug.Message("Failed to spawn item {0} because of {1}", itemTile.defName, e);
+                //Debug.Message("Failed to spawn item {0} because of {1}", itemTile.defName, e);
                 return null;
             }
         }
@@ -581,7 +578,7 @@ namespace RealRuins {
                                         //Debug.Message("Ticked");
 
                                     } catch (Exception e) {
-                                        Debug.Message("Exception while tried to perform tick for {0}", thing.def.defName);
+                                        //Debug.Message("Exception while tried to perform tick for {0}", thing.def.defName);
                                         thing.Destroy();
                                         throw e;
                                     }
@@ -603,7 +600,7 @@ namespace RealRuins {
                                         }
                                     }
                                 } catch (Exception e) {
-                                    Debug.Message("Failed to spawn item {0} because of {1}", thing, e);
+                                    //Debug.Message("Failed to spawn item {0} because of {1}", thing, e);
                                     //ignore
                                 }
                             }
@@ -716,7 +713,7 @@ namespace RealRuins {
                 float powerThreshold = (Math.Abs(Rand.Gaussian(0.5f, 1)) * powerMax) + 1;
 
 
-                Debug.Message("Gathering troops power of {0} (max was {1})", powerThreshold, powerMax);
+                //Debug.Message("Gathering troops power of {0} (max was {1})", powerThreshold, powerMax);
 
                 float cumulativePower = 0;
 
@@ -751,7 +748,7 @@ namespace RealRuins {
                         lord.AddPawn(pawn);
                         cumulativePower += pawn.kindDef.combatPower;
 
-                        Debug.Message("Adding combat power for {0}, total is {1}", currentPawnKindDef.defName, cumulativePower);
+                        //Debug.Message("Adding combat power for {0}, total is {1}", currentPawnKindDef.defName, cumulativePower);
                     } else {
                         break; //no more suitable cells
                     }
@@ -775,7 +772,7 @@ namespace RealRuins {
 
             int triggersAbsoluteMaximum = 100;
 
-            Debug.Message("Triggers number: {0}. Cost: {1}. Base max points: {2} (absolute max in x2)", 0, remainingCost, 0);
+            //Debug.Message("Triggers number: {0}. Cost: {1}. Base max points: {2} (absolute max in x2)", 0, remainingCost, 0);
 
 
             while (remainingCost > 0) {
@@ -801,7 +798,7 @@ namespace RealRuins {
                 if (trigger.value > 10000) trigger.value = Rand.Range(8000, 11000); //sanity cap. against some beta-poly bases.
                 remainingCost -= trigger.value * ratio;
 
-                Debug.Message("Added trigger at {0}, {1} for {2} points, remaining cost: {3}", mapLocation.x, mapLocation.z, trigger.value, remainingCost);
+                //Debug.Message("Added trigger at {0}, {1} for {2} points, remaining cost: {3}", mapLocation.x, mapLocation.z, trigger.value, remainingCost);
 
                 GenSpawn.Spawn(trigger, mapLocation, map);
                 addedTriggers++;
