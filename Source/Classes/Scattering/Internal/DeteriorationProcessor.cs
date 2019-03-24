@@ -188,8 +188,8 @@ namespace RealRuins {
                 dp.terrainIntegrity = new float[source.width, source.height];
                 dp.ConstructRoomBasedIntegrityMap();
 
-                Debug.PrintNormalizedFloatMap(dp.terrainIntegrity);
-                Debug.PrintNormalizedFloatMap(dp.itemsIntegrity);
+                //Debug.PrintNormalizedFloatMap(dp.terrainIntegrity);
+                //Debug.PrintNormalizedFloatMap(dp.itemsIntegrity);
 
                 dp.Deteriorate();
             }

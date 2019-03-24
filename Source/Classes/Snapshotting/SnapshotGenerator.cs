@@ -32,12 +32,7 @@ namespace RealRuins {
         //Since RimWorlds save system is based on a singleton which does not support subclassing in a sane way, I can't use it for saving pawns.
         //Actually, I can use it for saving, but can't for loading. So I will use combination of native and custom way of saving pawn info
         //(to get rid of tons of unnecessary information like pawn records or pawn work schedule), and fully customized loading routines.
-        private string EncodePawn(Pawn pawn) {
-            StringBuilder builder = new StringBuilder();
-            XmlWriterSettings settings = new XmlWriterSettings();
-            settings.OmitXmlDeclaration = true;
-            settings.ConformanceLevel = ConformanceLevel.Fragment;
-            XmlWriter writer = XmlWriter.Create(builder, settings);
+        private void EncodePawn(Pawn pawn, XmlWriter writer) {
 
             //Pawn and it's kind
             Debug.Message("Writing pawn {0}", pawn.ToString());
@@ -117,27 +112,29 @@ namespace RealRuins {
             writer.WriteEndElement();
 
             writer.Flush();
-            return builder.ToString();
-
         }
 
-        private string EncodeCorpse(Corpse corpse) {
-            return "<item def=\"Corpse\" timeOfDeath=\"" + corpse.timeOfDeath.ToString() + "\">" + EncodePawn(corpse.InnerPawn) + "</item>";
+        private void EncodeCorpse(Corpse corpse, XmlWriter writer) {
+            writer.WriteStartElement("item");
+            writer.WriteAttributeString("def", "corpse");
+            writer.WriteAttributeString("timeOfDeath", corpse.timeOfDeath.ToString());
+            EncodePawn(corpse.InnerPawn, writer);
+            writer.WriteEndElement();
         }
 
-        private string EncodeThing(Thing thing) {
+        private void EncodeThing(Thing thing, XmlWriter writer) {
 
             if (thing is Corpse) {
-                return EncodeCorpse((Corpse)thing);
+                EncodeCorpse((Corpse)thing, writer);
+                return;
             } else if (thing is Pawn) {
-                return EncodePawn((Pawn)thing);
+                EncodePawn((Pawn)thing, writer);
+                return;
             }
 
             //Use only buildings and items. Ignoring pawns, trees, filth and so on
             if (thing.def.category == ThingCategory.Building || thing.def.category == ThingCategory.Item) {
-                if (thing.def.building != null && thing.def.building.isNaturalRock) return null; //ignoring natural rocks too
-
-                StringBuilder itemBuilder = new StringBuilder();
+                if (thing.def.building != null && thing.def.building.isNaturalRock) return; //ignoring natural rocks too
 
                 Type CompTextClass = Type.GetType("SaM.CompText, Signs_and_Memorials");
 
@@ -147,23 +144,26 @@ namespace RealRuins {
                 }
                 itemsCount++;
 
-                itemBuilder.AppendFormat("\t\t<item def=\"{0}\"", thing.def.defName);
+                writer.WriteStartElement("item");
+                writer.WriteAttributeString("def", thing.def.defName);
 
                 if (thing.Stuff != null) {
-                    itemBuilder.AppendFormat(" stuffDef=\"{0}\"", thing.Stuff.defName);
+                    writer.WriteAttributeString("stuffDef", thing.Stuff.defName);
                 }
 
                 if (thing.stackCount > 1) {
-                    itemBuilder.AppendFormat(" stackCount=\"{0}\"", thing.stackCount);
+                    writer.WriteAttributeString("stackCount", thing.stackCount.ToString());
                 }
 
                 if (thing.Rotation != null) {
-                    itemBuilder.AppendFormat(" rot=\"{0}\"", thing.Rotation.AsByte);
+                    writer.WriteAttributeString("rot", thing.Rotation.AsByte.ToString());
                 }
 
                 CompArt a = thing.TryGetComp<CompArt>();
                 if (a != null && a.Active) {
-                    itemBuilder.AppendFormat(" artAuthor=\"{0}\" artTitle=\"{1}\" artDescription=\"{2}\"", Uri.EscapeDataString(a.AuthorName), Uri.EscapeDataString(a.Title), Uri.EscapeDataString(a.GenerateImageDescription())); //not always a wall, but should act as a wall)
+                    writer.WriteAttributeString("artAuthor", a.AuthorName);
+                    writer.WriteAttributeString("artTitle", a.Title);
+                    writer.WriteAttributeString("artDescription", a.GenerateImageDescription());
                 }
 
                 ThingWithComps thingWithComps = thing as ThingWithComps;
@@ -178,37 +178,36 @@ namespace RealRuins {
                     if (textComp != null) {
                         string text = (string)(textComp?.GetType()?.GetField("text")?.GetValue(textComp));
                         if (text != null) {
-                            itemBuilder.AppendFormat(" text = \"{0}\" ", SecurityElement.Escape(text));
+                            writer.WriteAttributeString("text", text);
                         }
                     }
                 }
 
                 if (thing.def.passability == Traversability.Impassable || thing.def.fillPercent > 0.99) {
-                    itemBuilder.Append(" actsAsWall=\"1\""); //not always a wall, but should act as a wall
+                    writer.WriteAttributeString("actsAsWall", "1");
                 }
 
                 if (thing.def.IsDoor) {
-                    itemBuilder.Append(" isDoor=\"1\"");
+                    writer.WriteAttributeString("isDoor", "1");
                 }
 
                 if (thing is IThingHolder) {
                     ThingOwner innerThingsOwner = ((IThingHolder)thing).GetDirectlyHeldThings();
-                    itemBuilder.Append(">\n");
                     foreach (Thing t in innerThingsOwner) {
-                        itemBuilder.Append(EncodeThing(t));
+                        EncodeThing(t, writer);
                     }
-                    itemBuilder.Append("</item>");
-                } else {
-                    itemBuilder.Append(" />\n");
                 }
-
-                return itemBuilder.ToString();
-            } else {
-                return null;
+                writer.WriteEndElement();
             }
         }
 
     public string Generate() {
+
+            StringBuilder builder = new StringBuilder();
+            XmlWriterSettings settings = new XmlWriterSettings();
+            settings.OmitXmlDeclaration = true;
+            settings.ConformanceLevel = ConformanceLevel.Fragment;
+            XmlWriter writer = XmlWriter.Create(builder, settings);
 
             int xmin = 10000, xmax = 0, zmin = 10000, zmax = 0;
             foreach (IntVec3 cell in map.areaManager.Home.ActiveCells) {
@@ -232,63 +231,67 @@ namespace RealRuins {
 
             Log.Message(string.Format("Start capturing in area of: ({0},{1})-({2},{3})", rect.minX, rect.minZ, rect.maxX, rect.maxZ));
 
-            StringBuilder fileBuilder = new StringBuilder();
-            fileBuilder.AppendFormat("<snapshot version=\"{3}\" width=\"{0}\" height=\"{1}\" biomeDef=\"{2}\" inGameYear=\"{4}\">\n", width, height, map.Biome.defName, typeof(RealRuins).Assembly.GetName().Version, Find.TickManager.StartingYear + Find.TickManager.TicksGame / 3600000);
-            fileBuilder.AppendFormat("<world seed=\"{0}\" tile=\"{1}\" gameId=\"{2}\"/>\n", SecurityElement.Escape(Find.World.info.seedString), map.Parent.Tile, Math.Abs(Find.World.info.persistentRandomValue));
+            
+            writer.WriteStartElement("snapshot");
+            writer.WriteAttributeString("version", typeof(RealRuins).Assembly.GetName().Version.ToString());
+            writer.WriteAttributeString("x", originX.ToString());
+            writer.WriteAttributeString("z", originZ.ToString());
+            writer.WriteAttributeString("width", width.ToString());
+            writer.WriteAttributeString("height", height.ToString());
+            writer.WriteAttributeString("biomeDef", map.Biome.defName);
+            writer.WriteAttributeString("mapSize", map.Size.x.ToString()); //hope maps are square all the time
+            writer.WriteAttributeString("inGameYear", (Find.TickManager.StartingYear + Find.TickManager.TicksGame / 3600000).ToString());
+
+            writer.WriteStartElement("world");
+            writer.WriteAttributeString("seed", Find.World.info.seedString);
+            writer.WriteAttributeString("tile", map.Parent.Tile.ToString());
+            writer.WriteAttributeString("gameId", Math.Abs(Find.World.info.persistentRandomValue).ToString());
+            writer.WriteAttributeString("percentage", Find.World.info.planetCoverage.ToString());
+            writer.WriteEndElement();
 
             for (int z = rect.minZ; z < rect.maxZ; z++) {
                 for (int x = rect.minX; x < rect.maxX; x++) {
 
 
-                    StringBuilder terrainBuilder = new StringBuilder();
-                    StringBuilder itemsBuilder = new StringBuilder();
-                    StringBuilder roofBuilder = new StringBuilder();
 
                     IntVec3 cellVec = new IntVec3(x, 0, z);
                     List<Thing> things = map.thingGrid.ThingsListAt(cellVec);
                     TerrainDef terrain = map.terrainGrid.TerrainAt(cellVec);
                     RoofDef roof = map.roofGrid.RoofAt(cellVec);
 
+                    if (roof == null && terrain.BuildableByPlayer == false && things.Count == 0) continue; //skip node creation if there is nothing to fill the node with
+
+                    writer.WriteStartElement("cell");
+                    writer.WriteAttributeString("x", (x - xmin).ToString());
+                    writer.WriteAttributeString("z", (z - zmin).ToString());
+
 
                     if (terrain.BuildableByPlayer) {
-                        terrainBuilder.AppendFormat("\t\t<terrain def=\"{0}\" />\n", terrain.defName);
+                        writer.WriteStartElement("terrain");
+                        writer.WriteAttributeString("def", terrain.defName);
+                        writer.WriteEndElement();
                         terrainCount++;
                     }
 
 
 
                     if (roof != null) {
-                        roofBuilder.AppendFormat("\t\t<roof />\n");
+                        writer.WriteElementString("roof", "");
                     }
 
                     if (things.Count > 0) {
                         foreach (Thing thing in things) {
                             if (!(thing is Pawn) && thing.Position.Equals(cellVec)) {//ignore alive pawns, store multicell object only if we're looking at it's origin point.
-                                string encoded = EncodeThing(thing);
-                                if (encoded != null) {
-                                    itemsBuilder.Append(encoded);
-                                }
+                                EncodeThing(thing, writer);
                             }
                         }
                     }
 
-                    if (terrainBuilder.Length > 0 || itemsBuilder.Length > 0 || roofBuilder.Length > 0) {
-                        StringBuilder nodeBuilder = new StringBuilder();
-                        nodeBuilder.AppendFormat("\t<cell x=\"{0}\" z=\"{1}\">\n", x - xmin, z - zmin);
-                        if (terrainBuilder.Length > 0) {
-                            nodeBuilder.Append(terrainBuilder.ToString());
-                        }
-                        if (itemsBuilder.Length > 0) {
-                            nodeBuilder.Append(itemsBuilder.ToString());
-                        }
-                        if (roofBuilder.Length > 0) {
-                            nodeBuilder.Append(roofBuilder.ToString());
-                        }
-                        nodeBuilder.Append("\t</cell>\n");
-                        fileBuilder.Append(nodeBuilder.ToString());
-                    }
+                    writer.WriteEndElement();
                 }
             }
+
+            writer.WriteEndElement();
             
             float density = ((float) (itemsCount + terrainCount)) / ((xmax - xmin) * (zmax - zmin));
             if (density < 0.01) {
@@ -302,11 +305,11 @@ namespace RealRuins {
                 return null;
             }
 
-            fileBuilder.Append("</snapshot>");
+            
 
-            string tmpPath = System.IO.Path.GetTempFileName();
-            System.IO.File.WriteAllText(tmpPath, fileBuilder.ToString());
-            Debug.Message("Capture finished successfully and passed all checks.");
+            string tmpPath = Path.GetTempFileName();
+            File.WriteAllText(tmpPath, builder.ToString());
+            Debug.Message("Capture finished successfully and passed all checks. ({0})", tmpPath);
 
             return tmpPath;
         }
