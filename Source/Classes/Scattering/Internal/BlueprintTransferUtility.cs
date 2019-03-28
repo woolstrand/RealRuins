@@ -508,11 +508,22 @@ namespace RealRuins {
 
             //update rect to actual placement rect using width and height
             rp.rect = new CellRect(mapOriginX, mapOriginZ, blueprint.width, blueprint.height);
+            CoverageMap coverageMap = null;
+            rp.TryGetCustom<CoverageMap>(Constants.CoverageMap, out coverageMap);
+            
 
             for (int z = 0; z < blueprint.height; z++) {
                 for (int x = 0; x < blueprint.width; x++) {
 
                     IntVec3 mapLocation = new IntVec3(x + mapOriginX, 0, z + mapOriginZ);
+                    if (coverageMap != null) {
+                        if (coverageMap.isMarked(mapLocation.x, mapLocation.z) == true) { //cell was used earlier
+                            continue; //skip already covered tiles
+                        } else {
+                            if (blueprint.wallMap[x, z] > 1 || blueprint.wallMap[x, z] == -1) coverageMap.Mark(mapLocation.x, mapLocation.z); //mark cell as used
+                        }
+                    }
+
                     if (!mapLocation.InBounds(map)) continue;
 
 

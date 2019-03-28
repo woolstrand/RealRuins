@@ -9,31 +9,35 @@ using System.Text;
 
 namespace RealRuins {
     class BlueprintFinder {
-        public static Blueprint FindRandomBlueprintWithParameters(out string filename, int minArea = 100, float minDensity = 0.01f, int minCost = 0, int maxAttemptsCount = 5) {
+        public static Blueprint FindRandomBlueprintWithParameters(out string filename, int minArea = 100, float minDensity = 0.01f, int minCost = 0, int maxAttemptsCount = 5, bool removeNonQualified = false) {
             Blueprint bp = null;
             filename = null;
             int attemptCount = 0;
             while (attemptCount < maxAttemptsCount) {
                 attemptCount++;
                 filename = SnapshotStoreManager.Instance.RandomSnapshotFilename();
-                Debug.Message("Loading blueprint named {0}", filename);
                 bp = BlueprintLoader.LoadWholeBlueprintAtPath(filename);
 
                 if (bp == null) {
-                    Debug.Message("Blueprint is null");
+                    Debug.Message("Corrupted XML at path {0}, removing", filename);
+                    SnapshotStoreManager.Instance.RemoveBlueprintWithName(filename);
                     continue;
                 }
 
-                bp.UpdateBlueprintStats();
+                bp.UpdateBlueprintStats(includeCost: true);
 
                 Debug.Message("size: {0}x{1} (needed {2}). density {3} (needed {4}). cost {5} (needed {6})", bp.width, bp.height, minArea, bp.itemsDensity, minDensity, bp.totalCost, minCost);
 
                 if (bp.height * bp.width > minArea && bp.itemsDensity > minDensity && bp.totalCost >= minCost) {
-                    Debug.Message("Success");
+                    Debug.Message("Qualified, using.");
                     return bp;
+                } else if (removeNonQualified) {
+                    Debug.Message("Non-qualified XML at path {0}, removing", filename);
+                    SnapshotStoreManager.Instance.RemoveBlueprintWithName(filename);
                 }
             }
-            return bp;
+            filename = null;
+            return null;
         }
     }
 }

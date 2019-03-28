@@ -14,7 +14,7 @@ namespace RealRuins {
             ScatterOptions options = rp.GetCustom<ScatterOptions>(Constants.ScatterOptions);
             if (options == null) return;
 
-            Debug.Message("Loading blueprint of size {0} - {1} to deploy at {2}, {3}", options.minRadius, options.maxRadius, rp.rect.minX, rp.rect.minZ);
+            //Debug.Message("Loading blueprint of size {0} - {1} to deploy at {2}, {3}", options.minRadius, options.maxRadius, rp.rect.minX, rp.rect.minZ);
 
             Blueprint bp = null;
             Map map = BaseGen.globalSettings.map;
@@ -22,7 +22,7 @@ namespace RealRuins {
             //probably should split scattering options into several distinct objects
             string filename = options.blueprintFileName;
             if (filename == null) {
-                BlueprintFinder.FindRandomBlueprintWithParameters(out filename, options.minimumAreaRequired, options.minimumDensityRequired, 15);
+                bp = BlueprintFinder.FindRandomBlueprintWithParameters(out filename, options.minimumAreaRequired, options.minimumDensityRequired, 15, removeNonQualified: true);
                 if (filename == null) {
                     //still null = no suitable blueprints, fail.
                     return;
@@ -30,13 +30,22 @@ namespace RealRuins {
             }
 
             if (!options.shouldLoadPartOnly) { //should not cut => load whole
-                bp = BlueprintLoader.LoadWholeBlueprintAtPath(filename);
+                if (bp == null) { //if not loaded yet
+                    bp = BlueprintLoader.LoadWholeBlueprintAtPath(filename);
+                }
             } else {
                 int radius = Rand.Range(options.minRadius, options.maxRadius);
-                bp = BlueprintLoader.LoadRandomBlueprintPartAtPath(filename, new IntVec3(radius * 2, 0, radius * 2));
+                if (bp == null) {
+                    bp = BlueprintLoader.LoadWholeBlueprintAtPath(filename).RandomPartCenteredAtRoom(new IntVec3(radius, 0, radius));
+                } else {
+                    bp = bp.RandomPartCenteredAtRoom(new IntVec3(radius, 0, radius));
+                }
             }
 
-            if (bp == null) return;
+            if (bp == null) {
+                Debug.Message("Blueprint is still null, returning");
+                return;
+            }
             bp.CutIfExceedsBounds(map.Size);
 
             // Here we have our blueprint loaded and ready to action. Doing stuff:
@@ -64,6 +73,7 @@ namespace RealRuins {
             }
 
             btu.AddFilthAndRubble(); //add filth and rubble
+            //rp.GetCustom<CoverageMap>(Constants.CoverageMap).DebugPrint();
             
         }
 

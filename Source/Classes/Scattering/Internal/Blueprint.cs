@@ -259,7 +259,75 @@ namespace RealRuins {
             }
 
             roomsCount = currentRoomIndex;
-            Debug.Message("Traverse completed. Found {0} rooms", currentRoomIndex);
+            //Debug.Message("Traverse completed. Found {0} rooms", currentRoomIndex);
+        }
+
+        public Blueprint RandomPartCenteredAtRoom(IntVec3 size) {
+            if (roomsCount == 0) {
+                FindRooms();
+            }
+
+            if (roomsCount == 1) {
+                //no rooms => selecting arbitrary piece of the blueprint
+                return Part(new IntVec3(Rand.Range(size.x, width - size.x), 0, Rand.Range(size.z, height - size.z)), size);
+            }
+
+            int selectedRoomIndex = Rand.RangeInclusive(2, roomsCount);
+
+            int minX = width; int maxX = 0;
+            int minZ = height; int maxZ = 0;
+
+            for (int x = 0; x < width; x ++) {
+                for (int z = 0; z < height; z ++) {
+                    if (wallMap[x, z] == selectedRoomIndex) {
+                        if (x > maxX) maxX = x;
+                        if (x < minX) minX = x;
+                        if (z > maxZ) maxZ = z;
+                        if (z < minZ) minZ = z;
+                    }
+                }
+            }
+
+            IntVec3 center = new CellRect(minX, minZ, maxX - minX, maxZ - minZ).RandomCell;
+            return Part(center, size);
+        }
+
+
+        public Blueprint Part(IntVec3 location, IntVec3 size) {
+            Debug.Message("Cutting area of size {0}x{1}", size.x, size.z);
+
+            if (width <= size.x && height <= size.z) return this; //piece size os larger than the blueprint itself => don't alter blueprint
+
+            int centerX = location.x;
+            int centerZ = location.z;
+
+            int minX = Math.Max(0, centerX - size.x / 2);
+            int maxX = Math.Min(width - 1, centerX + size.x / 2);
+            int minZ = Math.Max(0, centerZ - size.z / 2);
+            int maxZ = Math.Min(height - 1, centerZ + size.z / 2);
+
+
+            Blueprint result = new Blueprint(maxX - minX, maxZ - minZ, version);
+            for (int z = minZ; z < maxZ; z++) {
+                for (int x = minX; x < maxX; x++) {
+                    var relativeLocation = new IntVec3(x - minX, 0, z - minZ);
+                    result.roofMap[x - minX, z - minZ] = roofMap[x, z];
+                    result.terrainMap[x - minX, z - minZ] = terrainMap[x, z];
+                    result.wallMap[x - minX, z - minZ] = wallMap[x, z];
+                    result.itemsMap[x - minX, z - minZ] = itemsMap[x, z];
+
+                    if (result.itemsMap[x - minX, z - minZ] != null) {
+                        foreach (Tile t in result.itemsMap[x - minX, z - minZ]) {
+                            t.location = relativeLocation;
+                        }
+                    }
+
+                    if (result.terrainMap[x - minX, z - minZ] != null) result.terrainMap[x - minX, z - minZ].location = relativeLocation;
+                }
+            }
+
+            result.snapshotYear = snapshotYear;
+            return result;
         }
     }
 }
