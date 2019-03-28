@@ -35,7 +35,7 @@ namespace RealRuins {
         private void EncodePawn(Pawn pawn, XmlWriter writer) {
 
             //Pawn and it's kind
-            Debug.Message("Writing pawn {0}", pawn.ToString());
+            //Debug.Message("Writing pawn {0}", pawn.ToString());
 
             writer.WriteStartElement("item");
             writer.WriteAttributeString("def", "Pawn");
@@ -56,7 +56,7 @@ namespace RealRuins {
             }
             writer.WriteEndElement();
 
-            Debug.Message("name ok");
+            //Debug.Message("name ok");
 
             //gender
             writer.WriteElementString("gender", pawn.gender.ToString());
@@ -71,7 +71,7 @@ namespace RealRuins {
                 writer.WriteRaw(storyXml ?? "");
             }
 
-            Debug.Message("gender age story ok");
+            //Debug.Message("gender age story ok");
 
             //apparel
             if (pawn.apparel != null) {
@@ -94,7 +94,7 @@ namespace RealRuins {
                     writer.WriteEndElement();
                 }
             }
-            Debug.Message("Finished apparel");
+            //Debug.Message("Finished apparel");
 
             //health
             if (pawn.health != null) {
@@ -107,7 +107,7 @@ namespace RealRuins {
                 string skillsXml = Scribe.saver.DebugOutputFor(pawn.skills);
                 writer.WriteRaw(skillsXml ?? "");
             }
-            Debug.Message("health skills ok");
+            //Debug.Message("health skills ok");
 
             writer.WriteEndElement();
 

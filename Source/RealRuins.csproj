@@ -80,6 +80,7 @@
     <Compile Include="Classes\Scattering\Internal\BlueprintFinder.cs" />
     <Compile Include="Classes\Scattering\Internal\BlueprintLoader.cs" />
     <Compile Include="Classes\Scattering\Internal\BlueprintTransferUtility.cs" />
+    <Compile Include="Classes\Scattering\Internal\CoverageMap.cs" />
     <Compile Include="Classes\Scattering\Internal\DeteriorationProcessor.cs" />
     <Compile Include="Classes\Scattering\Internal\ScavengingProcessor.cs" />
     <Compile Include="Classes\Scattering\Internal\Tiles.cs" />

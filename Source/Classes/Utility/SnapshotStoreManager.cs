@@ -166,6 +166,14 @@ namespace RealRuins
             return totalFileCount;
         }
 
+        public void RemoveBlueprintWithName(string filename) {
+            try {
+                File.Delete(filename);
+            } catch (Exception) { 
+                //can't do anything useful really, just ignore
+            }
+        }
+
         public List<string> FilterOutExistingItems(List<string> source) {
 
             List<string> result = new List<string>();

@@ -42,6 +42,23 @@ namespace RealRuins {
             Log.Message(output, true);
         }
 
+        public static void PrintBoolMap(bool[,] map) {
+
+            if (!active) return;
+
+            string output = "============== BOOL MAP ============= \r\n";
+
+            for (int i = 0; i < map.GetLength(0); i++) {
+                for (int j = 0; j < map.GetLength(1); j++) {
+                    if (map[i, j]) output += "#";
+                    else output += " ";
+                }
+                output += "\r\n";
+            }
+
+            Log.Message(output, true);
+        }
+
         public static void PrintNormalizedFloatMap(float[,] map, string charMap = " .,oO8") {
 
             if (!active) return;

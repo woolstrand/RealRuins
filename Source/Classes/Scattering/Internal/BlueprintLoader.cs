@@ -138,43 +138,12 @@ namespace RealRuins {
         }
 
         private void CutRandomRectOfSize(IntVec3 size) {
-            Debug.Message("Cutting area of size {0}x{1}", size.x, size.z);
-
-            if (blueprint == null) return;
-            if (blueprint.width <= size.x && blueprint.height <= size.z) return; //piece size os larger than the blueprint itself => don't alter blueprint
-
             int centerX = blueprint.width / 2;
             int centerZ = blueprint.height / 2;
             if (blueprint.width > size.x) centerX = Rand.Range(size.x / 2, blueprint.width - size.x / 2);
             if (blueprint.height > size.z) centerZ = Rand.Range(size.z / 2, blueprint.height - size.z / 2);
 
-            int minX = Math.Max(0, centerX - size.x / 2);
-            int maxX = Math.Min(blueprint.width - 1, centerX + size.x / 2);
-            int minZ = Math.Max(0, centerZ - size.z / 2);
-            int maxZ = Math.Min(blueprint.height - 1, centerZ + size.z / 2);
-
-            
-            Blueprint result = new Blueprint(maxX - minX, maxZ - minZ, blueprint.version);
-            for (int z = minZ; z < maxZ; z++) {
-                for (int x = minX; x < maxX; x++) {
-                    var location = new IntVec3(x - minX, 0, z - minZ);
-                    result.roofMap[x - minX, z - minZ] = blueprint.roofMap[x, z];
-                    result.terrainMap[x - minX, z - minZ] = blueprint.terrainMap[x, z];
-                    result.wallMap[x - minX, z - minZ] = blueprint.wallMap[x, z];
-                    result.itemsMap[x - minX, z - minZ] = blueprint.itemsMap[x, z];
-
-                    if (result.itemsMap[x - minX, z - minZ] != null) {
-                        foreach (Tile t in result.itemsMap[x - minX, z - minZ]) {
-                            t.location = location;
-                        }
-                    }
-
-                    if (result.terrainMap[x - minX, z - minZ] != null) result.terrainMap[x - minX, z - minZ].location = location;
-                }
-            }
-
-            result.snapshotYear = blueprint.snapshotYear;
-            blueprint = result;
+            blueprint = blueprint.Part(new IntVec3(centerX, 0, centerZ), size);
         }
     }
 }

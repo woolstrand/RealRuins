@@ -128,6 +128,7 @@ namespace RealRuins
                     shouldUnpause = true;
                 }
 
+                CoverageMap coverageMap = CoverageMap.EmptyCoverageMap(map);
 
 
                 for (int i = 0; i < num; i++) {
@@ -135,18 +136,16 @@ namespace RealRuins
                     //should use struct instead? is it compatible with IExposable?
                     ResolveParams rp = default(ResolveParams);
                     rp.SetCustom<ScatterOptions>(Constants.ScatterOptions, currentOptions.Copy());
+                    rp.SetCustom<CoverageMap>(Constants.CoverageMap, coverageMap);
                     rp.faction = Find.FactionManager.OfAncientsHostile;
                     var center = CellFinder.RandomNotEdgeCell(10, map);
                     rp.rect = new CellRect(center.x, center.z, 1, 1); //after generation will be extended to a real size
-                    Debug.Message("rect before {0}", rp.rect);
                     BaseGen.symbolStack.Push("scatterRuins", rp);
-                    //Debug.Message("rect after {0}", rp.rect);
-                    //BaseGen.symbolStack.Push("scatterRuinsMobs", rp);
                 }
                 BaseGen.Generate();
 
                 if (shouldUnpause) {
-                    Debug.Message("Finished spawning, unpausing");
+                    //Debug.Message("Finished spawning, unpausing");
                     Find.TickManager.TogglePaused();
                 }
             }
@@ -168,7 +167,7 @@ namespace RealRuins
 
         public override void Generate(Map map, GenStepParams parms) {
             Find.TickManager.Pause();
-            Debug.Message("Overridden LARGE generate");
+            //Debug.Message("Overridden LARGE generate");
             if (!map.TileInfo.WaterCovered) {
 
                 string filename = map.Parent.GetComponent<RuinedBaseComp>()?.blueprintFileName;
