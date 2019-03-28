@@ -256,6 +256,7 @@ namespace RealRuins {
 
                         if (thingDef != null) {
                             Apparel apparel = (Apparel)ThingMaker.MakeThing(thingDef, stuffDef);
+                            apparel.HitPoints = Rand.Range(1, int(apparel.MaxHitPoints * 0.6));
                             if (apparel is Apparel) {
                                 p.apparel.Wear(apparel, false);
                             }
@@ -345,7 +346,6 @@ namespace RealRuins {
                         byte category = (byte)Math.Abs(Math.Round(Rand.Gaussian(0, 2)));
 
                         if (itemTile.art != null) {
-                            category += 4;
                             if (category > 6) category = 6;
                             q.SetQuality((QualityCategory)category, ArtGenerationContext.Outsider); //setquality resets art, so it should go before actual setting art
                             thing.TryGetComp<CompArt>()?.InitializeArt(itemTile.art.author, itemTile.art.title, itemTile.art.TextWithDatesShiftedBy(blueprint.dateShift));
