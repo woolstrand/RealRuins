@@ -135,11 +135,14 @@ namespace RealRuins {
         }
 
         void Deteriorate() {
+            int itemsCount = 0;
+            int removedCount = 0;
             for (int x = 0; x < blueprint.width; x++) {
                 for (int z = 0; z < blueprint.height; z++) {
                     bool hadWall = false;
                     bool retainedWall = false;
                     List<ItemTile> items = blueprint.itemsMap[x, z];
+                    itemsCount += items.Count;
 
                     if (!Rand.Chance(terrainIntegrity[x, z])) {
                         blueprint.terrainMap[x, z] = null;
@@ -152,6 +155,7 @@ namespace RealRuins {
                     float itemsChance = itemsIntegrity[x, z] * (1.0f - options.deteriorationMultiplier);
                     List<ItemTile> newItems = new List<ItemTile>();
                     if (itemsChance > 0 && itemsChance < 1) {
+                        
                         blueprint.roofMap[x, z] = Rand.Chance(itemsChance * 0.3f); //roof will most likely collapse everywhere
 
                         foreach (ItemTile item in items) {
@@ -166,6 +170,7 @@ namespace RealRuins {
                                 newItems.Add(item);
                             }
                         }
+                        removedCount += items.Count - newItems.Count;
                     }
                     if (itemsChance < 1) {
                         blueprint.itemsMap[x, z] = newItems; //will be empty if chance is 0
@@ -175,6 +180,7 @@ namespace RealRuins {
                     if (hadWall && !retainedWall) blueprint.RemoveWall(x, z);
                 }
             }
+            Debug.Message("Deteriorated {0}/{1}", removedCount, itemsCount);
         }
 
 
@@ -189,7 +195,7 @@ namespace RealRuins {
                 dp.ConstructRoomBasedIntegrityMap();
 
                 //Debug.PrintNormalizedFloatMap(dp.terrainIntegrity);
-                //Debug.PrintNormalizedFloatMap(dp.itemsIntegrity);
+                Debug.PrintNormalizedFloatMap(dp.itemsIntegrity);
 
                 dp.Deteriorate();
             }

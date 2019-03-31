@@ -21,6 +21,8 @@ namespace RealRuins {
 
         public float totalCost { get; private set; }
         public float itemsDensity { get; private set; }
+        public int itemsCount { get; private set; }
+        public int terrainTilesCount { get; private set; }
 
         //rooms info. used to create deterioration maps.
         //earlier it was used by deterioration processor only, but now I hsve a few more places where I need this data, so I moved it to the blueprint level
@@ -118,7 +120,8 @@ namespace RealRuins {
 
         public void UpdateBlueprintStats(bool includeCost = false) {
             totalCost = 0;
-            int itemsCount = 0;
+            terrainTilesCount = 0;
+            itemsCount = 0;
             for (int x = 0; x < width; x ++) {
                 for (int z = 0; z < height; z ++) {
                     var items = itemsMap[x, z];
@@ -161,6 +164,7 @@ namespace RealRuins {
                                 totalCost += terrainTile.cost;
                             } catch (Exception) { }
                         }
+                        terrainTilesCount++;
                     }
                 }
             }
@@ -217,6 +221,8 @@ namespace RealRuins {
             }
         }
 
+        //This method enumerates closed areas in the blueprint base on a prefilled wallmap array. WallMap at this moment should have zeros on unprocessed tiles and "-1"s on tiles with walls.
+        //After the method is completed, wallmap will still have -1s for walls, but all other cells will contain room indices starting from 1 (outside)
         public void FindRooms() {
             int currentRoomIndex = 1;
             roomAreas = new List<int>() { 0 }; //we don't have a room indexed zero, so place it here as if it were processed already
@@ -248,6 +254,16 @@ namespace RealRuins {
                 }
             }
 
+            //mark edge cells as alreay opened
+            for (int z = 0; z < height; z++) {
+                wallMap[0, z] = 1;
+                wallMap[width - 1, z] = 1;
+            }
+            for (int x = 0; x < width; x++) {
+                wallMap[x, 0] = 1;
+                wallMap[x, height - 1] = 1;
+            }
+
             //For each unmarked point we can interpret our map as a tree with root at current point and branches going to four directions. For this tree (with removed duplicate nodes) we can implement BFS traversing.
             for (int z = 0; z < height; z++) {
                 for (int x = 0; x < width; x++) {
@@ -259,20 +275,26 @@ namespace RealRuins {
             }
 
             roomsCount = currentRoomIndex;
-            //Debug.Message("Traverse completed. Found {0} rooms", currentRoomIndex);
+            Debug.Message("Traverse completed. Found {0} rooms", currentRoomIndex);
         }
 
         public Blueprint RandomPartCenteredAtRoom(IntVec3 size) {
+            Debug.Message("selecting random part of size {0} centered at room", size.x);
             if (roomsCount == 0) {
                 FindRooms();
             }
+            Debug.Message("Processed rooms, found {0}", roomsCount);
 
-            if (roomsCount == 1) {
+            if (roomsCount < 3) {
                 //no rooms => selecting arbitrary piece of the blueprint
+                Debug.PrintIntMap(wallMap, delta: +1);
                 return Part(new IntVec3(Rand.Range(size.x, width - size.x), 0, Rand.Range(size.z, height - size.z)), size);
             }
 
-            int selectedRoomIndex = Rand.RangeInclusive(2, roomsCount);
+
+            int selectedRoomIndex = 0;
+            selectedRoomIndex = Rand.Range(2, roomsCount);
+            Debug.Message("Selected room {0}", selectedRoomIndex);
 
             int minX = width; int maxX = 0;
             int minZ = height; int maxZ = 0;
@@ -287,16 +309,19 @@ namespace RealRuins {
                     }
                 }
             }
+            Debug.Message("Framed room by {0}..{1}, {2}..{3}", minX, maxX, minZ, maxZ);
 
             IntVec3 center = new CellRect(minX, minZ, maxX - minX, maxZ - minZ).RandomCell;
+
+            Debug.Message("Selected random cell {0}, {1}", center.x, center.z);
+
             return Part(center, size);
         }
 
-
+        //WARNING: Original blueprint becomes non-usable after slicing out it's part.
         public Blueprint Part(IntVec3 location, IntVec3 size) {
-            Debug.Message("Cutting area of size {0}x{1}", size.x, size.z);
 
-            if (width <= size.x && height <= size.z) return this; //piece size os larger than the blueprint itself => don't alter blueprint
+            if (width <= size.x && height <= size.z) return this; //piece size is larger than the blueprint itself => don't alter blueprint
 
             int centerX = location.x;
             int centerZ = location.z;
@@ -306,6 +331,10 @@ namespace RealRuins {
             int minZ = Math.Max(0, centerZ - size.z / 2);
             int maxZ = Math.Min(height - 1, centerZ + size.z / 2);
 
+            Debug.Message("Cutting area of size {0}x{1}. Frame is {2}..{3}, {4}..{5}", size.x, size.z, minX, maxX, minZ, maxZ);
+
+            int relocatedTilesCount = 0;
+
 
             Blueprint result = new Blueprint(maxX - minX, maxZ - minZ, version);
             for (int z = minZ; z < maxZ; z++) {
@@ -313,12 +342,15 @@ namespace RealRuins {
                     var relativeLocation = new IntVec3(x - minX, 0, z - minZ);
                     result.roofMap[x - minX, z - minZ] = roofMap[x, z];
                     result.terrainMap[x - minX, z - minZ] = terrainMap[x, z];
-                    result.wallMap[x - minX, z - minZ] = wallMap[x, z];
                     result.itemsMap[x - minX, z - minZ] = itemsMap[x, z];
+
+                    if (wallMap[x, z] == -1) result.wallMap[x - minX, z - minZ] = -1;
+                    else result.wallMap[x - minX, z - minZ] = 0;
 
                     if (result.itemsMap[x - minX, z - minZ] != null) {
                         foreach (Tile t in result.itemsMap[x - minX, z - minZ]) {
                             t.location = relativeLocation;
+                            relocatedTilesCount++;
                         }
                     }
 
@@ -327,6 +359,7 @@ namespace RealRuins {
             }
 
             result.snapshotYear = snapshotYear;
+            Debug.Message("Cutting completed, relocated {0} tiles", relocatedTilesCount);
             return result;
         }
     }
