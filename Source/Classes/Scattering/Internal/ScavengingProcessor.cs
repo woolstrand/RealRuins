@@ -13,10 +13,16 @@ namespace RealRuins {
             //word is spread, so each next raid is more destructive than the previous ones
             //to make calculations a bit easier we're going to calculate value per cell, not per item.
 
-            Debug.active = false;
+            Debug.active = true;
 
             float scavengersActivity = Rand.Value * options.scavengingMultiplier + (options.scavengingMultiplier) / 3; //slight variation for scavengers activity for this particular blueprint
             float elapsedTime = -blueprint.dateShift;
+
+            int totalRemovedTiles = 0;
+            int totalRemovedTerrains = 0;
+            int totalReplacedTiles = 0;
+            int processedTiles = 0;
+            int processedTerrains = 0;
 
 
             List<Tile> tilesByCost = new List<Tile>();
@@ -25,10 +31,12 @@ namespace RealRuins {
                 for (int z = 0; z < blueprint.height; z++) {
                     if (blueprint.terrainMap[x, z] != null) {
                         tilesByCost.Add(blueprint.terrainMap[x, z]);
+                        processedTerrains++;
                     }
 
                     foreach (ItemTile item in blueprint.itemsMap[x, z]) {
                         tilesByCost.Add(item);
+                        processedTiles++;
                     }
                 }
             }
@@ -69,6 +77,7 @@ namespace RealRuins {
                             raidCapacity -= topTile.weight; 
                             if (topTile is TerrainTile) {
                                 blueprint.terrainMap[topTile.location.x, topTile.location.z] = null;
+                                totalRemovedTerrains++;
                                 msg += "Terrain removed.";
                             } else if (topTile is ItemTile) {
                                 ItemTile itemTile = topTile as ItemTile;
@@ -78,13 +87,18 @@ namespace RealRuins {
                                         ItemTile replacementTile = ItemTile.DefaultDoorItemTile(itemTile.location);
                                         blueprint.itemsMap[topTile.location.x, topTile.location.z].Add(replacementTile);
                                         msg += "Added " + replacementTile.defName + ", original ";
+                                        totalReplacedTiles++;
                                     } else {
+                                        totalRemovedTiles++;
                                         blueprint.RemoveWall(itemTile.location.x, itemTile.location.z);
                                     }
                                 } else if (itemTile.isWall) { //if something like a wall removed (vent or aircon) you usually want to cover the hole to keep wall integrity
                                     ItemTile replacementTile = ItemTile.WallReplacementItemTile(itemTile.location);
                                     blueprint.itemsMap[topTile.location.x, topTile.location.z].Add(replacementTile);
                                     msg += "Added " + replacementTile.defName + ", original ";
+                                    totalReplacedTiles++;
+                                } else {
+                                    totalRemovedTiles++;
                                 }
                                 msg += "Tile removed.";
                             }
@@ -123,6 +137,7 @@ namespace RealRuins {
                 }
             }
             Debug.active = true;
+            Debug.Message("Scavenging completed. Terrain removed: {0}/{1}, Tiles removed: {2}/{3}, tiles replaced: {4}.", totalRemovedTerrains, processedTerrains, totalRemovedTiles, processedTiles, totalReplacedTiles);
         }
     }
 }

@@ -61,7 +61,15 @@ namespace RealRuins {
 
             string filename = null;
             BlueprintFinder.FindRandomBlueprintWithParameters(out filename, 6400, 0.1f, 100000);
-            site.GetComponent<RuinedBaseComp>().blueprintFileName = filename;
+
+            Debug.Message("Trying to gt comp");
+            RuinedBaseComp comp = site.GetComponent<RuinedBaseComp>();
+            if (comp == null) {
+                Debug.Message("Component is null");
+            } else {
+                comp.blueprintFileName = filename;
+            }
+
             Debug.Message("Found blueprint with name {0} and stored", filename);
             Find.WorldObjects.Add(site);
             return site;

@@ -256,7 +256,7 @@ namespace RealRuins {
 
                         if (thingDef != null) {
                             Apparel apparel = (Apparel)ThingMaker.MakeThing(thingDef, stuffDef);
-                            apparel.HitPoints = Rand.Range(1, int(apparel.MaxHitPoints * 0.6));
+                            apparel.HitPoints = Rand.Range(1, (int)(apparel.MaxHitPoints * 0.6));
                             if (apparel is Apparel) {
                                 p.apparel.Wear(apparel, false);
                             }
@@ -393,6 +393,11 @@ namespace RealRuins {
                         }
                     }
 
+                    if (thing is UnfinishedThing) {
+                        ((UnfinishedThing)thing).workLeft = 10000;
+                        ((UnfinishedThing)thing).Creator = Find.WorldPawns.AllPawnsAliveOrDead.RandomElement();
+                    }
+
                     //Substract some hit points. Most lilkely below 400 (to make really strudy structures stay almost untouched. No more 1% beta poly walls)
                     var maxDeltaHP = Math.Min(thing.MaxHitPoints - 1, (int)Math.Abs(Rand.Gaussian(0, 200)));
                     thing.HitPoints = thing.MaxHitPoints - Rand.Range(0, maxDeltaHP);
@@ -438,6 +443,8 @@ namespace RealRuins {
         public void RemoveIncompatibleItems() {
             //Each item should be checked if it can be placed or not. This should help preventing situations when simulated scavenging removes things which anyway won't be placed.
             //For each placed item it's cost should be calculated
+            int totalItems = 0;
+            int removedItems = 0;
             for (int x = 0; x < blueprint.width; x++) {
                 for (int z = 0; z < blueprint.height; z++) {
 
@@ -467,6 +474,7 @@ namespace RealRuins {
 
                     List<ItemTile> itemsToRemove = new List<ItemTile>();
                     foreach (ItemTile item in items) {
+                        totalItems++;
 
                         ThingDef thingDef = DefDatabase<ThingDef>.GetNamed(item.defName, false);
                         if (thingDef == null) {
@@ -497,14 +505,20 @@ namespace RealRuins {
                         }
 
                         items.Remove(item);
+                        removedItems++;
                     }
                 }
             }
+            Debug.Message("Blueprint transfer utility did remove {0}/{1} items", removedItems, totalItems);
         }
 
         public void Transfer() {
             //Planting blueprint
             float totalCost = 0;
+            int transferredTerrains = 0;
+            int transferredTiles = 0;
+            int totalTerrains = 0;
+            int totalItems = 0;
 
             //update rect to actual placement rect using width and height
             rp.rect = new CellRect(mapOriginX, mapOriginZ, blueprint.width, blueprint.height);
@@ -534,10 +548,12 @@ namespace RealRuins {
 
                     //Construct terrain if some specific terrain stored in the blueprint
                     if (blueprint.terrainMap[x, z] != null) {
+                        totalTerrains++;
                         TerrainDef blueprintTerrain = TerrainDef.Named(blueprint.terrainMap[x, z].defName);
                         if (!map.terrainGrid.TerrainAt(mapLocation).IsWater) {
                             map.terrainGrid.SetTerrain(mapLocation, blueprintTerrain);
                             totalCost += blueprint.terrainMap[x, z].cost;
+                            transferredTerrains++;
                         }
                     }
 
@@ -550,6 +566,7 @@ namespace RealRuins {
                     if (blueprint.itemsMap[x, z] != null && blueprint.itemsMap[x, z].Count > 0/* && cellUsed[mapLocation.x, mapLocation.z] == false*/) {
 
                         bool cellIsAlreadyCleared = false;
+                        totalItems += blueprint.itemsMap[x, z].Count;
 
                         foreach (ItemTile itemTile in blueprint.itemsMap[x, z]) {
                             //if (!itemTile.defName.ToLower().Contains("wall")) { Debug.Message("Processing item {0} at {1}, {2}", itemTile.defName, x, z); }
@@ -564,9 +581,9 @@ namespace RealRuins {
                                 }
                             }
 
-                            if ((blueprint.wallMap[x, z] > 1 || blueprint.wallMap[x, z] == -1) && !map.roofGrid.Roofed(mapLocation)) {
+/*                            if ((blueprint.wallMap[x, z] > 1 || blueprint.wallMap[x, z] == -1) && !map.roofGrid.Roofed(mapLocation)) {
                                 map.roofGrid.SetRoof(mapLocation, RoofDefOf.RoofConstructed);
-                            }
+                            }*/
 
                             Thing thing = MakeThingFromItemTile(itemTile);
                             if (thing != null) {
@@ -610,6 +627,7 @@ namespace RealRuins {
                                             thing.HitPoints = (thing.HitPoints - 10) / Rand.Range(5, 20) + Rand.Range(1, 10); //things in marsh or river are really in bad condition
                                         }
                                     }
+                                    transferredTiles++;
                                 } catch (Exception e) {
                                     //Debug.Message("Failed to spawn item {0} because of {1}", thing, e);
                                     //ignore
@@ -625,7 +643,7 @@ namespace RealRuins {
                 options.uncoveredCost = totalCost;
             }
 
-            Debug.Message("Transferred blueprint of size {0}x{1}, age {2}, total cost of approximately {3}", blueprint.width, blueprint.height, blueprint.dateShift, totalCost);
+            Debug.Message("Transferred blueprint of size {0}x{1}, age {2}, total cost of approximately {3}. Terrains: {4}/{5}, tiles: {6}/{7}", blueprint.width, blueprint.height, blueprint.dateShift, totalCost, transferredTiles, totalItems, transferredTerrains, totalTerrains);
         }
 
         public void AddFilthAndRubble() {
