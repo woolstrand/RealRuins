@@ -357,7 +357,7 @@ namespace RealRuins {
 
 
                     if (itemTile.stackCount > 1) {
-                        thing.stackCount = Rand.Range(1, Math.Min(thingDef.stackLimit, itemTile.stackCount));
+                        thing.stackCount = itemTile.stackCount;
 
 
                         //Spoil things that can be spoiled. You shouldn't find a fresh meat an the old ruins.
@@ -509,7 +509,9 @@ namespace RealRuins {
                     }
                 }
             }
-            Debug.Message("Blueprint transfer utility did remove {0}/{1} items", removedItems, totalItems);
+
+            blueprint.UpdateBlueprintStats(true);
+            Debug.Message("Blueprint transfer utility did remove {0}/{1} incompatible items. New cost: {2}", removedItems, totalItems, blueprint.totalCost);
         }
 
         public void Transfer() {
@@ -569,9 +571,8 @@ namespace RealRuins {
                         totalItems += blueprint.itemsMap[x, z].Count;
 
                         foreach (ItemTile itemTile in blueprint.itemsMap[x, z]) {
-                            //if (!itemTile.defName.ToLower().Contains("wall")) { Debug.Message("Processing item {0} at {1}, {2}", itemTile.defName, x, z); }
 
-                            if (!cellIsAlreadyCleared) { //first item to be spawned should also clear place for itself. we can't do it beforehand because we don't know it it will be able and get a chance to be spawned.
+                            if (!cellIsAlreadyCleared) { //first item to be spawned should also clear place for itself. we can't do it beforehand because we don't know if it will be able and get a chance to be spawned.
                                 bool forceCleaning = (blueprint.wallMap[x, z] > 1) && Rand.Chance(0.9f);
 
                                 if (!ClearCell(mapLocation, map, forceCleaning)) {
@@ -580,10 +581,6 @@ namespace RealRuins {
                                     cellIsAlreadyCleared = true;
                                 }
                             }
-
-/*                            if ((blueprint.wallMap[x, z] > 1 || blueprint.wallMap[x, z] == -1) && !map.roofGrid.Roofed(mapLocation)) {
-                                map.roofGrid.SetRoof(mapLocation, RoofDefOf.RoofConstructed);
-                            }*/
 
                             Thing thing = MakeThingFromItemTile(itemTile);
                             if (thing != null) {
@@ -606,7 +603,7 @@ namespace RealRuins {
                                         //Debug.Message("Ticked");
 
                                     } catch (Exception e) {
-                                        //Debug.Message("Exception while tried to perform tick for {0}", thing.def.defName);
+                                        Debug.Message("Exception while tried to perform tick for {0} of cost {1}", thing.def.defName, itemTile.cost);
                                         thing.Destroy();
                                         throw e;
                                     }
@@ -628,8 +625,9 @@ namespace RealRuins {
                                         }
                                     }
                                     transferredTiles++;
+                                    totalCost += itemTile.cost;
                                 } catch (Exception e) {
-                                    //Debug.Message("Failed to spawn item {0} because of {1}", thing, e);
+                                    Debug.Message("Failed to spawn item {0} of cost {1} because of exception", thing, itemTile.cost);
                                     //ignore
                                 }
                             }
@@ -642,8 +640,7 @@ namespace RealRuins {
                 }
                 options.uncoveredCost = totalCost;
             }
-
-            Debug.Message("Transferred blueprint of size {0}x{1}, age {2}, total cost of approximately {3}. Terrains: {4}/{5}, tiles: {6}/{7}", blueprint.width, blueprint.height, blueprint.dateShift, totalCost, transferredTiles, totalItems, transferredTerrains, totalTerrains);
+            Debug.Message("Transferred blueprint of size {0}x{1}, age {2}, total cost of approximately {3}. Items: {4}/{5}, terrains: {6}/{7}", blueprint.width, blueprint.height, -blueprint.dateShift, totalCost, transferredTiles, totalItems, transferredTerrains, totalTerrains);
         }
 
         public void AddFilthAndRubble() {
@@ -827,7 +824,7 @@ namespace RealRuins {
                 if (trigger.value > 10000) trigger.value = Rand.Range(8000, 11000); //sanity cap. against some beta-poly bases.
                 remainingCost -= trigger.value * ratio;
 
-                //Debug.Message("Added trigger at {0}, {1} for {2} points, remaining cost: {3}", mapLocation.x, mapLocation.z, trigger.value, remainingCost);
+                Debug.Message("Added trigger at {0}, {1} for {2} points, remaining cost: {3}", mapLocation.x, mapLocation.z, trigger.value, remainingCost);
 
                 GenSpawn.Spawn(trigger, mapLocation, map);
                 addedTriggers++;

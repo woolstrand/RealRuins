@@ -104,8 +104,11 @@ namespace RealRuins
                     return true; //ignore if setting is off
                 } else if (map.Parent is Site) {
                     if (((Site)(map.Parent))?.core?.def?.defName == "RuinedBaseSite") {
-                        __result = true; //Always think there is something hostile in an abandoned base event
-                        return false; //prevent original method execution
+                        RuinedBaseComp comp = (map.Parent as WorldObject)?.GetComponent<RuinedBaseComp>();
+                        if (comp?.mapExitLocked == true) {
+                            __result = true; //Always think there is something hostile in an abandoned base event if it was not explicitly unlocket dy the map itself
+                            return false; //prevent original method execution
+                        }
                     }
                 }
                 return true;
