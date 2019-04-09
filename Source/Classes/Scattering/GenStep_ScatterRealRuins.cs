@@ -181,15 +181,19 @@ namespace RealRuins
                 currentOptions.deteriorationMultiplier = 0.0f;
                 currentOptions.hostileChance = 1.0f;
 
+                //CBC4FDE2 - 1319 - 43FB - 9FBE - 44D1495854EE.bp.xml and stored
                 currentOptions.blueprintFileName = filename;
-                currentOptions.minimumCostRequired = 5000;
-                currentOptions.minimumDensityRequired = 0.15f;
+                currentOptions.costCap = map.Parent.GetComponent<RuinedBaseComp>()?.currentCapCost ?? -1;
+                currentOptions.startingPartyPoints =(int)(map.Parent.GetComponent<RuinedBaseComp>()?.raidersActivity ?? -1);
+                currentOptions.minimumCostRequired = 100000;
+                currentOptions.minimumDensityRequired = 0.015f;
                 currentOptions.minimumAreaRequired = 6400;
                 currentOptions.deleteLowQuality = false; //do not delete since we have much higher requirements for base ruins
                 currentOptions.shouldKeepDefencesAndPower = true;
                 currentOptions.shouldLoadPartOnly = false;
                 currentOptions.shouldAddRaidTriggers = true;
                 currentOptions.claimableBlocks = false;
+                currentOptions.enableDeterioration = false;
 
 
                 ResolveParams resolveParams = default(ResolveParams);
@@ -198,7 +202,7 @@ namespace RealRuins
                 resolveParams.faction = Find.FactionManager.OfAncientsHostile;
                 resolveParams.rect = new CellRect(0, 0, map.Size.x, map.Size.z);
                 BaseGen.symbolStack.Push("scatterRuins", resolveParams);
-                BaseGen.symbolStack.Push("scatterRaidTriggers", resolveParams);
+
 
                 BaseGen.globalSettings.mainRect = resolveParams.rect;
 
@@ -213,60 +217,19 @@ namespace RealRuins
                 //adding starting party
                 //don't doing it via basegen because of uh oh i don't remember, something with pawn location control
 
-                if (uncoveredCost > 0) {
-                    float pointsCost = uncoveredCost / 10.0f;
-                    FloatRange defaultPoints = new FloatRange(pointsCost * 0.2f,
-                        Math.Min(10000.0f, pointsCost * 2.0f));
-                    Debug.Message("Adding starting party. Remaining points: {0}. Used points range: {1}",
-                        currentOptions.uncoveredCost, defaultPoints);
-
-                    if (currentOptions.allowFriendlyRaids) {
-                        if (Rand.Chance(0.1f)) {
-                            resolveParams.faction = Find.FactionManager.RandomNonHostileFaction();
-                        } else {
-                            resolveParams.faction = Find.FactionManager.RandomEnemyFaction();
-                        }
+                if (uncoveredCost > 0 || currentOptions.startingPartyPoints > 0) {
+                    float pointsCost = 0;
+                    if (currentOptions.startingPartyPoints > 0) {
+                        pointsCost = currentOptions.startingPartyPoints;
                     } else {
-                        resolveParams.faction = Find.FactionManager.RandomEnemyFaction();
+                        pointsCost = uncoveredCost / 10.0f;
+                        FloatRange defaultPoints = new FloatRange(pointsCost * 0.7f,
+                            Math.Min(12000.0f, pointsCost * 2.0f));
+                        Debug.Message("Adding starting party. Remaining points: {0}. Used points range: {1}",
+                            currentOptions.uncoveredCost, defaultPoints);
+
                     }
-
-
-                    PawnGroupMakerParms pawnGroupMakerParms = new PawnGroupMakerParms();
-                    pawnGroupMakerParms.groupKind = PawnGroupKindDefOf.Combat;
-                    pawnGroupMakerParms.tile = map.Tile;
-                    pawnGroupMakerParms.points = pointsCost;
-                    pawnGroupMakerParms.faction = resolveParams.faction;
-                    pawnGroupMakerParms.generateFightersOnly = true;
-                    pawnGroupMakerParms.raidStrategy = RaidStrategyDefOf.ImmediateAttack;
-                    pawnGroupMakerParms.forceOneIncap = false;
-                    pawnGroupMakerParms.seed = Rand.Int;
-
-                    List<Pawn> pawns = PawnGroupMakerUtility.GeneratePawns(pawnGroupMakerParms).ToList();
-                    CellRect rect = resolveParams.rect;
-
-                    Debug.Message("Rect: {0}, {1} - {2}, {3}", rect.BottomLeft.x, rect.BottomLeft.z, rect.TopRight.x, rect.TopRight.z);
-                    Debug.Message("corner: {0}, {1} size: {2}, {3}", currentOptions.bottomLeft.x, currentOptions.bottomLeft.z, currentOptions.roomMap.GetLength(0), currentOptions.roomMap.GetLength(1));
-
-                    CellRect spawnRect = new CellRect(10, 10, map.Size.x - 20, map.Size.y - 20);
-                    //CellRect mapRect = new CellRect(currentOptions.topLeft.x, currentOptions.topLeft.z, currentOptions.)
-
-                    foreach (Pawn p in pawns) {
-
-                        IntVec3 location = CellFinder.RandomNotEdgeCell(10, map);
-                        bool result = CellFinder.TryFindRandomSpawnCellForPawnNear(location, map, out location);
-                        
-                        if ( result ) { 
-                            GenSpawn.Spawn(p, location, map, Rot4.Random);
-                            Debug.Message("Spawned at {0}, {1}", p.Position.x, p.Position.z);
-                        } else {
-                            Debug.Message("Failed to find a new position");
-                        }
-                    }
-
-                    LordJob lordJob = new LordJob_AssaultColony(resolveParams.faction, canKidnap: false, canTimeoutOrFlee: Rand.Chance(0.5f));
-                    if (lordJob != null) {
-                        LordMaker.MakeNewLord(resolveParams.faction, lordJob, map, pawns);
-                    }
+                    ScatterStartingParties((int)pointsCost, currentOptions.allowFriendlyRaids, map);
 
                 }
 
@@ -276,8 +239,72 @@ namespace RealRuins
                 BaseGen.Generate();
 
             }
+
         }
 
+        private void ScatterStartingParties(int points, bool allowFriendly, Map map) {
+            
+            while (points > 0) {
+                int pointsUsed = Rand.Range(200, Math.Min(3000, points / 5));
+
+                IntVec3 rootCell = CellFinder.RandomNotEdgeCell(30, map);
+                CellFinder.TryFindRandomSpawnCellForPawnNear(rootCell, map, out IntVec3 result);
+                if (result.IsValid) {
+                    Faction faction = null;
+                    if (allowFriendly) {
+                        Find.FactionManager.TryGetRandomNonColonyHumanlikeFaction(out faction, false);
+                    } else {
+                        faction = Find.FactionManager.RandomEnemyFaction();
+                    }
+
+                    if (faction == null) faction = Find.FactionManager.AllFactions.RandomElement(); 
+
+                    SpawnGroup(pointsUsed, new CellRect(result.x - 10, result.z - 10, 20, 20), faction, map);
+                    points -= pointsUsed;
+                }
+            }
+        }
+
+        private void SpawnGroup(int points, CellRect locationRect, Faction faction, Map map) {
+            PawnGroupMakerParms pawnGroupMakerParms = new PawnGroupMakerParms();
+            pawnGroupMakerParms.groupKind = PawnGroupKindDefOf.Combat;
+            pawnGroupMakerParms.tile = map.Tile;
+            pawnGroupMakerParms.points = points;
+            pawnGroupMakerParms.faction = faction;
+            pawnGroupMakerParms.generateFightersOnly = true;
+            pawnGroupMakerParms.raidStrategy = RaidStrategyDefOf.ImmediateAttack;
+            pawnGroupMakerParms.forceOneIncap = false;
+            pawnGroupMakerParms.seed = Rand.Int;
+
+            List<Pawn> pawns = PawnGroupMakerUtility.GeneratePawns(pawnGroupMakerParms).ToList();
+            CellRect rect = locationRect;
+
+            Debug.Message("Rect: {0}, {1} - {2}, {3}", rect.BottomLeft.x, rect.BottomLeft.z, rect.TopRight.x, rect.TopRight.z);
+
+            if (pawns == null) {
+                Debug.Message("Pawns list is null");
+            }
+
+            foreach (Pawn p in pawns) {
+
+                bool result = CellFinder.TryFindRandomSpawnCellForPawnNear(locationRect.RandomCell, map, out IntVec3 location);
+
+                if (result) {
+                    GenSpawn.Spawn(p, location, map, Rot4.Random);
+                }
+            }
+
+            LordJob lordJob = null;
+//            if (Rand.Chance(0.7f) || ) {
+                lordJob = new LordJob_AssaultColony(faction, canKidnap: false, canTimeoutOrFlee: Rand.Chance(0.5f));
+ //           } else {
+ //               lordJob = new LordJob_Steal();
+ //           }
+
+            if (lordJob != null) {
+                LordMaker.MakeNewLord(faction, lordJob, map, pawns);
+            }
+        }
     }
     
     class GenStep_ScatterMediumRealRuins : GenStep {

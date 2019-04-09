@@ -61,7 +61,8 @@ namespace RealRuins {
 
             DeteriorationProcessor.Process(bp, options); //create deterioration maps and do deterioration
 
-            ScavengingProcessor.RaidAndScavenge(bp, options); //scavenge remaining items according to scavenge options
+            ScavengingProcessor sp = new ScavengingProcessor();
+            sp.RaidAndScavenge(bp, options); //scavenge remaining items according to scavenge options
 
             btu.Transfer(); //transfer blueprint
             if (!options.shouldAddRaidTriggers) {
@@ -73,46 +74,8 @@ namespace RealRuins {
             }
 
             btu.AddFilthAndRubble(); //add filth and rubble
-            //rp.GetCustom<CoverageMap>(Constants.CoverageMap).DebugPrint();
-            
+                                     //rp.GetCustom<CoverageMap>(Constants.CoverageMap).DebugPrint();
+
         }
-
-        /*
-        private Blueprint FindAndLoadRandomBlueprint(IntVec3 size, ScatterOptions options) {
-            Blueprint result = null;
-            int attemptNumber = 0;
-            bool forceDelete = false;
-            while (attemptNumber < 5 && result == null) {
-
-                attemptNumber++;
-
-                string snapshotName = SnapshotStoreManager.Instance.RandomSnapshotFilename();
-                if (snapshotName == null) {
-                    return null;
-                }
-
-                try {
-                    if (size.x * size.z != 0) {
-                        result = BlueprintLoader.LoadRandomBlueprintPartAtPath(snapshotName, size);
-                    } else {
-                        result = BlueprintLoader.LoadWholeBlueprintAtPath(snapshotName);
-                    }
-                    forceDelete = false;
-                } catch (Exception e) {
-                    Debug.Message("Corrupted file, removing. Error: {0}", e.ToString());
-                    forceDelete = true;
-                }
-
-                if (result == null && (options.deleteLowQuality || forceDelete)) { //remove bad snapshots
-                    Debug.Message("DELETING low quality file");
-                    //File.Delete(snapshotName);
-                    string deflatedName = snapshotName + ".xml";
-                    if (!File.Exists(deflatedName)) {
-                        File.Delete(deflatedName);
-                    }
-                }
-            }
-            return result;
-        }*/
     }
 }

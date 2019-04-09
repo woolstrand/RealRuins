@@ -68,6 +68,7 @@
     <Compile Include="Classes\Incidents\IncidentWorker_CaravanFoundRuins.cs" />
     <Compile Include="Classes\Incidents\IncidentWorker_RuinsFound.cs" />
     <Compile Include="Classes\Incidents\RuinedBaseComp.cs" />
+    <Compile Include="Classes\Incidents\RuinedBaseSite.cs" />
     <Compile Include="Classes\Incidents\RuinedBaseWorker.cs" />
     <Compile Include="Classes\Incidents\SmallRuinsWorldObject.cs" />
     <Compile Include="Classes\Incidents\WorldObjectCompProperties_RuinedBase.cs" />

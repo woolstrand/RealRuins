@@ -3,7 +3,7 @@
     <defName>RuinedBase</defName>
     <label>ruins</label>
     <description>Ruins of an abandoned outpost</description>
-    <worldObjectClass>MapParent</worldObjectClass>
+    <worldObjectClass>RealRuins.RuinedBaseSite</worldObjectClass>
     <expandingIcon>true</expandingIcon>
     <expandingIconPriority>10</expandingIconPriority>
     <canBePlayerHome>false</canBePlayerHome>
@@ -13,8 +13,8 @@
     </IncidentTargetTags>
 
     <comps>
-      <li Class="WorldObjectCompProperties_Timeout" />
       <li Class="RealRuins.WorldObjectCompProperties_RuinedBase" />
+      <li Class="WorldObjectCompProperties_Timeout" />
       <li Class="WorldObjectCompProperties_TimedForcedExit" />
     </comps>
   </WorldObjectDef>
