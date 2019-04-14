@@ -714,7 +714,7 @@ namespace RealRuins {
                 }
             }
 
-            Debug.Message("Added tripping triggers");
+            //Debug.Message("Added tripping triggers");
             //enemies
             if (Rand.Chance(options.hostileChance)) {
                 CellRect rect = rp.rect;
@@ -824,7 +824,7 @@ namespace RealRuins {
                 if (trigger.value > 10000) trigger.value = Rand.Range(8000, 11000); //sanity cap. against some beta-poly bases.
                 remainingCost -= trigger.value * ratio;
 
-                Debug.Message("Added trigger at {0}, {1} for {2} points, remaining cost: {3}", mapLocation.x, mapLocation.z, trigger.value, remainingCost);
+                //Debug.Message("Added trigger at {0}, {1} for {2} points, remaining cost: {3}", mapLocation.x, mapLocation.z, trigger.value, remainingCost);
 
                 GenSpawn.Spawn(trigger, mapLocation, map);
                 addedTriggers++;

@@ -11,6 +11,7 @@ namespace RealRuins {
         public static bool allowDownloads = true;
         public static bool allowUploads = true;
         public static bool allowInstantCaravanReform = false;
+        public static bool startWithoutRuins = false;
         public static float diskCacheLimit = 256.0f; //256mb cache by default, it's about 2000 to 10000 blueprints in average.
 
         public static ScatterOptions defaultScatterOptions = ScatterOptions.Default;
@@ -22,6 +23,7 @@ namespace RealRuins {
             Scribe_Values.Look(ref allowUploads, "allowUploads", true, false);
             Scribe_Values.Look(ref diskCacheLimit, "diskCacheLimit", 256.0f, false);
             Scribe_Values.Look(ref allowInstantCaravanReform, "allowInstantCaravanReform", false, false);
+            Scribe_Values.Look(ref startWithoutRuins, "startWithoutRuins", false, false);
             Scribe_Deep.Look(ref defaultScatterOptions, "defaultScatterOptions");
         }
     }

@@ -62,11 +62,13 @@ namespace RealRuins {
 
         public static string Text_Option_CaravanReforming = "RealRuins_MapOptions_CaravanReforming";
         public static string Text_Option_CaravanReformingTT = "RealRuins_MapOptions_CaravanReformingTT";
-          
+        public static string Text_Option_StartWithourRuins = "RealRuins_MapOptions_StartWithoutRuins";
+        public static string Text_Option_StartWithourRuinsTT = "RealRuins_MapOptions_StartWithoutRuinsTT";
+
         // fast regex from xml:
         //<RealRuins_M..Options_([^>]*)>[^<]*<\/([^>]*)>     ===>     public static string Text_Option_$1 = "$2";
 
-    public RealRuins_Mod(ModContentPack mcp)
+        public RealRuins_Mod(ModContentPack mcp)
         : base(mcp) {
             LongEventHandler.ExecuteWhenFinished(SetTexts);
             LongEventHandler.ExecuteWhenFinished(GetSettings);
@@ -169,7 +171,9 @@ namespace RealRuins {
             left.CheckboxLabeled(Text_Option_WallsAndDoorsOnly, ref RealRuins_ModSettings.defaultScatterOptions.wallsDoorsOnly, Text_Option_WallsAndDoorsOnlyTT);
             left.CheckboxLabeled(Text_Option_Proximity, ref RealRuins_ModSettings.defaultScatterOptions.enableProximity, Text_Option_ProximityTT);
             left.CheckboxLabeled(Text_Option_CaravanReforming, ref RealRuins_ModSettings.allowInstantCaravanReform, Text_Option_CaravanReformingTT);
-            left.Gap(35);
+            left.CheckboxLabeled(Text_Option_StartWithourRuins, ref RealRuins_ModSettings.startWithoutRuins, Text_Option_StartWithourRuinsTT);
+
+            left.Gap(15);
             if (left.ButtonText(Text_Option_ResetToDefaults, null)) {
                 ResetSettings();
             }
@@ -201,6 +205,10 @@ namespace RealRuins {
             RealRuins_ModSettings.defaultScatterOptions.decorationChance = right.Slider(RealRuins_ModSettings.defaultScatterOptions.decorationChance, 0.0f, 0.01f);
             RealRuins_ModSettings.defaultScatterOptions.trapChance = right.Slider(RealRuins_ModSettings.defaultScatterOptions.trapChance, 0.0f, 0.01f);
             RealRuins_ModSettings.defaultScatterOptions.hostileChance = right.Slider(RealRuins_ModSettings.defaultScatterOptions.hostileChance, 0.0f, 1.0f);
+
+            if (right.ButtonText(Text_Option_ResetToDefaults, null)) {
+                ResetSettings();
+            }
 
             right.End();
         }
