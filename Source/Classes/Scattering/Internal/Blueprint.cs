@@ -135,7 +135,7 @@ namespace RealRuins {
                             try {
                                 //Since at this moment we don't have filtered all things, we can't be sure that cost for all items can be calculated
                                 item.cost = ThingComponentsMarketCost(thingDef, stuffDef) * item.stackCount;
-                                totalCost += item.cost * item.stackCount;
+                                totalCost += item.cost;
                             } catch (Exception) { } //just ignore items with uncalculatable cost
                         }
 
@@ -169,6 +169,7 @@ namespace RealRuins {
                 }
             }
             itemsDensity = (float)itemsCount / (width * height);
+            Debug.Message("Recalculated blueprint stats. Processed {0} items and {1} tiles, got {2} cost", itemsCount, terrainTilesCount, totalCost);
         }
 
         // -------------- walls processing ------------

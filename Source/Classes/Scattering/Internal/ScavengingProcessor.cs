@@ -8,10 +8,18 @@ using Verse;
 namespace RealRuins {
     class ScavengingProcessor {
 
-        public static void RaidAndScavenge(Blueprint blueprint, ScatterOptions options) {
+        private List<Tile> tilesByCost = new List<Tile>();
+        private ScatterOptions options;
+        private Blueprint blueprint;
+        float totalCost = 0;
+
+        public void RaidAndScavenge(Blueprint blueprint, ScatterOptions options) {
             //remove the most precious things. smash some other things.
             //word is spread, so each next raid is more destructive than the previous ones
             //to make calculations a bit easier we're going to calculate value per cell, not per item.
+
+            this.options = options;
+            this.blueprint = blueprint;
 
             Debug.active = true;
 
@@ -24,18 +32,17 @@ namespace RealRuins {
             int processedTiles = 0;
             int processedTerrains = 0;
 
-
-            List<Tile> tilesByCost = new List<Tile>();
-
             for (int x = 0; x < blueprint.width; x++) {
                 for (int z = 0; z < blueprint.height; z++) {
                     if (blueprint.terrainMap[x, z] != null) {
                         tilesByCost.Add(blueprint.terrainMap[x, z]);
+                        totalCost += blueprint.terrainMap[x, z].cost;
                         processedTerrains++;
                     }
 
                     foreach (ItemTile item in blueprint.itemsMap[x, z]) {
                         tilesByCost.Add(item);
+                        totalCost += item.cost;
                         processedTiles++;
                     }
                 }
@@ -78,10 +85,12 @@ namespace RealRuins {
                             if (topTile is TerrainTile) {
                                 blueprint.terrainMap[topTile.location.x, topTile.location.z] = null;
                                 totalRemovedTerrains++;
+                                totalCost -= topTile.cost;
                                 msg += "Terrain removed.";
                             } else if (topTile is ItemTile) {
                                 ItemTile itemTile = topTile as ItemTile;
-                                blueprint.itemsMap[topTile.location.x, topTile.location.z].Remove((ItemTile)topTile);
+                                totalCost -= itemTile.cost;
+                                blueprint.itemsMap[topTile.location.x, topTile.location.z].Remove(itemTile);
                                 if (itemTile.isDoor) { //if door is removed it should be replaced with another door, raiders are very polite and always replace expensive doors with cheaper ones.
                                     if (Rand.Chance(0.8f)) { //ok, not always.
                                         ItemTile replacementTile = ItemTile.DefaultDoorItemTile(itemTile.location);
@@ -132,12 +141,37 @@ namespace RealRuins {
                     }
                     if (tileToRemove != null) {
                         blueprint.itemsMap[x, z].Remove(tileToRemove);
+                        totalCost -= tileToRemove.cost;
                         blueprint.RemoveWall(x, z);
                     }
                 }
             }
             Debug.active = true;
             Debug.Message("Scavenging completed. Terrain removed: {0}/{1}, Tiles removed: {2}/{3}, tiles replaced: {4}.", totalRemovedTerrains, processedTerrains, totalRemovedTiles, processedTiles, totalReplacedTiles);
+
+            if (options.costCap > 0) { LimitCostToCap(); }
+        }
+
+        private void LimitCostToCap() {
+            Debug.Message("Capping current cost of {0} to target cost of {1}", totalCost, options.costCap);
+
+            var initialCount = tilesByCost.Count;
+            var filteredItems = tilesByCost.Where(item => item.cost > 20).ToList();
+
+            while (filteredItems.Count > 0 && totalCost > options.costCap) {
+                var tile = filteredItems.RandomElement();
+                totalCost -= tile.cost;
+                filteredItems.Remove(tile);
+                if (tile is ItemTile) {
+                    blueprint.itemsMap[tile.location.x, tile.location.z].Remove(tile as ItemTile);
+                }
+                if (tile is TerrainTile) {
+                    blueprint.terrainMap[tile.location.x, tile.location.z] = null;
+                }
+            }
+
+            Debug.Message("Done. Resulting cost is {0}. Items left: {1}/{2}", totalCost, tilesByCost.Count, initialCount);
         }
     }
+
 }

@@ -169,6 +169,11 @@ namespace RealRuins {
                                 if (item.isWall) retainedWall = true;
                                 newItems.Add(item);
                             }
+
+                            var thingDef = DefDatabase<ThingDef>.GetNamedSilentFail(item.defName);
+                            if (thingDef != null) {
+                                item.stackCount = Rand.Range(1, Math.Min(thingDef.stackLimit, item.stackCount));
+                            }
                         }
                         removedCount += items.Count - newItems.Count;
                     }

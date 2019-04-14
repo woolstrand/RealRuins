@@ -90,7 +90,6 @@
     <Compile Include="Classes\Snapshotting\SnapshotGenerator.cs" />
     <Compile Include="Classes\Scattering\GenStep_ScatterRealRuins.cs" />
     <Compile Include="Classes\RealRuins.cs" />
-    <Compile Include="Classes\Triggers\HostilityGenerator.cs" />
     <Compile Include="Classes\Triggers\RaidTrigger.cs" />
     <Compile Include="Classes\Triggers\TrippingTrigger.cs" />
     <Compile Include="Classes\Utility\APIService.cs" />

@@ -17,6 +17,7 @@ namespace RealRuins {
                 attemptCount++;
                 filename = SnapshotStoreManager.Instance.RandomSnapshotFilename();
                 bp = BlueprintLoader.LoadWholeBlueprintAtPath(filename);
+                
 
                 if (bp == null) {
                     Debug.Message("Corrupted XML at path {0}, removing", filename);
