@@ -288,7 +288,7 @@ namespace RealRuins {
 
             if (roomsCount < 3) {
                 //no rooms => selecting arbitrary piece of the blueprint
-                Debug.PrintIntMap(wallMap, delta: +1);
+                //Debug.PrintIntMap(wallMap, delta: +1);
                 return Part(new IntVec3(Rand.Range(size.x, width - size.x), 0, Rand.Range(size.z, height - size.z)), size);
             }
 

@@ -511,7 +511,7 @@ namespace RealRuins {
             }
 
             blueprint.UpdateBlueprintStats(true);
-            Debug.Message("Blueprint transfer utility did remove {0}/{1} incompatible items. New cost: {2}", removedItems, totalItems, blueprint.totalCost);
+            //Debug.Message("Blueprint transfer utility did remove {0}/{1} incompatible items. New cost: {2}", removedItems, totalItems, blueprint.totalCost);
         }
 
         public void Transfer() {
@@ -603,7 +603,7 @@ namespace RealRuins {
                                         //Debug.Message("Ticked");
 
                                     } catch (Exception e) {
-                                        Debug.Message("Exception while tried to perform tick for {0} of cost {1}", thing.def.defName, itemTile.cost);
+                                        //Debug.Message("Exception while tried to perform tick for {0} of cost {1}", thing.def.defName, itemTile.cost);
                                         thing.Destroy();
                                         throw e;
                                     }
@@ -627,7 +627,7 @@ namespace RealRuins {
                                     transferredTiles++;
                                     totalCost += itemTile.cost;
                                 } catch (Exception e) {
-                                    Debug.Message("Failed to spawn item {0} of cost {1} because of exception", thing, itemTile.cost);
+                                    //Debug.Message("Failed to spawn item {0} of cost {1} because of exception", thing, itemTile.cost);
                                     //ignore
                                 }
                             }

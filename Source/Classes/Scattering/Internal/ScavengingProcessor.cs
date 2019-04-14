@@ -21,7 +21,7 @@ namespace RealRuins {
             this.options = options;
             this.blueprint = blueprint;
 
-            Debug.active = true;
+            Debug.active = false;
 
             float scavengersActivity = Rand.Value * options.scavengingMultiplier + (options.scavengingMultiplier) / 3; //slight variation for scavengers activity for this particular blueprint
             float elapsedTime = -blueprint.dateShift;
@@ -147,13 +147,13 @@ namespace RealRuins {
                 }
             }
             Debug.active = true;
-            Debug.Message("Scavenging completed. Terrain removed: {0}/{1}, Tiles removed: {2}/{3}, tiles replaced: {4}.", totalRemovedTerrains, processedTerrains, totalRemovedTiles, processedTiles, totalReplacedTiles);
+            //Debug.Message("Scavenging completed. Terrain removed: {0}/{1}, Tiles removed: {2}/{3}, tiles replaced: {4}.", totalRemovedTerrains, processedTerrains, totalRemovedTiles, processedTiles, totalReplacedTiles);
 
             if (options.costCap > 0) { LimitCostToCap(); }
         }
 
         private void LimitCostToCap() {
-            Debug.Message("Capping current cost of {0} to target cost of {1}", totalCost, options.costCap);
+            //Debug.Message("Capping current cost of {0} to target cost of {1}", totalCost, options.costCap);
 
             var initialCount = tilesByCost.Count;
             var filteredItems = tilesByCost.Where(item => item.cost > 20).ToList();
@@ -170,7 +170,7 @@ namespace RealRuins {
                 }
             }
 
-            Debug.Message("Done. Resulting cost is {0}. Items left: {1}/{2}", totalCost, tilesByCost.Count, initialCount);
+            //Debug.Message("Done. Resulting cost is {0}. Items left: {1}/{2}", totalCost, tilesByCost.Count, initialCount);
         }
     }
 

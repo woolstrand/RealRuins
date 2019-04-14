@@ -94,7 +94,7 @@ namespace RealRuins
                     }
                     
                     if (totalDensity > 0) {
-                        densityMultiplier = (float)(Math.Exp(1.0 / (distanceToSettlement / 5.0 + 0.3)) - 0.5);
+                        densityMultiplier = (float)(Math.Exp(1.0 / (distanceToSettlement / 10.0 + 0.3)) - 0.7);
                         scaleMultiplier = (float)(Math.Exp(1 / (distanceToSettlement / 5 + 0.5)) - 0.3);
                     } else {
                         densityMultiplier = 0.0f;

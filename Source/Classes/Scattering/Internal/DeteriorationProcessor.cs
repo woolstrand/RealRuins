@@ -185,7 +185,7 @@ namespace RealRuins {
                     if (hadWall && !retainedWall) blueprint.RemoveWall(x, z);
                 }
             }
-            Debug.Message("Deteriorated {0}/{1}", removedCount, itemsCount);
+            //Debug.Message("Deteriorated {0}/{1}", removedCount, itemsCount);
         }
 
 
@@ -200,7 +200,7 @@ namespace RealRuins {
                 dp.ConstructRoomBasedIntegrityMap();
 
                 //Debug.PrintNormalizedFloatMap(dp.terrainIntegrity);
-                Debug.PrintNormalizedFloatMap(dp.itemsIntegrity);
+                //Debug.PrintNormalizedFloatMap(dp.itemsIntegrity);
 
                 dp.Deteriorate();
             }
