@@ -69,6 +69,20 @@ namespace RealRuins
                 return;
             }
 
+            if (RealRuins_ModSettings.startWithoutRuins) {
+                int homes = 0;
+                var allMaps = Find.Maps;
+                for (int i = 0; i < allMaps.Count; i++) {
+                    Map someMap = allMaps[i];
+                    if (someMap.IsPlayerHome) {
+                        homes++;
+                    }
+                }
+
+                //Debug.Message("Player homes count: {0}, ticks: {1} ({2})", homes, Find.TickManager.TicksGame, Find.TickManager.TicksAbs);
+                if (homes == 1 && Find.TickManager.TicksGame < 10) return; //single home => we're generating that single home => that's starting map => no ruins here if this option is selected.
+            }
+
             bool shouldReturn = false;
             foreach (WorldObject wo in Find.World.worldObjects.ObjectsAt(map.Tile))
             {

@@ -169,7 +169,7 @@ namespace RealRuins {
                 }
             }
             itemsDensity = (float)itemsCount / (width * height);
-            Debug.Message("Recalculated blueprint stats. Processed {0} items and {1} tiles, got {2} cost", itemsCount, terrainTilesCount, totalCost);
+            //Debug.Message("Recalculated blueprint stats. Processed {0} items and {1} tiles, got {2} cost", itemsCount, terrainTilesCount, totalCost);
         }
 
         // -------------- walls processing ------------
@@ -276,15 +276,15 @@ namespace RealRuins {
             }
 
             roomsCount = currentRoomIndex;
-            Debug.Message("Traverse completed. Found {0} rooms", currentRoomIndex);
+            //Debug.Message("Traverse completed. Found {0} rooms", currentRoomIndex);
         }
 
         public Blueprint RandomPartCenteredAtRoom(IntVec3 size) {
-            Debug.Message("selecting random part of size {0} centered at room", size.x);
+            //Debug.Message("selecting random part of size {0} centered at room", size.x);
             if (roomsCount == 0) {
                 FindRooms();
             }
-            Debug.Message("Processed rooms, found {0}", roomsCount);
+            //Debug.Message("Processed rooms, found {0}", roomsCount);
 
             if (roomsCount < 3) {
                 //no rooms => selecting arbitrary piece of the blueprint
@@ -295,7 +295,7 @@ namespace RealRuins {
 
             int selectedRoomIndex = 0;
             selectedRoomIndex = Rand.Range(2, roomsCount);
-            Debug.Message("Selected room {0}", selectedRoomIndex);
+            //Debug.Message("Selected room {0}", selectedRoomIndex);
 
             int minX = width; int maxX = 0;
             int minZ = height; int maxZ = 0;
@@ -310,11 +310,11 @@ namespace RealRuins {
                     }
                 }
             }
-            Debug.Message("Framed room by {0}..{1}, {2}..{3}", minX, maxX, minZ, maxZ);
+            //Debug.Message("Framed room by {0}..{1}, {2}..{3}", minX, maxX, minZ, maxZ);
 
             IntVec3 center = new CellRect(minX, minZ, maxX - minX, maxZ - minZ).RandomCell;
 
-            Debug.Message("Selected random cell {0}, {1}", center.x, center.z);
+            //Debug.Message("Selected random cell {0}, {1}", center.x, center.z);
 
             return Part(center, size);
         }
@@ -332,7 +332,7 @@ namespace RealRuins {
             int minZ = Math.Max(0, centerZ - size.z / 2);
             int maxZ = Math.Min(height - 1, centerZ + size.z / 2);
 
-            Debug.Message("Cutting area of size {0}x{1}. Frame is {2}..{3}, {4}..{5}", size.x, size.z, minX, maxX, minZ, maxZ);
+            //Debug.Message("Cutting area of size {0}x{1}. Frame is {2}..{3}, {4}..{5}", size.x, size.z, minX, maxX, minZ, maxZ);
 
             int relocatedTilesCount = 0;
 
@@ -360,7 +360,7 @@ namespace RealRuins {
             }
 
             result.snapshotYear = snapshotYear;
-            Debug.Message("Cutting completed, relocated {0} tiles", relocatedTilesCount);
+            //Debug.Message("Cutting completed, relocated {0} tiles", relocatedTilesCount);
             return result;
         }
     }
