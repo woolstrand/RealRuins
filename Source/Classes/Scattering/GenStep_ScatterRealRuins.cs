@@ -168,7 +168,6 @@ namespace RealRuins
         public override void Generate(Map map, GenStepParams parms) {
             Find.TickManager.Pause();
             //Debug.Message("Overridden LARGE generate");
-            if (!map.TileInfo.WaterCovered) {
 
                 string filename = map.Parent.GetComponent<RuinedBaseComp>()?.blueprintFileName;
                 Debug.Message("Preselected file name is {0}", filename);
@@ -191,7 +190,7 @@ namespace RealRuins
                 currentOptions.deleteLowQuality = false; //do not delete since we have much higher requirements for base ruins
                 currentOptions.shouldKeepDefencesAndPower = true;
                 currentOptions.shouldLoadPartOnly = false;
-                currentOptions.shouldAddRaidTriggers = true;
+                currentOptions.shouldAddRaidTriggers = Find.Storyteller.difficulty.allowBigThreats;
                 currentOptions.claimableBlocks = false;
                 currentOptions.enableDeterioration = false;
 
@@ -229,6 +228,7 @@ namespace RealRuins
                             currentOptions.uncoveredCost, defaultPoints);
 
                     }
+                    pointsCost *= Find.Storyteller.difficulty.threatScale;
                     ScatterStartingParties((int)pointsCost, currentOptions.allowFriendlyRaids, map);
 
                 }
@@ -238,7 +238,6 @@ namespace RealRuins
 
                 BaseGen.Generate();
 
-            }
 
         }
 
@@ -349,8 +348,8 @@ namespace RealRuins
                 BaseGen.globalSettings.map = map;
                 BaseGen.globalSettings.mainRect = resolveParams.rect;
 
-                if (Rand.Chance(0.2f)) {
-                    float pointsCost = Math.Abs(Rand.Gaussian()) * 500; 
+                if (Rand.Chance(0.5f * Find.Storyteller.difficulty.threatScale)) {
+                    float pointsCost = Math.Abs(Rand.Gaussian()) * 500 * Find.Storyteller.difficulty.threatScale; 
 
                     resolveParams.faction = Find.FactionManager.RandomEnemyFaction();
                     resolveParams.singlePawnLord = LordMaker.MakeNewLord(resolveParams.faction,
