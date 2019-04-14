@@ -41,7 +41,7 @@ namespace RealRuins {
                     if (ticksLeft < 0) {
                         ticksLeft = (int)Math.Abs(Rand.Gaussian(0, 200));
                         triggered = true;
-                        Debug.Message("Auto triggered raid at {0}, {1} of value {2} after {3} long ticks (approximately max speed seconds)", base.Position.x, base.Position.z, value, ticksLeft);
+                        //Debug.Message("Auto triggered raid at {0}, {1} of value {2} after {3} long ticks (approximately max speed seconds)", base.Position.x, base.Position.z, value, ticksLeft);
                     }
 
                     List<Thing> searchSet = PawnsFinder.AllMaps_FreeColonistsSpawned.ToList().ConvertAll(pawn => (Thing)pawn);
@@ -50,7 +50,7 @@ namespace RealRuins {
                     if (thing != null) {
                         ticksLeft = (int)Math.Abs(Rand.Gaussian(0, 200));
                         triggered = true;
-                        Debug.Message("Triggered raid at {0}, {1} of value {2} after {3} long ticks (approximately max speed seconds)", base.Position.x, base.Position.z, value, ticksLeft);
+                        //Debug.Message("Triggered raid at {0}, {1} of value {2} after {3} long ticks (approximately max speed seconds)", base.Position.x, base.Position.z, value, ticksLeft);
                     }
                 } else { 
                     if (ticksLeft < 0) {
