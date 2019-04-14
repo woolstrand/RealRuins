@@ -58,6 +58,7 @@ namespace RealRuins {
         public static Site CreateSite(int tile, SitePartDef sitePart, int days, Faction siteFaction) {
             
             Site site = SiteMaker.MakeSite(DefDatabase<SiteCoreDef>.GetNamed("RuinedBaseSite"), sitePart, tile, siteFaction, true, null);
+
             site.sitePartsKnown = true;
 
             string filename = null;

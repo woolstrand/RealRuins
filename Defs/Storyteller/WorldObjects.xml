@@ -3,7 +3,7 @@
     <defName>RuinedBase</defName>
     <label>ruins</label>
     <description>Ruins of an abandoned outpost</description>
-    <worldObjectClass>RealRuins.RuinedBaseSite</worldObjectClass>
+    <worldObjectClass>MapParent</worldObjectClass>
     <expandingIcon>true</expandingIcon>
     <expandingIconPriority>10</expandingIconPriority>
     <canBePlayerHome>false</canBePlayerHome>

@@ -181,7 +181,7 @@ namespace RealRuins
                 currentOptions.deteriorationMultiplier = 0.0f;
                 currentOptions.hostileChance = 1.0f;
 
-                //CBC4FDE2 - 1319 - 43FB - 9FBE - 44D1495854EE.bp.xml and stored
+               
                 currentOptions.blueprintFileName = filename;
                 currentOptions.costCap = map.Parent.GetComponent<RuinedBaseComp>()?.currentCapCost ?? -1;
                 currentOptions.startingPartyPoints =(int)(map.Parent.GetComponent<RuinedBaseComp>()?.raidersActivity ?? -1);
