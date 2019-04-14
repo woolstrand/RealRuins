@@ -42,6 +42,7 @@ namespace RealRuins {
 
             int randomInRange = SiteTuning.QuestSiteTimeoutDaysRange.RandomInRange;
             Site site = CreateSite(tile, sitePart, randomInRange, faction2);
+            if (site == null) return false;
 
 
             string letterText = GetLetterText(faction, site.GetComponent<TimeoutComp>().TicksLeft / 60000);
@@ -55,19 +56,23 @@ namespace RealRuins {
         }
 
         public static Site CreateSite(int tile, SitePartDef sitePart, int days, Faction siteFaction) {
+            
             Site site = SiteMaker.MakeSite(DefDatabase<SiteCoreDef>.GetNamed("RuinedBaseSite"), sitePart, tile, siteFaction, true, null);
+
             site.sitePartsKnown = true;
-            site.GetComponent<TimeoutComp>().StartTimeout(days * 60000);
 
             string filename = null;
-            BlueprintFinder.FindRandomBlueprintWithParameters(out filename, 6400, 0.1f, 100000);
+            Blueprint bp = BlueprintFinder.FindRandomBlueprintWithParameters(out filename, 6400, 0.01f, 30000, maxAttemptsCount: 50);
+            if (bp == null) return null;
 
             Debug.Message("Trying to gt comp");
+            
             RuinedBaseComp comp = site.GetComponent<RuinedBaseComp>();
             if (comp == null) {
                 Debug.Message("Component is null");
             } else {
                 comp.blueprintFileName = filename;
+                comp.StartScavenging((int)bp.totalCost);
             }
 
             Debug.Message("Found blueprint with name {0} and stored", filename);

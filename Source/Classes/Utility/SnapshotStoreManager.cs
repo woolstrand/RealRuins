@@ -33,7 +33,7 @@ namespace RealRuins
         private string oldRootFolder = "../Snapshots";
         private long totalFilesSize = 0;
         private int totalFileCount = 0;
-        private Thread ioThread;
+       
 
         public SnapshotStoreManager() {
             MoveFilesIfNeeded();

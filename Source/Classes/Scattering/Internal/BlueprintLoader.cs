@@ -109,6 +109,7 @@ namespace RealRuins {
                                 if (thingDef.fillPercent == 1.0f || tile.isWall || tile.isDoor) {
                                     blueprint.wallMap[x, z] = -1; //place wall
                                 }
+                                tile.stackCount = Math.Min(thingDef.stackLimit, tile.stackCount); //limit stack to max stack size to correctly calculate weight and cost later
                                 tile.location = new IntVec3(x, 0, z);
                                 blueprint.itemsMap[x, z].Add(tile); //save item if it's def is valid.
                             } else {
