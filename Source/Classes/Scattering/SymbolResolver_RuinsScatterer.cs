@@ -21,9 +21,9 @@ namespace RealRuins {
 
             //probably should split scattering options into several distinct objects
             string filename = options.blueprintFileName;
-            if (filename == null) {
+            if (string.IsNullOrEmpty(filename)) {
                 bp = BlueprintFinder.FindRandomBlueprintWithParameters(out filename, options.minimumAreaRequired, options.minimumDensityRequired, 15, removeNonQualified: true);
-                if (filename == null) {
+                if (string.IsNullOrEmpty(filename)) {
                     //still null = no suitable blueprints, fail.
                     return;
                 }
