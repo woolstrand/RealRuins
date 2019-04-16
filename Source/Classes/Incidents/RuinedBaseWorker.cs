@@ -3,6 +3,7 @@ using RimWorld;
 using Verse;
 
 using RimWorld.Planet;
+using System.Collections.Generic;
 
 /** 
  * This class overrides standard SiteCoreWorker because there is no other way to generate encounter map of an arbitrary size. Encounter map is always
@@ -48,6 +49,13 @@ namespace RealRuins {
         public override void VisitAction(Caravan caravan, Site site)
         {
             Enter(caravan, site);
+        }
+
+        public override IEnumerable<FloatMenuOption> GetTransportPodsFloatMenuOptions(IEnumerable<IThingHolder> pods, CompLaunchable representative, Site site) {
+            Debug.Message("overriden transport pod options");
+            foreach (FloatMenuOption floatMenuOption in TransportPodsArrivalAction_VisitRuins.GetFloatMenuOptions(representative, pods, site)) {
+                yield return floatMenuOption;
+            }
         }
 
     }
