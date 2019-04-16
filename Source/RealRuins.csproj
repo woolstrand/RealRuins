@@ -70,6 +70,7 @@
     <Compile Include="Classes\Incidents\RuinedBaseComp.cs" />
     <Compile Include="Classes\Incidents\RuinedBaseWorker.cs" />
     <Compile Include="Classes\Incidents\SmallRuinsWorldObject.cs" />
+    <Compile Include="Classes\Incidents\TransportPodsArrivalAction_VisitRuins.cs" />
     <Compile Include="Classes\Incidents\WorldObjectCompProperties_RuinedBase.cs" />
     <Compile Include="Classes\RealRuins_Mod.cs" />
     <Compile Include="Classes\RealRuins_ModSettings.cs" />

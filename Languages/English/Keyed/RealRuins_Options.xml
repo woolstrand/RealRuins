@@ -47,8 +47,8 @@
   <RealRuins_MapOptions_EnableProximity>Consider settlement proximity</RealRuins_MapOptions_EnableProximity>
   <RealRuins_MapOptions_EnableProximityTT>Settlement proximity influences generation parameters: ruins are more dense near cities, but also more empty.</RealRuins_MapOptions_EnableProximityTT>
 
-  <RealRuins_MapOptions_StartWithoutRuins>No ruins on starting tile</RealRuins_MapOptions_StartWithoutRuins>
-  <RealRuins_MapOptions_StartWithoutRuinsTT>No ruins will be generated on the starting tile. After that ruins will be generated normally accoring to settings.</RealRuins_MapOptions_StartWithoutRuinsTT>
+  <RealRuins_MapOptions_StartWithoutRuins>No ruins on starting map</RealRuins_MapOptions_StartWithoutRuins>
+  <RealRuins_MapOptions_StartWithoutRuinsTT>No ruins will be generated on starting map. Later ruins will be generated normally accoring to settings.</RealRuins_MapOptions_StartWithoutRuinsTT>
 
   <!-- Caravan entered map -->
   <LetterLabelCaravanEnteredRuins>Caravan arrived at ruins</LetterLabelCaravanEnteredRuins>
@@ -83,6 +83,6 @@
   <RealRuins.RuinsActivity.4>extreme</RealRuins.RuinsActivity.4>
   
   <!-- Ruins messages -->
-  <RealRuins.NoMoreEnemies>It seems that no more people are willing to come here. You can safely pack up and leave. (Instant caravan reform allowed)</RealRuins.NoMoreEnemies>
+  <RealRuins.NoMoreEnemies>Looks like no one's gonna show up anymore. You can safely pack up and leave. (Instant caravan reform allowed)</RealRuins.NoMoreEnemies>
 
 </LanguageData>

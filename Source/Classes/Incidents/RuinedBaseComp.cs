@@ -119,7 +119,7 @@ namespace RealRuins {
                     raidersActivity = raidersActivity / Rand.Range(2.0f, 5.0f);
                 }
 
-                raidersActivity += Rand.Range(-1.0f, 2.5f) * currentCapCost / 100000.0f;
+                raidersActivity += Rand.Range(-.2f, 0.5f) * currentCapCost / 100000.0f;
                 if (raidersActivity < 0) raidersActivity = 0;
 
                 if ((currentCapCost < 20000 && Rand.Chance(0.00001f)) || currentCapCost <= 100) {

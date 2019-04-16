@@ -46,9 +46,42 @@
 
   <RealRuins_MapOptions_EnableProximity>Учитывать близость поселений</RealRuins_MapOptions_EnableProximity>
   <RealRuins_MapOptions_EnableProximityTT>Расстояние до поселения влияет на параметры генерации: чем ближе к городу, тем плотнее руины, но тем сильнее они разграблены.</RealRuins_MapOptions_EnableProximityTT>
+  <RealRuins_MapOptions_StartWithoutRuins>Отключить руины на стартовой локации</RealRuins_MapOptions_StartWithoutRuins>
+  <RealRuins_MapOptions_StartWithoutRuinsTT>Игра начинается без руин на стартовой локации. В дальнейшем руины генерируются обычным образом согласно настройкам.</RealRuins_MapOptions_StartWithoutRuinsTT>
 
   <!-- Caravan entered map -->
   <LetterLabelCaravanEnteredRuins>Караван прибыл в руины</LetterLabelCaravanEnteredRuins>
   <LetterCaravanEnteredRuins>{0} прибыл к руинам заброшенной базы и готов сражаться за сокровища.</LetterCaravanEnteredRuins>
+
+  <RealRuins.CaravanFoundRuins>Во время путешествия, {0} обнаружил несколько неплохо сохранившихся строений неподалеку. Вероятно, там остались какие-то ценности. С другой стороны, там может быть гнездо механоидов, логово диких зверей или база рейдеров: должна же быть причина, по которой эти здания до сих пор не разграблены.</RealRuins.CaravanFoundRuins>
+  <RealRuins.CaravanFoundRuins.Investigate>Исследовать</RealRuins.CaravanFoundRuins.Investigate>
+  <RealRuins.CaravanFoundRuinsTitle>Несколько заброшенных зданий</RealRuins.CaravanFoundRuinsTitle>
+
+  <RealRuins_ModOptions_Reset>Сбросить настройки</RealRuins_ModOptions_Reset>
+  <RealRuins_MapOptions_CaravanReforming>Разрешить моментальное формирование каравана</RealRuins_MapOptions_CaravanReforming>
+  <RealRuins_MapOptions_CaravanReformingTT>Обычно по время исследования руин возможность моментально сформировать караван заблокирована. Вам необходимо вручную исследовать руины и складывать понравившиеся вещи в инвентарь колонистов или вьючных животных, а затем покидать карту, доходя до ее границы. Даже в случае, если на карте прямо сейчас нет врагов. Тем не менее, если вы предпочитаете разрешить моментальное переформирование, включите эту настройку.</RealRuins_MapOptions_CaravanReformingTT>
+
+  <!-- Art -->
+  <DeterioratedArtDescription>Эта вещь сильно повреждена. Вы можете с определенностью сказать, что когда-то это было прекрансное произведение искусства, но сейчас вы едва ли сможете сказать, что конкретно оно изображало.</DeterioratedArtDescription>
+
+  <!-- Ruins info -->
+  <RealRuins.RuinsWealth>Богатство: </RealRuins.RuinsWealth>
+  <RealRuins.RuinsActivity>Присуствие рейдеров: </RealRuins.RuinsActivity>
+
+  <RealRuins.RuinsWealth.0>почти нулевое (&lt;10K)</RealRuins.RuinsWealth.0>
+  <RealRuins.RuinsWealth.1>низкое</RealRuins.RuinsWealth.1>
+  <RealRuins.RuinsWealth.2>посредственное</RealRuins.RuinsWealth.2>
+  <RealRuins.RuinsWealth.3>высокое (&gt;1M)</RealRuins.RuinsWealth.3>
+  <RealRuins.RuinsWealth.4>крайне высокое (&gt;10M)</RealRuins.RuinsWealth.4>
+
+  <RealRuins.RuinsActivity.0>почти нет</RealRuins.RuinsActivity.0>
+  <RealRuins.RuinsActivity.1>низкое</RealRuins.RuinsActivity.1>
+  <RealRuins.RuinsActivity.2>среднее</RealRuins.RuinsActivity.2>
+  <RealRuins.RuinsActivity.3>высокое</RealRuins.RuinsActivity.3>
+  <RealRuins.RuinsActivity.4>экстремальное</RealRuins.RuinsActivity.4>
+  
+
+  <!-- Ruins messages -->
+  <RealRuins.NoMoreEnemies>Кажется, сюда больше никто не придет. Можно спокойно собрать караван и отправиться дальше (доступно моментальное формирование каравана)</RealRuins.NoMoreEnemies>
 
 </LanguageData>
