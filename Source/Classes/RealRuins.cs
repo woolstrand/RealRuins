@@ -18,9 +18,14 @@ namespace RealRuins
 
         public override string ModIdentifier => "RealRuins";
 
-        public static bool SingleFile = false;
-//        public static bool SingleFile = true;
+        public static string SingleFileName = null;
+        //public static string SingleFileName = "C:/Users/dieworld/AppData/LocalLow/Ludeon Studios/RimWorld by Ludeon Studios\\RealRuins\\9900A83A-1DFA-433F-8441-E4E22077059C.bp";
+        //public static string SingleFileName = "C:/Users/dieworld/AppData/LocalLow/Ludeon Studios/RimWorld by Ludeon Studios\\RealRuins\\20180936-13488551490-jeluder.bp";
+        
 
+
+
+        public static bool SingleFile = SingleFileName != null;
 
         static RealRuins() {
             DateTime startTime = DateTime.Now;
@@ -30,7 +35,7 @@ namespace RealRuins
             harmony.PatchAll(Assembly.GetExecutingAssembly());
             Debug.Message("RealRuins finished patching at {0} ({1} msec)", DateTime.Now, (DateTime.Now - startTime).TotalMilliseconds);
 
-            if (RealRuins_ModSettings.allowDownloads) {
+            if (RealRuins_ModSettings.allowDownloads && !RealRuins_ModSettings.offlineMode) {
                 SnapshotManager.Instance.LoadSomeSnapshots();
             }
             SnapshotStoreManager.Instance.CheckCacheSizeLimits();
@@ -47,6 +52,17 @@ namespace RealRuins
             }
         }
 
+        
+        [HarmonyPatch(typeof(UIRoot_Entry), "Init", new Type[0])]
+        static class UIRoot_Entry_Init_Patch {
+            static void Postfix() {
+                if (RealRuins_ModSettings.allowDownloads && !RealRuins_ModSettings.offlineMode && SnapshotStoreManager.Instance.StoredSnapshotsCount() < 100) {
+                    SnapshotManager.Instance.AggressiveLoadSnapshots();
+                }
+                SnapshotStoreManager.Instance.CheckCacheSizeLimits();
+            }
+        }
+        
 
         [HarmonyPatch(typeof(GameDataSaveLoader), "SaveGame")]
         class SaveGame_Patch {
@@ -88,8 +104,11 @@ namespace RealRuins
                     return true; //ignore if setting is off
                 } else if (map.Parent is Site) {
                     if (((Site)(map.Parent))?.core?.def?.defName == "RuinedBaseSite") {
-                        __result = true; //Always think there is something hostile in an abandoned base event
-                        return false; //prevent original method execution
+                        RuinedBaseComp comp = (map.Parent as WorldObject)?.GetComponent<RuinedBaseComp>();
+                        if (comp?.mapExitLocked == true) {
+                            __result = true; //Always think there is something hostile in an abandoned base event if it was not explicitly unlocket dy the map itself
+                            return false; //prevent original method execution
+                        }
                     }
                 }
                 return true;

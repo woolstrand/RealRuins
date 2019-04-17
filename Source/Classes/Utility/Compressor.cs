@@ -7,8 +7,8 @@ using System.IO.Compression;
 
 namespace RealRuins {
     class Compressor {
+        //Dangerous zipping: if somethig goes wrong the information is lost, but we don't care too.
         public static void ZipFile(string filename) {
-
             var bytes = File.ReadAllBytes(filename);
             File.Delete(filename);
 
