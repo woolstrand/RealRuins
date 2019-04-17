@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 
 using Verse;
 
@@ -10,6 +11,9 @@ using System.Runtime.Remoting.Messaging;
 using System.Security.AccessControl;
 using System.Security.Principal;
 
+
+//Snapshot manager operates with blueprint identifiers, which do not have .bp extensions. Only SnapshotStoreManager (this class) is aware of extensions
+//So you should not use .bp extension explicitly outside of this class.
 
 namespace RealRuins
 {
@@ -29,6 +33,7 @@ namespace RealRuins
         private string oldRootFolder = "../Snapshots";
         private long totalFilesSize = 0;
         private int totalFileCount = 0;
+       
 
         public SnapshotStoreManager() {
             MoveFilesIfNeeded();
@@ -91,48 +96,53 @@ namespace RealRuins
             return snapshotsFolderPath;
         }
     
-        public void StoreData(string buffer, string filename) {
-            StoreBinaryData(Encoding.UTF8.GetBytes(buffer), filename);
+        public void StoreData(string buffer, string blueprintName) {
+            StoreBinaryData(Encoding.UTF8.GetBytes(buffer), blueprintName);
         }
 
-        public void StoreBinaryData(byte[] buffer, string filename) {
-            if (RealRuins.SingleFile) {
-                filename = "jeluder.bp";
-            }
+        public void StoreBinaryData(byte[] buffer, string blueprintName) {
+
+            new Thread(() => {
+                string filename = blueprintName + ".bp";
+                if (RealRuins.SingleFile) {
+                    filename = "jeluder.bp";
+                }
 
 
-            //when storing a file you need to remove older version of snapshots of the same game
-            string[] parts = filename.Split('=');
-            if (parts.Count() > 1) {
-                int date = 0;
-                if (int.TryParse(parts[0], out date)) {
-                    parts[0] = "*";
-                    string mask = string.Join("=", parts);
-                    string[] files = Directory.GetFiles(GetSnapshotsFolderPath(), mask);
-                    foreach (string existingFile in files) {
-                        int existingFileDate = 0;
-                        string[] existingFileParts = existingFile.Split('-');
-                        if (int.TryParse(existingFileParts[0], out existingFileDate)) {
-                            if (existingFileDate > date) {
-                                //there is more fresh file. no need to save this one.
-                                return;
-                            } else {
-                                //remove older files
-                                File.Delete(existingFile);
+                //when storing a file you need to remove older version of snapshots of the same game
+                string[] parts = filename.Split('=');
+                if (parts.Count() > 1) {
+                    int date = 0;
+                    if (int.TryParse(parts[0], out date)) {
+                        parts[0] = "*";
+                        string mask = string.Join("=", parts);
+                        string[] files = Directory.GetFiles(GetSnapshotsFolderPath(), mask);
+                        foreach (string existingFile in files) {
+                            int existingFileDate = 0;
+                            string[] existingFileParts = existingFile.Split('-');
+                            if (int.TryParse(existingFileParts[0], out existingFileDate)) {
+                                if (existingFileDate > date) {
+                                    //there is more fresh file. no need to save this one.
+                                    return;
+                                } else {
+                                    //remove older files
+                                    File.Delete(existingFile);
+                                }
                             }
                         }
                     }
                 }
-            }
+                //writing file in all cases except "newer version available"
+                File.WriteAllBytes(Path.Combine(GetSnapshotsFolderPath(), filename), buffer);
+                RecalculateFilesSize();
 
-            //writing file in all cases except "newer version available"
-            File.WriteAllBytes(Path.Combine(GetSnapshotsFolderPath(), filename), buffer);
-            RecalculateFilesSize();
+            }).Start();
+
         }
 
         private string DoGetRandomFilenameFromRootFolder() {
             if (RealRuins.SingleFile) {
-                return "jeluder.bp";
+                return RealRuins.SingleFileName;
             }
 
             var files = Directory.GetFiles(GetSnapshotsFolderPath());
@@ -156,12 +166,20 @@ namespace RealRuins
             return totalFileCount;
         }
 
+        public void RemoveBlueprintWithName(string filename) {
+            try {
+                File.Delete(filename);
+            } catch (Exception) { 
+                //can't do anything useful really, just ignore
+            }
+        }
+
         public List<string> FilterOutExistingItems(List<string> source) {
 
             List<string> result = new List<string>();
 
             foreach (string item in source) {
-                if (!File.Exists(GetSnapshotsFolderPath() + "/" + item)) {
+                if (!File.Exists(GetSnapshotsFolderPath() + "/" + item + ".bp")) { 
                     result.Add(item);
                 }
             }
@@ -223,5 +241,22 @@ namespace RealRuins
             RecalculateFilesSize();
         }
 
+        public bool CanFireMediumEvent() {
+            if (StoredSnapshotsCount() > 0) {
+                if (RealRuins_ModSettings.offlineMode) return true;
+                else return StoredSnapshotsCount() > 30;
+            } else {
+                return false;
+            }
+        }
+
+        public bool CanFireLargeEvent() {
+            if (StoredSnapshotsCount() > 0) {
+                if (RealRuins_ModSettings.offlineMode) return true;
+                else return StoredSnapshotsCount() > 250;
+            } else {
+                return false;
+            }
+        }
     }
 }

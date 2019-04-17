@@ -10,11 +10,15 @@ namespace RealRuins {
 				return false;
 			}
 
+            if (!SnapshotStoreManager.Instance.CanFireMediumEvent()) {
+                return false;
+            }
+
             if (parms.target is Map) {
                 return true;
             }
-            return CaravanIncidentUtility.CanFireIncidentWhichWantsToGenerateMapAt(parms.target.Tile);
 
+            return CaravanIncidentUtility.CanFireIncidentWhichWantsToGenerateMapAt(parms.target.Tile);
         }
 
         private bool TryFindEntryCell(Map map, out IntVec3 cell) {
