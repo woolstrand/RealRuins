@@ -47,6 +47,9 @@
   <RealRuins_MapOptions_EnableProximity>入植地からの距離による影響</RealRuins_MapOptions_EnableProximity>
   <RealRuins_MapOptions_EnableProximityTT>コロニーや派閥拠点からの距離は、遺跡の作成条件に影響を及ぼします。遺跡は都市の近くではより密集していますが、荒らされていて何も残っていない率が高くなります。</RealRuins_MapOptions_EnableProximityTT>
 
+  <RealRuins_MapOptions_StartWithoutRuins>スタート時のマップには廃墟なし</RealRuins_MapOptions_StartWithoutRuins>
+  <RealRuins_MapOptions_StartWithoutRuinsTT>ゲームスタートした時のマップに廃墟は生成されません。ゲーム開始後に生成されるマップでは、設定に応じて遺跡や廃墟が通常に生成されます。</RealRuins_MapOptions_StartWithoutRuinsTT>
+
   <!-- Caravan entered map -->
   <LetterLabelCaravanEnteredRuins>キャラバンは遺跡に到着した</LetterLabelCaravanEnteredRuins>
   <LetterCaravanEnteredRuins>{0}は放棄された遺跡に到着して、何か残っていないか探索を始める準備ができました。</LetterCaravanEnteredRuins>
@@ -61,6 +64,25 @@
   <RealRuins_ModOptions_Reset>Mod設定を初期化</RealRuins_ModOptions_Reset>
   <RealRuins_MapOptions_CaravanReforming>襲撃中でもキャラバン隊の編成可能</RealRuins_MapOptions_CaravanReforming>
   <RealRuins_MapOptions_CaravanReformingTT>通常、未調査の遺跡を発見イベント中は、最初の敵対勢力が敗北した直後にはキャラバン隊を即座に編成することはできません。これは意図的に戦利品を手動で検索して、敵対的なポーンを殲滅しても、アイテムを拾ってマップの隅に移動してマップから出なければなりません。ただし、強力な即時編成機能を使用した古い方法を好む場合は、この設定を有効にできます。</RealRuins_MapOptions_CaravanReformingTT>
+
+  <!-- Ruins info -->
+  <RealRuins.RuinsWealth>財宝：</RealRuins.RuinsWealth>
+  <RealRuins.RuinsActivity>襲撃者の規模：</RealRuins.RuinsActivity>
+
+  <RealRuins.RuinsWealth.0>ほぼ無し（1万以下)</RealRuins.RuinsWealth.0>
+  <RealRuins.RuinsWealth.1>低い</RealRuins.RuinsWealth.1>
+  <RealRuins.RuinsWealth.2>普通</RealRuins.RuinsWealth.2>
+  <RealRuins.RuinsWealth.3>多い（100万以下)</RealRuins.RuinsWealth.3>
+  <RealRuins.RuinsWealth.4>非常に多い（1000万以下)</RealRuins.RuinsWealth.4>
+
+  <RealRuins.RuinsActivity.0>ほぼ無し</RealRuins.RuinsActivity.0>
+  <RealRuins.RuinsActivity.1>少ない</RealRuins.RuinsActivity.1>
+  <RealRuins.RuinsActivity.2>普通</RealRuins.RuinsActivity.2>
+  <RealRuins.RuinsActivity.3>多い</RealRuins.RuinsActivity.3>
+  <RealRuins.RuinsActivity.4>危険</RealRuins.RuinsActivity.4>
+
+  <!-- Ruins messages -->
+  <RealRuins.NoMoreEnemies>もう誰も来ないようです。\nあなたは安全に荷物をまとめてマップを離れることが可能です。（即時キャラバン隊を編成可能）</RealRuins.NoMoreEnemies>
 
 
 </LanguageData>
