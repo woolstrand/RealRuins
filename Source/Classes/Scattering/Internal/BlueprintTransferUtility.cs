@@ -305,12 +305,13 @@ namespace RealRuins {
                 }
 
                 if (itemTile.defName.Contains("Corpse") || itemTile.defName.Contains("Minified")) { //should bypass older minified things and corpses
-                    if (itemTile.innerItems == null) return null;
+                    if (!itemTile.innerItems?.Any() ?? true) return null;
                 }
 
                 if (itemTile.defName == "Hive") return null; //Ignore hives, probably should add more comprehensive ignore list here.
 
                 ThingDef thingDef = DefDatabase<ThingDef>.GetNamed(itemTile.defName, false); //here thingDef is definitely not null because it was checked earlier
+                if (thingDef.category == ThingCategory.Ethereal) return null; //don't spawn ethereals like drop pod landing sites and so on
 
                 ThingDef stuffDef = null; //but stuff can still be null, or can be missing, so we have to check and use default just in case.
                 if (itemTile.stuffDef != null && thingDef.MadeFromStuff) { //some mods may alter thing and add stuff parameter to it. this will result in a bug on a vanilla, so need to double-check here

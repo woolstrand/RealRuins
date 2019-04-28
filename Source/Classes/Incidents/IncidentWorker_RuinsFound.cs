@@ -5,7 +5,7 @@ using Verse;
 
 using System.Collections.Generic;
 using System.Linq;
-
+using System;
 
 namespace RealRuins {
     public class IncidentWorker_RuinsFound : IncidentWorker {
@@ -44,8 +44,8 @@ namespace RealRuins {
             Site site = CreateSite(tile, sitePart, randomInRange, faction2);
             if (site == null) return false;
 
-
-            string letterText = GetLetterText(faction, site.GetComponent<TimeoutComp>().TicksLeft / 60000);
+            var lifetime = (int)(Math.Pow(site.GetComponent<RuinedBaseComp>().currentCapCost / 1000, 0.41) * 1.1);
+            string letterText = GetLetterText(faction, lifetime);
             Find.LetterStack.ReceiveLetter(def.letterLabel, letterText, def.letterDef, site, faction, null);
             return true;
         }
