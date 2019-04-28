@@ -44,8 +44,7 @@ namespace RealRuins {
             Site site = CreateSite(tile, sitePart, randomInRange, faction2);
             if (site == null) return false;
 
-
-            var lifetime = (int)(Math.Pow(site.GetComponent<RuinedBaseComp>().currentCapCost, 0.41) * 1.1);
+            var lifetime = (int)(Math.Pow(site.GetComponent<RuinedBaseComp>().currentCapCost / 1000, 0.41) * 1.1);
             string letterText = GetLetterText(faction, lifetime);
             Find.LetterStack.ReceiveLetter(def.letterLabel, letterText, def.letterDef, site, faction, null);
             return true;

@@ -115,7 +115,7 @@ namespace RealRuins {
             if (!ParentHasMap) {
                 //base "do maradeur" act chance is once per 1.5 game days, but high activity can make it as often as once per game hour
                 if (Rand.Chance(0.00001f + (float)raidersActivity / 50000000.0f) || raidersActivity * 4 > currentCapCost / 2) {
-                    int stolenAmount = (int)(Rand.Range(0.05f, 0.2f) * (raidersActivity / 10000.0f) * currentCapCost);
+                    int stolenAmount = (int)(Rand.Range(0.05f, 0.2f) * (raidersActivity / 12000.0f) * currentCapCost);
                     currentCapCost -= Math.Max(stolenAmount, (int)(raidersActivity * 4));
                     raidersActivity = raidersActivity / Rand.Range(2.0f, 5.0f);
                 }
