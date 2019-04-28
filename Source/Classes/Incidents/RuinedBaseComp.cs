@@ -28,6 +28,7 @@ namespace RealRuins {
         public int currentCapCost = -1;
         public float raidersActivity = -1; //battle points amount of starting raiders group
         private bool ShouldRemoveWorldObjectNow => state == RuinedBaseState.ScavengedCompletely && !base.ParentHasMap;
+        public bool isActive => state != RuinedBaseState.Inactive;
 
         public bool mapExitLocked {
             get {

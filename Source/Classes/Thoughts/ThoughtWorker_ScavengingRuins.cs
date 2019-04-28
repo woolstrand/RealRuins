@@ -19,6 +19,7 @@ namespace RealRuins {
 
             RuinedBaseComp comp = (p.Map?.Parent as MapParent)?.GetComponent<RuinedBaseComp>();
             if (comp == null) return ThoughtState.Inactive;
+            if (!comp.isActive) return ThoughtState.Inactive;
 
             if (comp.currentCapCost < MaxForUpset) return ThoughtState.ActiveAtStage(0);
             if (comp.currentCapCost > MinForExtreme) return ThoughtState.ActiveAtStage(4);
