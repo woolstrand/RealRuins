@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LanguageData>
+
+  <ScavengingRuins.stages.low_wealth_ruins.label>遺跡の財宝が少ない</ScavengingRuins.stages.low_wealth_ruins.label>
+  <ScavengingRuins.stages.low_wealth_ruins.description>こんな石とゴミを得るために我々は本当にここまで来なければならなかったのか？</ScavengingRuins.stages.low_wealth_ruins.description>
+  <ScavengingRuins.stages.medium_wealth_ruins.label>遺跡の財宝が普通</ScavengingRuins.stages.medium_wealth_ruins.label>
+  <ScavengingRuins.stages.medium_wealth_ruins.description>ここなら本当に価値のあるものを見つけられるでしょう</ScavengingRuins.stages.medium_wealth_ruins.description>
+  <ScavengingRuins.stages.high_wealth_ruins.label>遺跡の財宝が多い</ScavengingRuins.stages.high_wealth_ruins.label>
+  <ScavengingRuins.stages.high_wealth_ruins.description>この旅には間違いなくその価値があった。</ScavengingRuins.stages.high_wealth_ruins.description>
+  <ScavengingRuins.stages.very_high_wealth_ruins.label>遺跡の財宝が凄い</ScavengingRuins.stages.very_high_wealth_ruins.label>
+  <ScavengingRuins.stages.very_high_wealth_ruins.description>ここにはお宝がある！全部我々のものにするために戦って守るぞ！</ScavengingRuins.stages.very_high_wealth_ruins.description>
+  <ScavengingRuins.stages.insanely_wealth_ruins.label>信じられない財宝</ScavengingRuins.stages.insanely_wealth_ruins.label>
+  <ScavengingRuins.stages.insanely_wealth_ruins.description>なんて凄い！これまで見たことが無い財宝だ！</ScavengingRuins.stages.insanely_wealth_ruins.description>
+
+
+</LanguageData>
