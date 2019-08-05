@@ -210,6 +210,11 @@ namespace RealRuins {
                 ResetSettings();
             }
 
+            if (right.ButtonText("load ruins for game", null)) {
+                Page_RealRuins page = new Page_RealRuins();
+                page.SetupRealRuins();
+            }
+
             right.End();
         }
     }

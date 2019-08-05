@@ -17,7 +17,7 @@ namespace RealRuins {
         private static HashSet<Timer> timers = new HashSet<Timer>();
         private static void ExecuteAfter(Action action, TimeSpan delay) {
             Timer timer = null;
-            timer = new System.Threading.Timer(s =>
+            timer = new Timer(s =>
             {
                 action();
                 timer.Dispose();
@@ -39,6 +39,9 @@ namespace RealRuins {
             }
         }
 
+        public Action<int, int> Progress { set => progress = value; }
+        public Action<bool> Completion { set => completion = value; }
+
         private readonly SnapshotStoreManager storeManager = SnapshotStoreManager.Instance;
         //private concurrentDownloads = 0;
 
@@ -46,13 +49,27 @@ namespace RealRuins {
 
         private List<string> snapshotsToLoad = new List<string>();
 
+        private int snapshotsToLoadCount = 0;
+        private int loadedSnapshotsCount = 0;
+        private int failedSnapshotsCount = 0;
+
+        private Action<int, int> progress;
+        private Action<bool> completion;
+
+
+        public void Reset() {
+            snapshotsToLoadCount = 0;
+            loadedSnapshotsCount = 0;
+            failedSnapshotsCount = 0;
+            snapshotsToLoad = new List<string>();
+        }
 
         //try to load snapshots until your guts are out
         public void AggressiveLoadSnapshots() {
             APIService service = new APIService();
 
             Debug.Message("Snapshot pool is almost empty, doing some aggressive loading...", true);
-
+            
             service.LoadRandomMapsList(delegate (bool success, List<string> files) {
                 if (!success) {
                     Debug.Message("Failed loading list of random maps. Rescheduling after 10 seconds");
@@ -70,13 +87,18 @@ namespace RealRuins {
                 }
 
                 Debug.Message("Loading {0} files...", snapshotsToLoad.Count);
-
-                if (snapshotsToLoad.Count > 0) {
-                    for (int i = 0; i < 10; i++) {
-                        LoadNextSnapshot();
-                    }
-                }
+                AggressiveLoadSnaphotsFromList(snapshotsToLoad, null);
             });
+        }
+
+        public void AggressiveLoadSnaphotsFromList(List<string> snapshotsToLoad, string gamePath = null) {
+            this.snapshotsToLoad = snapshotsToLoad; //in case it was call from the outside
+            this.snapshotsToLoadCount = snapshotsToLoad.Count;
+            if (snapshotsToLoad.Count > 0) {
+                for (int i = 0; i < 10; i++) {
+                    LoadNextSnapshot(gamePath);
+                }
+            }
         }
 
         public void LoadSomeSnapshots(int concurrent = 1, int retries = 10) {
@@ -113,7 +135,7 @@ namespace RealRuins {
             });
         }
 
-        private void LoadNextSnapshot() {
+        private void LoadNextSnapshot(string gamePath = null) {
             string next = snapshotsToLoad.Pop();
 
             Debug.Message("Loading snapshot {0}", next);
@@ -121,10 +143,22 @@ namespace RealRuins {
             APIService service = new APIService();
             service.LoadMap(next, delegate (bool success, byte[] data) {
                 if (success) {
-                    storeManager.StoreBinaryData(data, next);
+                    loadedSnapshotsCount++;
+                    storeManager.StoreBinaryData(data, next, gamePath);
+                } else {
+                    failedSnapshotsCount++;
                 }
+
+                progress?.Invoke(loadedSnapshotsCount, snapshotsToLoadCount);
+
                 if (snapshotsToLoad.Count > 0) {
-                    LoadNextSnapshot();
+                    //Debug.Message("Snapshots to load: {0}", snapshotsToLoad);
+                    LoadNextSnapshot(gamePath);
+                } else {
+                    //Debug.Message("Loaded: {0}, failed: {1}, should be: {2}", loadedSnapshotsCount, failedSnapshotsCount, snapshotsToLoadCount);
+                    if (loadedSnapshotsCount + failedSnapshotsCount == snapshotsToLoadCount) {
+                        completion?.Invoke(true);
+                    }
                 }
             });
         }
@@ -158,6 +192,7 @@ namespace RealRuins {
                     APIService service = new APIService();
                     service.UploadMap(tmpFilename, delegate (bool success) {
                         File.Delete(tmpFilename);
+                        completion?.Invoke(success);
                     });
                 }
             }

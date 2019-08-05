@@ -100,14 +100,26 @@ namespace RealRuins
             StoreBinaryData(Encoding.UTF8.GetBytes(buffer), blueprintName);
         }
 
-        public void StoreBinaryData(byte[] buffer, string blueprintName) {
+        public void StoreBinaryData(byte[] buffer, string blueprintName, string gameName = null) {
 
             new Thread(() => {
                 string filename = blueprintName + ".bp";
+                string path = GetSnapshotsFolderPath();
+                if (gameName != null) {
+                    path = Path.Combine(path, gameName);
+                }
                 if (RealRuins.SingleFile) {
                     filename = "jeluder.bp";
                 }
 
+                DirectoryInfo directoryInfo = new DirectoryInfo(path);
+                if (!directoryInfo.Exists) {
+                    try {
+                        directoryInfo.Create();
+                    } catch {
+                        Debug.Message("Can't create test dirt");
+                    }
+                }
 
                 //when storing a file you need to remove older version of snapshots of the same game
                 string[] parts = filename.Split('=');
@@ -116,7 +128,7 @@ namespace RealRuins
                     if (int.TryParse(parts[0], out date)) {
                         parts[0] = "*";
                         string mask = string.Join("=", parts);
-                        string[] files = Directory.GetFiles(GetSnapshotsFolderPath(), mask);
+                        string[] files = Directory.GetFiles(path, mask);
                         foreach (string existingFile in files) {
                             int existingFileDate = 0;
                             string[] existingFileParts = existingFile.Split('-');
@@ -133,7 +145,7 @@ namespace RealRuins
                     }
                 }
                 //writing file in all cases except "newer version available"
-                File.WriteAllBytes(Path.Combine(GetSnapshotsFolderPath(), filename), buffer);
+                File.WriteAllBytes(Path.Combine(path, filename), buffer);
                 RecalculateFilesSize();
 
             }).Start();
@@ -160,6 +172,10 @@ namespace RealRuins
                 if (filename == null) return null; //no more valid files. sorry, no party.
             } while (filename == null);
             return filename;
+        }
+
+        public string SnapshotNameFor(string snapshotId, string gameName) {
+            return GetSnapshotsFolderPath() + "/" + gameName + "/" + snapshotId + ".bp";
         }
 
         public int StoredSnapshotsCount() {

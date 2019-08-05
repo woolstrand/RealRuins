@@ -332,62 +332,64 @@ namespace RealRuins
 
 
         public override void Generate(Map map, GenStepParams parms) {
-            if (!map.TileInfo.WaterCovered) {
+
+            Debug.Message("Medium generate");
                 Find.TickManager.Pause();
 
                 currentOptions = RealRuins_ModSettings.defaultScatterOptions.Copy(); //store as instance variable to keep accessible on subsequent ScatterAt calls
 
                 currentOptions.minRadius = 24;
                 currentOptions.maxRadius = 50;   
-                currentOptions.scavengingMultiplier = 0.5f;
+                currentOptions.scavengingMultiplier = 0.1f;
                 currentOptions.deteriorationMultiplier = 0.1f;
                 currentOptions.hostileChance = 0.8f;
                 currentOptions.itemCostLimit = 800;
 
-                currentOptions.minimumCostRequired = 5000;
-                currentOptions.minimumDensityRequired = 0.2f;
-                currentOptions.minimumAreaRequired = 1000;
+                currentOptions.minimumCostRequired = 25000;
+                currentOptions.minimumDensityRequired = 0.01f;
+                currentOptions.minimumAreaRequired = 4000;
                 currentOptions.deleteLowQuality = false; //do not delete since we have much higher requirements for base ruins
                 currentOptions.shouldKeepDefencesAndPower = true;
 
                 ResolveParams rp = default(ResolveParams);
                 BaseGen.globalSettings.map = map;
+                rp.rect = new CellRect(0, 0, map.Size.x, map.Size.z);
                 rp.SetCustom<ScatterOptions>(Constants.ScatterOptions, currentOptions);
                 rp.faction = Find.FactionManager.OfAncientsHostile;
                 BaseGen.symbolStack.Push("scatterRuins", rp);
 
 
-                ResolveParams resolveParams = default(ResolveParams);
+              /*  ResolveParams resolveParams = default(ResolveParams);
                 resolveParams.rect = CellRect.CenteredOn(map.Center, currentOptions.minRadius + (currentOptions.maxRadius - currentOptions.maxRadius) / 2);
                 BaseGen.globalSettings.map = map;
-                BaseGen.globalSettings.mainRect = resolveParams.rect;
+                BaseGen.globalSettings.mainRect = resolveParams.rect; */
 
                 if (Rand.Chance(0.5f * Find.Storyteller.difficulty.threatScale)) {
-                    float pointsCost = Math.Abs(Rand.Gaussian()) * 500 * Find.Storyteller.difficulty.threatScale; 
+                    float pointsCost = Math.Abs(Rand.Gaussian()) * 500 * Find.Storyteller.difficulty.threatScale;
 
-                    resolveParams.faction = Find.FactionManager.RandomEnemyFaction();
-                    resolveParams.singlePawnLord = LordMaker.MakeNewLord(resolveParams.faction,
-                        new LordJob_AssaultColony(resolveParams.faction, false, false, true, true), map, null);
+                rp.faction = Find.FactionManager.RandomEnemyFaction();
+                rp.singlePawnLord = LordMaker.MakeNewLord(rp.faction,
+                        new LordJob_AssaultColony(rp.faction, false, false, true, true), map, null);
 
-                    resolveParams.pawnGroupKindDef = (resolveParams.pawnGroupKindDef ?? PawnGroupKindDefOf.Settlement);
+                rp.pawnGroupKindDef = (rp.pawnGroupKindDef ?? PawnGroupKindDefOf.Settlement);
 
-                    if (resolveParams.pawnGroupMakerParams == null) {
-                        resolveParams.pawnGroupMakerParams = new PawnGroupMakerParms();
-                        resolveParams.pawnGroupMakerParams.tile = map.Tile;
-                        resolveParams.pawnGroupMakerParams.faction = resolveParams.faction;
-                        PawnGroupMakerParms pawnGroupMakerParams = resolveParams.pawnGroupMakerParams;
+                    if (rp.pawnGroupMakerParams == null) {
+                    rp.pawnGroupMakerParams = new PawnGroupMakerParms();
+                    rp.pawnGroupMakerParams.tile = map.Tile;
+                    rp.pawnGroupMakerParams.faction = rp.faction;
+                        PawnGroupMakerParms pawnGroupMakerParams = rp.pawnGroupMakerParams;
                         pawnGroupMakerParams.points = pointsCost;
                     }
 
-                    BaseGen.symbolStack.Push("pawnGroup", resolveParams);
+                    BaseGen.symbolStack.Push("pawnGroup", rp);
 
                 }
 
-                BaseGen.symbolStack.Push("chargeBatteries", resolveParams);
-                BaseGen.symbolStack.Push("refuel", resolveParams);
+                BaseGen.symbolStack.Push("chargeBatteries", rp);
+                BaseGen.symbolStack.Push("refuel", rp);
                     
                 BaseGen.Generate();
-            }
+          
         }
 
     }

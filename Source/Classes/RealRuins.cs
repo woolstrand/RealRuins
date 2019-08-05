@@ -115,7 +115,25 @@ namespace RealRuins
             }
         }
 
-
+/*
+        [HarmonyPatch(typeof(Scenario), "GetFirstConfigPage")]
+        class WindowContents_Patch {
+            public static void DoWindowContentsPostfix(Rect rect, Page_ConfigureStartingPawns __instance) {
+                //IL_00b4: Unknown result type (might be due to invalid IL or missing references)
+                Vector2 vector = new Vector2(150f, 38f);
+                float y = rect.height + 45f;
+                if (Widgets.ButtonText(new Rect(rect.x + rect.width / 2f - vector.x / 2f, y, vector.x, vector.y), Translator.Translate("EdB.PC.Page.Button.PrepareCarefully"), true, false, true)) {
+                    try {
+                        Page_RealRuins pageRealRuins = new Page_RealRuins();
+                        Find.UIRoot.windows.Add(pageRealRuins);
+                    } catch (Exception ex) {
+                        //Find.get_WindowStack().Add(new DialogInitializationError());
+                        //SoundStarter.PlayOneShot(SoundDefOf.ClickReject, SoundInfo.op_Implicit(null));
+                        throw ex;
+                    }
+                }
+            }
+        }*/
     }
 
     public static class Art_Extensions {
