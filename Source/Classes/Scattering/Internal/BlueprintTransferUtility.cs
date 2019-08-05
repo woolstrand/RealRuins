@@ -439,6 +439,10 @@ namespace RealRuins {
             }
 
             options = rp.GetCustom<ScatterOptions>(Constants.ScatterOptions);
+            if (options.overridePosition != IntVec3.Zero) {
+                mapOriginX = options.overridePosition.x;
+                mapOriginZ = options.overridePosition.z;
+            }
         }
 
         public void RemoveIncompatibleItems() {

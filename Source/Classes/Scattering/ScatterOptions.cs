@@ -45,6 +45,7 @@ namespace RealRuins {
         public bool allowFriendlyRaids = true; // friendly factions hostile to environment, but friendly to you
         public bool enableDeterioration = true;
         public bool canHaveFood = true;
+        public IntVec3 overridePosition = IntVec3.Zero;
         public string blueprintFileName = null;
 
 

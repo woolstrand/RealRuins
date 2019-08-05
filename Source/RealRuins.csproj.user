@@ -4,6 +4,7 @@
     <StartProgram>D:\Program Files %28x86%29\Steam\steamapps\common\RimWorld\Mods\Real Ruins\..\..\RimWorldWin64.exe</StartProgram>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
-    <StartProgram>D:\Program Files %28x86%29\Steam\steamapps\common\RimWorld\Mods\Real Ruins\..\..\RimWorldWin64.exe</StartProgram>
+    <StartProgram>D:\Program Files %28x86%29\Steam\Steam.exe</StartProgram>
+    <StartArguments>-applaunch 294100</StartArguments>
   </PropertyGroup>
 </Project>

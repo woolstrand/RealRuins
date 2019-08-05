@@ -20,6 +20,25 @@
   </WorldObjectDef>
 
   <WorldObjectDef>
+    <defName>RealRuinsPOI</defName>
+    <label>A group of buildings</label>
+    <description>A group of buildings. Deserves an investigation.</description>
+    <worldObjectClass>RealRuins.RealRuinsPOIWorldObject</worldObjectClass>
+    <mapGenerator>RealRuinsPOI</mapGenerator>
+    <expandingIcon>false</expandingIcon>
+    <expandingIconPriority>15</expandingIconPriority>
+    <canBePlayerHome>false</canBePlayerHome>
+
+    <IncidentTargetTags>
+      <li>Map_PlayerHome</li>
+    </IncidentTargetTags>
+
+    <comps>
+      <li Class="RealRuins.WorldObjectCompProperties_RealRuinsPOI" />
+    </comps>
+  </WorldObjectDef>
+
+  <WorldObjectDef>
     <defName>CaravanSmallRuinsWorldObject</defName>
     <label>small ruins</label>
     <description>Small ruins</description>

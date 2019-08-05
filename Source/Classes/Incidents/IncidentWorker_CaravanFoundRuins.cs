@@ -50,7 +50,7 @@ namespace RealRuins {
 					Find.WorldObjects.Add(site);
 					*/
 
-					Map map = CaravanIncidentUtility.GetOrGenerateMapForIncident(caravan, new IntVec3(105, 1, 105),
+					Map map = CaravanIncidentUtility.GetOrGenerateMapForIncident(caravan, new IntVec3(120, 1, 120),
 						DefDatabase<WorldObjectDef>.GetNamed("CaravanSmallRuinsWorldObject"));
 					CaravanEnterMapUtility.Enter(caravan, map, CaravanEnterMode.Edge);
 					CameraJumper.TryJumpAndSelect(t);
