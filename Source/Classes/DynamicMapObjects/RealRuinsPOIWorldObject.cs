@@ -12,13 +12,13 @@ namespace RealRuins {
     class RealRuinsPOIWorldObject : MapParent {
 
         public override Texture2D ExpandingIcon => ContentFinder<Texture2D>.Get("poi-" + GetComponent<RealRuinsPOIComp>().poiType);
-        public override Color ExpandingIconColor => Color.white;
+        public override Color ExpandingIconColor => Faction?.Color ?? Color.white;
         private Material cachedMat;
 
         public override Material Material {
             get {
                 if (cachedMat == null) {
-                    cachedMat = MaterialPool.MatFrom(color: Color.white, texPath: "poi-0", shader: ShaderDatabase.WorldOverlayTransparentLit, renderQueue: WorldMaterials.WorldObjectRenderQueue);
+                    cachedMat = MaterialPool.MatFrom(color: Faction?.Color ?? Color.white, texPath: "World/WorldObjects/Sites/GenericSite", shader: ShaderDatabase.WorldOverlayTransparentLit, renderQueue: WorldMaterials.WorldObjectRenderQueue);
                 }
                 return cachedMat;
             }

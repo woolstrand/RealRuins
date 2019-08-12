@@ -25,7 +25,7 @@
     <description>A group of buildings. Deserves an investigation.</description>
     <worldObjectClass>RealRuins.RealRuinsPOIWorldObject</worldObjectClass>
     <mapGenerator>RealRuinsPOI</mapGenerator>
-    <expandingIcon>false</expandingIcon>
+    <expandingIcon>true</expandingIcon>
     <expandingIconPriority>15</expandingIconPriority>
     <canBePlayerHome>false</canBePlayerHome>
 
