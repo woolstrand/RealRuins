@@ -21,12 +21,11 @@ namespace RealRuins {
             }
 
             Faction faction = null;
-            Find.FactionManager.TryGetRandomNonColonyHumanlikeFaction(out faction, false, false);
-
-            if (faction == null) {
-                return false;
+            if (Rand.Chance(0.3f)) {
+                Find.FactionManager.TryGetRandomNonColonyHumanlikeFaction(out faction, false, false);
             }
-     
+
+             
             RealRuinsPOIWorldObject site = CreateWorldObject(tileInfo.tile, faction);
 
             RealRuinsPOIComp comp = site.GetComponent<RealRuinsPOIComp>();
@@ -37,7 +36,7 @@ namespace RealRuins {
                 comp.gameName = gameName;
                 comp.originX = tileInfo.originX;
                 comp.originZ = tileInfo.originZ;
-                comp.poiType = Rand.Range(0, 6);
+                comp.poiType = Rand.Range(0, 11);
             }
             if (site == null) return false;
  
