@@ -400,7 +400,10 @@ namespace RealRuins {
                     }
 
                     //Substract some hit points. Most lilkely below 400 (to make really strudy structures stay almost untouched. No more 1% beta poly walls)
-                    var maxDeltaHP = Math.Min(thing.MaxHitPoints - 1, (int)Math.Abs(Rand.Gaussian(0, 200)));
+                    var maxDeltaHP = 0;
+                    if (!options.forceFullHitPoints) {
+                        maxDeltaHP = Math.Min(thing.MaxHitPoints - 1, (int)Math.Abs(Rand.Gaussian(0, 200)));
+                    }
                     thing.HitPoints = thing.MaxHitPoints - Rand.Range(0, maxDeltaHP);
 
                     //Forbid haulable stuff

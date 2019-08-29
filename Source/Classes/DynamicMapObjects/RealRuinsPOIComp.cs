@@ -7,6 +7,20 @@ using RimWorld;
 using RimWorld.Planet;
 using Verse;
 
+enum POIType {
+    MilitaryBaseSmall = 0,
+    Outpost,
+    Camp,
+    City,
+    Factory,
+    Research,
+    PowerPlant,
+    MilitaryBaseLarge,
+    Storage,
+    Communication,
+    Ruins
+}
+
 namespace RealRuins {
     class RealRuinsPOIComp : WorldObjectComp {
         public string blueprintName = "";

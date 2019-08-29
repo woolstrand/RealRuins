@@ -43,7 +43,8 @@ namespace RealRuins {
         public bool shouldAddRaidTriggers = false;
         public bool enableInstantCaravanReform = false; //only for large events
         public bool allowFriendlyRaids = true; // friendly factions hostile to environment, but friendly to you
-        public bool enableDeterioration = true;
+        public bool enableDeterioration = true; //enables BLOCK REMOVING due to deterioration. HP control is the next option
+        public bool forceFullHitPoints = false; //forces all HP to be maxed
         public bool canHaveFood = true;
         public IntVec3 overridePosition = IntVec3.Zero;
         public string blueprintFileName = null;
@@ -106,6 +107,7 @@ namespace RealRuins {
                 blueprintRect = blueprintRect,
                 allowFriendlyRaids = allowFriendlyRaids,
                 enableDeterioration = enableDeterioration,
+                forceFullHitPoints = forceFullHitPoints,
                 canHaveFood = canHaveFood,
                 blueprintFileName = blueprintFileName
     };
