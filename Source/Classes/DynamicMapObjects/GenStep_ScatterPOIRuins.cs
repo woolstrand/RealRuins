@@ -34,9 +34,9 @@ namespace RealRuins {
 
             currentOptions.minRadius = 400;
             currentOptions.maxRadius = 400;
-            currentOptions.scavengingMultiplier = 0.1f;
+            currentOptions.scavengingMultiplier = 0.0f;
             currentOptions.deteriorationMultiplier = 0.0f;
-            currentOptions.hostileChance = 1.0f;
+            currentOptions.hostileChance = 0.0f;
 
 
             currentOptions.blueprintFileName = filename;
@@ -45,12 +45,16 @@ namespace RealRuins {
             currentOptions.minimumCostRequired = 0;
             currentOptions.minimumDensityRequired = 0.0f;
             currentOptions.minimumAreaRequired = 0;
-            currentOptions.deleteLowQuality = false; //do not delete since we have much higher requirements for base ruins
+            currentOptions.deleteLowQuality = false;
             currentOptions.shouldKeepDefencesAndPower = true;
             currentOptions.shouldLoadPartOnly = false;
-            currentOptions.shouldAddRaidTriggers = Find.Storyteller.difficulty.allowBigThreats;
+            currentOptions.shouldAddRaidTriggers = false;
             currentOptions.claimableBlocks = false;
             currentOptions.enableDeterioration = false;
+
+            if (poiComp.poiType != (int)POIType.Ruins) {
+                currentOptions.forceFullHitPoints = true;
+            }
 
             
             currentOptions.overridePosition = new IntVec3(poiComp.originX, 0, poiComp.originZ);
@@ -60,23 +64,28 @@ namespace RealRuins {
             BaseGen.globalSettings.map = map;
             resolveParams.SetCustom<ScatterOptions>(Constants.ScatterOptions, currentOptions);
             resolveParams.faction = Find.FactionManager.OfAncientsHostile;
-            resolveParams.rect = new CellRect(currentOptions.overridePosition.x, currentOptions.overridePosition.z, map.Size.x, map.Size.z);
+            resolveParams.rect = new CellRect(currentOptions.overridePosition.x, currentOptions.overridePosition.z, map.Size.x - currentOptions.overridePosition.x, map.Size.z - currentOptions.overridePosition.z);
+            
             BaseGen.symbolStack.Push("scatterRuins", resolveParams);
 
 
             BaseGen.globalSettings.mainRect = resolveParams.rect;
 
             float uncoveredCost = currentOptions.uncoveredCost;
-            if (uncoveredCost < 0) {
-                if (Rand.Chance(0.5f)) {
-                    uncoveredCost = -uncoveredCost; //adding really small party
-                }
+            
+            if (map.ParentFaction == null) {
+                uncoveredCost = 0;
+                currentOptions.startingPartyPoints = 0;
             }
-
-
             //adding starting party
             //don't doing it via basegen because of uh oh i don't remember, something with pawn location control
-/*
+
+                        
+            BaseGen.symbolStack.Push("chargeBatteries", resolveParams);
+            BaseGen.symbolStack.Push("refuel", resolveParams);
+
+            BaseGen.Generate();
+
             if (uncoveredCost > 0 || currentOptions.startingPartyPoints > 0) {
                 float pointsCost = 0;
                 if (currentOptions.startingPartyPoints > 0) {
@@ -90,19 +99,12 @@ namespace RealRuins {
 
                 }
                 pointsCost *= Find.Storyteller.difficulty.threatScale;
-                ScatterStartingParties((int)pointsCost, currentOptions.allowFriendlyRaids, map);
+                ScatterStartingParties((int)pointsCost, map.ParentFaction, map);
 
             }
-            */
-            BaseGen.symbolStack.Push("chargeBatteries", resolveParams);
-            BaseGen.symbolStack.Push("refuel", resolveParams);
-
-            BaseGen.Generate();
-
-
         }
 
-        private void ScatterStartingParties(int points, bool allowFriendly, Map map) {
+        private void ScatterStartingParties(int points, Faction faction, Map map) {
 
             while (points > 0) {
                 int pointsUsed = Rand.Range(200, Math.Min(3000, points / 5));
@@ -110,15 +112,6 @@ namespace RealRuins {
                 IntVec3 rootCell = CellFinder.RandomNotEdgeCell(30, map);
                 CellFinder.TryFindRandomSpawnCellForPawnNear(rootCell, map, out IntVec3 result);
                 if (result.IsValid) {
-                    Faction faction = null;
-                    if (allowFriendly) {
-                        Find.FactionManager.TryGetRandomNonColonyHumanlikeFaction(out faction, false);
-                    } else {
-                        faction = Find.FactionManager.RandomEnemyFaction();
-                    }
-
-                    if (faction == null) faction = Find.FactionManager.AllFactions.RandomElement();
-
                     SpawnGroup(pointsUsed, new CellRect(result.x - 10, result.z - 10, 20, 20), faction, map);
                     points -= pointsUsed;
                 }
@@ -132,7 +125,7 @@ namespace RealRuins {
             pawnGroupMakerParms.points = points;
             pawnGroupMakerParms.faction = faction;
             pawnGroupMakerParms.generateFightersOnly = true;
-            pawnGroupMakerParms.raidStrategy = RaidStrategyDefOf.ImmediateAttack;
+            pawnGroupMakerParms.inhabitants = true;
             pawnGroupMakerParms.forceOneIncap = false;
             pawnGroupMakerParms.seed = Rand.Int;
 
@@ -155,11 +148,7 @@ namespace RealRuins {
             }
 
             LordJob lordJob = null;
-            //            if (Rand.Chance(0.7f) || ) {
-            lordJob = new LordJob_AssaultColony(faction, canKidnap: false, canTimeoutOrFlee: Rand.Chance(0.5f));
-            //           } else {
-            //               lordJob = new LordJob_Steal();
-            //           }
+            lordJob = new LordJob_DefendBase(faction: faction, baseCenter: locationRect.CenterCell);
 
             if (lordJob != null) {
                 LordMaker.MakeNewLord(faction, lordJob, map, pawns);
