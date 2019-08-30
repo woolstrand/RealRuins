@@ -27,6 +27,8 @@ namespace RealRuins {
 
             RealRuinsPOIComp poiComp = map.Parent.GetComponent<RealRuinsPOIComp>();
             string filename = SnapshotStoreManager.Instance.SnapshotNameFor(poiComp.blueprintName, poiComp.gameName);
+
+
             Debug.Message("Preselected file name is {0}", filename);
             Debug.Message("Location is {0} {1}", poiComp.originX, poiComp.originZ);
 
@@ -51,14 +53,27 @@ namespace RealRuins {
             currentOptions.shouldAddRaidTriggers = false;
             currentOptions.claimableBlocks = false;
             currentOptions.enableDeterioration = false;
+            currentOptions.overwritesEverything = true;
 
             if (poiComp.poiType != (int)POIType.Ruins) {
                 currentOptions.forceFullHitPoints = true;
             }
 
-            
-            currentOptions.overridePosition = new IntVec3(poiComp.originX, 0, poiComp.originZ);
 
+            currentOptions.overridePosition = new IntVec3(poiComp.originX, 0, poiComp.originZ);
+            currentOptions.centerIfExceedsBounds = true;
+
+            
+
+            var bp = BlueprintLoader.LoadWholeBlueprintAtPath(filename);
+            Debug.Message("Trying to place POI map at tile {0}, at {1},{2} to {3},{4} ({5}x{6})",
+                map.Parent.Tile, 
+                poiComp.originX, poiComp.originZ,
+                poiComp.originX + bp.width, poiComp.originZ + bp.height,
+                bp.width, bp.height);
+
+            var a = new BlueprintAnalyzer(bp, currentOptions);
+            a.Analyze();
 
             ResolveParams resolveParams = default(ResolveParams);
             BaseGen.globalSettings.map = map;

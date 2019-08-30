@@ -443,8 +443,13 @@ namespace RealRuins {
 
             options = rp.GetCustom<ScatterOptions>(Constants.ScatterOptions);
             if (options.overridePosition != IntVec3.Zero) {
-                mapOriginX = options.overridePosition.x;
-                mapOriginZ = options.overridePosition.z;
+                if (!options.centerIfExceedsBounds || (options.overridePosition.x + blueprint.width < map.Size.x && options.overridePosition.z + blueprint.height < map.Size.z)) {
+                    mapOriginX = options.overridePosition.x;
+                    mapOriginZ = options.overridePosition.z;
+                } else {
+                    Debug.Message("Tried to override position, but map exceeded bounds and position was reverted due to corresponding options flag.");
+                    Debug.Message("New position: {0}, {1}", mapOriginX, mapOriginZ);
+                }
             }
         }
 
@@ -534,7 +539,26 @@ namespace RealRuins {
             rp.rect = new CellRect(mapOriginX, mapOriginZ, blueprint.width, blueprint.height);
             CoverageMap coverageMap = null;
             rp.TryGetCustom<CoverageMap>(Constants.CoverageMap, out coverageMap);
-            
+
+            for (int z = 0; z < blueprint.height; z++) {
+                for (int x = 0; x < blueprint.width; x++) {
+                    IntVec3 mapLocation = new IntVec3(x + mapOriginX, 0, z + mapOriginZ);
+                    //Check if thepoint is in allowed bounds of the map
+                    if (!mapLocation.InBounds(map) || mapLocation.InNoBuildEdgeArea(map)) {
+                        continue; //ignore invalid cells
+                    }
+
+                    if (options.overwritesEverything || Rand.Chance(0.6f)) {
+                        if (blueprint.terrainMap[x, z] != null ||
+                            blueprint.itemsMap[x, z].Count > 0 ||
+                            blueprint.wallMap[x, z] > 1) {
+                            ClearCell(mapLocation, map, true);
+                        }
+                    }
+
+                }
+            }
+
 
             for (int z = 0; z < blueprint.height; z++) {
                 for (int x = 0; x < blueprint.width; x++) {
@@ -547,9 +571,6 @@ namespace RealRuins {
                             if (blueprint.wallMap[x, z] > 1 || blueprint.wallMap[x, z] == -1) coverageMap.Mark(mapLocation.x, mapLocation.z); //mark cell as used
                         }
                     }
-
-                    if (!mapLocation.InBounds(map)) continue;
-
 
                     //Check if thepoint is in allowed bounds of the map
                     if (!mapLocation.InBounds(map) || mapLocation.InNoBuildEdgeArea(map)) {
@@ -567,19 +588,19 @@ namespace RealRuins {
                         }
                     }
 
-                    /*if (roofMap[x, z] == true) {
+                    //construct roof evetywhere if we doing complete transfer
+                    if (blueprint.roofMap[x, z] == true && options.overwritesEverything && blueprint.wallMap[x, z] != 1) {
                         map.roofGrid.SetRoof(mapLocation, RoofDefOf.RoofConstructed);
-                    }*/ //no roof yet
+                    }
 
 
                     //Add items
                     if (blueprint.itemsMap[x, z] != null && blueprint.itemsMap[x, z].Count > 0/* && cellUsed[mapLocation.x, mapLocation.z] == false*/) {
 
-                        bool cellIsAlreadyCleared = false;
                         totalItems += blueprint.itemsMap[x, z].Count;
 
+                        bool cellIsAlreadyCleared = false;
                         foreach (ItemTile itemTile in blueprint.itemsMap[x, z]) {
-
                             if (!cellIsAlreadyCleared) { //first item to be spawned should also clear place for itself. we can't do it beforehand because we don't know if it will be able and get a chance to be spawned.
                                 bool forceCleaning = (blueprint.wallMap[x, z] > 1) && Rand.Chance(0.9f);
 
