@@ -65,6 +65,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Classes\Debug.cs" />
+    <Compile Include="Classes\DynamicMapObjects\BlueprintAnalyzer.cs" />
     <Compile Include="Classes\DynamicMapObjects\CaravanArrivalAction_VisitRealRuinsPOI.cs" />
     <Compile Include="Classes\DynamicMapObjects\GenStep_ScatterPOIRuins.cs" />
     <Compile Include="Classes\DynamicMapObjects\MapRuinsStore.cs" />

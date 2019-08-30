@@ -91,7 +91,7 @@ namespace RealRuins {
             base.PreOpen();
             pageState = RuinsPageState.LoadingHeader;
             Debug.Message("Loading list for seed: {0}", Find.World.info.seedString);
-            service.LoadAllMapsForSeed(Find.World.info.seedString, (int)Find.World.info.initialMapSize.x, Find.World.PlanetCoverage, delegate (bool success, List<PlanetTileInfo> mapTiles) {
+            service.LoadAllMapsForSeed(Find.World.info.seedString, (int)Find.World.info.initialMapSize.x, (int)(Find.World.PlanetCoverage * 100), delegate (bool success, List<PlanetTileInfo> mapTiles) {
                 if (success) {
                     this.mapTiles = mapTiles;
                     blueprintIds = new List<string>();

@@ -47,7 +47,10 @@ namespace RealRuins {
         public bool forceFullHitPoints = false; //forces all HP to be maxed
         public bool canHaveFood = true;
         public IntVec3 overridePosition = IntVec3.Zero;
+        public bool overwritesEverything = false; //if true, each item, terrain and even empty cell inside a room removes everything from that tile
+        public bool centerIfExceedsBounds = false;
         public string blueprintFileName = null;
+  
 
 
         public bool deleteLowQuality = true;
@@ -97,11 +100,11 @@ namespace RealRuins {
                 minimumCostRequired = minimumCostRequired,
                 deleteLowQuality = deleteLowQuality,
                 shouldKeepDefencesAndPower = shouldKeepDefencesAndPower,
-//                shouldAddSignificantResistance = shouldAddSignificantResistance,
                 shouldLoadPartOnly = shouldLoadPartOnly,
                 shouldAddRaidTriggers = shouldAddRaidTriggers,
                 uncoveredCost = uncoveredCost,
                 enableInstantCaravanReform = enableInstantCaravanReform,
+
                 roomMap = roomMap,
                 bottomLeft = bottomLeft,
                 blueprintRect = blueprintRect,
@@ -109,7 +112,9 @@ namespace RealRuins {
                 enableDeterioration = enableDeterioration,
                 forceFullHitPoints = forceFullHitPoints,
                 canHaveFood = canHaveFood,
-                blueprintFileName = blueprintFileName
+                blueprintFileName = blueprintFileName,
+                centerIfExceedsBounds = centerIfExceedsBounds,
+                overwritesEverything = overwritesEverything
     };
 
             return copy;
