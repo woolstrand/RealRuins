@@ -6,6 +6,7 @@ using UnityEngine;
 
 using Verse;
 using RimWorld;
+using System.Threading;
 
 namespace RealRuins {
     enum RuinsPageState {
@@ -13,6 +14,7 @@ namespace RealRuins {
         LoadingHeader,
         LoadedHeader,
         LoadingBlueprints,
+        ProcessingBlueprints,
         Completed
     }
 
@@ -23,6 +25,7 @@ namespace RealRuins {
         private RuinsPageState pageState = RuinsPageState.Idle;
         private int blueprintsTotalCount = 0;
         private int blueprintsLoadedCount = 0;
+        private int blueprintsProcessedCount = 0;
         private bool strict = true;
         private List<string> blueprintIds = null;
         private List<PlanetTileInfo> mapTiles;
@@ -36,34 +39,30 @@ namespace RealRuins {
             Text.Font = GameFont.Small;
             float num = 0f;
             string blueprintStats = "RealRuins.Loading".Translate();
-            if (pageState != RuinsPageState.Idle && pageState != RuinsPageState.LoadedHeader) {
-                blueprintStats = " " + blueprintsLoadedCount + "/" + blueprintsTotalCount;
-            } else if (pageState == RuinsPageState.LoadedHeader) {
-                blueprintStats = " " + blueprintsTotalCount + "blueprints found";
+            switch (pageState) {
+                case RuinsPageState.Idle:
+                    blueprintStats = "Idle".Translate();
+                    break;
+                case RuinsPageState.LoadingHeader:
+                    blueprintStats = "Searching for blueprints...";
+                    break;
+                case RuinsPageState.LoadedHeader:
+                case RuinsPageState.LoadingBlueprints:
+                    blueprintStats = "Loading blueprints: " + blueprintsLoadedCount + "/" + blueprintsTotalCount;
+                    break;
+                case RuinsPageState.ProcessingBlueprints:
+                    blueprintStats = "Processing blueprints: " + blueprintsProcessedCount + "/" + blueprintsTotalCount;
+                    break;
+                case RuinsPageState.Completed:
+                    blueprintStats = "Completed";
+                    break;
             }
 
-            Widgets.Label(new Rect(0f, num, 350f, 30f), "RealRuins.BlueprintsLoaderCount".Translate() + blueprintStats);
+            Widgets.Label(new Rect(0f, num, 350f, 30f), blueprintStats);
 
             Rect rect3 = new Rect(390f, num, 200f, 30f);
             if (Widgets.ButtonText(rect3, "RealRuins.LoadBlueprints".Translate())) {
-                if (pageState == RuinsPageState.LoadedHeader) {
-                    pageState = RuinsPageState.LoadingBlueprints;
-
-                    SnapshotManager manager = new SnapshotManager();
-                    manager.Progress = delegate (int progress, int total) {
-                        blueprintsLoadedCount = progress;
-                        blueprintsTotalCount = total;
-                    };
-
-                    manager.Completion = delegate (bool success) {
-                        Debug.Message("Completed loadingm creating sites.");
-                        pageState = RuinsPageState.Completed;
-                        CreateSites();
-                    };
-
-                    Debug.Message("Loading blueprints one by one...");
-                    manager.AggressiveLoadSnaphotsFromList(blueprintIds, "test");
-                }
+                ProcessLoading();
             }
 
             num += 45;
@@ -76,6 +75,30 @@ namespace RealRuins {
             Widgets.CheckboxLabeled(new Rect(20, 120, 300, 20), "Strict filtering", ref strict);
 
 
+        }
+
+        private void ProcessLoading() {
+            if (pageState == RuinsPageState.LoadedHeader) {
+                pageState = RuinsPageState.LoadingBlueprints;
+
+                SnapshotManager manager = new SnapshotManager();
+                manager.Progress = delegate (int progress, int total) {
+                    blueprintsLoadedCount = progress;
+                    blueprintsTotalCount = total;
+                };
+
+                manager.Completion = delegate (bool success) {
+                    Debug.Message("Completed loading, creating sites.");
+                    pageState = RuinsPageState.ProcessingBlueprints;
+                    new Thread(() => {
+                        CreateSites();
+                        pageState = RuinsPageState.Completed;
+                    }).Start();
+                };
+
+                Debug.Message("Loading blueprints one by one...");
+                manager.AggressiveLoadSnaphotsFromList(blueprintIds, "test");
+            }
         }
 
         private void CreateSites() {

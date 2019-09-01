@@ -58,9 +58,9 @@ namespace RealRuins {
         private Dictionary<string, ItemStatRecord> itemStats;
         private ScatterOptions options;
 
-        public BlueprintAnalyzer(Blueprint blueprint, ScatterOptions options) {
+        public BlueprintAnalyzer(Blueprint blueprint, ScatterOptions options = null) {
             this.blueprint = blueprint;
-            this.options = options;
+            this.options = options ?? ScatterOptions.asIs();
             itemStats = new Dictionary<string, ItemStatRecord>();
         }
 
@@ -126,7 +126,7 @@ namespace RealRuins {
             }
 
             if (!itemTile.isWall && !itemTile.isDoor && itemTile.cost > 100) {
-                Debug.Message(message);
+               // Debug.Message(message);
             }
         }
   
@@ -157,7 +157,93 @@ namespace RealRuins {
                 }
             }
 
-            Debug.Message(result.ToString());
+            determinedType = supposedType();
+            Debug.Message("Type is {0} by {1}", determinedType, result.ToString());
+        }
+
+        private POIType supposedType() {
+            float militaryScore = 0;
+            float prodScore = 0;
+            float researchScore = 0;
+
+            //many walls, liitle internal space => ruins
+            if (result.wallLength < 70 || (result.totalItemsCost < 2000 && result.bedsCount < 1)) {
+                return POIType.Ruins;
+            }
+
+            if (result.internalArea / result.wallLength < 2 && result.roomsCount < 6) {
+                return POIType.Ruins;
+            }
+
+            //internal area here is definitely > 0, so occupiedTilesCount too
+            if (result.totalItemsCost / result.occupiedTilesCount < 10) {
+                return POIType.Ruins;
+            }
+
+            militaryScore = (float)(result.militaryItemsCount + result.defensiveItemsCount * 10) * 25 / result.internalArea;
+            prodScore = (result.productionItemsCount * 50 + result.haulableItemsCount) * 5 / result.internalArea;
+
+            Debug.Message("military: {0}. prod: {1}", militaryScore, prodScore);
+
+            if (militaryScore < 3 && prodScore < 4) {
+                if (result.internalArea < 2000 && result.bedsCount > 0 && result.totalItemsCost < 30000) {
+                    return POIType.Camp;
+                }
+                if ((float)(result.occupiedTilesCount - result.wallLength) / result.haulableStacksCount < 3) {
+                    return POIType.Storage;
+                }
+                if (result.internalArea >= 2000) {
+                    return POIType.City;
+                }
+            }
+
+            if (militaryScore >= 3 && militaryScore < 8 && prodScore < 4) {
+                if (result.internalArea < 2000) {
+                    return Rand.Chance(0.5f)?POIType.Outpost:POIType.Communication;
+                }
+                if (result.internalArea > 2000 && result.internalArea < 6000 && result.roomsCount < 20) {
+                    return POIType.MilitaryBaseSmall;
+                }
+                if (result.internalArea > 6000 || result.roomsCount > 20) {
+                    return POIType.City;
+                }
+            }
+
+            if (militaryScore < 8 && prodScore >= 4) {
+                return Rand.Chance(0.5f) ? POIType.Factory : POIType.Research;
+            }
+
+            if (militaryScore >= 8) {
+                return POIType.MilitaryBaseLarge;
+            }
+
+            return POIType.Ruins;
+        }
+
+        public float chanceOfHavingFaction() {
+            switch (determinedType) {
+                case POIType.Ruins:
+                    return 0.0f;
+
+                case POIType.Camp:
+                case POIType.Outpost:
+                case POIType.Storage:
+                    return 0.3f;
+
+                case POIType.MilitaryBaseSmall:
+                case POIType.Communication:
+                    return 0.7f;
+
+                case POIType.City:
+                case POIType.MilitaryBaseLarge:
+                case POIType.Research:
+                case POIType.PowerPlant:
+                case POIType.Factory:
+                    return 0.9f;
+
+                default:
+                    return 0.5f;
+            }
         }
     }
 }

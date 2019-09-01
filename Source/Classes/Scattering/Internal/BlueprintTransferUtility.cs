@@ -495,7 +495,7 @@ namespace RealRuins {
                             continue;
                         }
 
-                        if (thingDef.terrainAffordanceNeeded != null) {
+                        if (!options.overwritesEverything && thingDef.terrainAffordanceNeeded != null) {
                             if (thingDef.EverTransmitsPower && options.shouldKeepDefencesAndPower) continue; //ignore affordances for power transmitters if we need to keep defence systems
 
                             if (terrainDef != null && terrainDef.terrainAffordanceNeeded != null && existingTerrain.affordances.Contains(terrainDef.terrainAffordanceNeeded)) {
@@ -588,7 +588,7 @@ namespace RealRuins {
                         }
                     }
 
-                    //construct roof evetywhere if we doing complete transfer
+                    //construct roof evetywhere if we doing complete transfer (ignoring outside: room with index 1).
                     if (blueprint.roofMap[x, z] == true && options.overwritesEverything && blueprint.wallMap[x, z] != 1) {
                         map.roofGrid.SetRoof(mapLocation, RoofDefOf.RoofConstructed);
                     }
@@ -640,7 +640,7 @@ namespace RealRuins {
                                     //Debug.Message("Setting up props");
                                     //Breakdown breakdownables: it't yet impossible to silently breakdown an item which is not spawned.
                                     CompBreakdownable b = thing.TryGetComp<CompBreakdownable>();
-                                    if (b != null) {
+                                    if (b != null && options.enableDeterioration) {
                                         if (Rand.Chance(0.8f)) {
                                             b.DoBreakdown();
                                         }

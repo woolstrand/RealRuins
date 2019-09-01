@@ -73,8 +73,10 @@ namespace RealRuins {
                 btu.ScatterRaidTriggers();
             }
 
-            btu.AddFilthAndRubble(); //add filth and rubble
-                                     //rp.GetCustom<CoverageMap>(Constants.CoverageMap).DebugPrint();
+            if (options.shouldAddFilth) {
+                btu.AddFilthAndRubble(); //add filth and rubble
+                                         //rp.GetCustom<CoverageMap>(Constants.CoverageMap).DebugPrint();
+            }
 
         }
     }

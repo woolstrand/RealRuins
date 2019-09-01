@@ -20,12 +20,17 @@ namespace RealRuins {
                 return false;
             }
 
+            string filename = SnapshotStoreManager.Instance.SnapshotNameFor(tileInfo.mapId, gameName);
+            Blueprint bp = BlueprintLoader.LoadWholeBlueprintAtPath(filename);
+            BlueprintAnalyzer ba = new BlueprintAnalyzer(bp);
+            ba.Analyze();
+            var poiType = ba.determinedType;
+
             Faction faction = null;
-            if (Rand.Chance(0.3f)) {
+            if (Rand.Chance(ba.chanceOfHavingFaction())) {
                 Find.FactionManager.TryGetRandomNonColonyHumanlikeFaction(out faction, false, false);
             }
 
-             
             RealRuinsPOIWorldObject site = CreateWorldObject(tileInfo.tile, faction);
 
             RealRuinsPOIComp comp = site.GetComponent<RealRuinsPOIComp>();
@@ -36,7 +41,7 @@ namespace RealRuins {
                 comp.gameName = gameName;
                 comp.originX = tileInfo.originX;
                 comp.originZ = tileInfo.originZ;
-                comp.poiType = Rand.Range(0, 11);
+                comp.poiType = (int)poiType;
             }
             if (site == null) return false;
  
