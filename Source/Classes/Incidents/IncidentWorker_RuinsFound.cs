@@ -65,17 +65,17 @@ namespace RealRuins {
             Blueprint bp = BlueprintFinder.FindRandomBlueprintWithParameters(out filename, 6400, 0.01f, 30000, maxAttemptsCount: 50);
             if (bp == null) return null;
 
-            Debug.Message("Trying to gt comp");
+            Debug.Log("Trying to get ruinsed base comp");
             
             RuinedBaseComp comp = site.GetComponent<RuinedBaseComp>();
             if (comp == null) {
-                Debug.Message("Component is null");
+                Debug.Warning("Component is null");
             } else {
                 comp.blueprintFileName = filename;
                 comp.StartScavenging((int)bp.totalCost);
             }
 
-            Debug.Message("Found blueprint with name {0} and stored", filename);
+            Debug.Log("Found blueprint with name {0} and stored", filename);
             Find.WorldObjects.Add(site);
             return site;
         }

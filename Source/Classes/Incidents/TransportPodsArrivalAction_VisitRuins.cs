@@ -40,7 +40,7 @@ namespace RealRuins {
         }
 
         public override void Arrived(List<ActiveDropPodInfo> pods, int tile) {
-            Debug.Message("Overridden arrive pods");
+            Debug.Log("Overridden arrive pods");
             Thing lookTarget = TransportPodsArrivalActionUtility.GetLookTarget(pods);
             bool flag = !site.HasMap;
             Map orGenerateMap = GetOrGenerateMapUtility.GetOrGenerateMap(site.Tile, RuinedBaseWorker.MapSize, null);

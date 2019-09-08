@@ -43,7 +43,7 @@ namespace RealRuins {
             }
 
             if (bp == null) {
-                Debug.Message("Blueprint is still null, returning");
+                Debug.Warning(Debug.Scatter, "Blueprint is still null after attempting to load any qualifying, returning");
                 return;
             }
             bp.CutIfExceedsBounds(map.Size);

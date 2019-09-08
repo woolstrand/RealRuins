@@ -35,7 +35,7 @@ namespace RealRuins {
 
             RealRuinsPOIComp comp = site.GetComponent<RealRuinsPOIComp>();
             if (comp == null) {
-                Debug.Message("Component is null!");
+                Debug.Error(Debug.BlueprintTransfer, "POI Component is null!");
             } else {
                 comp.blueprintName = tileInfo.mapId;
                 comp.gameName = gameName;
@@ -53,7 +53,7 @@ namespace RealRuins {
 
         static RealRuinsPOIWorldObject CreateWorldObject(int tile, Faction siteFaction) {
 
-            Debug.Message("Creating site at tile: {0}", tile);
+            Debug.Log("Creating site at tile: {0}", tile);
             RealRuinsPOIWorldObject site = (RealRuinsPOIWorldObject)WorldObjectMaker.MakeWorldObject(DefDatabase<WorldObjectDef>.GetNamed("RealRuinsPOI"));
             site.Tile = tile;
             site.SetFaction(siteFaction);

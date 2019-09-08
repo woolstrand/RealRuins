@@ -60,7 +60,7 @@ namespace RealRuins {
                         }
                     }
                 }
-                Debug.Message("Added {0} triggers", addedTriggers);
+                Debug.Log("military gen: added {0} triggers", addedTriggers);
             }
 
         }
@@ -69,7 +69,7 @@ namespace RealRuins {
             ScatterOptions currentOptions = rp.GetCustom<ScatterOptions>(Constants.ScatterOptions);
             float uncoveredCost = currentOptions.uncoveredCost;
 
-            Debug.Message("army gen: uncoveredCost {0}", uncoveredCost);
+            Debug.Log("army gen: uncoveredCost {0}", uncoveredCost);
             int points = (int)(uncoveredCost / (10 * militaryPower));
             int initialGroup = 0;
             if (points > 10000) {
@@ -112,9 +112,9 @@ namespace RealRuins {
             CellRect rect = locationRect;
 
             if (pawns == null) {
-                Debug.Message("Pawns list is null");
+                Debug.Warning("Pawns list is null");
             } else {
-                Debug.Message("Pawns list contains {0} records", pawns.Count);
+                Debug.Log("Pawns list contains {0} records", pawns.Count);
             }
 
             foreach (Pawn p in pawns) {
@@ -125,7 +125,7 @@ namespace RealRuins {
                 if (result) {
                     GenSpawn.Spawn(p, location, map, Rot4.Random);
                 } else {
-                    Debug.Message("Can't find location!");
+                    Debug.Warning("Can't find location!");
                 }
             }
 

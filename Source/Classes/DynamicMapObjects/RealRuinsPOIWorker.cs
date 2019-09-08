@@ -45,7 +45,7 @@ namespace RealRuins {
         }
 
         public override IEnumerable<FloatMenuOption> GetTransportPodsFloatMenuOptions(IEnumerable<IThingHolder> pods, CompLaunchable representative, Site site) {
-            Debug.Message("overriden transport pod options");
+            Debug.Log(Debug.POI, "overriden transport pod options");
             foreach (FloatMenuOption floatMenuOption in TransportPodsArrivalAction_VisitRuins.GetFloatMenuOptions(representative, pods, site)) {
                 yield return floatMenuOption;
             }

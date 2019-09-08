@@ -69,25 +69,25 @@ namespace RealRuins {
         public void AggressiveLoadSnapshots() {
             APIService service = new APIService();
 
-            Debug.Message("Snapshot pool is almost empty, doing some aggressive loading...", true);
+            Debug.Log(Debug.Store, "Snapshot pool is almost empty, doing some aggressive loading...", true);
             
             service.LoadRandomMapsList(delegate (bool success, List<string> files) {
                 if (!success) {
-                    Debug.Message("Failed loading list of random maps. Rescheduling after 10 seconds");
+                    Debug.Log(Debug.Store, "Failed loading list of random maps. Rescheduling after 10 seconds");
                     ExecuteAfter(delegate () {
                         AggressiveLoadSnapshots();
                     }, new TimeSpan(0, 0, 20));
                     return;
                 }
 
-                Debug.Message("Loaded list of {0} elements...", files.Count);
+                Debug.Log(Debug.Store, "Loaded list of {0} elements...", files.Count);
                 files = storeManager.FilterOutExistingItems(files);
 
                 foreach (string filename in files) {
                     snapshotsToLoad.Add(filename);
                 }
 
-                Debug.Message("Loading {0} files...", snapshotsToLoad.Count);
+                Debug.Log(Debug.Store, "Loading {0} files...", snapshotsToLoad.Count);
                 AggressiveLoadSnaphotsFromList(snapshotsToLoad, null);
             });
         }
@@ -97,7 +97,7 @@ namespace RealRuins {
 
             if (loadIfExists == false) {
                 this.snapshotsToLoad = storeManager.FilterOutExistingItems(snapshotsToLoad, gamePath);
-                Debug.Message("Filtered snapshots {0} -> {1}", snapshotsToLoad.Count, this.snapshotsToLoad.Count);
+                Debug.Log(Debug.Store, "Filtered snapshots {0} -> {1}", snapshotsToLoad.Count, this.snapshotsToLoad.Count);
             } else {
                 this.snapshotsToLoad = snapshotsToLoad; //in case it was call from the outside
             }
@@ -122,25 +122,25 @@ namespace RealRuins {
 
             APIService service = new APIService();
 
-            Debug.Message("Loading some snapshots...", true);
+            Debug.Log(Debug.Store, "Loading some snapshots...", true);
 
             service.LoadRandomMapsList(delegate (bool success, List<string> files) {
                 if (!success) {
-                    Debug.Message("Failed loading list of random maps");
+                    Debug.Log(Debug.Store, "Failed loading list of random maps");
                     ExecuteAfter(delegate () {
                         LoadSomeSnapshots(concurrent, retries - 1);
                     }, new TimeSpan(0, 0, 20));
                     return;
                 }
 
-                Debug.Message("Loaded list of {0} elements...", files.Count);
+                Debug.Log(Debug.Store, "Loaded list of {0} elements...", files.Count);
                 files = storeManager.FilterOutExistingItems(files);
             
                 foreach (string filename in files) {
                     snapshotsToLoad.Add(filename);
                 }
 
-                Debug.Message("Loading {0} files...", snapshotsToLoad.Count);
+                Debug.Log(Debug.Store, "Loading {0} files...", snapshotsToLoad.Count);
 
                 if (snapshotsToLoad.Count > 0) {
                     for (int i = 0; i < concurrent; i++) {
@@ -153,7 +153,7 @@ namespace RealRuins {
         private void LoadNextSnapshot(string gamePath = null) {
             string next = snapshotsToLoad.Pop();
 
-            Debug.Message("Loading snapshot {0}", next);
+            Debug.Log(Debug.Store, "Loading snapshot {0}", next);
 
             APIService service = new APIService();
             service.LoadMap(next, delegate (bool success, byte[] data) {
@@ -203,7 +203,7 @@ namespace RealRuins {
                 } else if (RealRuins_ModSettings.offlineMode) {
                     SnapshotStoreManager.Instance.StoreBinaryData(File.ReadAllBytes(tmpFilename), "local-" + snapshotId + ".bp");
                 } else {
-                    Debug.Message("Uploading file {0}", tmpFilename);
+                    Debug.Log(Debug.Store, "Uploading file {0}", tmpFilename);
                     APIService service = new APIService();
                     service.UploadMap(tmpFilename, delegate (bool success) {
                         File.Delete(tmpFilename);

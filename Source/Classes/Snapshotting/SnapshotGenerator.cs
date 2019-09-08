@@ -76,10 +76,10 @@ namespace RealRuins {
             //apparel
             if (pawn.apparel != null) {
                 if (pawn.apparel.WornApparelCount > 0) {
-                    Debug.Message("starting apparel");
+                    Debug.Log(Debug.BlueprintGen, "starting apparel");
                     writer.WriteStartElement("apparel");
                     foreach (Apparel apparel in pawn.apparel.WornApparel) {
-                        Debug.Message("Trying {0}", apparel);
+                        Debug.Log(Debug.BlueprintGen, "Trying {0}", apparel);
                         string appDef = apparel.def?.defName;
                         string stuffDef = apparel.Stuff?.defName;
                         if (appDef != null) {
@@ -296,12 +296,12 @@ namespace RealRuins {
             float density = ((float) (itemsCount + terrainCount)) / ((xmax - xmin) * (zmax - zmin));
             if (density < 0.01) {
                 //too low density of user generated things.
-                Debug.Message("Too low ruins density: {0}. Ignoring.", density);
+                Debug.Log(Debug.BlueprintGen, "Too low ruins density: {0}. Ignoring.", density);
                 return null;
             }
             if (maxHPItemsCount < itemsCount * 0.25f) {
-                //items with maxhp less than 25% means VERY worn base. It's very likely this base is just a bunch of claimed ruins, and we want to prevent recycling ruins as is
-                Debug.Message("Too low ruins average HP. Ignoring.");
+                //items count with maxhp less than 25% means VERY worn base. It's very likely this base is just a bunch of claimed ruins, and we want to prevent recycling ruins as is
+                Debug.Log(Debug.BlueprintGen, "Too low ruins average HP. Ignoring.");
                 return null;
             }
 
@@ -309,7 +309,7 @@ namespace RealRuins {
 
             string tmpPath = Path.GetTempFileName();
             File.WriteAllText(tmpPath, builder.ToString());
-            Debug.Message("Capture finished successfully and passed all checks. ({0})", tmpPath);
+            Debug.Log(Debug.BlueprintGen, "Capture finished successfully and passed all checks. ({0})", tmpPath);
 
             return tmpPath;
         }

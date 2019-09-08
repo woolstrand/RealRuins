@@ -79,7 +79,7 @@ namespace RealRuins {
 
         private void StartLoadingList() {
             pageState = RuinsPageState.LoadingHeader;
-            Debug.Message("Loading list for seed: {0}", Find.World.info.seedString);
+            Debug.Log("Loading list for seed: {0}", Find.World.info.seedString);
             service.LoadAllMapsForSeed(Find.World.info.seedString, Find.World.info.initialMapSize.x, (int)(Find.World.PlanetCoverage * 100), delegate (bool success, List<PlanetTileInfo> mapTiles) {
                 if (success) {
                     this.mapTiles = mapTiles;
@@ -90,7 +90,7 @@ namespace RealRuins {
 
                     blueprintsTotalCount = blueprintIds.Count;
                     pageState = RuinsPageState.LoadedHeader;
-                    Debug.Message("Loaded list of snapshot names, {0} elements", blueprintsTotalCount);
+                    Debug.Log("Loaded list of snapshot names, {0} elements", blueprintsTotalCount);
                     LoadItems();
                 }
             });
@@ -107,7 +107,7 @@ namespace RealRuins {
                 };
 
                 manager.Completion = delegate (bool success) {
-                    Debug.Message("Completed loading, creating sites.");
+                    Debug.Log(Debug.POI, "Completed loading, creating sites.");
                     pageState = RuinsPageState.ProcessingBlueprints;
                     new Thread(() => {
                         CreateSites();
@@ -115,7 +115,7 @@ namespace RealRuins {
                     }).Start();
                 };
 
-                Debug.Message("Loading blueprints one by one...");
+                Debug.Log(Debug.POI, "Loading blueprints one by one...");
                 string gamePath = string.Format("{0}-{1}-{2}", Find.World.info.seedString.SanitizeForFileSystem(), Find.World.info.initialMapSize.x, (int)(Find.World.PlanetCoverage * 100));
                 manager.AggressiveLoadSnaphotsFromList(blueprintIds, gamePath: gamePath, loadIfExists: false);
             }
