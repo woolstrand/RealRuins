@@ -12,11 +12,17 @@ namespace RealRuins {
         public Faction faction;
         public float value;
         private bool triggered;
-        private int ticksLeft; // shows how many ticks left before auto triggering (if trigger is not triggered yet) or before raid itself (if trigger was triggered by any means)
+        private int ticksLeft = 200; // shows how many ticks left before auto triggering (if trigger is not triggered yet) or before raid itself (if trigger was triggered by any means)
+        private int referenceTimeoutAfterTriggered = 200;
 
         public Thing Thing => this;
 
         public LocalTargetInfo TargetCurrentlyAimingAt => null;
+
+        public void SetTimeouts(int timeoutUntilAutoTrigger, int referenceTimeoutAfterTriggered = 200) {
+            ticksLeft = timeoutUntilAutoTrigger;
+            this.referenceTimeoutAfterTriggered = referenceTimeoutAfterTriggered;
+        }
 
         public bool IsTriggered() {
             return triggered;
@@ -35,13 +41,13 @@ namespace RealRuins {
         
         public override void TickRare()
         {
-            if (base.Spawned) {
+            if (Spawned) {
                 ticksLeft--;
                 if (!triggered) {
                     if (ticksLeft < 0) {
-                        ticksLeft = (int)Math.Abs(Rand.Gaussian(0, 200));
+                        ticksLeft = (int)Math.Abs(Rand.Gaussian(0, referenceTimeoutAfterTriggered));
                         triggered = true;
-                        //Debug.Message("Auto triggered raid at {0}, {1} of value {2} after {3} long ticks (approximately max speed seconds)", base.Position.x, base.Position.z, value, ticksLeft);
+                        Debug.Log("Battle", "Auto triggered raid at {0}, {1} of value {2} after {3} long ticks (approximately max speed seconds)", base.Position.x, base.Position.z, value, ticksLeft);
                     }
 
                     List<Thing> searchSet = PawnsFinder.AllMaps_FreeColonistsSpawned.ToList().ConvertAll(pawn => (Thing)pawn);
@@ -50,7 +56,7 @@ namespace RealRuins {
                     if (thing != null) {
                         ticksLeft = (int)Math.Abs(Rand.Gaussian(0, 200));
                         triggered = true;
-                        //Debug.Message("Triggered raid at {0}, {1} of value {2} after {3} long ticks (approximately max speed seconds)", base.Position.x, base.Position.z, value, ticksLeft);
+                        Debug.Log("Battle", "Triggered raid at {0}, {1} of value {2} after {3} long ticks (approximately max speed seconds)", base.Position.x, base.Position.z, value, ticksLeft);
                     }
                 } else { 
                     if (ticksLeft < 0) {

@@ -22,6 +22,10 @@ namespace RealRuins {
 
             string filename = SnapshotStoreManager.Instance.SnapshotNameFor(tileInfo.mapId, gameName);
             Blueprint bp = BlueprintLoader.LoadWholeBlueprintAtPath(filename);
+            if (bp == null) {
+                return false;
+            }
+
             BlueprintAnalyzer ba = new BlueprintAnalyzer(bp);
             ba.Analyze();
             var poiType = ba.determinedType;

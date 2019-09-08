@@ -10,6 +10,12 @@ using Verse.AI.Group;
 namespace RealRuins{
     class CitizenForcesGeneration : AbstractDefenderForcesGenerator {
 
+        private int bedCount;
+
+        public CitizenForcesGeneration(int bedCount) {
+            this.bedCount = bedCount;
+        }
+
         public override void GenerateForces(Map map, ResolveParams rp) {
 
         }
@@ -20,10 +26,10 @@ namespace RealRuins{
 
             Debug.Log(Debug.ForceGen, "uncoveredCost {0}. rect {1}", uncoveredCost, rp.rect);
             int points = (int)(uncoveredCost / 10);
-            SpawnGroup(points, rp.rect, rp.faction, map);
+            SpawnGroup(points, rp.rect, rp.faction, map, Rand.Range(Math.Max(2, (int)(bedCount * 0.7)), (int)(bedCount * 1.5)));
         }
 
-        private void SpawnGroup(int points, CellRect locationRect, Faction faction, Map map) {
+        private void SpawnGroup(int points, CellRect locationRect, Faction faction, Map map, int countCap) {
             PawnGroupMakerParms pawnGroupMakerParms = new PawnGroupMakerParms();
             pawnGroupMakerParms.groupKind = PawnGroupKindDefOf.Settlement;
             pawnGroupMakerParms.tile = map.Tile;
@@ -40,6 +46,10 @@ namespace RealRuins{
                 Debug.Warning(Debug.ForceGen, "Generating starting party: Pawns list is null");
             } else {
                 Debug.Log(Debug.ForceGen, "Pawns list contains {0} records", pawns.Count);
+            }
+
+            while (pawns.Count > countCap) {
+                pawns.Remove(pawns.RandomElement());
             }
 
             foreach (Pawn p in pawns) {
