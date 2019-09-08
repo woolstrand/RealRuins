@@ -33,9 +33,8 @@ namespace RealRuins {
 
         private void DoArrivalAction(Caravan caravan) {
             bool flag = !mapParent.HasMap;
-            if (flag) {
-                mapParent.SetFaction(Faction.OfPlayer);
-            }
+
+            AffectRelationsIfNeeded();
             Map orGenerateMap = GetOrGenerateMapUtility.GetOrGenerateMap(mapParent.Tile, null);
             Pawn t = caravan.PawnsListForReading[0];
             CaravanEnterMapUtility.Enter(caravan, orGenerateMap, CaravanEnterMode.Edge, CaravanDropInventoryMode.UnloadIndividually);
@@ -44,12 +43,27 @@ namespace RealRuins {
 
 
         public static FloatMenuAcceptanceReport CanEnter(Caravan caravan, MapParent mapParent) {
-            return true;
+            //worldObject.GetComponent<EnterCooldownComp>()?.DaysLeft ?? 0f add message
+            return !(mapParent.GetComponent<EnterCooldownComp>()?.BlocksEntering ?? false);
         }
 
 
         public static IEnumerable<FloatMenuOption> GetFloatMenuOptions(Caravan caravan, MapParent mapParent) {
             return CaravanArrivalActionUtility.GetFloatMenuOptions(() => CanEnter(caravan, mapParent), () => new CaravanArrivalAction_VisitRealRuinsPOI(mapParent), "EnterMap".Translate(mapParent.Label), caravan, mapParent.Tile, mapParent);
+        }
+
+        private void AffectRelationsIfNeeded() {
+            if (mapParent.Faction == null || mapParent.Faction == Faction.OfPlayer) {
+                return;
+            }
+
+            FactionRelationKind playerRelationKind = mapParent.Faction.PlayerRelationKind;
+            if (!mapParent.Faction.HostileTo(Faction.OfPlayer)) {
+                mapParent.Faction.TrySetRelationKind(Faction.OfPlayer, FactionRelationKind.Hostile, canSendLetter: false);
+            } else if (mapParent.Faction.TryAffectGoodwillWith(Faction.OfPlayer, -50, canSendMessage: false, canSendHostilityLetter: false)) {
+            }
+            string letterText = "YOU ARE ASSHOLE.";
+            mapParent.Faction.TryAppendRelationKindChangedInfo(ref letterText, playerRelationKind, mapParent.Faction.PlayerRelationKind);
         }
     }
 }

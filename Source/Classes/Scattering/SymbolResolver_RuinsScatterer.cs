@@ -65,12 +65,12 @@ namespace RealRuins {
             sp.RaidAndScavenge(bp, options); //scavenge remaining items according to scavenge options
 
             btu.Transfer(); //transfer blueprint
-            if (!options.shouldAddRaidTriggers) {
-                btu.ScatterMobs();
-            }
 
-            if (options.shouldAddRaidTriggers) {
-                btu.ScatterRaidTriggers();
+            List<AbstractDefenderForcesGenerator> generators = rp.GetCustom<List<AbstractDefenderForcesGenerator>>(Constants.ForcesGenerators);
+            if (generators != null) {
+                foreach (AbstractDefenderForcesGenerator generator in generators) {
+                    generator.GenerateForces(map, rp);
+                }
             }
 
             if (options.shouldAddFilth) {

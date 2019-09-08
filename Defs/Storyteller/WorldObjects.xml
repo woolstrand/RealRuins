@@ -2,14 +2,14 @@
   <WorldObjectDef>
     <defName>RuinedBase</defName>
     <label>ruins</label>
-    <description>Ruins of an abandoned outpost</description>
+    <description>Ruins of an abandoned base</description>
     <worldObjectClass>MapParent</worldObjectClass>
     <expandingIcon>true</expandingIcon>
     <expandingIconPriority>10</expandingIconPriority>
     <canBePlayerHome>false</canBePlayerHome>
 
     <IncidentTargetTags>
-      <li>Map_PlayerHome</li>
+      <li>Map_TempIncident</li>
     </IncidentTargetTags>
 
     <comps>
@@ -27,14 +27,16 @@
     <mapGenerator>RealRuinsPOI</mapGenerator>
     <expandingIcon>true</expandingIcon>
     <expandingIconPriority>15</expandingIconPriority>
-    <canBePlayerHome>false</canBePlayerHome>
+    <canBePlayerHome>true</canBePlayerHome>
 
     <IncidentTargetTags>
-      <li>Map_PlayerHome</li>
+      <li>Map_TempIncident</li>
     </IncidentTargetTags>
 
     <comps>
       <li Class="RealRuins.WorldObjectCompProperties_RealRuinsPOI" />
+      <li Class="WorldObjectCompProperties_EnterCooldown" />
+      <li Class="WorldObjectCompProperties_FormCaravan" />
     </comps>
   </WorldObjectDef>
 

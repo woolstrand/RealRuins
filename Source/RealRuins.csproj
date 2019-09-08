@@ -67,6 +67,8 @@
     <Compile Include="Classes\Debug.cs" />
     <Compile Include="Classes\DynamicMapObjects\BlueprintAnalyzer.cs" />
     <Compile Include="Classes\DynamicMapObjects\CaravanArrivalAction_VisitRealRuinsPOI.cs" />
+    <Compile Include="Classes\DynamicMapObjects\DefenderForcesGenerator\CitizenForcesGeneration.cs" />
+    <Compile Include="Classes\DynamicMapObjects\DefenderForcesGenerator\MilitaryForcesGenerator.cs" />
     <Compile Include="Classes\DynamicMapObjects\GenStep_ScatterPOIRuins.cs" />
     <Compile Include="Classes\DynamicMapObjects\MapRuinsStore.cs" />
     <Compile Include="Classes\DynamicMapObjects\PlanetTileInfo.cs" />
@@ -93,6 +95,10 @@
     <Compile Include="Classes\Scattering\Internal\BlueprintLoader.cs" />
     <Compile Include="Classes\Scattering\Internal\BlueprintTransferUtility.cs" />
     <Compile Include="Classes\Scattering\Internal\CoverageMap.cs" />
+    <Compile Include="Classes\Scattering\Internal\DefenderForcesGenerator\AnimalInhabitantsForcesGenerator.cs" />
+    <Compile Include="Classes\Scattering\Internal\DefenderForcesGenerator\BattleRoyaleForcesGenerator.cs" />
+    <Compile Include="Classes\Scattering\Internal\DefenderForcesGenerator\AbstractDefenderForcesGenerator.cs" />
+    <Compile Include="Classes\Scattering\Internal\DefenderForcesGenerator\MechanoidsForcesGenerator.cs" />
     <Compile Include="Classes\Scattering\Internal\DeteriorationProcessor.cs" />
     <Compile Include="Classes\Scattering\Internal\ScavengingProcessor.cs" />
     <Compile Include="Classes\Scattering\Internal\Tiles.cs" />
@@ -116,6 +122,7 @@
   <ItemGroup>
     <Content Include="MapGenerators_RealRuins.xml" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>

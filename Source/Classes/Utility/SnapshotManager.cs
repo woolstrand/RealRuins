@@ -52,6 +52,7 @@ namespace RealRuins {
         private int snapshotsToLoadCount = 0;
         private int loadedSnapshotsCount = 0;
         private int failedSnapshotsCount = 0;
+        private bool loadIfExists = true;
 
         private Action<int, int> progress;
         private Action<bool> completion;
@@ -91,20 +92,34 @@ namespace RealRuins {
             });
         }
 
-        public void AggressiveLoadSnaphotsFromList(List<string> snapshotsToLoad, string gamePath = null) {
-            this.snapshotsToLoad = snapshotsToLoad; //in case it was call from the outside
-            this.snapshotsToLoadCount = snapshotsToLoad.Count;
-            if (snapshotsToLoad.Count > 0) {
-                for (int i = 0; i < 10; i++) {
+        public void AggressiveLoadSnaphotsFromList(List<string> snapshotsToLoad, string gamePath = null, bool loadIfExists = true) {
+            this.loadIfExists = loadIfExists;
+
+            if (loadIfExists == false) {
+                this.snapshotsToLoad = storeManager.FilterOutExistingItems(snapshotsToLoad, gamePath);
+                Debug.Message("Filtered snapshots {0} -> {1}", snapshotsToLoad.Count, this.snapshotsToLoad.Count);
+            } else {
+                this.snapshotsToLoad = snapshotsToLoad; //in case it was call from the outside
+            }
+
+            snapshotsToLoadCount = this.snapshotsToLoad.Count;
+            var concurrentLoaders = Math.Min(10, snapshotsToLoadCount);
+
+            if (snapshotsToLoadCount > 0) {
+                for (int i = 0; i < concurrentLoaders; i++) {
                     LoadNextSnapshot(gamePath);
                 }
+            } else {
+                completion?.Invoke(true);
             }
         }
 
         public void LoadSomeSnapshots(int concurrent = 1, int retries = 10) {
             if (snapshotsToLoad.Count > 0) return; //don't start loader if there is something still to load
 
-            //AmazonS3Service listLoader = new AmazonS3Service();
+            loadIfExists = true;
+
+
             APIService service = new APIService();
 
             Debug.Message("Loading some snapshots...", true);

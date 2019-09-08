@@ -42,6 +42,9 @@ namespace RealRuins {
                 comp.originX = tileInfo.originX;
                 comp.originZ = tileInfo.originZ;
                 comp.poiType = (int)poiType;
+                comp.militaryPower = ba.militaryPower;
+                comp.approximateSnapshotCost = ba.result.totalItemsCost;
+                comp.bedsCount = ba.result.bedsCount;
             }
             if (site == null) return false;
  

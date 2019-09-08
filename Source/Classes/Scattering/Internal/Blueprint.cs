@@ -65,58 +65,7 @@ namespace RealRuins {
             if (height > size.z) height = size.z;
         }
 
-        // -------------------- cost and weight related methods --------------------
 
-        //Calculates cost of item made of stuff, or default cost if stuff is null
-        //Golden wall is a [Wall] made of [Gold], golden tile is a [GoldenTile] made of default material
-        private float ThingComponentsMarketCost(BuildableDef buildable, ThingDef stuffDef = null) {
-            float num = 0f;
-
-            if (buildable == null) return 0; //can be for missing subcomponents, i.e. bed from alpha-poly. Bed does exist, but alpha poly does not.
-
-            if (buildable.costList != null) {
-                foreach (ThingDefCountClass cost in buildable.costList) {
-                    num += (float)cost.count * ThingComponentsMarketCost(cost.thingDef);
-                }
-            }
-
-            if (buildable.costStuffCount > 0) {
-                if (stuffDef == null) {
-                    stuffDef = GenStuff.DefaultStuffFor(buildable);
-                }
-
-                if (stuffDef != null) {
-                    num += (float)buildable.costStuffCount * stuffDef.BaseMarketValue * (1.0f / stuffDef.VolumePerUnit);
-                }
-            }
-
-            if (num == 0) {
-                if (buildable is ThingDef) {
-                    if (((ThingDef)buildable).recipeMaker == null) {
-                        return ((ThingDef)buildable).BaseMarketValue; //on some reason base market value is calculated wrong for, say, golden walls
-                    }
-                }
-            }
-            return num;
-        }
-
-        private float ThingWeight(ThingDef thingDef, ThingDef stuffDef) {
-            if (thingDef == null) return 0;
-
-            float weight = thingDef.GetStatValueAbstract(StatDefOf.Mass, stuffDef);
-            if (weight != 0 && weight != 1.0f) return weight;
-            if (thingDef.costList == null) return 1.0f; //weight is either 1 or 0, no way to calculate real weight, weight 0 is invalid => returning 1.
-
-            //Debug.Message("Weight of {0} was {1}, calculating resursively based on list", thing.defName, weight);
-            //Debug.PrintArray(thing.costList.ToArray());
-            weight = 0;
-            foreach (ThingDefCountClass part in thingDef.costList) {
-                weight += part.count * ThingWeight(part.thingDef, null);
-            }
-            //Debug.Message("Result: {0}", weight);
-           
-            return weight != 0?weight:1.0f;
-        }
 
         public void UpdateBlueprintStats(bool includeCost = false) {
             totalCost = 0;
@@ -134,14 +83,14 @@ namespace RealRuins {
                         if (includeCost) {
                             try {
                                 //Since at this moment we don't have filtered all things, we can't be sure that cost for all items can be calculated
-                                item.cost = ThingComponentsMarketCost(thingDef, stuffDef) * item.stackCount;
+                                item.cost = thingDef.ThingComponentsMarketCost(stuffDef) * item.stackCount;
                                 totalCost += item.cost;
                             } catch (Exception) { } //just ignore items with uncalculatable cost
                         }
 
                         if (item.defName.Contains("Wall")) item.weight = 5; //walls are on some reason always have weight of 1, which is obviously not correct. The game itself does not need walls weight, so that's ok, but we need.
 
-                        item.weight = ThingWeight(thingDef, stuffDef);
+                        item.weight = thingDef.ThingWeight(stuffDef);
                         
                         if (item.stackCount != 0) item.weight *= item.stackCount;
                         if (item.weight == 0) {
@@ -160,7 +109,7 @@ namespace RealRuins {
                         TerrainDef terrainDef = DefDatabase<TerrainDef>.GetNamed(terrainTile.defName, false);
                         if (terrainDef != null && includeCost) {
                             try {
-                                terrainTile.cost = ThingComponentsMarketCost(terrainDef);
+                                terrainTile.cost = terrainDef.ThingComponentsMarketCost();
                                 totalCost += terrainTile.cost;
                             } catch (Exception) { }
                         }

@@ -50,6 +50,7 @@ namespace RealRuins {
 
         private Blueprint blueprint;
         public POIType determinedType;
+        public float militaryPower;
         public int approximateDisplayValue;
         public List<string> randomMostValueableItemDefNames;
 
@@ -103,7 +104,7 @@ namespace RealRuins {
 
             string lowerName = itemTile.defName.ToLower();
 
-            if (itemDef.IsShell || itemDef.IsWeapon || lowerName.Contains("turret") || lowerName.Contains("cannon") || lowerName.Contains("gun")) {
+            if (itemDef.IsShell || itemDef.IsRangedWeapon || lowerName.Contains("turret") || lowerName.Contains("cannon") || lowerName.Contains("gun")) {
                 result.militaryItemsCount++;
                 message += "military ";
                 if (itemDef.building != null) {
@@ -162,9 +163,10 @@ namespace RealRuins {
         }
 
         private POIType supposedType() {
-            float militaryScore = 0;
             float prodScore = 0;
             float researchScore = 0;
+
+            militaryPower = 0;
 
             //many walls, liitle internal space => ruins
             if (result.wallLength < 70 || (result.totalItemsCost < 2000 && result.bedsCount < 1)) {
@@ -180,24 +182,25 @@ namespace RealRuins {
                 return POIType.Ruins;
             }
 
-            militaryScore = (float)(result.militaryItemsCount + result.defensiveItemsCount * 10) * 25 / result.internalArea;
-            prodScore = (result.productionItemsCount * 50 + result.haulableItemsCount) * 5 / result.internalArea;
+            militaryPower = (float)(result.militaryItemsCount + (result.defensiveItemsCount * 10)) * 25 / result.internalArea;
+            prodScore = result.productionItemsCount * 10 + (result.haulableStacksCount * 5 / result.internalArea);
 
-            Debug.Message("military: {0}. prod: {1}", militaryScore, prodScore);
+            Debug.Message("military: {0}. prod: {1}", militaryPower, prodScore);
 
-            if (militaryScore < 3 && prodScore < 4) {
+            if (militaryPower < 3 && prodScore <= 50) {
                 if (result.internalArea < 2000 && result.bedsCount > 0 && result.totalItemsCost < 30000) {
                     return POIType.Camp;
                 }
-                if ((float)(result.occupiedTilesCount - result.wallLength) / result.haulableStacksCount < 3) {
-                    return POIType.Storage;
-                }
-                if (result.internalArea >= 2000) {
+                if (result.internalArea >= 2000 && result.roomsCount > 12) {
                     return POIType.City;
                 }
+                if ((float)(result.occupiedTilesCount - result.wallLength) / result.haulableStacksCount < 3 || result.bedsCount < 3) {
+                    return POIType.Storage;
+                }
+                return POIType.Camp;
             }
 
-            if (militaryScore >= 3 && militaryScore < 8 && prodScore < 4) {
+            if (militaryPower >= 3 && militaryPower < 8 && prodScore < 50) {
                 if (result.internalArea < 2000) {
                     return Rand.Chance(0.5f)?POIType.Outpost:POIType.Communication;
                 }
@@ -209,12 +212,24 @@ namespace RealRuins {
                 }
             }
 
-            if (militaryScore < 8 && prodScore >= 4) {
-                return Rand.Chance(0.5f) ? POIType.Factory : POIType.Research;
+            if (militaryPower < 8 && prodScore >= 50) {
+                if (result.haulableItemsCost / result.haulableItemsCount > 30) {
+                    return POIType.Research;
+                } else {
+                    return POIType.Factory;
+                }
             }
 
-            if (militaryScore >= 8) {
-                return POIType.MilitaryBaseLarge;
+            if (militaryPower >= 8) {
+                if (result.defensiveItemsCount > 15) {
+                    return POIType.MilitaryBaseLarge;
+                } else {
+                    if (result.internalArea > 2000) {
+                        return POIType.MilitaryBaseSmall;
+                    } else {
+                        return Rand.Chance(0.5f) ? POIType.Outpost : POIType.Communication;
+                    }
+                }
             }
 
             return POIType.Ruins;
