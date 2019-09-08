@@ -15,6 +15,7 @@ namespace RealRuins {
         public override Color ExpandingIconColor => Faction?.Color ?? Color.white;
         private Material cachedMat;
         private float wealthOnEnter = 1;
+        private Faction originalFaction;
 
         public override Material Material {
             get {
@@ -37,6 +38,7 @@ namespace RealRuins {
         public override void ExposeData() {
             base.ExposeData();
             Scribe_Values.Look(ref wealthOnEnter, "wealthOnEnter");
+            Scribe_References.Look(ref originalFaction, "originalFaction");
         }
 
         public override IEnumerable<Gizmo> GetGizmos() {
@@ -70,6 +72,7 @@ namespace RealRuins {
             if (shouldRemove) {
                 EnterCooldownComp cooldownComp = GetComponent<EnterCooldownComp>();
                 RealRuinsPOIComp poiComp = GetComponent<RealRuinsPOIComp>();
+                SetFaction(originalFaction);
                 float blueprintCost = 1;
                 if (poiComp != null) {
                     if (poiComp.poiType == (int)POIType.Ruins) {

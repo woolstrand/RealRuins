@@ -81,7 +81,7 @@ namespace RealRuins {
                 poiComp.originX + bp.width, poiComp.originZ + bp.height,
                 bp.width, bp.height);
 
-            var generators = GeneratorsForBlueprint(bp, (POIType)poiComp.poiType, poiComp.militaryPower, map.Parent.Faction);
+            var generators = GeneratorsForBlueprint(bp, poiComp, map.Parent.Faction);
 
             ResolveParams resolveParams = default(ResolveParams);
             BaseGen.globalSettings.map = map;
@@ -110,26 +110,26 @@ namespace RealRuins {
 
         }
 
-        private List<AbstractDefenderForcesGenerator> GeneratorsForBlueprint(Blueprint bp, POIType poiType, float militaryPower, Faction faction) {
+        private List<AbstractDefenderForcesGenerator> GeneratorsForBlueprint(Blueprint bp, RealRuinsPOIComp poiComp, Faction faction) {
             List<AbstractDefenderForcesGenerator> result = new List<AbstractDefenderForcesGenerator>();
 
-            if (faction == null && poiType != POIType.Ruins) {
+            if (faction == null && (POIType)poiComp.poiType != POIType.Ruins) {
                 
             }
 
-            switch (poiType) {
+            switch ((POIType)poiComp.poiType) {
                 case POIType.MilitaryBaseSmall:
                 case POIType.MilitaryBaseLarge:
                 case POIType.Outpost:
-                    result.Add(new MilitaryForcesGenerator(militaryPower));
+                    result.Add(new MilitaryForcesGenerator(poiComp.militaryPower));
                     break;
                 case POIType.Camp:
                 case POIType.City:
                 case POIType.Factory:
                 case POIType.PowerPlant:
                 case POIType.Research:
-                    result.Add(new CitizenForcesGeneration());
-                    if (bp.totalCost > 100000) {
+                    result.Add(new CitizenForcesGeneration(poiComp.bedsCount));
+                    if (bp.totalCost > 50000 || bp.totalCost > 10000 && (poiComp.bedsCount < 6)) {
                         result.Add(new MilitaryForcesGenerator(3));
                     }
                     break;
@@ -137,7 +137,7 @@ namespace RealRuins {
                     if (bp.totalCost > 30000) {
                         result.Add(new MilitaryForcesGenerator(2));
                     } else {
-                        result.Add(new CitizenForcesGeneration());
+                        result.Add(new CitizenForcesGeneration(poiComp.bedsCount));
                     }
                     break;
                 case POIType.Ruins:
