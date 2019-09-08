@@ -92,7 +92,7 @@ namespace RealRuins {
         public void GetSettings() {
             GetSettings<RealRuins_ModSettings>();
             if (RealRuins_ModSettings.defaultScatterOptions == null) {
-                Debug.Message("Scatter settings is null! setting default");
+                Debug.Warning("Scatter settings is null! setting default");
                 RealRuins_ModSettings.defaultScatterOptions = ScatterOptions.Default;
             }
             //Debug.Message("Settings scatter: {1}", RealRuins_ModSettings.defaultScatterOptions);

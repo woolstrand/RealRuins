@@ -94,7 +94,7 @@ namespace RealRuins {
             };
 
             void failureHandler(Exception ex) {
-                Debug.Message(string.Format("Exception during loading object: {0}", ex), true);
+                Debug.Warning(Debug.Loader, string.Format("Exception during loading object: {0}", ex), true);
                 completionHandler(false, null);
             }
 
@@ -105,7 +105,7 @@ namespace RealRuins {
             var path = APIRoot + MapsBySeedListPath + seed;
 
             string requestLink = path + "?limit=9999&coverage=" + coverage + "&mapSize=" + mapSize;
-            Debug.Message("Loading all compatible blueprings by link {0}", requestLink);
+            Debug.Log(Debug.Loader, "Loading all compatible blueprings by link {0}", requestLink);
             UnityWebRequest request = new UnityWebRequest(requestLink, "GET") {
                 downloadHandler = new DownloadHandlerBuffer()
             };
@@ -135,7 +135,7 @@ namespace RealRuins {
             };
 
             void failureHandler(Exception ex) {
-                Debug.Message(string.Format("Exception during loading object: {0}", ex), true);
+                Debug.Error(Debug.Loader, string.Format("Exception during loading object: {0}", ex), true);
                 completionHandler(false, null);
             }
 
@@ -156,7 +156,7 @@ namespace RealRuins {
             };
 
             void failureHandler(Exception ex) {
-                Debug.Message(string.Format("Exception during loading map by link {1}: {0}", ex, link), true);
+                Debug.Error(Debug.Loader, string.Format("Exception during loading map by link {1}: {0}", ex, link), true);
                 completionHandler(false, null);
             }
 
@@ -178,12 +178,12 @@ namespace RealRuins {
 
 
             Action<byte[]> internalSuccessHandler = delegate (byte[] response) {
-                Debug.Message("Map upload successful");
+                Debug.Log(Debug.Loader, "Map upload successful");
                 completionHandler?.Invoke(true);
             };
 
             void failureHandler(Exception ex) {
-                Debug.Message("Exception during uploading: {0}", ex);
+                Debug.Warning(Debug.Loader, "Exception during uploading: {0}", ex);
                 completionHandler?.Invoke(false);
             }
 

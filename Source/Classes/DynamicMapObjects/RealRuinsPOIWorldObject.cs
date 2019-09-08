@@ -52,7 +52,7 @@ namespace RealRuins {
             base.PostMapGenerate();
             //we don't use wealth watcher because it can't be set up properly (counts only player's belongings and always includes pawns)
             wealthOnEnter = CurrentMapWealth(); 
-            Debug.Message("Started with cost of {0}", wealthOnEnter);
+            Debug.Log(Debug.POI, "Started with cost of {0}", wealthOnEnter);
         }
 
         public override void Tick() {
@@ -87,7 +87,7 @@ namespace RealRuins {
                     cooldownComp.Props.durationDays = Math.Max(4, difference / 2000);
                 }
 
-                Debug.Message("on enter {0}, now {1}, snapshot: {4}, diff {2}, ratio {3},", wealthOnEnter, mapWealth, difference, ratio, blueprintCost);
+                Debug.Log(Debug.POI, "on enter {0}, now {1}, snapshot: {4}, diff {2}, ratio {3},", wealthOnEnter, mapWealth, difference, ratio, blueprintCost);
 
                 alsoRemoveWorldObject = ratio > 0.5; //at least half worth of initial wealth is destroyed or stolen.
                 return true;

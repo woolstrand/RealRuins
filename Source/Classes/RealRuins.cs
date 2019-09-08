@@ -29,11 +29,11 @@ namespace RealRuins
 
         static RealRuins() {
             DateTime startTime = DateTime.Now;
-            Debug.Message("RealRuins started patching at {0}", startTime);
+            Debug.SysLog("RealRuins started patching at {0}", startTime);
             var harmony = HarmonyInstance.Create("com.woolstrand.realruins");
 
             harmony.PatchAll(Assembly.GetExecutingAssembly());
-            Debug.Message("RealRuins finished patching at {0} ({1} msec)", DateTime.Now, (DateTime.Now - startTime).TotalMilliseconds);
+            Debug.SysLog("RealRuins finished patching at {0} ({1} msec)", DateTime.Now, (DateTime.Now - startTime).TotalMilliseconds);
 
             if (RealRuins_ModSettings.allowDownloads && !RealRuins_ModSettings.offlineMode) {
                 SnapshotManager.Instance.LoadSomeSnapshots();

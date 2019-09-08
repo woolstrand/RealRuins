@@ -132,11 +132,11 @@ namespace RealRuins {
         }
   
         public void Analyze() {
-            Debug.Message("analyzing blueprint {0} with options {1}", blueprint, options);
+            Debug.Log("analyzing blueprint {0} with options {1}", blueprint, options);
             blueprint.FindRooms();
-            Debug.Message("Rooms found");
+            Debug.Log("Rooms found");
             BlueprintPreprocessor.ProcessBlueprint(blueprint, options);
-            Debug.Message("Blueprint processed");
+            Debug.Log("Blueprint processed");
 
             result = new BlueprintAnalyzerResult();
             result.totalArea = blueprint.width * blueprint.height;
@@ -148,7 +148,7 @@ namespace RealRuins {
             }
 
             blueprint.UpdateBlueprintStats(includeCost: true);
-            Debug.Message("Analyzing map");
+            Debug.Log("Analyzing map");
             for (int y = 0; y < blueprint.height; y++) {
                 for (int x = 0; x < blueprint.width; x++) {
                     List<ItemTile> tiles = blueprint.itemsMap[x, y] ?? new List<ItemTile>();
@@ -159,7 +159,7 @@ namespace RealRuins {
             }
 
             determinedType = supposedType();
-            Debug.Message("Type is {0} by {1}", determinedType, result.ToString());
+            Debug.Log("Type is {0} by {1}", determinedType, result.ToString());
         }
 
         private POIType supposedType() {
@@ -185,7 +185,7 @@ namespace RealRuins {
             militaryPower = (float)(result.militaryItemsCount + (result.defensiveItemsCount * 10)) * 25 / result.internalArea;
             prodScore = result.productionItemsCount * 10 + (result.haulableStacksCount * 5 / result.internalArea);
 
-            Debug.Message("military: {0}. prod: {1}", militaryPower, prodScore);
+            Debug.Log("military: {0}. prod: {1}", militaryPower, prodScore);
 
             if (militaryPower < 3 && prodScore <= 50) {
                 if (result.internalArea < 2000 && result.bedsCount > 0 && result.totalItemsCost < 30000) {

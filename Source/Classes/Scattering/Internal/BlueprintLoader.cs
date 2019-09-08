@@ -48,7 +48,7 @@ namespace RealRuins {
         }
 
         private void LoadBlueprint() {
-            Debug.Message("Loading blueprint at path {0}", snapshotName);
+            Debug.Log(Debug.BlueprintTransfer, "Loading blueprint at path {0}", snapshotName);
 
             string deflatedName = snapshotName;
             if (Path.GetExtension(snapshotName).Equals(".bp")) {

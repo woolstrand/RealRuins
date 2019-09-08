@@ -65,7 +65,7 @@ namespace RealRuins
         public override void Generate(Map map, GenStepParams parms) {
             //skip generation due to low blueprints count
             if (SnapshotStoreManager.Instance.StoredSnapshotsCount() < 10) {
-                Debug.Message("Skipping ruins gerenation due to low blueprints count.");
+                Debug.Error("Skipping ruins gerenation due to low blueprints count.");
                 return;
             }
 
@@ -131,8 +131,8 @@ namespace RealRuins
                 //number of ruins based on density settings
                 var num = (int)((float)map.Area / 10000.0f) * Rand.Range(1 * totalDensity, 2 * totalDensity);
 
-                Debug.Message("dist {0}, dens {1} (x{2}), scale x{3} ({4}-{5}), scav {6}, deter {7}", distanceToSettlement, currentOptions.densityMultiplier, densityMultiplier, scaleMultiplier, currentOptions.minRadius, currentOptions.maxRadius, currentOptions.scavengingMultiplier, currentOptions.deteriorationMultiplier);
-                Debug.Message("Spawning {0} ruin chunks", num);
+                Debug.Log("dist {0}, dens {1} (x{2}), scale x{3} ({4}-{5}), scav {6}, deter {7}", distanceToSettlement, currentOptions.densityMultiplier, densityMultiplier, scaleMultiplier, currentOptions.minRadius, currentOptions.maxRadius, currentOptions.scavengingMultiplier, currentOptions.deteriorationMultiplier);
+                Debug.Log("Spawning {0} ruin chunks", num);
                 BaseGen.globalSettings.map = map;
 
                 bool shouldUnpause = false;
@@ -191,7 +191,7 @@ namespace RealRuins
             //Debug.Message("Overridden LARGE generate");
 
                 string filename = map.Parent.GetComponent<RuinedBaseComp>()?.blueprintFileName;
-                Debug.Message("Preselected file name is {0}", filename);
+                Debug.Log(Debug.Scatter, "Preselected file name is {0}", filename);
 
                 currentOptions = RealRuins_ModSettings.defaultScatterOptions.Copy(); //store as instance variable to keep accessible on subsequent ScatterAt calls
 
@@ -267,7 +267,7 @@ namespace RealRuins
 
         public override void Generate(Map map, GenStepParams parms) {
 
-            Debug.Message("Medium generate");
+            Debug.Log(Debug.Scatter, "Medium generate");
                 Find.TickManager.Pause();
 
                 currentOptions = RealRuins_ModSettings.defaultScatterOptions.Copy(); //store as instance variable to keep accessible on subsequent ScatterAt calls

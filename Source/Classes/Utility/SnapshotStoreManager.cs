@@ -52,7 +52,7 @@ namespace RealRuins
             string[] oldFiles = Directory.GetFiles(oldRootFolder);
             
             DateTime startTime = DateTime.Now;
-            Debug.Message("RealRuins: Started moving {0} files at {1}", oldFiles.Length, startTime);
+            Debug.SysLog("Started moving {0} files at {1}", oldFiles.Length, startTime);
 
             foreach (string fullPath in oldFiles) {
                 string filename = Path.GetFileName(fullPath);
@@ -69,7 +69,7 @@ namespace RealRuins
                 }
             }
 
-            Debug.Message("RealRuins: finished at {0} ({1} msec)", DateTime.Now, (DateTime.Now - startTime).TotalMilliseconds);
+            Debug.SysLog("finished at {0} ({1} msec)", DateTime.Now, (DateTime.Now - startTime).TotalMilliseconds);
 
             try {
                 Directory.Delete(oldRootFolder);
@@ -117,7 +117,7 @@ namespace RealRuins
                     try {
                         directoryInfo.Create();
                     } catch {
-                        Debug.Message("Can't create test dirt");
+                        Debug.Error(Debug.Store, "Can't access store path");
                     }
                 }
 
@@ -161,7 +161,7 @@ namespace RealRuins
             if (files.Length == 0) return null;
 
             int index = Rand.Range(0, files.Length);
-            Debug.Message("files length: {0} count {1}, selected: {2}", files.Length, files.Count(), index);
+            Debug.Log(Debug.Store, "files length: {0} count {1}, selected: {2}", files.Length, files.Count(), index);
             return files[index];
         }
 

@@ -447,8 +447,8 @@ namespace RealRuins {
                     mapOriginX = options.overridePosition.x;
                     mapOriginZ = options.overridePosition.z;
                 } else {
-                    Debug.Message("Tried to override position, but map exceeded bounds and position was reverted due to corresponding options flag.");
-                    Debug.Message("New position: {0}, {1}", mapOriginX, mapOriginZ);
+                    Debug.Warning(Debug.BlueprintTransfer, "Tried to override position, but map exceeded bounds and position was reverted due to corresponding options flag.");
+                    Debug.Warning(Debug.BlueprintTransfer, "New position: {0}, {1}", mapOriginX, mapOriginZ);
                 }
             }
         }
@@ -669,7 +669,7 @@ namespace RealRuins {
                 }
                 options.uncoveredCost = totalCost;
             }
-            Debug.Message("Transferred blueprint of size {0}x{1}, age {2}, total cost of approximately {3}. Items: {4}/{5}, terrains: {6}/{7}", blueprint.width, blueprint.height, -blueprint.dateShift, totalCost, transferredTiles, totalItems, transferredTerrains, totalTerrains);
+            Debug.Log(Debug.BlueprintTransfer, "Transferred blueprint of size {0}x{1}, age {2}, total cost of approximately {3}. Items: {4}/{5}, terrains: {6}/{7}", blueprint.width, blueprint.height, -blueprint.dateShift, totalCost, transferredTiles, totalItems, transferredTerrains, totalTerrains);
         }
 
         public void AddFilthAndRubble() {

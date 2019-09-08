@@ -18,7 +18,7 @@ namespace RealRuins{
             ScatterOptions currentOptions = rp.GetCustom<ScatterOptions>(Constants.ScatterOptions);
             float uncoveredCost = currentOptions.uncoveredCost;
 
-            Debug.Message("citizen gen: uncoveredCost {0}. rect {1}", uncoveredCost, rp.rect);
+            Debug.Log(Debug.ForceGen, "uncoveredCost {0}. rect {1}", uncoveredCost, rp.rect);
             int points = (int)(uncoveredCost / 10);
             SpawnGroup(points, rp.rect, rp.faction, map);
         }
@@ -37,9 +37,9 @@ namespace RealRuins{
             CellRect rect = locationRect;
 
             if (pawns == null) {
-                Debug.Message("Pawns list is null");
+                Debug.Warning(Debug.ForceGen, "Generating starting party: Pawns list is null");
             } else {
-                Debug.Message("Pawns list contains {0} records", pawns.Count);
+                Debug.Log(Debug.ForceGen, "Pawns list contains {0} records", pawns.Count);
             }
 
             foreach (Pawn p in pawns) {
@@ -50,7 +50,7 @@ namespace RealRuins{
                 if (result) {
                     GenSpawn.Spawn(p, location, map, Rot4.Random);
                 } else {
-                    Debug.Message("Can't find location!");
+                    Debug.Warning(Debug.ForceGen, "Can't find spawning location for defender pawn!");
                 }
             }
 

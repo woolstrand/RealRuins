@@ -65,12 +65,12 @@ namespace RealRuins {
             }
             float baseRaidCapacity = ruinsArea / 10 * scavengersActivity;
 
-            Debug.Message("Performing {0} raids. Base capacity: {1}", raidsCount, baseRaidCapacity);
+            Debug.Log(Debug.BlueprintTransfer, "Performing {0} raids. Base capacity: {1}", raidsCount, baseRaidCapacity);
 
             for (int i = 0; i < raidsCount; i++) {
                 float raidCapacity = baseRaidCapacity * (float)Math.Pow(1.1, i);
                 bool shouldStop = false;
-                Debug.Message("Performing raid {0} of capacity {1}", i, raidCapacity);
+                Debug.Log(Debug.BlueprintTransfer, "Performing raid {0} of capacity {1}", i, raidCapacity);
 
                 while (tilesByCost.Count > 0 && raidCapacity > 0 && !shouldStop) {
                     Tile topTile = tilesByCost.Pop();
@@ -113,7 +113,7 @@ namespace RealRuins {
                             }
                         }
                     }
-                    Debug.Message(msg);
+                    Debug.Log(Debug.BlueprintTransfer, msg);
                     if (shouldStop) break;
                 }
                 if (shouldStop) break;
@@ -153,7 +153,7 @@ namespace RealRuins {
         }
 
         private void LimitCostToCap() {
-            //Debug.Message("Capping current cost of {0} to target cost of {1}", totalCost, options.costCap);
+            Debug.Log(Debug.BlueprintTransfer, "Capping current cost of {0} to target cost of {1}", totalCost, options.costCap);
 
             var initialCount = tilesByCost.Count;
             var filteredItems = tilesByCost.Where(item => item.cost > 20).ToList();
@@ -170,7 +170,7 @@ namespace RealRuins {
                 }
             }
 
-            //Debug.Message("Done. Resulting cost is {0}. Items left: {1}/{2}", totalCost, tilesByCost.Count, initialCount);
+            Debug.Log(Debug.BlueprintTransfer, "Done. Resulting cost is {0}. Items left: {1}/{2}", totalCost, tilesByCost.Count, initialCount);
         }
     }
 

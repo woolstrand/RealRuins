@@ -29,8 +29,8 @@ namespace RealRuins {
             string filename = SnapshotStoreManager.Instance.SnapshotNameFor(poiComp.blueprintName, poiComp.gameName);
 
 
-            Debug.Message("Preselected file name is {0}", filename);
-            Debug.Message("Location is {0} {1}", poiComp.originX, poiComp.originZ);
+            Debug.Log("Spawning POI: Preselected file name is {0}", filename);
+            Debug.Log("Location is {0} {1}", poiComp.originX, poiComp.originZ);
 
             currentOptions = RealRuins_ModSettings.defaultScatterOptions.Copy(); //store as instance variable to keep accessible on subsequent ScatterAt calls
 
@@ -75,7 +75,7 @@ namespace RealRuins {
             var a = new BlueprintAnalyzer(bp, currentOptions);
             a.Analyze();
 
-            Debug.Message("Trying to place POI map at tile {0}, at {1},{2} to {3},{4} ({5}x{6})",
+            Debug.Log(Debug.BlueprintTransfer, "Trying to place POI map at tile {0}, at {1},{2} to {3},{4} ({5}x{6})",
                 map.Parent.Tile,
                 poiComp.originX, poiComp.originZ,
                 poiComp.originX + bp.width, poiComp.originZ + bp.height,

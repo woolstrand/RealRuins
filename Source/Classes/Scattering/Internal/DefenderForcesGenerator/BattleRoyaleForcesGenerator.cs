@@ -74,7 +74,7 @@ namespace RealRuins {
                     pointsCost = uncoveredCost / 10.0f;
                     FloatRange defaultPoints = new FloatRange(pointsCost * 0.7f,
                         Math.Min(12000.0f, pointsCost * 2.0f));
-                    Debug.Message("Adding starting party. Remaining points: {0}. Used points range: {1}",
+                    Debug.Log(Debug.ForceGen, "Adding starting party. Remaining points: {0}. Used points range: {1}",
                         currentOptions.uncoveredCost, defaultPoints);
 
                 }
@@ -123,7 +123,7 @@ namespace RealRuins {
             CellRect rect = locationRect;
 
             if (pawns == null) {
-                Debug.Message("Pawns list is null");
+                Debug.Warning(Debug.ForceGen, "Pawns list is null");
             }
 
             foreach (Pawn p in pawns) {
