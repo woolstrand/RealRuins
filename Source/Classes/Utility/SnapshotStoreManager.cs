@@ -175,7 +175,15 @@ namespace RealRuins
         }
 
         public string SnapshotNameFor(string snapshotId, string gameName) {
-            return GetSnapshotsFolderPath() + "/" + gameName + "/" + snapshotId + ".bp";
+            if (gameName == null) {
+                return GetSnapshotsFolderPath() + "/" + snapshotId + ".bp";
+            } else {
+                return GetSnapshotsFolderPath() + "/" + gameName + "/" + snapshotId + ".bp";
+            }
+        }
+
+        public bool SnapshotExists(string snapshotId, string gameName) {
+            return File.Exists(SnapshotNameFor(snapshotId, gameName));
         }
 
         public int StoredSnapshotsCount() {
@@ -190,12 +198,12 @@ namespace RealRuins
             }
         }
 
-        public List<string> FilterOutExistingItems(List<string> source) {
+        public List<string> FilterOutExistingItems(List<string> source, string gamePath = null) {
 
             List<string> result = new List<string>();
 
             foreach (string item in source) {
-                if (!File.Exists(GetSnapshotsFolderPath() + "/" + item + ".bp")) { 
+                if (!File.Exists(SnapshotNameFor(item, gamePath))) { 
                     result.Add(item);
                 }
             }

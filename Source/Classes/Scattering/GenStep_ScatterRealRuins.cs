@@ -149,8 +149,15 @@ namespace RealRuins
                     //We use copy of scatteroptions because each scatteroptions represents separate chunk with separate location, size, maps, etc.
                     //should use struct instead? is it compatible with IExposable?
                     ResolveParams rp = default(ResolveParams);
-                    rp.SetCustom<ScatterOptions>(Constants.ScatterOptions, currentOptions.Copy());
-                    rp.SetCustom<CoverageMap>(Constants.CoverageMap, coverageMap);
+                    rp.SetCustom(Constants.ScatterOptions, currentOptions.Copy());
+                    rp.SetCustom(Constants.CoverageMap, coverageMap);
+                    if (Rand.Chance(currentOptions.hostileChance)) {
+                        if (Rand.Chance(0.8f)) {
+                            rp.SetCustom(Constants.ForcesGenerators, new List<AbstractDefenderForcesGenerator> { new AnimalInhabitantsForcesGenerator() });
+                        } else {
+                            rp.SetCustom(Constants.ForcesGenerators, new List<AbstractDefenderForcesGenerator> { new MechanoidsForcesGenerator(0) });
+                        }
+                    }
                     rp.faction = Find.FactionManager.OfAncientsHostile;
                     var center = CellFinder.RandomNotEdgeCell(10, map);
                     rp.rect = new CellRect(center.x, center.z, 1, 1); //after generation will be extended to a real size
@@ -211,8 +218,9 @@ namespace RealRuins
 
                 ResolveParams resolveParams = default(ResolveParams);
                 BaseGen.globalSettings.map = map;
-                resolveParams.SetCustom<ScatterOptions>(Constants.ScatterOptions, currentOptions);
+                resolveParams.SetCustom(Constants.ScatterOptions, currentOptions);
                 resolveParams.faction = Find.FactionManager.OfAncientsHostile;
+                resolveParams.SetCustom(Constants.ForcesGenerators, new List<AbstractDefenderForcesGenerator> { new BattleRoyaleForcesGenerator() });
                 resolveParams.rect = new CellRect(0, 0, map.Size.x, map.Size.z);
                 BaseGen.symbolStack.Push("scatterRuins", resolveParams);
 
@@ -226,98 +234,24 @@ namespace RealRuins
                     }
                 }
 
-                
-                //adding starting party
-                //don't doing it via basegen because of uh oh i don't remember, something with pawn location control
-
-                if (uncoveredCost > 0 || currentOptions.startingPartyPoints > 0) {
-                    float pointsCost = 0;
-                    if (currentOptions.startingPartyPoints > 0) {
-                        pointsCost = currentOptions.startingPartyPoints;
-                    } else {
-                        pointsCost = uncoveredCost / 10.0f;
-                        FloatRange defaultPoints = new FloatRange(pointsCost * 0.7f,
-                            Math.Min(12000.0f, pointsCost * 2.0f));
-                        Debug.Message("Adding starting party. Remaining points: {0}. Used points range: {1}",
-                            currentOptions.uncoveredCost, defaultPoints);
-
-                    }
-                    pointsCost *= Find.Storyteller.difficulty.threatScale;
-                    ScatterStartingParties((int)pointsCost, currentOptions.allowFriendlyRaids, map);
-
-                }
-
                 BaseGen.symbolStack.Push("chargeBatteries", resolveParams);
                 BaseGen.symbolStack.Push("refuel", resolveParams);
 
                 BaseGen.Generate();
 
 
-        }
 
-        private void ScatterStartingParties(int points, bool allowFriendly, Map map) {
-            
-            while (points > 0) {
-                int pointsUsed = Rand.Range(200, Math.Min(3000, points / 5));
-
-                IntVec3 rootCell = CellFinder.RandomNotEdgeCell(30, map);
-                CellFinder.TryFindRandomSpawnCellForPawnNear(rootCell, map, out IntVec3 result);
-                if (result.IsValid) {
-                    Faction faction = null;
-                    if (allowFriendly) {
-                        Find.FactionManager.TryGetRandomNonColonyHumanlikeFaction(out faction, false);
-                    } else {
-                        faction = Find.FactionManager.RandomEnemyFaction();
-                    }
-
-                    if (faction == null) faction = Find.FactionManager.AllFactions.RandomElement(); 
-
-                    SpawnGroup(pointsUsed, new CellRect(result.x - 10, result.z - 10, 20, 20), faction, map);
-                    points -= pointsUsed;
+            //adding starting party
+            //don't doing it via basegen because of uh oh i don't remember, something with pawn location control
+            List<AbstractDefenderForcesGenerator> generators = resolveParams.GetCustom<List<AbstractDefenderForcesGenerator>>(Constants.ForcesGenerators);
+            if (generators != null) {
+                foreach (AbstractDefenderForcesGenerator generator in generators) {
+                    generator.GenerateStartingParty(map, resolveParams);
                 }
             }
         }
 
-        private void SpawnGroup(int points, CellRect locationRect, Faction faction, Map map) {
-            PawnGroupMakerParms pawnGroupMakerParms = new PawnGroupMakerParms();
-            pawnGroupMakerParms.groupKind = PawnGroupKindDefOf.Combat;
-            pawnGroupMakerParms.tile = map.Tile;
-            pawnGroupMakerParms.points = points;
-            pawnGroupMakerParms.faction = faction;
-            pawnGroupMakerParms.generateFightersOnly = true;
-            pawnGroupMakerParms.raidStrategy = RaidStrategyDefOf.ImmediateAttack;
-            pawnGroupMakerParms.forceOneIncap = false;
-            pawnGroupMakerParms.seed = Rand.Int;
 
-            List<Pawn> pawns = PawnGroupMakerUtility.GeneratePawns(pawnGroupMakerParms).ToList();
-            CellRect rect = locationRect;
-
-            Debug.Message("Rect: {0}, {1} - {2}, {3}", rect.BottomLeft.x, rect.BottomLeft.z, rect.TopRight.x, rect.TopRight.z);
-
-            if (pawns == null) {
-                Debug.Message("Pawns list is null");
-            }
-
-            foreach (Pawn p in pawns) {
-
-                bool result = CellFinder.TryFindRandomSpawnCellForPawnNear(locationRect.RandomCell, map, out IntVec3 location);
-
-                if (result) {
-                    GenSpawn.Spawn(p, location, map, Rot4.Random);
-                }
-            }
-
-            LordJob lordJob = null;
-//            if (Rand.Chance(0.7f) || ) {
-                lordJob = new LordJob_AssaultColony(faction, canKidnap: false, canTimeoutOrFlee: Rand.Chance(0.5f));
- //           } else {
- //               lordJob = new LordJob_Steal();
- //           }
-
-            if (lordJob != null) {
-                LordMaker.MakeNewLord(faction, lordJob, map, pawns);
-            }
-        }
     }
     
     class GenStep_ScatterMediumRealRuins : GenStep {

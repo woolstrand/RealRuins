@@ -62,7 +62,7 @@ namespace RealRuins {
 
             Rect rect3 = new Rect(390f, num, 200f, 30f);
             if (Widgets.ButtonText(rect3, "RealRuins.LoadBlueprints".Translate())) {
-                ProcessLoading();
+                StartLoadingList();
             }
 
             num += 45;
@@ -77,7 +77,26 @@ namespace RealRuins {
 
         }
 
-        private void ProcessLoading() {
+        private void StartLoadingList() {
+            pageState = RuinsPageState.LoadingHeader;
+            Debug.Message("Loading list for seed: {0}", Find.World.info.seedString);
+            service.LoadAllMapsForSeed(Find.World.info.seedString, Find.World.info.initialMapSize.x, (int)(Find.World.PlanetCoverage * 100), delegate (bool success, List<PlanetTileInfo> mapTiles) {
+                if (success) {
+                    this.mapTiles = mapTiles;
+                    blueprintIds = new List<string>();
+                    foreach (PlanetTileInfo t in mapTiles) {
+                        blueprintIds.Add(t.mapId);
+                    }
+
+                    blueprintsTotalCount = blueprintIds.Count;
+                    pageState = RuinsPageState.LoadedHeader;
+                    Debug.Message("Loaded list of snapshot names, {0} elements", blueprintsTotalCount);
+                    LoadItems();
+                }
+            });
+        }
+
+        private void LoadItems() { 
             if (pageState == RuinsPageState.LoadedHeader) {
                 pageState = RuinsPageState.LoadingBlueprints;
 
@@ -97,7 +116,8 @@ namespace RealRuins {
                 };
 
                 Debug.Message("Loading blueprints one by one...");
-                manager.AggressiveLoadSnaphotsFromList(blueprintIds, "test");
+                string gamePath = string.Format("{0}-{1}-{2}", Find.World.info.seedString.SanitizeForFileSystem(), Find.World.info.initialMapSize.x, (int)(Find.World.PlanetCoverage * 100));
+                manager.AggressiveLoadSnaphotsFromList(blueprintIds, gamePath: gamePath, loadIfExists: false);
             }
         }
 
@@ -106,27 +126,15 @@ namespace RealRuins {
                 if (strict) {
                     if (t.originX == 0 && t.originZ == 0) continue;
                 }
-                RealRuinsPOIFactory.CreatePOI(t, "test");
+                string gamePath = string.Format("{0}-{1}-{2}", Find.World.info.seedString.SanitizeForFileSystem(), Find.World.info.initialMapSize.x, (int)(Find.World.PlanetCoverage * 100));
+                RealRuinsPOIFactory.CreatePOI(t, gamePath);
+                blueprintsProcessedCount ++;
             }
         }
 
         public override void PreOpen() {
             base.PreOpen();
-            pageState = RuinsPageState.LoadingHeader;
-            Debug.Message("Loading list for seed: {0}", Find.World.info.seedString);
-            service.LoadAllMapsForSeed(Find.World.info.seedString, (int)Find.World.info.initialMapSize.x, (int)(Find.World.PlanetCoverage * 100), delegate (bool success, List<PlanetTileInfo> mapTiles) {
-                if (success) {
-                    this.mapTiles = mapTiles;
-                    blueprintIds = new List<string>();
-                    foreach (PlanetTileInfo t in mapTiles) {
-                        blueprintIds.Add(t.mapId);
-                    }
-
-                    blueprintsTotalCount = blueprintIds.Count;
-                    pageState = RuinsPageState.LoadedHeader;
-                    Debug.Message("Loaded list of snapshot names, {0} elements", blueprintsTotalCount);
-                }
-            });
+            
 
         }
 
