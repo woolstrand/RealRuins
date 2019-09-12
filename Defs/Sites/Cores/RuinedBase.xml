@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <Defs>
 
+  <!-- not used anymore, left here for compatibility -->
   <SiteCoreDef>
     <defName>RuinedBaseSite</defName>
     <label>abandoned base</label>

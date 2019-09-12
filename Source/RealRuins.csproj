@@ -76,6 +76,8 @@
     <Compile Include="Classes\DynamicMapObjects\RealRuinsPOIFactory.cs" />
     <Compile Include="Classes\DynamicMapObjects\RealRuinsPOIWorker.cs" />
     <Compile Include="Classes\DynamicMapObjects\WorldObjectCompProperties_RealRuinsPOI.cs" />
+    <Compile Include="Classes\Incidents\AbandonedBaseWorldObject.cs" />
+    <Compile Include="Classes\Incidents\CaravanArrivalAction_VisitAbandonedBase.cs" />
     <Compile Include="Classes\Incidents\IncidentWorker_CaravanFoundRuins.cs" />
     <Compile Include="Classes\Incidents\IncidentWorker_RuinsFound.cs" />
     <Compile Include="Classes\Incidents\RuinedBaseComp.cs" />

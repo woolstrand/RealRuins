@@ -153,7 +153,7 @@ namespace RealRuins {
         private void LoadNextSnapshot(string gamePath = null) {
             string next = snapshotsToLoad.Pop();
 
-            Debug.Log(Debug.Store, "Loading snapshot {0}", next);
+            //Debug.Log(Debug.Store, "Loading snapshot {0}", next);
 
             APIService service = new APIService();
             service.LoadMap(next, delegate (bool success, byte[] data) {

@@ -24,7 +24,6 @@ namespace RealRuins {
 
             Map map = orGenerateMap;
 
-
             CaravanEnterMode enterMode = CaravanEnterMode.Edge;
             bool draftColonists = flag;
             CaravanEnterMapUtility.Enter(caravan, map, enterMode, CaravanDropInventoryMode.DoNotDrop, draftColonists, null);

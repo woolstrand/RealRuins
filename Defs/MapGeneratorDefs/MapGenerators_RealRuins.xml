@@ -48,5 +48,14 @@
     </genSteps>
   </MapGeneratorDef>
 
+  <MapGeneratorDef ParentName="MapCommonBase">
+    <defName>RealRuinsAbandonedBase</defName>
+    <genSteps>
+      <li>RocksFromGrid</li>
+      <li>ScatterDeepResourceLumps</li>
+      <li>ScatterBaseRuins</li>
+    </genSteps>
+  </MapGeneratorDef>
+
 
 </Defs>

@@ -36,13 +36,11 @@ namespace RealRuins {
             if (!TryFindTile(out int tile)) {
                 return false;
             }
-            if (!SiteMakerHelper.TryFindSiteParams_SingleSitePart(DefDatabase<SiteCoreDef>.GetNamed("RuinedBaseSite"), (string)null, out SitePartDef sitePart, out Faction faction2, null, true, null)) {
-                return false;
-            }
 
-            int randomInRange = SiteTuning.QuestSiteTimeoutDaysRange.RandomInRange;
-            Site site = CreateSite(tile, sitePart, randomInRange, faction2);
-            if (site == null) return false;
+            AbandonedBaseWorldObject site = (AbandonedBaseWorldObject)WorldObjectMaker.MakeWorldObject(DefDatabase<WorldObjectDef>.GetNamed("AbandonedBase"));
+            site.Tile = tile;
+            site.SetFaction(null);
+            Find.WorldObjects.Add(site);
 
             var lifetime = (int)(Math.Pow(site.GetComponent<RuinedBaseComp>().currentCapCost / 1000, 0.41) * 1.1);
             string letterText = GetLetterText(faction, lifetime);
@@ -58,14 +56,13 @@ namespace RealRuins {
         public static Site CreateSite(int tile, SitePartDef sitePart, int days, Faction siteFaction) {
             
             Site site = SiteMaker.MakeSite(DefDatabase<SiteCoreDef>.GetNamed("RuinedBaseSite"), sitePart, tile, siteFaction, true, null);
-
             site.sitePartsKnown = true;
 
             string filename = null;
             Blueprint bp = BlueprintFinder.FindRandomBlueprintWithParameters(out filename, 6400, 0.01f, 30000, maxAttemptsCount: 50);
             if (bp == null) return null;
 
-            Debug.Log("Trying to get ruinsed base comp");
+            Debug.Log("Trying to get ruinsed base comp.");
             
             RuinedBaseComp comp = site.GetComponent<RuinedBaseComp>();
             if (comp == null) {
