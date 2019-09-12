@@ -54,7 +54,7 @@ namespace RealRuins {
             base.PostMapGenerate();
             //we don't use wealth watcher because it can't be set up properly (counts only player's belongings and always includes pawns)
             wealthOnEnter = CurrentMapWealth(); 
-            Debug.Log(Debug.POI, "Started with cost of {0}", wealthOnEnter);
+            Debug.Log(Debug.POI, "Started with cost of  {0}", wealthOnEnter);
         }
 
         public override void Tick() {

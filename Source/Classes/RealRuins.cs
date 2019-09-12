@@ -97,6 +97,7 @@ namespace RealRuins
             }
         }
 
+        /*
         [HarmonyPatch(typeof(GenHostility), "AnyHostileActiveThreatToPlayer", typeof(Map))]
         class PlayerThreat_Patch {
             static bool Prefix(ref bool __result, Map map) {
@@ -113,7 +114,7 @@ namespace RealRuins
                 }
                 return true;
             }
-        }
+        }*/
 
 /*
         [HarmonyPatch(typeof(Scenario), "GetFirstConfigPage")]

@@ -128,6 +128,17 @@ namespace RealRuins {
                 }
             }
 
+            if (ParentHasMap && parent.Faction != Faction.OfPlayer) {
+                if (!GenHostility.AnyHostileActiveThreatToPlayer((parent as MapParent).Map)) {
+                    //show letter about enemies defeated
+                    Debug.Log(Debug.Generic, "pristine ruins was cleared, changing faction");
+                    parent.SetFaction(Faction.OfPlayer);
+                   // parent as MapParent
+                }
+            }
+
+            /*
+
             if (!RealRuins_ModSettings.allowInstantCaravanReform && ParentHasMap) {
                 if (state == RuinedBaseState.FightingWaves) {
                     CheckTriggers();
@@ -148,6 +159,8 @@ namespace RealRuins {
                     }
                 }
             }
+
+            */
 
         }
 

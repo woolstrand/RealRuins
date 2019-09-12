@@ -45,6 +45,7 @@ namespace RealRuins {
                 remainingCost -= trigger.value * ratio;
 
                 GenSpawn.Spawn(trigger, mapLocation, map);
+                Debug.Log(Debug.ForceGen, "Spawned trigger at {0}, {1} for {2} points, autofiring after {3} rare ticks", mapLocation.x, mapLocation.z, trigger.value, 0);
                 addedTriggers++;
 
                 options.uncoveredCost = Math.Abs(remainingCost);

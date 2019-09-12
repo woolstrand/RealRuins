@@ -92,6 +92,8 @@ namespace RealRuins {
                     pageState = RuinsPageState.LoadedHeader;
                     Debug.Log("Loaded list of snapshot names, {0} elements", blueprintsTotalCount);
                     LoadItems();
+                } else {
+                    pageState = RuinsPageState.Idle;
                 }
             });
         }
