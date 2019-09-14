@@ -35,6 +35,14 @@ namespace RealRuins
         private int totalFileCount = 0;
        
 
+        public static string GamePath(string seed, int mapSize, float coverage) {
+            return string.Format("{0}-{1}-{2}", seed.SanitizeForFileSystem(), mapSize, (int)(coverage * 100));
+        }
+
+        public static string CurrentGamePath() {
+            return GamePath(Find.World.info.seedString, Find.World.info.initialMapSize.x, Find.World.PlanetCoverage);
+        }
+
         public SnapshotStoreManager() {
             MoveFilesIfNeeded();
             GetSnapshotsFolderPath();

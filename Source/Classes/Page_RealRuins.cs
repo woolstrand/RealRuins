@@ -18,12 +18,14 @@ namespace RealRuins {
         Completed
     }
 
-    class Page_RealRuins : Page {
+    class Page_RealRuins : Window {
 
-        public override string PageTitle => "RealRuinsSetup".Translate();
+        //public override string PageTitle => "RealRuinsSetup".Translate();
+        public override Vector2 InitialSize => new Vector2(650, 110 + 45 + 38);
 
         private RuinsPageState pageState = RuinsPageState.Idle;
         private int blueprintsTotalCount = 0;
+        private int blueprintsToLoadCount = 0;
         private int blueprintsLoadedCount = 0;
         private int blueprintsProcessedCount = 0;
         private bool strict = true;
@@ -34,8 +36,7 @@ namespace RealRuins {
 
 
         public override void DoWindowContents(Rect rect) {
-            DrawPageTitle(rect);
-            GUI.BeginGroup(GetMainRect(rect));
+            GUI.BeginGroup(rect);
             Text.Font = GameFont.Small;
             float num = 0f;
             string blueprintStats = "RealRuins.Loading".Translate();
@@ -48,7 +49,7 @@ namespace RealRuins {
                     break;
                 case RuinsPageState.LoadedHeader:
                 case RuinsPageState.LoadingBlueprints:
-                    blueprintStats = "Loading blueprints: " + blueprintsLoadedCount + "/" + blueprintsTotalCount;
+                    blueprintStats = "Loading blueprints: " + blueprintsLoadedCount + "/" + blueprintsToLoadCount;
                     break;
                 case RuinsPageState.ProcessingBlueprints:
                     blueprintStats = "Processing blueprints: " + blueprintsProcessedCount + "/" + blueprintsTotalCount;
@@ -65,14 +66,14 @@ namespace RealRuins {
                 StartLoadingList();
             }
 
-            num += 45;
+            num += 25;
 
             Rect rect4 = new Rect(0, num, 200f, 30f);
             if (Widgets.ButtonText(rect4, "RealRuins.Close".Translate())) {
                 Find.WindowStack.TryRemove(this);
             }
 
-            Widgets.CheckboxLabeled(new Rect(20, 120, 300, 20), "Strict filtering", ref strict);
+            Widgets.CheckboxLabeled(new Rect(20, 70, 300, 20), "Strict filtering", ref strict);
 
 
         }
@@ -105,7 +106,7 @@ namespace RealRuins {
                 SnapshotManager manager = new SnapshotManager();
                 manager.Progress = delegate (int progress, int total) {
                     blueprintsLoadedCount = progress;
-                    blueprintsTotalCount = total;
+                    blueprintsToLoadCount = total;
                 };
 
                 manager.Completion = delegate (bool success) {
@@ -118,29 +119,31 @@ namespace RealRuins {
                 };
 
                 Debug.Log(Debug.POI, "Loading blueprints one by one...");
-                string gamePath = string.Format("{0}-{1}-{2}", Find.World.info.seedString.SanitizeForFileSystem(), Find.World.info.initialMapSize.x, (int)(Find.World.PlanetCoverage * 100));
-                manager.AggressiveLoadSnaphotsFromList(blueprintIds, gamePath: gamePath, loadIfExists: false);
+                
+                manager.AggressiveLoadSnaphotsFromList(blueprintIds, gamePath: SnapshotStoreManager.CurrentGamePath(), loadIfExists: false);
             }
         }
 
         private void CreateSites() {
             foreach (PlanetTileInfo t in mapTiles) {
+                blueprintsProcessedCount++;
                 if (strict) {
                     if (t.originX == 0 && t.originZ == 0) continue;
                 }
-                string gamePath = string.Format("{0}-{1}-{2}", Find.World.info.seedString.SanitizeForFileSystem(), Find.World.info.initialMapSize.x, (int)(Find.World.PlanetCoverage * 100));
-                RealRuinsPOIFactory.CreatePOI(t, gamePath);
-                blueprintsProcessedCount ++;
+                try {
+                    RealRuinsPOIFactory.CreatePOI(t, SnapshotStoreManager.CurrentGamePath());
+                } catch {
+                    //just skip blueprint
+                }
             }
         }
 
         public override void PreOpen() {
             base.PreOpen();
-            
-
         }
 
         public void SetupRealRuins() {
+            Find.WindowStack.TryRemove(Find.WindowStack.currentlyDrawnWindow.GetType(), false);
             Find.WindowStack.Add(this);
         }
     }

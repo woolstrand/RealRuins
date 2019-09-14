@@ -28,7 +28,6 @@ namespace RealRuins {
             ScatterOptions currentOptions = rp.GetCustom<ScatterOptions>(Constants.ScatterOptions);
             float uncoveredCost = currentOptions.uncoveredCost;
 
-            Debug.Log("army gen: uncoveredCost {0}", uncoveredCost);
             int points = (int)(uncoveredCost / (10 * militaryPower));
             int initialGroup = 0;
             if (points > 10000) {
@@ -36,8 +35,11 @@ namespace RealRuins {
             } else {
                 initialGroup = points;
             }
+            Debug.Log(Debug.ForceGen, "Military gen: uncoveredCost {0}, military power: {1}, total points allowed: {2}", uncoveredCost, militaryPower, points);
+
             points -= initialGroup;
             SpawnGroup(initialGroup, rp.rect, rp.faction, map);
+            Debug.Log(Debug.ForceGen, "Initial group of {0} spawned, {1} points left for triggers", initialGroup, points);
 
             while (points > 0) {
                 IntVec3 mapLocation = rp.rect.RandomCell;

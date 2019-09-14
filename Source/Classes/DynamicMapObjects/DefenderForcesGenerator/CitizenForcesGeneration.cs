@@ -24,9 +24,10 @@ namespace RealRuins{
             ScatterOptions currentOptions = rp.GetCustom<ScatterOptions>(Constants.ScatterOptions);
             float uncoveredCost = currentOptions.uncoveredCost;
 
-            Debug.Log(Debug.ForceGen, "uncoveredCost {0}. rect {1}", uncoveredCost, rp.rect);
-            int points = (int)(uncoveredCost / 10);
-            SpawnGroup(points, rp.rect, rp.faction, map, Rand.Range(Math.Max(2, (int)(bedCount * 0.7)), (int)(bedCount * 1.5)));
+            Debug.Log(Debug.ForceGen, "Citizen force gen: uncoveredCost {0}. rect {1}", uncoveredCost, rp.rect);
+            int maxPoints = Math.Min((int)(uncoveredCost / 10), 5000);
+            SpawnGroup(maxPoints, rp.rect, rp.faction, map, Rand.Range(Math.Max(2, (int)(bedCount * 0.7)), (int)(bedCount * 1.5)));
+            currentOptions.uncoveredCost -= maxPoints * 10;
         }
 
         private void SpawnGroup(int points, CellRect locationRect, Faction faction, Map map, int countCap) {

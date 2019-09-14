@@ -90,14 +90,21 @@ namespace RealRuins {
             resolveParams.SetCustom(Constants.ForcesGenerators, generators);
             resolveParams.rect = new CellRect(currentOptions.overridePosition.x, currentOptions.overridePosition.z, map.Size.x - currentOptions.overridePosition.x, map.Size.z - currentOptions.overridePosition.z);
 
-            BaseGen.symbolStack.Push("scatterRuins", resolveParams);
 
             BaseGen.globalSettings.mainRect = resolveParams.rect;
 
             float uncoveredCost = currentOptions.uncoveredCost;
 
+            if (resolveParams.faction != null) {
+                ManTurrets((int)(poiComp.mannableCount * 1.25f), resolveParams, map);
+            }
+
+            //ok, but why LIFO? Queue looks more suitable for map generation.
+            //Looks like it was done for nested symbols resolving, but looks strange anyway.
             BaseGen.symbolStack.Push("chargeBatteries", resolveParams);
+            BaseGen.symbolStack.Push("ensureCanHoldRoof", resolveParams);
             BaseGen.symbolStack.Push("refuel", resolveParams);
+            BaseGen.symbolStack.Push("scatterRuins", resolveParams);
 
             BaseGen.Generate();
 
@@ -108,6 +115,19 @@ namespace RealRuins {
                 }
             }
 
+        }
+
+        private void ManTurrets(int count, ResolveParams rp, Map map) {
+            for (int i = 0; i < count; i++) {
+                Lord singlePawnLord = LordMaker.MakeNewLord(rp.faction, new LordJob_ManTurrets(), map);
+                PawnKindDef kind = rp.faction.RandomPawnKind();
+                int tile = map.Tile;
+                PawnGenerationRequest value = new PawnGenerationRequest(kind, rp.faction, PawnGenerationContext.NonPlayer, tile, forceGenerateNewPawn: false, newborn: false, allowDead: false, allowDowned: false, canGeneratePawnRelations: true, mustBeCapableOfViolence: true, colonistRelationChanceFactor: 1f, forceAddFreeWarmLayerIfNeeded: false, allowGay: true, allowFood: true, inhabitant: true);
+                ResolveParams resolveParams = rp; //copy!
+                resolveParams.singlePawnGenerationRequest = value;
+                resolveParams.singlePawnLord = singlePawnLord;
+                BaseGen.symbolStack.Push("pawn", resolveParams);
+            }
         }
 
         private List<AbstractDefenderForcesGenerator> GeneratorsForBlueprint(Blueprint bp, RealRuinsPOIComp poiComp, Faction faction) {

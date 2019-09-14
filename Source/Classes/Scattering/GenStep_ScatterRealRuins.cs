@@ -65,10 +65,11 @@ namespace RealRuins
         public override void Generate(Map map, GenStepParams parms) {
             //skip generation due to low blueprints count
             if (SnapshotStoreManager.Instance.StoredSnapshotsCount() < 10) {
-                Debug.Error("Skipping ruins gerenation due to low blueprints count.");
+                Debug.Error(Debug.Scatter, "Skipping ruins gerenation due to low blueprints count.");
                 return;
             }
 
+            //Skip generation for starting tile if corresponding settings flag is set
             if (RealRuins_ModSettings.startWithoutRuins) {
                 int homes = 0;
                 var allMaps = Find.Maps;
@@ -79,18 +80,14 @@ namespace RealRuins
                     }
                 }
 
-                //Debug.Message("Player homes count: {0}, ticks: {1} ({2})", homes, Find.TickManager.TicksGame, Find.TickManager.TicksAbs);
                 if (homes == 1 && Find.TickManager.TicksGame < 10) return; //single home => we're generating that single home => that's starting map => no ruins here if this option is selected.
             }
 
-            bool shouldReturn = false;
+            //Skip generation on other ruins world objects
             foreach (WorldObject wo in Find.World.worldObjects.ObjectsAt(map.Tile))
             {
-                if (!(wo is Site site)) continue;
-                shouldReturn = true;
+                if (wo is RealRuinsPOIWorldObject || wo is AbandonedBaseWorldObject) return;
             }
-            
-            if (shouldReturn) return;
             
             if (!map.TileInfo.WaterCovered) {
 
@@ -131,8 +128,8 @@ namespace RealRuins
                 //number of ruins based on density settings
                 var num = (int)((float)map.Area / 10000.0f) * Rand.Range(1 * totalDensity, 2 * totalDensity);
 
-                Debug.Log("dist {0}, dens {1} (x{2}), scale x{3} ({4}-{5}), scav {6}, deter {7}", distanceToSettlement, currentOptions.densityMultiplier, densityMultiplier, scaleMultiplier, currentOptions.minRadius, currentOptions.maxRadius, currentOptions.scavengingMultiplier, currentOptions.deteriorationMultiplier);
-                Debug.Log("Spawning {0} ruin chunks", num);
+                Debug.Log(Debug.Scatter, "dist {0}, dens {1} (x{2}), scale x{3} ({4}-{5}), scav {6}, deter {7}", distanceToSettlement, currentOptions.densityMultiplier, densityMultiplier, scaleMultiplier, currentOptions.minRadius, currentOptions.maxRadius, currentOptions.scavengingMultiplier, currentOptions.deteriorationMultiplier);
+                Debug.Log(Debug.Scatter, "Spawning {0} ruin chunks", num);
                 BaseGen.globalSettings.map = map;
 
                 bool shouldUnpause = false;
@@ -222,6 +219,8 @@ namespace RealRuins
                 resolveParams.faction = Find.FactionManager.OfAncientsHostile;
                 resolveParams.SetCustom(Constants.ForcesGenerators, new List<AbstractDefenderForcesGenerator> { new BattleRoyaleForcesGenerator() });
                 resolveParams.rect = new CellRect(0, 0, map.Size.x, map.Size.z);
+                BaseGen.symbolStack.Push("chargeBatteries", resolveParams);
+                BaseGen.symbolStack.Push("refuel", resolveParams);
                 BaseGen.symbolStack.Push("scatterRuins", resolveParams);
 
 
@@ -234,8 +233,6 @@ namespace RealRuins
                     }
                 }
 
-                BaseGen.symbolStack.Push("chargeBatteries", resolveParams);
-                BaseGen.symbolStack.Push("refuel", resolveParams);
 
                 BaseGen.Generate();
 
@@ -290,13 +287,10 @@ namespace RealRuins
                 rp.rect = new CellRect(0, 0, map.Size.x, map.Size.z);
                 rp.SetCustom<ScatterOptions>(Constants.ScatterOptions, currentOptions);
                 rp.faction = Find.FactionManager.OfAncientsHostile;
+                BaseGen.symbolStack.Push("chargeBatteries", rp);
+                BaseGen.symbolStack.Push("refuel", rp);
                 BaseGen.symbolStack.Push("scatterRuins", rp);
 
-
-              /*  ResolveParams resolveParams = default(ResolveParams);
-                resolveParams.rect = CellRect.CenteredOn(map.Center, currentOptions.minRadius + (currentOptions.maxRadius - currentOptions.maxRadius) / 2);
-                BaseGen.globalSettings.map = map;
-                BaseGen.globalSettings.mainRect = resolveParams.rect; */
 
                 if (Rand.Chance(0.5f * Find.Storyteller.difficulty.threatScale)) {
                     float pointsCost = Math.Abs(Rand.Gaussian()) * 500 * Find.Storyteller.difficulty.threatScale;
@@ -319,8 +313,6 @@ namespace RealRuins
 
                 }
 
-                BaseGen.symbolStack.Push("chargeBatteries", rp);
-                BaseGen.symbolStack.Push("refuel", rp);
                     
                 BaseGen.Generate();
           

@@ -305,7 +305,7 @@ namespace RealRuins {
                 }
 
                 if (itemTile.defName.Contains("Corpse") || itemTile.defName.Contains("Minified")) { //should bypass older minified things and corpses
-                    if (!itemTile.innerItems?.Any() ?? true) return null;
+                    if ((!itemTile.innerItems?.Any()) ?? true) return null;
                 }
 
                 if (itemTile.defName == "Hive") return null; //Ignore hives, probably should add more comprehensive ignore list here.
@@ -335,6 +335,7 @@ namespace RealRuins {
                             Thing innerThing = MakeThingFromItemTile(innerTile, true);
                             ((IThingHolder)thing).GetDirectlyHeldThings().TryAdd(innerThing);
                         }
+                        if (thing.GetInnerIfMinified() == null) return null;
                     }
 
                     if (thingDef.CanHaveFaction) {
