@@ -211,6 +211,7 @@ namespace RealRuins {
             }
 
             if (right.ButtonText("load ruins for game", null)) {
+                Find.WindowStack.TryRemove(typeof(Dialog_ModSettings), true);
                 Page_RealRuins page = new Page_RealRuins();
                 page.SetupRealRuins();
             }

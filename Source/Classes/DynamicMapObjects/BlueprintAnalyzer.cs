@@ -15,6 +15,7 @@ namespace RealRuins {
         public int occupiedTilesCount;
         public int haulableItemsCount;
         public int haulableStacksCount;
+        public int itemsInside;
         public int militaryItemsCount;
         public float totalItemsCost;
         public float haulableItemsCost;
@@ -22,6 +23,7 @@ namespace RealRuins {
         public int roomsCount;
         public int internalArea;
         public int defensiveItemsCount;
+        public int mannableCount;
         public int productionItemsCount;
         public int bedsCount;
 
@@ -50,7 +52,9 @@ namespace RealRuins {
 
         private Blueprint blueprint;
         public POIType determinedType;
+        private float militaryFeatures;
         public float militaryPower;
+        public int mannableCount;
         public int approximateDisplayValue;
         public List<string> randomMostValueableItemDefNames;
 
@@ -65,10 +69,7 @@ namespace RealRuins {
             itemStats = new Dictionary<string, ItemStatRecord>();
         }
 
-        private void ProcessTile(ItemTile itemTile) {
-            if (!itemTile.isWall) {
-                //Debug.Message("processing item {0}", itemTile.defName);
-            }
+        private void ProcessTile(ItemTile itemTile, IntVec3 pos) {
 
             ThingDef itemDef = DefDatabase<ThingDef>.GetNamed(itemTile.defName, false);
             if (itemDef == null) return;
@@ -96,11 +97,11 @@ namespace RealRuins {
             var message = itemTile.defName + " ";
 
             if (itemDef.alwaysHaulable) {
-                    message += "is haulable ";
-                    result.haulableStacksCount++;
-                    result.haulableItemsCount += itemTile.stackCount;
-                    result.haulableItemsCost += itemTile.cost;
-                }
+                message += "is haulable ";
+                result.haulableStacksCount++;
+                result.haulableItemsCount += itemTile.stackCount;
+                result.haulableItemsCost += itemTile.cost;
+            }
 
             string lowerName = itemTile.defName.ToLower();
 
@@ -116,6 +117,10 @@ namespace RealRuins {
                 }
             }
 
+            if (itemDef.HasComp(typeof(CompMannable))) {
+                result.mannableCount++;
+            }
+
             if (itemDef.IsWorkTable) {
                 message += "worktable ";
                 result.productionItemsCount++;
@@ -125,6 +130,11 @@ namespace RealRuins {
                 message += "bed ";
                 result.bedsCount++;
             }
+
+            if (blueprint.wallMap[pos.x, pos.z] > 1 || blueprint.roofMap[pos.x, pos.z] == true) {
+                result.itemsInside++;
+            }
+
 
             if (!itemTile.isWall && !itemTile.isDoor && itemTile.cost > 100) {
                // Debug.Message(message);
@@ -153,11 +163,12 @@ namespace RealRuins {
                 for (int x = 0; x < blueprint.width; x++) {
                     List<ItemTile> tiles = blueprint.itemsMap[x, y] ?? new List<ItemTile>();
                     foreach (ItemTile itemTile in tiles) {
-                        ProcessTile(itemTile);
+                        ProcessTile(itemTile, new IntVec3(x, 0, y));
                     }
                 }
             }
 
+            this.mannableCount = result.mannableCount;
             determinedType = supposedType();
             Debug.Log(Debug.Analyzer, "Type is {0} by {1}", determinedType, result.ToString());
         }
@@ -166,10 +177,16 @@ namespace RealRuins {
             float prodScore = 0;
             float researchScore = 0;
 
+            militaryFeatures = 0;
             militaryPower = 0;
 
             //many walls, liitle internal space => ruins
             if (result.wallLength < 70 || (result.totalItemsCost < 2000 && result.bedsCount < 1)) {
+                return POIType.Ruins;
+            }
+
+            //if 2/3 of all items (except walls) are outside (outside of room and unroofed), consider it a ruin. Caveat: enclosed rooms formed by mountains are not considered closed rooms.
+            if (result.itemsInside < (result.occupiedTilesCount - result.wallLength) * 0.3) {
                 return POIType.Ruins;
             }
 
@@ -182,12 +199,13 @@ namespace RealRuins {
                 return POIType.Ruins;
             }
 
-            militaryPower = (float)(result.militaryItemsCount + (result.defensiveItemsCount * 10)) * 25 / result.internalArea;
+            militaryFeatures = (float)(result.militaryItemsCount + (result.defensiveItemsCount * 10)) * 25 / result.internalArea;
+            militaryPower = (float)(result.defensiveItemsCount * 250) / result.internalArea + 1;
             prodScore = result.productionItemsCount * 10 + (result.haulableStacksCount * 5 / result.internalArea);
 
-            Debug.Log(Debug.Analyzer, "military: {0}. prod: {1}", militaryPower, prodScore);
+            Debug.Log(Debug.Analyzer, "military features: {0}. power: {1}. prod: {2}.", militaryFeatures, militaryPower, prodScore);
 
-            if (militaryPower < 3 && prodScore <= 50) {
+            if (militaryFeatures < 3 && prodScore <= 50) {
                 if (result.internalArea < 2000 && result.bedsCount > 0 && result.totalItemsCost < 30000) {
                     return POIType.Camp;
                 }
@@ -200,7 +218,7 @@ namespace RealRuins {
                 return POIType.Camp;
             }
 
-            if (militaryPower >= 3 && militaryPower < 8 && prodScore < 50) {
+            if (militaryFeatures >= 3 && militaryPower < 8 && prodScore < 50) {
                 if (result.internalArea < 2000) {
                     return Rand.Chance(0.5f)?POIType.Outpost:POIType.Communication;
                 }
@@ -212,7 +230,7 @@ namespace RealRuins {
                 }
             }
 
-            if (militaryPower < 8 && prodScore >= 50) {
+            if (militaryFeatures < 8 && prodScore >= 50) {
                 if (result.haulableItemsCost / result.haulableItemsCount > 30) {
                     return POIType.Research;
                 } else {
@@ -220,7 +238,7 @@ namespace RealRuins {
                 }
             }
 
-            if (militaryPower >= 8) {
+            if (militaryFeatures >= 8) {
                 if (result.defensiveItemsCount > 15) {
                     return POIType.MilitaryBaseLarge;
                 } else {
