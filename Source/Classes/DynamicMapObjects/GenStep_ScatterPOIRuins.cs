@@ -96,7 +96,8 @@ namespace RealRuins {
             float uncoveredCost = currentOptions.uncoveredCost;
 
             if (resolveParams.faction != null) {
-                ManTurrets((int)(poiComp.mannableCount * 1.25f), resolveParams, map);
+                //Debug.Log("Mannable count: {0}", poiComp.mannableCount);
+                ManTurrets((int)(poiComp.mannableCount * 1.25f + 1), resolveParams, map);
             }
 
             //ok, but why LIFO? Queue looks more suitable for map generation.
@@ -127,6 +128,7 @@ namespace RealRuins {
                 resolveParams.singlePawnGenerationRequest = value;
                 resolveParams.singlePawnLord = singlePawnLord;
                 BaseGen.symbolStack.Push("pawn", resolveParams);
+                //Debug.Log("Pushed ManTurrets pawn symbol to stack");
             }
         }
 
@@ -140,6 +142,7 @@ namespace RealRuins {
             switch ((POIType)poiComp.poiType) {
                 case POIType.MilitaryBaseSmall:
                 case POIType.MilitaryBaseLarge:
+                case POIType.Stronghold:
                 case POIType.Outpost:
                     result.Add(new MilitaryForcesGenerator(poiComp.militaryPower));
                     break;

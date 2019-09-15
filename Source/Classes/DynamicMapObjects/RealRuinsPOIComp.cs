@@ -18,7 +18,8 @@ enum POIType {
     MilitaryBaseLarge,
     Storage,
     Communication,
-    Ruins
+    Ruins,
+    Stronghold
 }
 
 namespace RealRuins {

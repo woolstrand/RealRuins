@@ -240,12 +240,12 @@ namespace RealRuins {
 
             if (militaryFeatures >= 8) {
                 if (result.defensiveItemsCount > 15) {
-                    return POIType.MilitaryBaseLarge;
+                    return POIType.Stronghold;
                 } else {
-                    if (result.internalArea > 2000) {
-                        return POIType.MilitaryBaseSmall;
+                    if (result.internalArea > 2500) {
+                        return POIType.MilitaryBaseLarge;
                     } else {
-                        return Rand.Chance(0.5f) ? POIType.Outpost : POIType.Communication;
+                        return POIType.MilitaryBaseSmall;
                     }
                 }
             }
@@ -268,6 +268,7 @@ namespace RealRuins {
                     return 0.7f;
 
                 case POIType.City:
+                case POIType.Stronghold:
                 case POIType.MilitaryBaseLarge:
                 case POIType.Research:
                 case POIType.PowerPlant:
