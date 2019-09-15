@@ -11,7 +11,16 @@ namespace RealRuins {
 
         private MapParent mapParent;
 
-        public override string Label => "RealRuins.EnterPOI".Translate();
+        public override string Label {
+            get {
+                if (mapParent.Faction == null || mapParent.Faction == Faction.OfPlayer) {
+                    return "RealRuins.EnterPOI".Translate();
+                } else {
+                    return "RealRuins.AttackPOI".Translate();
+                }
+            }
+        }
+
 
         public override string ReportString => "RealRuins.CaravanEnteringPOI".Translate();
 

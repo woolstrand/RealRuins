@@ -1,19 +1,22 @@
-﻿// RimWorld.Planet.TransportPodsArrivalAction_VisitSite
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using RimWorld;
 using RimWorld.Planet;
 using System.Collections.Generic;
 using Verse;
 
 namespace RealRuins {
-    public class TransportPodsArrivalAction_VisitRuins : TransportPodsArrivalAction {
+    public class TransportPodsArrivalAction_VisitRuinsPOI : TransportPodsArrivalAction {
         private MapParent site;
 
         private PawnsArrivalModeDef arrivalMode;
 
-        public TransportPodsArrivalAction_VisitRuins() {
+        public TransportPodsArrivalAction_VisitRuinsPOI() {
         }
 
-        public TransportPodsArrivalAction_VisitRuins(MapParent site, PawnsArrivalModeDef arrivalMode) {
+        public TransportPodsArrivalAction_VisitRuinsPOI(MapParent site, PawnsArrivalModeDef arrivalMode) {
             this.site = site;
             this.arrivalMode = arrivalMode;
         }

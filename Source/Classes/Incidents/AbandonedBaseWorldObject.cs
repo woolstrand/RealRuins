@@ -32,6 +32,15 @@ namespace RealRuins {
             }
         }
 
+        public override IEnumerable<FloatMenuOption> GetTransportPodsFloatMenuOptions(IEnumerable<IThingHolder> pods, CompLaunchable representative) {
+            foreach (FloatMenuOption transportPodsFloatMenuOption in base.GetTransportPodsFloatMenuOptions(pods, representative)) {
+                yield return transportPodsFloatMenuOption;
+            }
+            foreach (FloatMenuOption floatMenuOption in TransportPodsArrivalAction_VisitRuins.GetFloatMenuOptions(representative, pods, this)) {
+                yield return floatMenuOption;
+            }
+        }
+
         public override IEnumerable<Gizmo> GetGizmos() {
             foreach (Gizmo gizmo in base.GetGizmos()) {
                 yield return gizmo;
@@ -58,5 +67,22 @@ namespace RealRuins {
             alsoRemoveWorldObject = shouldRemove;
             return shouldRemove;
         }
+
+        public override string GetInspectString() {
+            StringBuilder builder = new StringBuilder();
+            builder.Append(base.GetInspectString());
+            if (builder.Length > 0) {
+                builder.AppendLine();
+            }
+            builder.AppendLine("RealRuins.PristineRuinsWolrdObject".Translate());
+
+            var comp = GetComponent<RuinedBaseComp>();
+            if (comp != null) {
+                builder.AppendLine(comp.CompInspectStringExtra());
+            }
+
+            return builder.ToString();
+        }
+
     }
 }

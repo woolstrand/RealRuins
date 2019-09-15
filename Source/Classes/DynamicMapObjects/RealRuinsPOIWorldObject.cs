@@ -17,7 +17,10 @@ namespace RealRuins {
         private float wealthOnEnter = 1;
         private Faction originalFaction;
 
-        public override Material Material {
+        public override string Label => ("RealRuins.CaptionPOI" + GetComponent<RealRuinsPOIComp>().poiType).Translate();
+        
+
+    public override Material Material {
             get {
                 if (cachedMat == null) {
                     cachedMat = MaterialPool.MatFrom(color: Faction?.Color ?? Color.white, texPath: "World/WorldObjects/Sites/GenericSite", shader: ShaderDatabase.WorldOverlayTransparentLit, renderQueue: WorldMaterials.WorldObjectRenderQueue);
@@ -31,6 +34,15 @@ namespace RealRuins {
                 yield return floatMenuOption;
             }
             foreach (FloatMenuOption floatMenuOption in CaravanArrivalAction_VisitRealRuinsPOI.GetFloatMenuOptions(caravan, this)) {
+                yield return floatMenuOption;
+            }
+        }
+
+        public override IEnumerable<FloatMenuOption> GetTransportPodsFloatMenuOptions(IEnumerable<IThingHolder> pods, CompLaunchable representative) {
+            foreach (FloatMenuOption transportPodsFloatMenuOption in base.GetTransportPodsFloatMenuOptions(pods, representative)) {
+                yield return transportPodsFloatMenuOption;
+            }
+            foreach (FloatMenuOption floatMenuOption in TransportPodsArrivalAction_VisitRuinsPOI.GetFloatMenuOptions(representative, pods, this)) {
                 yield return floatMenuOption;
             }
         }
@@ -62,7 +74,9 @@ namespace RealRuins {
             if (HasMap && Faction != Faction.OfPlayer) {
                 if (!GenHostility.AnyHostileActiveThreatToPlayer(Map)) {
                     //show letter about enemies defeated
+                    originalFaction = Faction;
                     SetFaction(Faction.OfPlayer);
+                    cachedMat = null;
                 }
             }
         }
@@ -73,6 +87,8 @@ namespace RealRuins {
                 EnterCooldownComp cooldownComp = GetComponent<EnterCooldownComp>();
                 RealRuinsPOIComp poiComp = GetComponent<RealRuinsPOIComp>();
                 SetFaction(originalFaction);
+                cachedMat = null; //reset cached icon to recolor it
+
                 float blueprintCost = 1;
                 if (poiComp != null) {
                     if (poiComp.poiType == (int)POIType.Ruins) {
@@ -106,6 +122,47 @@ namespace RealRuins {
                 totalCost += thing.def.ThingComponentsMarketCost(thing.Stuff) * thing.stackCount;
             }
             return totalCost;
+        }
+
+        public override string GetInspectString() {
+            StringBuilder builder = new StringBuilder();
+            builder.Append("Tile " + Tile);
+            builder.Append(base.GetInspectString());
+            if (builder.Length > 0) {
+                builder.AppendLine();
+            }
+
+
+            var comp = GetComponent<RealRuinsPOIComp>();
+            if (comp != null) {
+                builder.AppendLine(("RealRuins.DescPOI" + comp.poiType).Translate());
+                if (Faction == null) {
+                    if ((POIType)comp.poiType != POIType.Ruins) {
+                        builder.AppendLine("RealRuins.POINowRuined".Translate());
+                    }
+                } else {
+                    if ((POIType)comp.poiType != POIType.Ruins) {
+
+                        int[] costThresholds = { 0, 10000, 100000, 1000000, 10000000 };
+                        string wealthDesc = null;
+                        if (comp.approximateSnapshotCost > costThresholds[costThresholds.Length - 1]) wealthDesc = ("RealRuins.RuinsWealth." + (costThresholds.Length - 1)).Translate();
+                        for (int i = 0; i < costThresholds.Length - 1; i++) {
+                            if (comp.approximateSnapshotCost > costThresholds[i] && comp.approximateSnapshotCost <= costThresholds[i + 1]) {
+                                wealthDesc = ("RealRuins.RuinsWealth." + i.ToString()).Translate();
+                            }
+                        }
+                        if (wealthDesc != null) {
+                            builder.Append("RealRuins.RuinsWealth".Translate());
+                            builder.AppendLine(wealthDesc);
+                        }
+                    }
+                }
+            }
+
+
+
+
+            return builder.ToString();
         }
     }
 }
