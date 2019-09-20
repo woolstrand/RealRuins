@@ -210,10 +210,9 @@ namespace RealRuins {
                 ResetSettings();
             }
 
-            if (right.ButtonText("load ruins for game", null)) {
-                Find.WindowStack.TryRemove(typeof(Dialog_ModSettings), true);
+            if (right.ButtonText("RealRuins.MapsModuleButton".Translate(), null)) {
                 Page_RealRuins page = new Page_RealRuins();
-                page.SetupRealRuins();
+                Find.WindowStack.Add(page);
             }
 
             right.End();

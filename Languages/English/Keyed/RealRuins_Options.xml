@@ -100,7 +100,7 @@
   <RealRuins.CaptionPOI11>Stronghold</RealRuins.CaptionPOI11>
 
 
-  <RealRuins.DescPOI0>A small group of building, presumably of military kind. Probably an armoury or a small transit military base. It can have several stationary weapons and a dozen or two soldiers.</RealRuins.DescPOI0>
+  <RealRuins.DescPOI0>A small group of buildings, presumably of military kind. Probably an armoury or a small transit military base. It can have several stationary weapons and a dozen or two soldiers.</RealRuins.DescPOI0>
   <RealRuins.DescPOI1>A very small military outpost, couple of rooms, couple of turrets, couple of soldiers.</RealRuins.DescPOI1>
   <RealRuins.DescPOI2>A temporary camp set up to mine resources, hunt or as a trans-shipment point.</RealRuins.DescPOI2>
   <RealRuins.DescPOI3>A large thriving city. Even though it usually does not have massive walls or a lot of stationary weapons, it can request powerful reinforcements in case of an assault.</RealRuins.DescPOI3>
@@ -114,5 +114,40 @@
   <RealRuins.DescPOI11>Heavily guarded stronghold. Extremely well defended with tons of stationary weapons, troops and reinforcements.</RealRuins.DescPOI11>
 
   <RealRuins.POINowRuined>Once this place was full of life, but now it's abandoned, no one knows why. So better beware of all kind of dangers.</RealRuins.POINowRuined>
+
+  <RealRuins.EnterPOI>Enter {0}</RealRuins.EnterPOI>
+  <RealRuins.AttackPOI>Attack {0}</RealRuins.AttackPOI>
+
+  <RealRuins.CaravanEnteringPOI>Entering {0}</RealRuins.CaravanEnteringPOI>
+
+  <LetterLabelCaravanEnteredUnownedPOI>Caravan arrived</LetterLabelCaravanEnteredUnownedPOI>
+  <LetterCaravanEnteredUnownedPOI>{0} has arrived at destination. Proceed with caution.</LetterCaravanEnteredUnownedPOI>
+  <LetterLabelCaravanAttackedPOI>Caravan is attacking</LetterLabelCaravanAttackedPOI>
+  <LetterCaravanAttackedPOI>{0} is attacking other faction's property.</LetterCaravanAttackedPOI>
+  <LetterTransportPodsArrivedInUnownedPOI>Transport pods have arrived at destination.</LetterTransportPodsArrivedInUnownedPOI>
+  <LetterLabelTransportPodsAttackedPOI>Transport pods have arrived</LetterLabelTransportPodsAttackedPOI>
+  <LetterTransportPodsAttackedPOI>Transport pods have arrived at destination. Attack has begun.</LetterTransportPodsAttackedPOI>
+  <LetterLabelTransportPodsArrivedAtRuins>Transport pods have arrived at ruins</LetterLabelTransportPodsArrivedAtRuins>
+  <LetterTransportPodsArrivedAtRuins>Transport pods have arrived at ruins</LetterTransportPodsArrivedAtRuins>
+
+  <!-- POI load dialog -->
+  <RealRuins.LoadBlueprintsCaption>Load blueprints for planet</RealRuins.LoadBlueprintsCaption>
+  <RealRuins.LoadBlueprints>Load blueprints</RealRuins.LoadBlueprints>
+  <RealRuins.Close>Close</RealRuins.Close>
+  <RealRuins.Idle>Idle</RealRuins.Idle>
+  <RealRuins.Searching>Searching for blueprints...</RealRuins.Searching>
+  <RealRuins.Loading>Loading blueprints: </RealRuins.Loading>
+  <RealRuins.Processing>Processing blueprints: </RealRuins.Processing>
+  <RealRuins.Completed>Completed!</RealRuins.Completed>
+  <RealRuins.BiomeFiltering>Biome filtering</RealRuins.BiomeFiltering>
+  <RealRuins.BiomeFilteringTT>Exclude maps with missing or mismatching biome</RealRuins.BiomeFilteringTT>
+  <RealRuins.CostFiltering>Cost filtering</RealRuins.CostFiltering>
+  <RealRuins.CostFilteringTT>Exclude maps with too low cost (lower than average "empty" map)</RealRuins.CostFilteringTT>
+  <RealRuins.AreaFiltering>Area and items filtering</RealRuins.AreaFiltering>
+  <RealRuins.AreaFilteringTT>Exclude maps with too small area and too low items count</RealRuins.AreaFilteringTT>
+  <RealRuins.UsedMaps>Maps used: </RealRuins.UsedMaps>
+  <RealRuins.DroppedMaps>Maps dropped: </RealRuins.DroppedMaps>
+
+  <RealRuins.MapsModuleButton>Import blueprints for this planet (BETA)</RealRuins.MapsModuleButton>
 
 </LanguageData>

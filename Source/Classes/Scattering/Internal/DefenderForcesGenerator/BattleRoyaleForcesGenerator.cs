@@ -40,9 +40,11 @@ namespace RealRuins {
                 }
 
                 int raidMaxPoints = (int)(remainingCost / ratio);
-                trigger.value = Math.Abs(Rand.Gaussian()) * raidMaxPoints + Rand.Value * raidMaxPoints + 250.0f;
-                if (trigger.value > 10000) trigger.value = Rand.Range(8000, 11000); //sanity cap. against some beta-poly bases.
-                remainingCost -= trigger.value * ratio;
+                float raidValue = Math.Abs(Rand.Gaussian()) * raidMaxPoints + Rand.Value * raidMaxPoints + 250.0f;
+                if (raidValue > 10000) raidValue = Rand.Range(8000, 11000); //sanity cap. against some beta-poly bases.
+                remainingCost -= raidValue * ratio;
+
+                trigger.value = ScalePointsToDifficulty(raidValue);
 
                 GenSpawn.Spawn(trigger, mapLocation, map);
                 Debug.Log(Debug.ForceGen, "Spawned trigger at {0}, {1} for {2} points, autofiring after {3} rare ticks", mapLocation.x, mapLocation.z, trigger.value, 0);
@@ -79,9 +81,8 @@ namespace RealRuins {
                         currentOptions.uncoveredCost, defaultPoints);
 
                 }
-                pointsCost *= Find.Storyteller.difficulty.threatScale;
+                pointsCost = ScalePointsToDifficulty(pointsCost);
                 ScatterStartingParties((int)pointsCost, currentOptions.allowFriendlyRaids, map);
-
             }
 
         }
