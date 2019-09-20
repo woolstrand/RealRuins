@@ -20,62 +20,84 @@ namespace RealRuins {
 
     class Page_RealRuins : Window {
 
-        //public override string PageTitle => "RealRuinsSetup".Translate();
-        public override Vector2 InitialSize => new Vector2(650, 110 + 45 + 38);
+        public override Vector2 InitialSize => new Vector2(650, 210 + 45 + 38);
 
         private RuinsPageState pageState = RuinsPageState.Idle;
         private int blueprintsTotalCount = 0;
         private int blueprintsToLoadCount = 0;
         private int blueprintsLoadedCount = 0;
         private int blueprintsProcessedCount = 0;
-        private bool strict = true;
+        private int blueprintsUsed = 0;
+        private bool biomeStrict = true;
+        private bool costStrict = true;
+        private bool areaStrict = true;
         private List<string> blueprintIds = null;
         private List<PlanetTileInfo> mapTiles;
 
         private APIService service = new APIService();
 
 
+        public Page_RealRuins() {
+            forcePause = true;
+            absorbInputAroundWindow = true;
+            closeOnAccept = false;
+            closeOnCancel = false;
+            forceCatchAcceptAndCancelEventEvenIfUnfocused = true;
+        }
+
         public override void DoWindowContents(Rect rect) {
-            GUI.BeginGroup(rect);
-            Text.Font = GameFont.Small;
-            float num = 0f;
-            string blueprintStats = "RealRuins.Loading".Translate();
-            switch (pageState) {
-                case RuinsPageState.Idle:
-                    blueprintStats = "Idle".Translate();
-                    break;
-                case RuinsPageState.LoadingHeader:
-                    blueprintStats = "Searching for blueprints...";
-                    break;
-                case RuinsPageState.LoadedHeader:
-                case RuinsPageState.LoadingBlueprints:
-                    blueprintStats = "Loading blueprints: " + blueprintsLoadedCount + "/" + blueprintsToLoadCount;
-                    break;
-                case RuinsPageState.ProcessingBlueprints:
-                    blueprintStats = "Processing blueprints: " + blueprintsProcessedCount + "/" + blueprintsTotalCount;
-                    break;
-                case RuinsPageState.Completed:
-                    blueprintStats = "Completed";
-                    break;
-            }
+            //GUI.BeginGroup(rect);
+            Listing_Standard list = new Listing_Standard();
+            list.Begin(rect);
 
-            Widgets.Label(new Rect(0f, num, 350f, 30f), blueprintStats);
+            Text.Font = GameFont.Medium;
+            list.Label("RealRuins.LoadBlueprintsCaption".Translate());
 
-            Rect rect3 = new Rect(390f, num, 200f, 30f);
-            if (Widgets.ButtonText(rect3, "RealRuins.LoadBlueprints".Translate())) {
+            if (list.ButtonText("RealRuins.LoadBlueprints".Translate())) {
                 StartLoadingList();
             }
 
-            num += 25;
+            Text.Font = GameFont.Small;
+            string blueprintStats = "RealRuins.Loading".Translate();
+            string skipped = "RealRuins.DroppedMaps".Translate() + " --- ";
+            string used = "RealRuins.UsedMaps" + " --- ";
 
-            Rect rect4 = new Rect(0, num, 200f, 30f);
-            if (Widgets.ButtonText(rect4, "RealRuins.Close".Translate())) {
-                Find.WindowStack.TryRemove(this);
+            switch (pageState) {
+                case RuinsPageState.Idle:
+                    blueprintStats = "RealRuins.Idle".Translate();
+                    break;
+                case RuinsPageState.LoadingHeader:
+                    blueprintStats = "RealRuins.Searching".Translate();
+                    break;
+                case RuinsPageState.LoadedHeader:
+                case RuinsPageState.LoadingBlueprints:
+                    blueprintStats = "RealRuins.Loading".Translate() + blueprintsLoadedCount + " / " + blueprintsToLoadCount;
+                    break;
+                case RuinsPageState.ProcessingBlueprints:
+                    blueprintStats = "RealRuins.Processing".Translate() + blueprintsProcessedCount + " / " + blueprintsTotalCount;
+                    skipped = "RealRuins.DroppedMaps".Translate() + (blueprintsProcessedCount - blueprintsUsed);
+                    used = "RealRuins.UsedMaps" + blueprintsUsed;
+                    break;
+                case RuinsPageState.Completed:
+                    blueprintStats = "RealRuins.Completed".Translate();
+                    skipped = "RealRuins.DroppedMaps".Translate() + (blueprintsProcessedCount - blueprintsUsed);
+                    used = "RealRuins.UsedMaps".Translate() + blueprintsUsed;
+                    break;
             }
 
-            Widgets.CheckboxLabeled(new Rect(20, 70, 300, 20), "Strict filtering", ref strict);
+            list.Label(blueprintStats);
+
+            list.Label(skipped);
+            list.Label(used);
+
+            list.CheckboxLabeled("RealRuins.BiomeFiltering".Translate(), ref biomeStrict, "RealRuins.BiomeFilteringTT".Translate());
+            list.CheckboxLabeled("RealRuins.CostFiltering".Translate(), ref costStrict, "RealRuins.CostFilteringTT".Translate());
+            list.CheckboxLabeled("RealRuins.AreaFiltering".Translate(), ref areaStrict, "RealRuins.AreaFilteringTT".Translate());
 
 
+            if (list.ButtonText("RealRuins.Close".Translate())) {
+                Find.WindowStack.TryRemove(this);
+            }
         }
 
         private void StartLoadingList() {
@@ -127,11 +149,13 @@ namespace RealRuins {
         private void CreateSites() {
             foreach (PlanetTileInfo t in mapTiles) {
                 blueprintsProcessedCount++;
-                if (strict) {
-                    if (t.originX == 0 && t.originZ == 0) continue;
+                if (biomeStrict) {
+                    if (t.originX == 0 && t.originZ == 0 || t.biomeName == null) continue;
                 }
                 try {
-                    RealRuinsPOIFactory.CreatePOI(t, SnapshotStoreManager.CurrentGamePath());
+                    if (RealRuinsPOIFactory.CreatePOI(t, SnapshotStoreManager.CurrentGamePath(), biomeStrict, costStrict, areaStrict)) {
+                        blueprintsUsed++;
+                    }
                 } catch {
                     //just skip blueprint
                 }
@@ -143,7 +167,6 @@ namespace RealRuins {
         }
 
         public void SetupRealRuins() {
-            Find.WindowStack.TryRemove(Find.WindowStack.currentlyDrawnWindow.GetType(), false);
             Find.WindowStack.Add(this);
         }
     }

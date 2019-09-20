@@ -17,22 +17,26 @@ namespace RealRuins {
         }
 
         public override void GenerateForces(Map map, ResolveParams rp) {
+            Debug.Log(Debug.ForceGen, "Generating mechanoid forces");
+
             ScatterOptions options = rp.GetCustom<ScatterOptions>(Constants.ScatterOptions);
             CellRect rect = rp.rect;
 
-            if (rect.minX < 15 || rect.minZ < 15 || rect.maxX > map.Size.x - 15 || rect.maxZ > map.Size.z - 15) {
+            /*if (rect.minX < 15 || rect.minZ < 15 || rect.maxX > map.Size.x - 15 || rect.maxZ > map.Size.z - 15) {
                 return; //do not add enemies if we're on the map edge
             }
 
             if (!CellFinder.TryFindRandomCellInsideWith(rect, (IntVec3 x) => x.Standable(map) && options.roomMap[x.x - rect.BottomLeft.x, x.z - rect.BottomLeft.z] > 1, out IntVec3 testCell)) {
                 return; //interrupt if there are no closed cells available
-            }
+            }*/
 
             PawnKindDef pawnKindDef = null;
 
             if (powerMax == 0) {
                 powerMax = rect.Area / 30.0f;
             }
+
+            powerMax = ScalePointsToDifficulty(powerMax);
 
             float powerThreshold = (Math.Abs(Rand.Gaussian(0.5f, 1)) * powerMax) + 1;
             float cumulativePower = 0;
@@ -57,7 +61,12 @@ namespace RealRuins {
                     null, null, null, null,
                     null, null, null, null);
 
-                if (CellFinder.TryFindRandomCellInsideWith(rect, (IntVec3 x) => x.Standable(map) && options.roomMap[x.x - rect.minX, x.z - rect.minZ] > 1, out IntVec3 cell)) {
+                IntVec3 cell = IntVec3.Invalid;
+                if (!CellFinder.TryFindRandomCellInsideWith(rect, (IntVec3 x) => x.Standable(map) && options.roomMap[x.x - rect.minX, x.z - rect.minZ] > 1, out cell)) {
+                    CellFinder.TryFindRandomSpawnCellForPawnNear(rect.CenterCell, map, out cell);
+                }
+
+                if (cell != IntVec3.Invalid) { 
                     Pawn pawn = PawnGenerator.GeneratePawn(request);
 
                     FilthMaker.MakeFilth(cell, map, ThingDefOf.Filth_Blood, 5);

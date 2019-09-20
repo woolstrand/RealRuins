@@ -23,7 +23,8 @@ namespace RealRuins {
     public override Material Material {
             get {
                 if (cachedMat == null) {
-                    cachedMat = MaterialPool.MatFrom(color: Faction?.Color ?? Color.white, texPath: "World/WorldObjects/Sites/GenericSite", shader: ShaderDatabase.WorldOverlayTransparentLit, renderQueue: WorldMaterials.WorldObjectRenderQueue);
+                    var color = Color.white;
+                    cachedMat = MaterialPool.MatFrom(color: color, texPath: "World/WorldObjects/Sites/GenericSite", shader: ShaderDatabase.WorldOverlayTransparentLit, renderQueue: WorldMaterials.DynamicObjectRenderQueue);
                 }
                 return cachedMat;
             }
@@ -65,7 +66,8 @@ namespace RealRuins {
         public override void PostMapGenerate() {
             base.PostMapGenerate();
             //we don't use wealth watcher because it can't be set up properly (counts only player's belongings and always includes pawns)
-            wealthOnEnter = CurrentMapWealth(); 
+            wealthOnEnter = CurrentMapWealth();
+            originalFaction = Faction;
             Debug.Log(Debug.POI, "Started with cost of  {0}", wealthOnEnter);
         }
 
@@ -76,6 +78,7 @@ namespace RealRuins {
                     //show letter about enemies defeated
                     originalFaction = Faction;
                     SetFaction(Faction.OfPlayer);
+                    Debug.Log("Setting player faction, cached mat set to nil");
                     cachedMat = null;
                 }
             }
@@ -87,7 +90,9 @@ namespace RealRuins {
                 EnterCooldownComp cooldownComp = GetComponent<EnterCooldownComp>();
                 RealRuinsPOIComp poiComp = GetComponent<RealRuinsPOIComp>();
                 SetFaction(originalFaction);
+                Debug.Log("Setting original faction ({0}), cached mat set to nil", originalFaction);
                 cachedMat = null; //reset cached icon to recolor it
+                Draw();
 
                 float blueprintCost = 1;
                 if (poiComp != null) {
@@ -126,16 +131,15 @@ namespace RealRuins {
 
         public override string GetInspectString() {
             StringBuilder builder = new StringBuilder();
-            builder.Append("Tile " + Tile);
             builder.Append(base.GetInspectString());
+
             if (builder.Length > 0) {
                 builder.AppendLine();
             }
 
-
             var comp = GetComponent<RealRuinsPOIComp>();
             if (comp != null) {
-                builder.AppendLine(("RealRuins.DescPOI" + comp.poiType).Translate());
+                builder.Append(("RealRuins.DescPOI" + comp.poiType).Translate());
                 if (Faction == null) {
                     if ((POIType)comp.poiType != POIType.Ruins) {
                         builder.AppendLine("RealRuins.POINowRuined".Translate());
@@ -153,16 +157,13 @@ namespace RealRuins {
                         }
                         if (wealthDesc != null) {
                             builder.Append("RealRuins.RuinsWealth".Translate());
-                            builder.AppendLine(wealthDesc);
+                            builder.Append(wealthDesc);
                         }
                     }
                 }
             }
-
-
-
-
-            return builder.ToString();
+            
+            return builder.ToString().TrimEndNewlines();
         }
     }
 }

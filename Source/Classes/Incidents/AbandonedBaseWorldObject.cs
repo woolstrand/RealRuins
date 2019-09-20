@@ -81,8 +81,7 @@ namespace RealRuins {
                 builder.AppendLine(comp.CompInspectStringExtra());
             }
 
-            return builder.ToString();
+            return builder.ToString().TrimEndNewlines();
         }
-
     }
 }

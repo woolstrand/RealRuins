@@ -38,7 +38,7 @@ namespace RealRuins {
             Debug.Log(Debug.ForceGen, "Military gen: uncoveredCost {0}, military power: {1}, total points allowed: {2}", uncoveredCost, militaryPower, points);
 
             points -= initialGroup;
-            SpawnGroup(initialGroup, rp.rect, rp.faction, map);
+            SpawnGroup((int)ScalePointsToDifficulty(initialGroup), rp.rect, rp.faction, map);
             Debug.Log(Debug.ForceGen, "Initial group of {0} spawned, {1} points left for triggers", initialGroup, points);
 
             while (points > 0) {
@@ -52,9 +52,11 @@ namespace RealRuins {
                 trigger.SetTimeouts(0, 300);
 
                 int raidMaxPoints = (int)(10000 / Math.Max(Math.Sqrt(d: militaryPower), 1.0));
-                trigger.value = Math.Abs(Rand.Gaussian()) * raidMaxPoints + Rand.Value * raidMaxPoints + 250.0f;
-                if (trigger.value > 10000) trigger.value = Rand.Range(8000, 11000); //sanity cap. against some beta-poly bases.
-                points -= (int)trigger.value;
+                float raidValue = Math.Abs(Rand.Gaussian()) * raidMaxPoints + Rand.Value * raidMaxPoints + 250.0f;
+                if (raidValue > 10000) raidValue = Rand.Range(8000, 11000); //sanity cap. against some beta-poly bases.
+                points -= (int)raidValue;
+
+                trigger.value = ScalePointsToDifficulty(points);
 
                 GenSpawn.Spawn(trigger, mapLocation, map);
                 Debug.Log(Debug.ForceGen, "Spawned trigger at {0}, {1} for {2} points, autofiring after {3} rare ticks", mapLocation.x, mapLocation.z, trigger.value, 0);
@@ -63,7 +65,7 @@ namespace RealRuins {
 
         private void SpawnGroup(int points, CellRect locationRect, Faction faction, Map map) {
             PawnGroupMakerParms pawnGroupMakerParms = new PawnGroupMakerParms();
-            pawnGroupMakerParms.groupKind = PawnGroupKindDefOf.Settlement;
+            pawnGroupMakerParms.groupKind = PawnGroupKindDefOf.Combat;
             pawnGroupMakerParms.tile = map.Tile;
             pawnGroupMakerParms.points = points;
             pawnGroupMakerParms.faction = faction;

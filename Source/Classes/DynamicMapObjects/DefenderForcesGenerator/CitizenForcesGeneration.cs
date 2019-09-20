@@ -11,9 +11,11 @@ namespace RealRuins{
     class CitizenForcesGeneration : AbstractDefenderForcesGenerator {
 
         private int bedCount;
+        private Faction faction;
 
-        public CitizenForcesGeneration(int bedCount) {
+        public CitizenForcesGeneration(int bedCount, Faction factionOverride = null) {
             this.bedCount = bedCount;
+            faction = factionOverride;
         }
 
         public override void GenerateForces(Map map, ResolveParams rp) {
@@ -24,15 +26,31 @@ namespace RealRuins{
             ScatterOptions currentOptions = rp.GetCustom<ScatterOptions>(Constants.ScatterOptions);
             float uncoveredCost = currentOptions.uncoveredCost;
 
+            Faction faction = rp.faction;
+            if (this.faction != null) {
+                faction = this.faction;
+            }
+            if (faction == null) {
+                faction = Find.FactionManager.RandomEnemyFaction(true, true, false);
+            }
+
             Debug.Log(Debug.ForceGen, "Citizen force gen: uncoveredCost {0}. rect {1}", uncoveredCost, rp.rect);
             int maxPoints = Math.Min((int)(uncoveredCost / 10), 5000);
-            SpawnGroup(maxPoints, rp.rect, rp.faction, map, Rand.Range(Math.Max(2, (int)(bedCount * 0.7)), (int)(bedCount * 1.5)));
+            SpawnGroup((int)ScalePointsToDifficulty(maxPoints), rp.rect, faction, map, Rand.Range(Math.Max(2, (int)(bedCount * 0.7)), (int)(bedCount * 1.5)));
             currentOptions.uncoveredCost -= maxPoints * 10;
         }
 
         private void SpawnGroup(int points, CellRect locationRect, Faction faction, Map map, int countCap) {
+
+            PawnGroupKindDef groupKind;
+            if (faction.def.pawnGroupMakers.Where((PawnGroupMaker gm) => gm.kindDef == PawnGroupKindDefOf.Settlement).Count() > 0) {
+                groupKind = PawnGroupKindDefOf.Settlement;
+            } else {
+                groupKind = faction.def.pawnGroupMakers.RandomElement().kindDef;
+            }
+
             PawnGroupMakerParms pawnGroupMakerParms = new PawnGroupMakerParms();
-            pawnGroupMakerParms.groupKind = PawnGroupKindDefOf.Settlement;
+            pawnGroupMakerParms.groupKind = groupKind;
             pawnGroupMakerParms.tile = map.Tile;
             pawnGroupMakerParms.points = points;
             pawnGroupMakerParms.faction = faction;

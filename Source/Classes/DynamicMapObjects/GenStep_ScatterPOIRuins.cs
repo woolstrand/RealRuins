@@ -55,12 +55,19 @@ namespace RealRuins {
 
 
             if (poiComp.poiType == (int)POIType.Ruins || map.ParentFaction == null) {
+                /*if (Rand.Chance(0.1f)) {
+                    currentOptions.wallsDoorsOnly = true;
+                } else {
+                    currentOptions.deteriorationMultiplier = Math.Abs(Rand.Gaussian(0, 0.15f));
+                }*/
+                currentOptions.shouldAddFilth = true;
                 currentOptions.forceFullHitPoints = false;
                 currentOptions.enableDeterioration = true;
                 currentOptions.overwritesEverything = false;
-                currentOptions.costCap = 10000;
-                currentOptions.itemCostLimit = Rand.Range(40, 300);
-            } else { 
+                currentOptions.costCap = (int)Math.Abs(Rand.Gaussian(0, 10000));
+                currentOptions.itemCostLimit = Rand.Range(50, 300);
+            } else {
+                currentOptions.shouldAddFilth = false;
                 currentOptions.forceFullHitPoints = true;
                 currentOptions.enableDeterioration = false;
                 currentOptions.overwritesEverything = true;
@@ -135,8 +142,18 @@ namespace RealRuins {
         private List<AbstractDefenderForcesGenerator> GeneratorsForBlueprint(Blueprint bp, RealRuinsPOIComp poiComp, Faction faction) {
             List<AbstractDefenderForcesGenerator> result = new List<AbstractDefenderForcesGenerator>();
 
-            if (faction == null && (POIType)poiComp.poiType != POIType.Ruins) {
-                
+            Debug.Log(Debug.Scatter, "Selecting force generators");
+            //override forces for any kind of POI if no faction selected
+            if (faction == null || (POIType)poiComp.poiType != POIType.Ruins) {
+                if (Rand.Chance(0.25f)) {
+                    result.Add(new AnimalInhabitantsForcesGenerator());
+                } else if (Rand.Chance(0.333f)) {
+                    result.Add(new MechanoidsForcesGenerator(0));
+                } else if (Rand.Chance(0.5f)) {
+                    result.Add(new CitizenForcesGeneration(1000, Find.FactionManager.RandomEnemyFaction(true, true, false)));
+                }
+                Debug.Log(Debug.Scatter, "Selected {0} for abandoned or ruins", result.Count);
+                return result;
             }
 
             switch ((POIType)poiComp.poiType) {
@@ -165,13 +182,12 @@ namespace RealRuins {
                     break;
                 case POIType.Ruins:
                 default:
-                    if (Rand.Chance(0.3f)) {
-                        result.Add(new AnimalInhabitantsForcesGenerator());
-                    } else if (Rand.Chance(0.5f)) {
+                    if (Rand.Chance(0.5f)) {
                         result.Add(new MechanoidsForcesGenerator(0));
                     }
                     break;
             }
+            Debug.Log(Debug.Scatter, "Selected {0} for POIs", result.Count);
             return result;
         }
     }
