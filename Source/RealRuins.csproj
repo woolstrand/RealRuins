@@ -87,6 +87,7 @@
     <Compile Include="Classes\Incidents\WorldObjectCompProperties_RuinedBase.cs" />
     <Compile Include="Classes\Page_RealRuins.cs" />
     <Compile Include="Classes\DynamicMapObjects\RealRuinsPOIWorldObject.cs" />
+    <Compile Include="Classes\RealRuinsPlanetary_Mod.cs" />
     <Compile Include="Classes\RealRuins_Mod.cs" />
     <Compile Include="Classes\RealRuins_ModSettings.cs" />
     <Compile Include="Classes\Scattering\Internal\BlueprintPreprocessor.cs" />

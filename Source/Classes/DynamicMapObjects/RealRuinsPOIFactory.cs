@@ -31,6 +31,11 @@ namespace RealRuins {
                 return false;
             }
 
+            if (tileInfo.originX + bp.width > Find.World.info.initialMapSize.x || tileInfo.originZ + bp.height > Find.World.info.initialMapSize.z) {
+                Debug.Log(Debug.POI, "Skipped because of exceeding size");
+                return false;
+            }
+
             BlueprintAnalyzer ba = new BlueprintAnalyzer(bp);
             ba.Analyze();
             if (costStrict && (ba.result.totalItemsCost < 1000)) {

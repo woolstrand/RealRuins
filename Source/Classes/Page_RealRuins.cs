@@ -29,38 +29,38 @@ namespace RealRuins {
         private int blueprintsProcessedCount = 0;
         private int blueprintsUsed = 0;
         private bool biomeStrict = true;
-        private bool costStrict = true;
-        private bool areaStrict = true;
+        private bool costStrict = false;
+        private bool areaStrict = false;
         private List<string> blueprintIds = null;
         private List<PlanetTileInfo> mapTiles;
 
         private APIService service = new APIService();
 
-
         public Page_RealRuins() {
-            forcePause = true;
-            absorbInputAroundWindow = true;
-            closeOnAccept = false;
-            closeOnCancel = false;
-            forceCatchAcceptAndCancelEventEvenIfUnfocused = true;
+            doCloseX = true;
         }
 
-        public override void DoWindowContents(Rect rect) {
-            //GUI.BeginGroup(rect);
+        public void DoWindowContents(Rect rect, bool standalone) {
             Listing_Standard list = new Listing_Standard();
             list.Begin(rect);
 
-            Text.Font = GameFont.Medium;
-            list.Label("RealRuins.LoadBlueprintsCaption".Translate());
+            if (standalone) {
+                Text.Font = GameFont.Medium;
+                list.Label("RealRuins.LoadBlueprintsCaption".Translate());
+                Text.Font = GameFont.Small;
+            }
 
-            if (list.ButtonText("RealRuins.LoadBlueprints".Translate())) {
-                StartLoadingList();
+            if (Find.World?.info?.Seed == null) {
+                Text.Font = GameFont.Medium;
+                list.Label("RealRuins.NeedsGameInProgress".Translate());
+                list.End();
+                return;
             }
 
             Text.Font = GameFont.Small;
             string blueprintStats = "RealRuins.Loading".Translate();
             string skipped = "RealRuins.DroppedMaps".Translate() + " --- ";
-            string used = "RealRuins.UsedMaps" + " --- ";
+            string used = "RealRuins.UsedMaps".Translate() + " --- ";
 
             switch (pageState) {
                 case RuinsPageState.Idle:
@@ -76,7 +76,7 @@ namespace RealRuins {
                 case RuinsPageState.ProcessingBlueprints:
                     blueprintStats = "RealRuins.Processing".Translate() + blueprintsProcessedCount + " / " + blueprintsTotalCount;
                     skipped = "RealRuins.DroppedMaps".Translate() + (blueprintsProcessedCount - blueprintsUsed);
-                    used = "RealRuins.UsedMaps" + blueprintsUsed;
+                    used = "RealRuins.UsedMaps".Translate() + blueprintsUsed;
                     break;
                 case RuinsPageState.Completed:
                     blueprintStats = "RealRuins.Completed".Translate();
@@ -94,10 +94,22 @@ namespace RealRuins {
             list.CheckboxLabeled("RealRuins.CostFiltering".Translate(), ref costStrict, "RealRuins.CostFilteringTT".Translate());
             list.CheckboxLabeled("RealRuins.AreaFiltering".Translate(), ref areaStrict, "RealRuins.AreaFilteringTT".Translate());
 
-
-            if (list.ButtonText("RealRuins.Close".Translate())) {
-                Find.WindowStack.TryRemove(this);
+            if (list.ButtonText("RealRuins.LoadBlueprints".Translate())) {
+                StartLoadingList();
             }
+
+            list.Gap();
+
+            if (standalone) {
+                if (list.ButtonText("RealRuins.Close".Translate())) {
+                    Find.WindowStack.TryRemove(this);
+                }
+            }
+            list.End();
+        }
+
+        public override void DoWindowContents(Rect rect) {
+            DoWindowContents(rect, true);
         }
 
         private void StartLoadingList() {
@@ -164,10 +176,6 @@ namespace RealRuins {
 
         public override void PreOpen() {
             base.PreOpen();
-        }
-
-        public void SetupRealRuins() {
-            Find.WindowStack.Add(this);
         }
     }
 }

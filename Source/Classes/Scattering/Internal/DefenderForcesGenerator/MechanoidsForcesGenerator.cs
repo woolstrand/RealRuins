@@ -62,9 +62,9 @@ namespace RealRuins {
                     null, null, null, null);
 
                 IntVec3 cell = IntVec3.Invalid;
-                if (!CellFinder.TryFindRandomCellInsideWith(rect, (IntVec3 x) => x.Standable(map) && options.roomMap[x.x - rect.minX, x.z - rect.minZ] > 1, out cell)) {
+//                if (!CellFinder.TryFindRandomCellInsideWith(rect, (IntVec3 x) => x.Standable(map) && options.roomMap[x.x - rect.minX, x.z - rect.minZ] > 1, out cell)) {
                     CellFinder.TryFindRandomSpawnCellForPawnNear(rect.CenterCell, map, out cell);
-                }
+//                }
 
                 if (cell != IntVec3.Invalid) { 
                     Pawn pawn = PawnGenerator.GeneratePawn(request);

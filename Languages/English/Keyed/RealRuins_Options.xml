@@ -149,5 +149,7 @@
   <RealRuins.DroppedMaps>Maps dropped: </RealRuins.DroppedMaps>
 
   <RealRuins.MapsModuleButton>Import blueprints for this planet (BETA)</RealRuins.MapsModuleButton>
+  <RealRuins.PlanetarySettignsCaption>Real Ruins - Planetary Ruins Settings</RealRuins.PlanetarySettignsCaption>
+  <RealRuins.NeedsGameInProgress>You have to be in an ongoing game to use this menu</RealRuins.NeedsGameInProgress>
 
 </LanguageData>
