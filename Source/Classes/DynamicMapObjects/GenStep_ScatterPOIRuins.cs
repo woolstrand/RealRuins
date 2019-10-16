@@ -144,7 +144,7 @@ namespace RealRuins {
 
             Debug.Log(Debug.Scatter, "Selecting force generators");
             //override forces for any kind of POI if no faction selected
-            if (faction == null || (POIType)poiComp.poiType != POIType.Ruins) {
+            if (faction == null || (POIType)poiComp.poiType == POIType.Ruins) {
                 if (Rand.Chance(0.25f)) {
                     result.Add(new AnimalInhabitantsForcesGenerator());
                 } else if (Rand.Chance(0.333f)) {

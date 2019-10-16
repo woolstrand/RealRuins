@@ -105,7 +105,8 @@ namespace RealRuins {
 
             string lowerName = itemTile.defName.ToLower();
 
-            if (itemDef.IsShell || itemDef.IsRangedWeapon || lowerName.Contains("turret") || lowerName.Contains("cannon") || lowerName.Contains("gun")) {
+            if (itemDef.IsShell || itemDef.IsRangedWeapon || lowerName.Contains("turret") || lowerName.Contains("cannon") || lowerName.Contains("gun")
+               /* || lowerName.Contains("laser") || lowerName.Contains("marauder") and obelisk and punisher when RimAtomics will add faction split*/) {
                 result.militaryItemsCount++;
                 message += "military ";
                 if (itemDef.building != null) {

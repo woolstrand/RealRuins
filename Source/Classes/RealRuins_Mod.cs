@@ -5,7 +5,6 @@ using System.Text;
 using System.Reflection;
 
 using Verse;
-using HugsLib;
 using RimWorld;
 using UnityEngine;
 
@@ -212,6 +211,9 @@ namespace RealRuins {
 
             if (right.ButtonText("RealRuins.MapsModuleButton".Translate(), null)) {
                 Page_RealRuins page = new Page_RealRuins();
+                Find.WindowStack.TryRemove(typeof(Dialog_VanillaModSettings));
+                Find.WindowStack.TryRemove(typeof(HugsLib.Settings.Dialog_ModSettings));
+
                 Find.WindowStack.Add(page);
             }
 

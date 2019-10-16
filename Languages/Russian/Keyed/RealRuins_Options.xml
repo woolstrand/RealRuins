@@ -84,4 +84,69 @@
   <!-- Ruins messages -->
   <RealRuins.NoMoreEnemies>Кажется, сюда больше никто не придет. Можно спокойно собрать караван и отправиться дальше (доступно моментальное формирование каравана)</RealRuins.NoMoreEnemies>
 
+  <!-- POI captions and descriptions -->
+  <RealRuins.CaptionPOI0>Маленькая военная база</RealRuins.CaptionPOI0>
+  <RealRuins.CaptionPOI1>Аванпост</RealRuins.CaptionPOI1>
+  <RealRuins.CaptionPOI2>Временная стоянка</RealRuins.CaptionPOI2>
+  <RealRuins.CaptionPOI3>Город</RealRuins.CaptionPOI3>
+  <RealRuins.CaptionPOI4>Фабрика</RealRuins.CaptionPOI4>
+  <RealRuins.CaptionPOI5>Исследовательский Центр</RealRuins.CaptionPOI5>
+  <RealRuins.CaptionPOI6>Электростанция</RealRuins.CaptionPOI6>
+  <RealRuins.CaptionPOI7>Крупная военная база</RealRuins.CaptionPOI7>
+  <RealRuins.CaptionPOI8>Склад</RealRuins.CaptionPOI8>
+  <RealRuins.CaptionPOI9>Центр связи</RealRuins.CaptionPOI9>
+  <RealRuins.CaptionPOI10>Руины</RealRuins.CaptionPOI10>
+  <RealRuins.CaptionPOI11>Цитадель</RealRuins.CaptionPOI11>
+
+
+  <RealRuins.DescPOI0>Небольшая группа строений, похоже на что-то военное. Склад боеприпасов или небольшая перевалочная военная база. Здесь может быть несколько стационарных орудий и десяток-другой солдат.</RealRuins.DescPOI0>
+  <RealRuins.DescPOI1>Очень маленькое военное поселение. Пара комнат, пара туррелей, пара охранников.</RealRuins.DescPOI1>
+  <RealRuins.DescPOI2>Временный лагерь, установленный для охоты или добычи ресурсов. Возможно, промежуточный пункт для транспортировки припасов.</RealRuins.DescPOI2>                                            
+  <RealRuins.DescPOI3>Большой процветающий город. Хоть у таких поселений обычно не бывает стен, сплошь утыканных охранными сооружениями, оно все равно непллохо защищено, и в случае нападения может запросить мощное подкрепление.</RealRuins.DescPOI3>
+  <RealRuins.DescPOI4>В этих зданиях расположены верстаки и склады продукции и сырья. Скорее всего, фабрика хорошо охраняется.</RealRuins.DescPOI4>
+  <RealRuins.DescPOI5>Производственно-исследовательский центр. Основная цель - производство, но продукция, как правило, более сложная и дорогая, чем на обычной фабрике. Скорее всего хошо охраняется и запросит подкрепление при попытке захвата.</RealRuins.DescPOI5>
+  <RealRuins.DescPOI6>Группа зданий преимущественно для производства энергии.</RealRuins.DescPOI6>
+  <RealRuins.DescPOI7>Большая военная база с множеством стационарных орудий, несколькими десятками персонала и подкреплением, готовым показаться в любой момент.</RealRuins.DescPOI7>
+  <RealRuins.DescPOI8>Издалека это место выглядит как ангар, набитый какими-то припасами. И охраной.</RealRuins.DescPOI8>
+  <RealRuins.DescPOI9>Небольшое здание, похожее на центр связи. Возможно, просто временный военный лагерь с несколькими охранниками.</RealRuins.DescPOI9>
+  <RealRuins.DescPOI10>Остатки каких-то строений, куски мебели, сломанные верстаки, обломки труб и арматуры. Невозможно определить, что здесь было раньше, сейчас это просто разграбленные руины.</RealRuins.DescPOI10>
+  <RealRuins.DescPOI11>Отлично охраняемая до зубов вооруженная цитадель, с массой стационарных орудий, толпами солдат, несметными волнами подкреплений и чем-то ужасно ценным внутри.</RealRuins.DescPOI11>
+
+  <RealRuins.POINowRuined>Однажды в этом месте бурлила жизнь, но сейчас оно покинуто, никто не знает почему. Так что лучше будьте готовы к любой опасности, подстерегающей вас.</RealRuins.POINowRuined>
+
+  <RealRuins.EnterPOI>Посетить: {0}</RealRuins.EnterPOI>
+  <RealRuins.AttackPOI>Атаковать: {0}</RealRuins.AttackPOI>
+
+  <RealRuins.CaravanEnteringPOI>Следует в локацию: {0}</RealRuins.CaravanEnteringPOI>
+
+  <LetterLabelCaravanEnteredUnownedPOI>Караван прибыл</LetterLabelCaravanEnteredUnownedPOI>
+  <LetterCaravanEnteredUnownedPOI>{0} Прибыл в пункт назначения. Будьте осторожны.</LetterCaravanEnteredUnownedPOI>
+  <LetterLabelCaravanAttackedPOI>Караван атакует</LetterLabelCaravanAttackedPOI>
+  <LetterCaravanAttackedPOI>{0} атакует собственность другой фракции.</LetterCaravanAttackedPOI>
+  <LetterTransportPodsArrivedInUnownedPOI>Транспортные капсулы прибыли.</LetterTransportPodsArrivedInUnownedPOI>
+  <LetterLabelTransportPodsAttackedPOI>Транспортные капсулы прибыли</LetterLabelTransportPodsAttackedPOI>
+  <LetterTransportPodsAttackedPOI>Транспортные капсулы прибыли в пункт назначения, атака началась.</LetterTransportPodsAttackedPOI>
+  <LetterLabelTransportPodsArrivedAtRuins>Транспортные капсулы прибыли в руины</LetterLabelTransportPodsArrivedAtRuins>
+  <LetterTransportPodsArrivedAtRuins>Транспортные капсулы прибыли в руины.</LetterTransportPodsArrivedAtRuins>
+
+  <!-- POI load dialog -->
+  <RealRuins.LoadBlueprintsCaption>Загрузить схемы для всей планеты</RealRuins.LoadBlueprintsCaption>
+  <RealRuins.LoadBlueprints>Загрузить схемы</RealRuins.LoadBlueprints>
+  <RealRuins.Close>Закрыть</RealRuins.Close>
+  <RealRuins.Idle>Нажмите "загрузить"</RealRuins.Idle>
+  <RealRuins.Searching>Поисх схем...</RealRuins.Searching>
+  <RealRuins.Loading>Загрузка схем: </RealRuins.Loading>
+  <RealRuins.Processing>Анализ схем: </RealRuins.Processing>
+  <RealRuins.Completed>Завершено!</RealRuins.Completed>
+  <RealRuins.BiomeFiltering>Отбрасывать несоответствующие биомы</RealRuins.BiomeFiltering>
+  <RealRuins.BiomeFilteringTT>Отбросить карты, биом которых не соответствует биому ячейки на вашей планете</RealRuins.BiomeFilteringTT>
+  <RealRuins.CostFiltering>Отбрасывать слишком дешевые</RealRuins.CostFiltering>
+  <RealRuins.CostFilteringTT>Отбрасывать слишком дешевые схемы, цена которых меньше цены средних "руин по умолчанию", которые и так генерируются на каждой карте.</RealRuins.CostFilteringTT>
+  <RealRuins.AreaFiltering>Отбрасывать слишком маленькие</RealRuins.AreaFiltering>
+  <RealRuins.AreaFilteringTT>Отбрасывать карты слишком маленького размера и в которых слишком мало предметов.</RealRuins.AreaFilteringTT>
+  <RealRuins.UsedMaps>Схем использовано: </RealRuins.UsedMaps>
+  <RealRuins.DroppedMaps>Схем отбраковано: </RealRuins.DroppedMaps>
+
+  <RealRuins.MapsModuleButton>Загрузить схемы для этой планеты (BETA)</RealRuins.MapsModuleButton>
+
 </LanguageData>

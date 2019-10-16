@@ -156,7 +156,11 @@ namespace RealRuins {
             Debug.Log(Debug.BlueprintTransfer, "Capping current cost of {0} to target cost of {1}", totalCost, options.costCap);
 
             var initialCount = tilesByCost.Count;
+
             var filteredItems = tilesByCost.Where(item => item.cost > 20).ToList();
+            if (filteredItems.Count == 0) {
+                filteredItems = tilesByCost;
+            }
 
             while (filteredItems.Count > 0 && totalCost > options.costCap) {
                 var tile = filteredItems.RandomElement();
