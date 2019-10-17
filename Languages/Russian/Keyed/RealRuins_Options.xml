@@ -149,4 +149,8 @@
 
   <RealRuins.MapsModuleButton>Загрузить схемы для этой планеты (BETA)</RealRuins.MapsModuleButton>
 
+  <RealRuins.PlanetarySettignsCaption>Real Ruins - Руины на карте мира</RealRuins.PlanetarySettignsCaption>
+  <RealRuins.NeedsGameInProgress>Вам необходимо загрузить или начать новую игру, чтобы воспользоваться этой функцией.</RealRuins.NeedsGameInProgress>
+
+
 </LanguageData>
