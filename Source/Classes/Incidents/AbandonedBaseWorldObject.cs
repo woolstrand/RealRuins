@@ -69,19 +69,7 @@ namespace RealRuins {
         }
 
         public override string GetInspectString() {
-            StringBuilder builder = new StringBuilder();
-            builder.Append(base.GetInspectString());
-            if (builder.Length > 0) {
-                builder.AppendLine();
-            }
-            builder.AppendLine("RealRuins.PristineRuinsWolrdObject".Translate());
-
-            var comp = GetComponent<RuinedBaseComp>();
-            if (comp != null) {
-                builder.AppendLine(comp.CompInspectStringExtra());
-            }
-
-            return builder.ToString().TrimEndNewlines();
+            return base.GetInspectString();
         }
     }
 }
