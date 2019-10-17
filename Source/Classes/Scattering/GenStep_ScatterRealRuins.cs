@@ -141,13 +141,13 @@ namespace RealRuins
 
                 CoverageMap coverageMap = CoverageMap.EmptyCoverageMap(map);
 
-
                 for (int i = 0; i < num; i++) {
                     //We use copy of scatteroptions because each scatteroptions represents separate chunk with separate location, size, maps, etc.
                     //should use struct instead? is it compatible with IExposable?
                     ResolveParams rp = default(ResolveParams);
                     rp.SetCustom(Constants.ScatterOptions, currentOptions.Copy());
                     rp.SetCustom(Constants.CoverageMap, coverageMap);
+
                     if (Rand.Chance(currentOptions.hostileChance)) {
                         if (Rand.Chance(0.8f)) {
                             rp.SetCustom(Constants.ForcesGenerators, new List<AbstractDefenderForcesGenerator> { new AnimalInhabitantsForcesGenerator() });
