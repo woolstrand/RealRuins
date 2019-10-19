@@ -79,8 +79,8 @@ namespace RealRuins {
             var bp = BlueprintLoader.LoadWholeBlueprintAtPath(filename);
 
             //FOR DEBUG LOGGING
-            var a = new BlueprintAnalyzer(bp, currentOptions);
-            a.Analyze();
+            //var a = new BlueprintAnalyzer(bp, currentOptions);
+            //a.Analyze();
 
             Debug.Log(Debug.BlueprintTransfer, "Trying to place POI map at tile {0}, at {1},{2} to {3},{4} ({5}x{6})",
                 map.Parent.Tile,

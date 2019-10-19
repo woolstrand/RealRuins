@@ -139,7 +139,7 @@ namespace RealRuins {
 
             var comp = GetComponent<RealRuinsPOIComp>();
             if (comp != null) {
-                builder.Append(("RealRuins.DescPOI" + comp.poiType).Translate());
+                builder.AppendLine(("RealRuins.DescPOI" + comp.poiType).Translate());
                 if (Faction == null) {
                     if ((POIType)comp.poiType != POIType.Ruins) {
                         builder.AppendLine("RealRuins.POINowRuined".Translate());
@@ -157,7 +157,7 @@ namespace RealRuins {
                         }
                         if (wealthDesc != null) {
                             builder.Append("RealRuins.RuinsWealth".Translate());
-                            builder.Append(wealthDesc);
+                            builder.AppendLine(wealthDesc);
                         }
                     }
                 }

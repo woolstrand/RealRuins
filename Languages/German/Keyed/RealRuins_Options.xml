@@ -2,7 +2,7 @@
 <LanguageData>
   <RealRuins_ModOptions_Category>Real Ruins</RealRuins_ModOptions_Category>
   <RealRuins_ModOptions_AllowDownloads>Erlaube das Herunterladen von Ruinen aus der Datenbank.</RealRuins_ModOptions_AllowDownloads>
-  <RealRuins_ModOptions_AllowUploads>Erlaube das hochladen deiner Basen.</RealRuins_ModOptions_AllowUploads>
+  <RealRuins_ModOptions_AllowUploads>Erlaube das Hochladen deiner Basen.</RealRuins_ModOptions_AllowUploads>
   <RealRuins_ModOptions_CacheSize>Beschränken Sie die Größe des lokalen Caches auf </RealRuins_ModOptions_CacheSize>
   <RealRuins_ModOptions_OfflineMode>Nur lokaler Modus</RealRuins_ModOptions_OfflineMode>
   <RealRuins_ModOptions_AllowDownloadsTooltip>Wenn Sie dies ausschalten, wird nichts entfernt, was Sie bereits heruntergeladen haben.</RealRuins_ModOptions_AllowDownloadsTooltip>
@@ -48,48 +48,48 @@
   <!-- Art -->
   <DeterioratedArtDescription>Dieser Gegenstand ist zu abgenutzt und beschädigt. Man kann mit Sicherheit sagen, dass es einmal ein schönes Kunstobjekt war, aber jetzt kann man kaum erraten, worum es ging.</DeterioratedArtDescription>
 
-  <RealRuins_ModOptions_Reset>Reset settings to defaults</RealRuins_ModOptions_Reset>
+  <RealRuins_ModOptions_Reset>Auf Grundeinstellungen zurücksetzen</RealRuins_ModOptions_Reset>
   <RealRuins_MapOptions_CaravanReforming>Enable instant caravan reforming between raids</RealRuins_MapOptions_CaravanReforming>
   <RealRuins_MapOptions_CaravanReformingTT>Normally during ruins scavenging events you should not be able to reform caravan instantly right after the initial hostile party is defeated. By design you had to manually search for loot, pick up and leave using map edge even if there are no hostile units right now. However, if you prefer the old way with overpowered instant reform feature, you can enable this feature</RealRuins_MapOptions_CaravanReformingTT>
 
   <!-- Ruins info -->
-  <RealRuins.RuinsWealth>Wealth: </RealRuins.RuinsWealth>
-  <RealRuins.RuinsActivity>Raiders presence: </RealRuins.RuinsActivity>
+  <RealRuins.RuinsWealth>Reichtum: </RealRuins.RuinsWealth>
+  <RealRuins.RuinsActivity>Anwesenheit von Räubern: </RealRuins.RuinsActivity>
 
-  <RealRuins.RuinsWealth.0>almost zero (&lt;10K)</RealRuins.RuinsWealth.0>
-  <RealRuins.RuinsWealth.1>low</RealRuins.RuinsWealth.1>
-  <RealRuins.RuinsWealth.2>medium</RealRuins.RuinsWealth.2>
-  <RealRuins.RuinsWealth.3>high (&gt;1M)</RealRuins.RuinsWealth.3>
-  <RealRuins.RuinsWealth.4>extremely high (&gt;10M)</RealRuins.RuinsWealth.4>
+  <RealRuins.RuinsWealth.0>nahe null (&lt;10K)</RealRuins.RuinsWealth.0>
+  <RealRuins.RuinsWealth.1>klein</RealRuins.RuinsWealth.1>
+  <RealRuins.RuinsWealth.2>mittel</RealRuins.RuinsWealth.2>
+  <RealRuins.RuinsWealth.3>groß (&gt;1M)</RealRuins.RuinsWealth.3>
+  <RealRuins.RuinsWealth.4>äußerst groß (&gt;10M)</RealRuins.RuinsWealth.4>
 
-  <RealRuins.RuinsActivity.0>almost none</RealRuins.RuinsActivity.0>
-  <RealRuins.RuinsActivity.1>low</RealRuins.RuinsActivity.1>
-  <RealRuins.RuinsActivity.2>medium</RealRuins.RuinsActivity.2>
-  <RealRuins.RuinsActivity.3>high</RealRuins.RuinsActivity.3>
-  <RealRuins.RuinsActivity.4>extreme</RealRuins.RuinsActivity.4>
+  <RealRuins.RuinsActivity.0>nahe null</RealRuins.RuinsActivity.0>
+  <RealRuins.RuinsActivity.1>niedrig</RealRuins.RuinsActivity.1>
+  <RealRuins.RuinsActivity.2>mittel</RealRuins.RuinsActivity.2>
+  <RealRuins.RuinsActivity.3>hoch</RealRuins.RuinsActivity.3>
+  <RealRuins.RuinsActivity.4>äußerst hoch</RealRuins.RuinsActivity.4>
   
   <!-- Ruins messages -->
   <RealRuins.NoMoreEnemies>Looks like no one's gonna show up anymore. You can safely pack up and leave. (Instant caravan reform allowed)</RealRuins.NoMoreEnemies>
 
   <!-- POI captions and descriptions -->
-  <RealRuins.CaptionPOI0>Small military base</RealRuins.CaptionPOI0>
-  <RealRuins.CaptionPOI1>Military outpost</RealRuins.CaptionPOI1>
-  <RealRuins.CaptionPOI2>Temporary camp</RealRuins.CaptionPOI2>
-  <RealRuins.CaptionPOI3>City</RealRuins.CaptionPOI3>
-  <RealRuins.CaptionPOI4>Factory</RealRuins.CaptionPOI4>
-  <RealRuins.CaptionPOI5>Research center</RealRuins.CaptionPOI5>
-  <RealRuins.CaptionPOI6>Power plant</RealRuins.CaptionPOI6>
-  <RealRuins.CaptionPOI7>Large military base</RealRuins.CaptionPOI7>
-  <RealRuins.CaptionPOI8>Warehouse</RealRuins.CaptionPOI8>
-  <RealRuins.CaptionPOI9>Comm center</RealRuins.CaptionPOI9>
-  <RealRuins.CaptionPOI10>Ruins</RealRuins.CaptionPOI10>
-  <RealRuins.CaptionPOI11>Stronghold</RealRuins.CaptionPOI11>
+  <RealRuins.CaptionPOI0>Kleiner militärischer Standort</RealRuins.CaptionPOI0>
+  <RealRuins.CaptionPOI1>Militärischer Außenposten</RealRuins.CaptionPOI1>
+  <RealRuins.CaptionPOI2>Übergangslager</RealRuins.CaptionPOI2>
+  <RealRuins.CaptionPOI3>Stadt</RealRuins.CaptionPOI3>
+  <RealRuins.CaptionPOI4>Fabrik</RealRuins.CaptionPOI4>
+  <RealRuins.CaptionPOI5>Forschungszentrum</RealRuins.CaptionPOI5>
+  <RealRuins.CaptionPOI6>Kraftwerk</RealRuins.CaptionPOI6>
+  <RealRuins.CaptionPOI7>Großer militärischer Standort</RealRuins.CaptionPOI7>
+  <RealRuins.CaptionPOI8>Lagerhalle</RealRuins.CaptionPOI8>
+  <RealRuins.CaptionPOI9>Kommunikationszentrum</RealRuins.CaptionPOI9>
+  <RealRuins.CaptionPOI10>Ruine</RealRuins.CaptionPOI10>
+  <RealRuins.CaptionPOI11>Zitadelle</RealRuins.CaptionPOI11>
 
 
-  <RealRuins.DescPOI0>A small group of buildings, presumably of military kind. Probably an armoury or a small transit military base. It can have several stationary weapons and a dozen or two soldiers.</RealRuins.DescPOI0>
-  <RealRuins.DescPOI1>A very small military outpost, couple of rooms, couple of turrets, couple of soldiers.</RealRuins.DescPOI1>
-  <RealRuins.DescPOI2>A temporary camp set up to mine resources, hunt or as a trans-shipment point.</RealRuins.DescPOI2>
-  <RealRuins.DescPOI3>A large thriving city. Even though it usually does not have massive walls or a lot of stationary weapons, it can request powerful reinforcements in case of an assault.</RealRuins.DescPOI3>
+  <RealRuins.DescPOI0>Eine kleine Gruppe von Gebäuden, die vermutlich militärisch genutzt werden. Wahrscheinlich ein Waffenarsenal oder ein kleiner militärischer Übergangsstandort. It can have several stationary weapons and a dozen or two soldiers.</RealRuins.DescPOI0>
+  <RealRuins.DescPOI1>Ein sehr kleiner militärischer Außenposten, ein Paar Räume, ein Paar Tourellen, ein paar Soldaten.</RealRuins.DescPOI1>
+  <RealRuins.DescPOI2>Ein Übergangslager set up to mine resources, hunt or as a trans-shipment point.</RealRuins.DescPOI2>
+  <RealRuins.DescPOI3>Eine große erfolgreiche Stadt. Hat gewöhnlich keine gewaltige Festung oder viel a lot of stationary weapons, it can request powerful reinforcements in case of an assault.</RealRuins.DescPOI3>
   <RealRuins.DescPOI4>Those buildings contain a lot of workbenches and produced goods. Most likely the factory is well guarded.</RealRuins.DescPOI4>
   <RealRuins.DescPOI5>Research and development center is focused on production, but goods are more sophisticated and pricey than in a regular factory. Most likely it's well guarded and guards will call reinforcements as soon as you decide to assault.</RealRuins.DescPOI5>
   <RealRuins.DescPOI6>A group of buildings focused primarily on power production.</RealRuins.DescPOI6>
