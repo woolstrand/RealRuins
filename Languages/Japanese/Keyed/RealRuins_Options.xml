@@ -18,14 +18,13 @@
   <RealRuins_ModOptions_DownloadMore>設計図をダウンロードする</RealRuins_ModOptions_DownloadMore>
   <RealRuins_ModOptions_CurrentCacheCount>キャッシュ内の設計図：</RealRuins_ModOptions_CurrentCacheCount>
 
-
   <RealRuins_MapOptions_Density>遺跡の密度</RealRuins_MapOptions_Density>
   <RealRuins_MapOptions_Size>最小遺跡断片サイズ</RealRuins_MapOptions_Size>
   <RealRuins_MapOptions_Size_Max>最大遺跡断片サイズ</RealRuins_MapOptions_Size_Max>
   <RealRuins_MapOptions_Deterioration>遺跡の劣化率</RealRuins_MapOptions_Deterioration>
   <RealRuins_MapOptions_Scavengers>回収業者の活動係数</RealRuins_MapOptions_Scavengers>
   <RealRuins_MapOptions_CostLimit>アイテム価値の上限を制限</RealRuins_MapOptions_CostLimit>
-  <RealRuins_MapOptions_DisableHaulables>再展示可能なアイテムを無効</RealRuins_MapOptions_DisableHaulables>
+  <RealRuins_MapOptions_DisableHaulables>再設置可能なアイテムを無効</RealRuins_MapOptions_DisableHaulables>
   <RealRuins_MapOptions_WallsAndDoorsOnly>壁と扉だけ配置</RealRuins_MapOptions_WallsAndDoorsOnly>
   <RealRuins_MapOptions_DisableDecoration>特殊アイテム(骨)を無効</RealRuins_MapOptions_DisableDecoration>
   <RealRuins_MapOptions_DisableTraps>特殊アイテム(罠)を無効</RealRuins_MapOptions_DisableTraps>
@@ -47,8 +46,8 @@
   <RealRuins_MapOptions_EnableProximity>入植地からの距離による影響</RealRuins_MapOptions_EnableProximity>
   <RealRuins_MapOptions_EnableProximityTT>コロニーや派閥拠点からの距離は、遺跡の作成条件に影響を及ぼします。遺跡は都市の近くではより密集していますが、荒らされていて何も残っていない率が高くなります。</RealRuins_MapOptions_EnableProximityTT>
 
-  <RealRuins_MapOptions_StartWithoutRuins>スタート時のマップには廃墟なし</RealRuins_MapOptions_StartWithoutRuins>
-  <RealRuins_MapOptions_StartWithoutRuinsTT>ゲームスタートした時のマップに廃墟は生成されません。ゲーム開始後に生成されるマップでは、設定に応じて遺跡や廃墟が通常に生成されます。</RealRuins_MapOptions_StartWithoutRuinsTT>
+  <RealRuins_MapOptions_StartWithoutRuins>開始マップに遺跡はなし</RealRuins_MapOptions_StartWithoutRuins>
+  <RealRuins_MapOptions_StartWithoutRuinsTT>ゲームスタート時のマップに遺跡は生成されません。開始後で廃墟は、設定に従って正常に生成されます。</RealRuins_MapOptions_StartWithoutRuinsTT>
 
   <!-- Caravan entered map -->
   <LetterLabelCaravanEnteredRuins>キャラバンは遺跡に到着した</LetterLabelCaravanEnteredRuins>
@@ -85,70 +84,70 @@
   <RealRuins.NoMoreEnemies>もう誰も来ないようです。\nあなたは安全に荷物をまとめてマップを離れることが可能です。（即時キャラバン隊を編成可能）</RealRuins.NoMoreEnemies>
 
   <!-- POI captions and descriptions -->
-  <RealRuins.CaptionPOI0>Small military base</RealRuins.CaptionPOI0>
-  <RealRuins.CaptionPOI1>Military outpost</RealRuins.CaptionPOI1>
-  <RealRuins.CaptionPOI2>Temporary camp</RealRuins.CaptionPOI2>
-  <RealRuins.CaptionPOI3>City</RealRuins.CaptionPOI3>
-  <RealRuins.CaptionPOI4>Factory</RealRuins.CaptionPOI4>
-  <RealRuins.CaptionPOI5>Research center</RealRuins.CaptionPOI5>
-  <RealRuins.CaptionPOI6>Power plant</RealRuins.CaptionPOI6>
-  <RealRuins.CaptionPOI7>Large military base</RealRuins.CaptionPOI7>
-  <RealRuins.CaptionPOI8>Warehouse</RealRuins.CaptionPOI8>
-  <RealRuins.CaptionPOI9>Comm center</RealRuins.CaptionPOI9>
-  <RealRuins.CaptionPOI10>Ruins</RealRuins.CaptionPOI10>
-  <RealRuins.CaptionPOI11>Stronghold</RealRuins.CaptionPOI11>
+  <RealRuins.CaptionPOI0>小さな軍事基地</RealRuins.CaptionPOI0>
+  <RealRuins.CaptionPOI1>軍事基地</RealRuins.CaptionPOI1>
+  <RealRuins.CaptionPOI2>仮設キャンプ</RealRuins.CaptionPOI2>
+  <RealRuins.CaptionPOI3>都市</RealRuins.CaptionPOI3>
+  <RealRuins.CaptionPOI4>工場</RealRuins.CaptionPOI4>
+  <RealRuins.CaptionPOI5>研究センター</RealRuins.CaptionPOI5>
+  <RealRuins.CaptionPOI6>発電所</RealRuins.CaptionPOI6>
+  <RealRuins.CaptionPOI7>大きな軍事基地</RealRuins.CaptionPOI7>
+  <RealRuins.CaptionPOI8>倉庫</RealRuins.CaptionPOI8>
+  <RealRuins.CaptionPOI9>通信センター</RealRuins.CaptionPOI9>
+  <RealRuins.CaptionPOI10>廃墟</RealRuins.CaptionPOI10>
+  <RealRuins.CaptionPOI11>要塞</RealRuins.CaptionPOI11>
 
 
-  <RealRuins.DescPOI0>A small group of buildings, presumably of military kind. Probably an armoury or a small transit military base. It can have several stationary weapons and a dozen or two soldiers.</RealRuins.DescPOI0>
-  <RealRuins.DescPOI1>A very small military outpost, couple of rooms, couple of turrets, couple of soldiers.</RealRuins.DescPOI1>
-  <RealRuins.DescPOI2>A temporary camp set up to mine resources, hunt or as a trans-shipment point.</RealRuins.DescPOI2>
-  <RealRuins.DescPOI3>A large thriving city. Even though it usually does not have massive walls or a lot of stationary weapons, it can request powerful reinforcements in case of an assault.</RealRuins.DescPOI3>
-  <RealRuins.DescPOI4>Those buildings contain a lot of workbenches and produced goods. Most likely the factory is well guarded.</RealRuins.DescPOI4>
-  <RealRuins.DescPOI5>Research and development center is focused on production, but goods are more sophisticated and pricey than in a regular factory. Most likely it's well guarded and guards will call reinforcements as soon as you decide to assault.</RealRuins.DescPOI5>
-  <RealRuins.DescPOI6>A group of buildings focused primarily on power production.</RealRuins.DescPOI6>
-  <RealRuins.DescPOI7>A large military base with lots of stationary weapons, several dozens of personnel and reinforcements ready to arrive.</RealRuins.DescPOI7>
-  <RealRuins.DescPOI8>From distance it looks like a large hangar filled with goods. And a lot of guards.</RealRuins.DescPOI8>
-  <RealRuins.DescPOI9>Small building which looks like a communication center. Probably just a temporary military camp with just a few guards.</RealRuins.DescPOI9>
-  <RealRuins.DescPOI10>Remainings of some buildings, bits of furniture, broken workbenches, pipes and metal bars. You can't tell what was there once long ago, everything left is just an empty ruins.</RealRuins.DescPOI10>
-  <RealRuins.DescPOI11>Heavily guarded stronghold. Extremely well defended with tons of stationary weapons, troops and reinforcements.</RealRuins.DescPOI11>
+  <RealRuins.DescPOI0>おそらく軍事用の建物が立ち並ぶ小さな建築群です。兵器庫や小さな輸送基地でしょう。いくつかのタレットや迫撃砲と分隊単位か2名の兵士が守っているかもしれません。</RealRuins.DescPOI0>
+  <RealRuins.DescPOI1>非常に小さな軍事基地で2つの建物にタレット2台と2名の兵士が配備されています。</RealRuins.DescPOI1>
+  <RealRuins.DescPOI2>採掘や狩猟、物流地点として一時的に設置された仮設キャンプです。</RealRuins.DescPOI2>
+  <RealRuins.DescPOI3>繁栄した大都市です。普通は巨大な壁や多数のタレットは設置されていませんが、防衛の際には強力な援軍が到着する事があります。</RealRuins.DescPOI3>
+  <RealRuins.DescPOI4>これらの建築物には作業台と生産物が数多くあります。ほとんどの場合工場は十分な警備体制が整っています。</RealRuins.DescPOI4>
+  <RealRuins.DescPOI5>研究センターは生産に重点が置かれ、そのアイテムは通常の工場よりも洗練され高価なものが多いです。ほとんどの場合、十分な警備体制が整っており、あなたから略奪を受けるとすぐに警備員が増援を呼びます。</RealRuins.DescPOI5>
+  <RealRuins.DescPOI6>主に発電所が集中している建築群です。</RealRuins.DescPOI6>
+  <RealRuins.DescPOI7>多数のタレットと数十人の兵員、そして準備万端な増援部隊が配備された大規模な軍事基地です。</RealRuins.DescPOI7>
+  <RealRuins.DescPOI8>遠くから見ると、アイテムが多数積まれている大きな格納庫のように見えます。そして多数の警備員たちも。</RealRuins.DescPOI8>
+  <RealRuins.DescPOI9>通信センターのように見える小さな建物です。おそらくはたかだか数人の警備員がいる仮設的な軍事キャンプでしょう。</RealRuins.DescPOI9>
+  <RealRuins.DescPOI10>部分的に残っている建物の残骸や壊れた家具や壊れた作業台などとパイプと金属の棒が散乱しています。ここで昔何が起こったのかは不明です。すべて漁り尽くされた遺跡です。</RealRuins.DescPOI10>
+  <RealRuins.DescPOI11>強力に防衛されている要塞です。大量のタレットと多数の兵士と増援部隊などで鉄壁の防御を誇ります。</RealRuins.DescPOI11>
 
-  <RealRuins.POINowRuined>Once this place was full of life, but now it's abandoned, no one knows why. So better beware of all kind of dangers.</RealRuins.POINowRuined>
+  <RealRuins.POINowRuined>かつてこの場所も活気に満ちていたかもしれませんが、現在は放棄され誰もその理由を知りません。あらゆる種類の危険に備えてください。</RealRuins.POINowRuined>
 
-  <RealRuins.EnterPOI>Enter {0}</RealRuins.EnterPOI>
-  <RealRuins.AttackPOI>Attack {0}</RealRuins.AttackPOI>
+  <RealRuins.EnterPOI>{0}に入る</RealRuins.EnterPOI>
+  <RealRuins.AttackPOI>{0}を攻撃</RealRuins.AttackPOI>
 
-  <RealRuins.CaravanEnteringPOI>Entering {0}</RealRuins.CaravanEnteringPOI>
+  <RealRuins.CaravanEnteringPOI>{0}に入る</RealRuins.CaravanEnteringPOI>
 
-  <LetterLabelCaravanEnteredUnownedPOI>Caravan arrived</LetterLabelCaravanEnteredUnownedPOI>
-  <LetterCaravanEnteredUnownedPOI>{0} has arrived at destination. Proceed with caution.</LetterCaravanEnteredUnownedPOI>
-  <LetterLabelCaravanAttackedPOI>Caravan is attacking</LetterLabelCaravanAttackedPOI>
-  <LetterCaravanAttackedPOI>{0} is attacking other faction's property.</LetterCaravanAttackedPOI>
-  <LetterTransportPodsArrivedInUnownedPOI>Transport pods have arrived at destination.</LetterTransportPodsArrivedInUnownedPOI>
-  <LetterLabelTransportPodsAttackedPOI>Transport pods have arrived</LetterLabelTransportPodsAttackedPOI>
-  <LetterTransportPodsAttackedPOI>Transport pods have arrived at destination. Attack has begun.</LetterTransportPodsAttackedPOI>
-  <LetterLabelTransportPodsArrivedAtRuins>Transport pods have arrived at ruins</LetterLabelTransportPodsArrivedAtRuins>
-  <LetterTransportPodsArrivedAtRuins>Transport pods have arrived at ruins</LetterTransportPodsArrivedAtRuins>
+  <LetterLabelCaravanEnteredUnownedPOI>キャラバン隊が到着</LetterLabelCaravanEnteredUnownedPOI>
+  <LetterCaravanEnteredUnownedPOI>{0}が目的地に到着しました。気を付けて行動してください。</LetterCaravanEnteredUnownedPOI>
+  <LetterLabelCaravanAttackedPOI>キャラバン隊は戦闘中</LetterLabelCaravanAttackedPOI>
+  <LetterCaravanAttackedPOI>{0}は他派閥の所有物を攻撃中です。</LetterCaravanAttackedPOI>
+  <LetterTransportPodsArrivedInUnownedPOI>輸送ポッドが目的地に到着</LetterTransportPodsArrivedInUnownedPOI>
+  <LetterLabelTransportPodsAttackedPOI>輸送ポッドが到着</LetterLabelTransportPodsAttackedPOI>
+  <LetterTransportPodsAttackedPOI>輸送ポッドが目的地に到着して攻撃が始まりました。</LetterTransportPodsAttackedPOI>
+  <LetterLabelTransportPodsArrivedAtRuins>輸送ポッドが遺跡に到着</LetterLabelTransportPodsArrivedAtRuins>
+  <LetterTransportPodsArrivedAtRuins>輸送ポッドが遺跡に到着</LetterTransportPodsArrivedAtRuins>
 
   <!-- POI load dialog -->
-  <RealRuins.LoadBlueprintsCaption>Load blueprints for planet</RealRuins.LoadBlueprintsCaption>
-  <RealRuins.LoadBlueprints>Load blueprints</RealRuins.LoadBlueprints>
-  <RealRuins.Close>Close</RealRuins.Close>
-  <RealRuins.Idle>Idle</RealRuins.Idle>
-  <RealRuins.Searching>Searching for blueprints...</RealRuins.Searching>
-  <RealRuins.Loading>Loading blueprints: </RealRuins.Loading>
-  <RealRuins.Processing>Processing blueprints: </RealRuins.Processing>
-  <RealRuins.Completed>Completed!</RealRuins.Completed>
-  <RealRuins.BiomeFiltering>Biome filtering</RealRuins.BiomeFiltering>
-  <RealRuins.BiomeFilteringTT>Exclude maps with missing or mismatching biome</RealRuins.BiomeFilteringTT>
-  <RealRuins.CostFiltering>Cost filtering</RealRuins.CostFiltering>
-  <RealRuins.CostFilteringTT>Exclude maps with too low cost (lower than average "empty" map)</RealRuins.CostFilteringTT>
-  <RealRuins.AreaFiltering>Area and items filtering</RealRuins.AreaFiltering>
-  <RealRuins.AreaFilteringTT>Exclude maps with too small area and too low items count</RealRuins.AreaFilteringTT>
-  <RealRuins.UsedMaps>Maps used: </RealRuins.UsedMaps>
-  <RealRuins.DroppedMaps>Maps dropped: </RealRuins.DroppedMaps>
+  <RealRuins.LoadBlueprintsCaption>この星の設計図をロード</RealRuins.LoadBlueprintsCaption>
+  <RealRuins.LoadBlueprints>設計図をロード</RealRuins.LoadBlueprints>
+  <RealRuins.Close>閉じる</RealRuins.Close>
+  <RealRuins.Idle>待機</RealRuins.Idle>
+  <RealRuins.Searching>設計図を検索中...</RealRuins.Searching>
+  <RealRuins.Loading>設計図をロード：</RealRuins.Loading>
+  <RealRuins.Processing>設計図を処理中：</RealRuins.Processing>
+  <RealRuins.Completed>完了！</RealRuins.Completed>
+  <RealRuins.BiomeFiltering>気候でフィルタ</RealRuins.BiomeFiltering>
+  <RealRuins.BiomeFilteringTT>気候が存在しないか一致しないマップを除外</RealRuins.BiomeFilteringTT>
+  <RealRuins.CostFiltering>コストでフィルタ</RealRuins.CostFiltering>
+  <RealRuins.CostFilteringTT>低コストのマップを除外（平均的な「空白」マップより低い）</RealRuins.CostFilteringTT>
+  <RealRuins.AreaFiltering>面積とアイテムでフィルタ</RealRuins.AreaFiltering>
+  <RealRuins.AreaFilteringTT>面積が小さく、アイテム数が少ないマップを除外</RealRuins.AreaFilteringTT>
+  <RealRuins.UsedMaps>使用マップ：</RealRuins.UsedMaps>
+  <RealRuins.DroppedMaps>降下先マップ：</RealRuins.DroppedMaps>
 
-  <RealRuins.MapsModuleButton>Import blueprints for this planet (BETA)</RealRuins.MapsModuleButton>
-  <RealRuins.PlanetarySettignsCaption>Real Ruins - Planetary Ruins Settings</RealRuins.PlanetarySettignsCaption>
-  <RealRuins.NeedsGameInProgress>You have to be in an ongoing game to use this menu</RealRuins.NeedsGameInProgress>
+  <RealRuins.MapsModuleButton>この惑星の設計図をインポート(試験中)</RealRuins.MapsModuleButton>
+  <RealRuins.PlanetarySettignsCaption>Real Ruins－惑星遺跡の設定</RealRuins.PlanetarySettignsCaption>
+  <RealRuins.NeedsGameInProgress>このメニューを使用するには、現在ゲームをプレイ中である必要があります</RealRuins.NeedsGameInProgress>
 
 </LanguageData>
