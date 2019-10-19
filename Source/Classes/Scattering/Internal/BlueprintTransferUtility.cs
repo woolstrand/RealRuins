@@ -305,7 +305,7 @@ namespace RealRuins {
                 }
 
                 if (itemTile.defName.Contains("Corpse") || itemTile.defName.Contains("Minified")) { //should bypass older minified things and corpses
-                    if (!itemTile.innerItems?.Any() ?? true) return null;
+                    if ((!itemTile.innerItems?.Any()) ?? true) return null;
                 }
 
                 if (itemTile.defName == "Hive") return null; //Ignore hives, probably should add more comprehensive ignore list here.
@@ -335,6 +335,7 @@ namespace RealRuins {
                             Thing innerThing = MakeThingFromItemTile(innerTile, true);
                             ((IThingHolder)thing).GetDirectlyHeldThings().TryAdd(innerThing);
                         }
+                        if (thing.GetInnerIfMinified() == null) return null;
                     }
 
                     if (thingDef.CanHaveFaction) {
@@ -400,7 +401,10 @@ namespace RealRuins {
                     }
 
                     //Substract some hit points. Most lilkely below 400 (to make really strudy structures stay almost untouched. No more 1% beta poly walls)
-                    var maxDeltaHP = Math.Min(thing.MaxHitPoints - 1, (int)Math.Abs(Rand.Gaussian(0, 200)));
+                    var maxDeltaHP = 0;
+                    if (!options.forceFullHitPoints) {
+                        maxDeltaHP = Math.Min(thing.MaxHitPoints - 1, (int)Math.Abs(Rand.Gaussian(0, 200)));
+                    }
                     thing.HitPoints = thing.MaxHitPoints - Rand.Range(0, maxDeltaHP);
 
                     //Forbid haulable stuff
@@ -439,6 +443,15 @@ namespace RealRuins {
             }
 
             options = rp.GetCustom<ScatterOptions>(Constants.ScatterOptions);
+            if (options.overridePosition != IntVec3.Zero) {
+                if (!options.centerIfExceedsBounds || (options.overridePosition.x + blueprint.width < map.Size.x && options.overridePosition.z + blueprint.height < map.Size.z)) {
+                    mapOriginX = options.overridePosition.x;
+                    mapOriginZ = options.overridePosition.z;
+                } else {
+                    Debug.Warning(Debug.BlueprintTransfer, "Tried to override position, but map exceeded bounds and position was reverted due to corresponding options flag.");
+                    Debug.Warning(Debug.BlueprintTransfer, "New position: {0}, {1}", mapOriginX, mapOriginZ);
+                }
+            }
         }
 
         public void RemoveIncompatibleItems() {
@@ -483,7 +496,7 @@ namespace RealRuins {
                             continue;
                         }
 
-                        if (thingDef.terrainAffordanceNeeded != null) {
+                        if (!options.overwritesEverything && thingDef.terrainAffordanceNeeded != null) {
                             if (thingDef.EverTransmitsPower && options.shouldKeepDefencesAndPower) continue; //ignore affordances for power transmitters if we need to keep defence systems
 
                             if (terrainDef != null && terrainDef.terrainAffordanceNeeded != null && existingTerrain.affordances.Contains(terrainDef.terrainAffordanceNeeded)) {
@@ -527,7 +540,26 @@ namespace RealRuins {
             rp.rect = new CellRect(mapOriginX, mapOriginZ, blueprint.width, blueprint.height);
             CoverageMap coverageMap = null;
             rp.TryGetCustom<CoverageMap>(Constants.CoverageMap, out coverageMap);
-            
+
+            for (int z = 0; z < blueprint.height; z++) {
+                for (int x = 0; x < blueprint.width; x++) {
+                    IntVec3 mapLocation = new IntVec3(x + mapOriginX, 0, z + mapOriginZ);
+                    //Check if thepoint is in allowed bounds of the map
+                    if (!mapLocation.InBounds(map) || mapLocation.InNoBuildEdgeArea(map)) {
+                        continue; //ignore invalid cells
+                    }
+
+                    if (options.overwritesEverything || Rand.Chance(0.6f)) {
+                        if (blueprint.terrainMap[x, z] != null ||
+                            blueprint.itemsMap[x, z].Count > 0 ||
+                            blueprint.wallMap[x, z] > 1) {
+                            ClearCell(mapLocation, map, true);
+                        }
+                    }
+
+                }
+            }
+
 
             for (int z = 0; z < blueprint.height; z++) {
                 for (int x = 0; x < blueprint.width; x++) {
@@ -540,9 +572,6 @@ namespace RealRuins {
                             if (blueprint.wallMap[x, z] > 1 || blueprint.wallMap[x, z] == -1) coverageMap.Mark(mapLocation.x, mapLocation.z); //mark cell as used
                         }
                     }
-
-                    if (!mapLocation.InBounds(map)) continue;
-
 
                     //Check if thepoint is in allowed bounds of the map
                     if (!mapLocation.InBounds(map) || mapLocation.InNoBuildEdgeArea(map)) {
@@ -560,19 +589,19 @@ namespace RealRuins {
                         }
                     }
 
-                    /*if (roofMap[x, z] == true) {
+                    //construct roof evetywhere if we doing complete transfer (ignoring outside: room with index 1).
+                    if (blueprint.roofMap[x, z] == true && options.overwritesEverything && blueprint.wallMap[x, z] != 1) {
                         map.roofGrid.SetRoof(mapLocation, RoofDefOf.RoofConstructed);
-                    }*/ //no roof yet
+                    }
 
 
                     //Add items
                     if (blueprint.itemsMap[x, z] != null && blueprint.itemsMap[x, z].Count > 0/* && cellUsed[mapLocation.x, mapLocation.z] == false*/) {
 
-                        bool cellIsAlreadyCleared = false;
                         totalItems += blueprint.itemsMap[x, z].Count;
 
+                        bool cellIsAlreadyCleared = false;
                         foreach (ItemTile itemTile in blueprint.itemsMap[x, z]) {
-
                             if (!cellIsAlreadyCleared) { //first item to be spawned should also clear place for itself. we can't do it beforehand because we don't know if it will be able and get a chance to be spawned.
                                 bool forceCleaning = (blueprint.wallMap[x, z] > 1) && Rand.Chance(0.9f);
 
@@ -612,7 +641,7 @@ namespace RealRuins {
                                     //Debug.Message("Setting up props");
                                     //Breakdown breakdownables: it't yet impossible to silently breakdown an item which is not spawned.
                                     CompBreakdownable b = thing.TryGetComp<CompBreakdownable>();
-                                    if (b != null) {
+                                    if (b != null && options.enableDeterioration) {
                                         if (Rand.Chance(0.8f)) {
                                             b.DoBreakdown();
                                         }
@@ -641,7 +670,7 @@ namespace RealRuins {
                 }
                 options.uncoveredCost = totalCost;
             }
-            Debug.Message("Transferred blueprint of size {0}x{1}, age {2}, total cost of approximately {3}. Items: {4}/{5}, terrains: {6}/{7}", blueprint.width, blueprint.height, -blueprint.dateShift, totalCost, transferredTiles, totalItems, transferredTerrains, totalTerrains);
+            Debug.Log(Debug.BlueprintTransfer, "Transferred blueprint of size {0}x{1}, age {2}, total cost of approximately {3}. Items: {4}/{5}, terrains: {6}/{7}", blueprint.width, blueprint.height, -blueprint.dateShift, totalCost, transferredTiles, totalItems, transferredTerrains, totalTerrains);
         }
 
         public void AddFilthAndRubble() {
@@ -690,161 +719,6 @@ namespace RealRuins {
                 }
             }
         }
-
-        public void ScatterMobs() {
-            ScatterOptions options = rp.GetCustom<ScatterOptions>(Constants.ScatterOptions);
-            if (options == null) return;
-            Map map = BaseGen.globalSettings.map;
-
-            //corpses, blood trails, mines and traps, bugs and bees
-            //Pretty low chance to have someone's remainings
-            for (int z = 0; z < rp.rect.Height; z++) {
-                for (int x = 0; x < rp.rect.Width; x++) {
-                    IntVec3 mapLocation = new IntVec3(x + rp.rect.minX, 0, z + rp.rect.minZ);
-                    if (!mapLocation.InBounds(map)) continue;
-
-                    if (options.roomMap[x, z] > 1 && Rand.Value < options.trapChance) { //spawn inside rooms only
-                        ThingDef trapDef = ThingDef.Named("TrippingTrigger");
-                        if (trapDef != null) {
-                            Thing thing = ThingMaker.MakeThing(trapDef);
-                            if (thing != null) {
-                                GenSpawn.Spawn(thing, mapLocation, map);
-                            }
-                        }
-                    }
-                }
-            }
-
-            //Debug.Message("Added tripping triggers");
-            //enemies
-            if (Rand.Chance(options.hostileChance)) {
-                CellRect rect = rp.rect;
-
-                if (rect.minX < 15 || rect.minZ < 15 || rect.maxX > map.Size.x - 15 || rect.maxZ > map.Size.z - 15) {
-                    return; //do not add enemies if we're on the map edge
-                }
-
-                if (!CellFinder.TryFindRandomCellInsideWith(rect, (IntVec3 x) => x.Standable(map) && options.roomMap[x.x - rect.BottomLeft.x, x.z - rect.BottomLeft.z] > 1, out IntVec3 testCell)) {
-                    return; //interrupt if there are no closed cells available
-                }
-
-                PawnKindDef pawnKindDef = null;
-
-                if (Rand.Chance(0.7f)) { //no animals in "significant resistance" scenario. Surely animals are not a significant resistance in sane amounts
-                    pawnKindDef = map.Biome.AllWildAnimals.RandomElementByWeight((PawnKindDef def) => (def.RaceProps.foodType == FoodTypeFlags.CarnivoreAnimal || def.RaceProps.foodType == FoodTypeFlags.OmnivoreAnimal) ? 1 : 0);
-                } else {
-                    //mechanoids' kinds are selected for each unit
-                }
-
-                float powerMax = rect.Area / 30.0f;
-                float powerThreshold = (Math.Abs(Rand.Gaussian(0.5f, 1)) * powerMax) + 1;
-
-
-                //Debug.Message("Gathering troops power of {0} (max was {1})", powerThreshold, powerMax);
-
-                float cumulativePower = 0;
-
-                Faction faction = Faction.OfAncientsHostile;
-
-                Lord lord = LordMaker.MakeNewLord(lordJob: new LordJob_DefendPoint(rect.CenterCell), faction: faction, map: map, startingPawns: null);
-                int tile = map.Tile;
-
-                while (cumulativePower <= powerThreshold) {
-
-                    PawnKindDef currentPawnKindDef = pawnKindDef;
-                    if (currentPawnKindDef == null) {
-                        currentPawnKindDef = (from kind in DefDatabase<PawnKindDef>.AllDefsListForReading
-                                              where kind.RaceProps.IsMechanoid
-                                              select kind).RandomElementByWeight((PawnKindDef kind) => 1f / kind.combatPower);
-                    }
-
-                    PawnGenerationRequest request =
-                        new PawnGenerationRequest(currentPawnKindDef, faction, PawnGenerationContext.NonPlayer, tile, true, false, false, //allowDead is last
-                        false, true, false, 1f,
-                        false, true, true, false,
-                        false, false, false,
-                        null, null, null, null,
-                        null, null, null, null);
-
-                    if (CellFinder.TryFindRandomCellInsideWith(rect, (IntVec3 x) => x.Standable(map) && options.roomMap[x.x - rect.minX, x.z - rect.minZ] > 1, out IntVec3 cell)) {
-                        Pawn pawn = PawnGenerator.GeneratePawn(request);
-
-                        FilthMaker.MakeFilth(cell, map, ThingDefOf.Filth_Blood, 5);
-                        GenSpawn.Spawn(pawn, cell, map, WipeMode.Vanish);
-
-                        lord.AddPawn(pawn);
-                        cumulativePower += pawn.kindDef.combatPower;
-
-                        //Debug.Message("Adding combat power for {0}, total is {1}", currentPawnKindDef.defName, cumulativePower);
-                    } else {
-                        break; //no more suitable cells
-                    }
-                }
-            }
-
-        }
-
-        public void ScatterRaidTriggers() {
-
-            ScatterOptions options = rp.GetCustom<ScatterOptions>(Constants.ScatterOptions);
-            if (options == null) return;
-            Map map = BaseGen.globalSettings.map;
-
-
-            int addedTriggers = 0;
-            float ratio = 10;
-            float remainingCost = options.uncoveredCost * (Rand.Value + 0.5f); //cost estimation as seen by other factions
-
-            float initialCost = remainingCost;
-
-            int triggersAbsoluteMaximum = 100;
-
-            //Debug.Message("Triggers number: {0}. Cost: {1}. Base max points: {2} (absolute max in x2)", 0, remainingCost, 0);
-
-
-            while (remainingCost > 0) {
-
-                IntVec3 mapLocation = rp.rect.RandomCell;
-                if (!mapLocation.InBounds(map)) continue;
-
-                ThingDef raidTriggerDef = ThingDef.Named("RaidTrigger");
-                RaidTrigger trigger = ThingMaker.MakeThing(raidTriggerDef) as RaidTrigger;
-
-                if (options.allowFriendlyRaids) {
-                    if (Rand.Chance(0.2f)) {
-                        trigger.faction = Find.FactionManager.RandomNonHostileFaction();
-                    } else {
-                        trigger.faction = Find.FactionManager.RandomEnemyFaction();
-                    }
-                } else {
-                    trigger.faction = Find.FactionManager.RandomEnemyFaction();
-                }
-
-                int raidMaxPoints = (int)(remainingCost / ratio);
-                trigger.value = Math.Abs(Rand.Gaussian()) * raidMaxPoints + Rand.Value * raidMaxPoints + 250.0f;
-                if (trigger.value > 10000) trigger.value = Rand.Range(8000, 11000); //sanity cap. against some beta-poly bases.
-                remainingCost -= trigger.value * ratio;
-
-                //Debug.Message("Added trigger at {0}, {1} for {2} points, remaining cost: {3}", mapLocation.x, mapLocation.z, trigger.value, remainingCost);
-
-                GenSpawn.Spawn(trigger, mapLocation, map);
-                addedTriggers++;
-
-                options.uncoveredCost = Math.Abs(remainingCost);
-
-                if (addedTriggers > triggersAbsoluteMaximum) {
-                    if (remainingCost < initialCost * 0.2f) {
-                        if (Rand.Chance(0.1f)) {
-                            if (remainingCost > 100000) {
-                                remainingCost = Rand.Range(80000, 110000);
-                            }
-                            return;
-                        }
-                    }
-                }
-            }
-        }
-
 
         private void RestoreDefencesAndPower() {
             foreach (var thing in map.spawnedThings) {

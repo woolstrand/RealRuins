@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <Defs>
 
+  <!-- not used anymore, left here for compatibility -->
   <SiteCoreDef>
     <defName>RuinedBaseSite</defName>
     <label>abandoned base</label>
@@ -10,23 +11,5 @@
     <forceExitAndRemoveMapCountdownDurationDays>15</forceExitAndRemoveMapCountdownDurationDays>
     <workerClass>RealRuins.RuinedBaseWorker</workerClass>
   </SiteCoreDef>
-
-  <GenStepDef>
-    <defName>ScatterBaseRuins</defName>
-    <linkWithSite>RuinedBaseSite</linkWithSite>
-    <order>450</order>
-    <genStep Class="RealRuins.GenStep_ScatterLargeRealRuins">
-    </genStep>
-  </GenStepDef>
-
-  <GenStepDef>
-    <defName>SettlementPower</defName>
-    <linkWithSite>RuinedBaseSite</linkWithSite>
-    <order>455</order>
-    <genStep Class="GenStep_Power">
-	
-    </genStep>
-  </GenStepDef>
-
 
 </Defs>

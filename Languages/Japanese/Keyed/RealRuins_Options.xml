@@ -84,5 +84,71 @@
   <!-- Ruins messages -->
   <RealRuins.NoMoreEnemies>もう誰も来ないようです。\nあなたは安全に荷物をまとめてマップを離れることが可能です。（即時キャラバン隊を編成可能）</RealRuins.NoMoreEnemies>
 
+  <!-- POI captions and descriptions -->
+  <RealRuins.CaptionPOI0>Small military base</RealRuins.CaptionPOI0>
+  <RealRuins.CaptionPOI1>Military outpost</RealRuins.CaptionPOI1>
+  <RealRuins.CaptionPOI2>Temporary camp</RealRuins.CaptionPOI2>
+  <RealRuins.CaptionPOI3>City</RealRuins.CaptionPOI3>
+  <RealRuins.CaptionPOI4>Factory</RealRuins.CaptionPOI4>
+  <RealRuins.CaptionPOI5>Research center</RealRuins.CaptionPOI5>
+  <RealRuins.CaptionPOI6>Power plant</RealRuins.CaptionPOI6>
+  <RealRuins.CaptionPOI7>Large military base</RealRuins.CaptionPOI7>
+  <RealRuins.CaptionPOI8>Warehouse</RealRuins.CaptionPOI8>
+  <RealRuins.CaptionPOI9>Comm center</RealRuins.CaptionPOI9>
+  <RealRuins.CaptionPOI10>Ruins</RealRuins.CaptionPOI10>
+  <RealRuins.CaptionPOI11>Stronghold</RealRuins.CaptionPOI11>
+
+
+  <RealRuins.DescPOI0>A small group of buildings, presumably of military kind. Probably an armoury or a small transit military base. It can have several stationary weapons and a dozen or two soldiers.</RealRuins.DescPOI0>
+  <RealRuins.DescPOI1>A very small military outpost, couple of rooms, couple of turrets, couple of soldiers.</RealRuins.DescPOI1>
+  <RealRuins.DescPOI2>A temporary camp set up to mine resources, hunt or as a trans-shipment point.</RealRuins.DescPOI2>
+  <RealRuins.DescPOI3>A large thriving city. Even though it usually does not have massive walls or a lot of stationary weapons, it can request powerful reinforcements in case of an assault.</RealRuins.DescPOI3>
+  <RealRuins.DescPOI4>Those buildings contain a lot of workbenches and produced goods. Most likely the factory is well guarded.</RealRuins.DescPOI4>
+  <RealRuins.DescPOI5>Research and development center is focused on production, but goods are more sophisticated and pricey than in a regular factory. Most likely it's well guarded and guards will call reinforcements as soon as you decide to assault.</RealRuins.DescPOI5>
+  <RealRuins.DescPOI6>A group of buildings focused primarily on power production.</RealRuins.DescPOI6>
+  <RealRuins.DescPOI7>A large military base with lots of stationary weapons, several dozens of personnel and reinforcements ready to arrive.</RealRuins.DescPOI7>
+  <RealRuins.DescPOI8>From distance it looks like a large hangar filled with goods. And a lot of guards.</RealRuins.DescPOI8>
+  <RealRuins.DescPOI9>Small building which looks like a communication center. Probably just a temporary military camp with just a few guards.</RealRuins.DescPOI9>
+  <RealRuins.DescPOI10>Remainings of some buildings, bits of furniture, broken workbenches, pipes and metal bars. You can't tell what was there once long ago, everything left is just an empty ruins.</RealRuins.DescPOI10>
+  <RealRuins.DescPOI11>Heavily guarded stronghold. Extremely well defended with tons of stationary weapons, troops and reinforcements.</RealRuins.DescPOI11>
+
+  <RealRuins.POINowRuined>Once this place was full of life, but now it's abandoned, no one knows why. So better beware of all kind of dangers.</RealRuins.POINowRuined>
+
+  <RealRuins.EnterPOI>Enter {0}</RealRuins.EnterPOI>
+  <RealRuins.AttackPOI>Attack {0}</RealRuins.AttackPOI>
+
+  <RealRuins.CaravanEnteringPOI>Entering {0}</RealRuins.CaravanEnteringPOI>
+
+  <LetterLabelCaravanEnteredUnownedPOI>Caravan arrived</LetterLabelCaravanEnteredUnownedPOI>
+  <LetterCaravanEnteredUnownedPOI>{0} has arrived at destination. Proceed with caution.</LetterCaravanEnteredUnownedPOI>
+  <LetterLabelCaravanAttackedPOI>Caravan is attacking</LetterLabelCaravanAttackedPOI>
+  <LetterCaravanAttackedPOI>{0} is attacking other faction's property.</LetterCaravanAttackedPOI>
+  <LetterTransportPodsArrivedInUnownedPOI>Transport pods have arrived at destination.</LetterTransportPodsArrivedInUnownedPOI>
+  <LetterLabelTransportPodsAttackedPOI>Transport pods have arrived</LetterLabelTransportPodsAttackedPOI>
+  <LetterTransportPodsAttackedPOI>Transport pods have arrived at destination. Attack has begun.</LetterTransportPodsAttackedPOI>
+  <LetterLabelTransportPodsArrivedAtRuins>Transport pods have arrived at ruins</LetterLabelTransportPodsArrivedAtRuins>
+  <LetterTransportPodsArrivedAtRuins>Transport pods have arrived at ruins</LetterTransportPodsArrivedAtRuins>
+
+  <!-- POI load dialog -->
+  <RealRuins.LoadBlueprintsCaption>Load blueprints for planet</RealRuins.LoadBlueprintsCaption>
+  <RealRuins.LoadBlueprints>Load blueprints</RealRuins.LoadBlueprints>
+  <RealRuins.Close>Close</RealRuins.Close>
+  <RealRuins.Idle>Idle</RealRuins.Idle>
+  <RealRuins.Searching>Searching for blueprints...</RealRuins.Searching>
+  <RealRuins.Loading>Loading blueprints: </RealRuins.Loading>
+  <RealRuins.Processing>Processing blueprints: </RealRuins.Processing>
+  <RealRuins.Completed>Completed!</RealRuins.Completed>
+  <RealRuins.BiomeFiltering>Biome filtering</RealRuins.BiomeFiltering>
+  <RealRuins.BiomeFilteringTT>Exclude maps with missing or mismatching biome</RealRuins.BiomeFilteringTT>
+  <RealRuins.CostFiltering>Cost filtering</RealRuins.CostFiltering>
+  <RealRuins.CostFilteringTT>Exclude maps with too low cost (lower than average "empty" map)</RealRuins.CostFilteringTT>
+  <RealRuins.AreaFiltering>Area and items filtering</RealRuins.AreaFiltering>
+  <RealRuins.AreaFilteringTT>Exclude maps with too small area and too low items count</RealRuins.AreaFilteringTT>
+  <RealRuins.UsedMaps>Maps used: </RealRuins.UsedMaps>
+  <RealRuins.DroppedMaps>Maps dropped: </RealRuins.DroppedMaps>
+
+  <RealRuins.MapsModuleButton>Import blueprints for this planet (BETA)</RealRuins.MapsModuleButton>
+  <RealRuins.PlanetarySettignsCaption>Real Ruins - Planetary Ruins Settings</RealRuins.PlanetarySettignsCaption>
+  <RealRuins.NeedsGameInProgress>You have to be in an ongoing game to use this menu</RealRuins.NeedsGameInProgress>
 
 </LanguageData>

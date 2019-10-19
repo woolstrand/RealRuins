@@ -1,4 +1,5 @@
 using RimWorld.Planet;
+using Verse;
 
 namespace RealRuins {
     public class SmallRuinsWorldObject : MapParent {
@@ -11,6 +12,10 @@ namespace RealRuins {
             }
             alsoRemoveWorldObject = false;
             return false;
+        }
+
+        public override string GetInspectString() {
+            return "RealRuins.SmallRuinsInspectString".Translate();
         }
     }
 }

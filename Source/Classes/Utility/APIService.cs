@@ -94,12 +94,55 @@ namespace RealRuins {
             };
 
             void failureHandler(Exception ex) {
-                Debug.Message(string.Format("Exception during loading object: {0}", ex), true);
+                Debug.Warning(Debug.Loader, string.Format("Exception during loading object: {0}", ex), true);
                 completionHandler(false, null);
             }
 
             AwaitUnityDataWebResponse(request, internalSuccessHandler, failureHandler);
         }
+
+        public void LoadAllMapsForSeed(string seed, int mapSize, float coverage, Action<bool, List<PlanetTileInfo>> completionHandler) {
+            var path = APIRoot + MapsBySeedListPath + seed;
+
+            string requestLink = path + "?limit=9999&coverage=" + coverage + "&mapSize=" + mapSize;
+            Debug.Log(Debug.Loader, "Loading all compatible blueprings by link {0}", requestLink);
+            UnityWebRequest request = new UnityWebRequest(requestLink, "GET") {
+                downloadHandler = new DownloadHandlerBuffer()
+            };
+
+            Action<byte[]> internalSuccessHandler = delegate (byte[] response) {
+                string jsonString = Encoding.UTF8.GetString(response);
+
+                List<PlanetTileInfo> tiles = new List<PlanetTileInfo>();
+
+                var json = JSON.Parse(jsonString);
+                if (json != null) {
+                    foreach (JSONNode node in json) {
+                        string name = node["nameInBucket"]?.Value;
+                        if (name != null) {
+                            PlanetTileInfo tileInfo = new PlanetTileInfo();
+                            tileInfo.mapId = name;
+                            tileInfo.tile = node["tileId"]?.AsInt ?? 0;
+                            tileInfo.biomeName = node["biome"]?.Value;
+                            tileInfo.originX = node["originX"]?.AsInt ?? 0;
+                            tileInfo.originZ = node["originZ"]?.AsInt ?? 0;
+                            tiles.Add(tileInfo);
+                        }
+                    }
+                }
+
+                completionHandler(true, tiles);
+            };
+
+            void failureHandler(Exception ex) {
+                Debug.Error(Debug.Loader, string.Format("Exception during loading object: {0}", ex), true);
+                completionHandler(false, null);
+            }
+
+            AwaitUnityDataWebResponse(request, internalSuccessHandler, failureHandler);
+        }
+
+
 
         public void LoadMap(string link, Action<bool, byte[]> completionHandler) {
             var path = BucketRoot + link + ".bp";
@@ -113,7 +156,7 @@ namespace RealRuins {
             };
 
             void failureHandler(Exception ex) {
-                Debug.Message(string.Format("Exception during loading map by link {1}: {0}", ex, link), true);
+                Debug.Error(Debug.Loader, string.Format("Exception during loading map by link {1}: {0}", ex, link), true);
                 completionHandler(false, null);
             }
 
@@ -135,12 +178,12 @@ namespace RealRuins {
 
 
             Action<byte[]> internalSuccessHandler = delegate (byte[] response) {
-                Debug.Message("Map upload successful");
+                Debug.Log(Debug.Loader, "Map upload successful");
                 completionHandler?.Invoke(true);
             };
 
             void failureHandler(Exception ex) {
-                Debug.Message("Exception during uploading: {0}", ex);
+                Debug.Warning(Debug.Loader, "Exception during uploading: {0}", ex);
                 completionHandler?.Invoke(false);
             }
 

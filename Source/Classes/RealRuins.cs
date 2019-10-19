@@ -29,11 +29,11 @@ namespace RealRuins
 
         static RealRuins() {
             DateTime startTime = DateTime.Now;
-            Debug.Message("RealRuins started patching at {0}", startTime);
+            Debug.SysLog("RealRuins started patching at {0}", startTime);
             var harmony = HarmonyInstance.Create("com.woolstrand.realruins");
 
             harmony.PatchAll(Assembly.GetExecutingAssembly());
-            Debug.Message("RealRuins finished patching at {0} ({1} msec)", DateTime.Now, (DateTime.Now - startTime).TotalMilliseconds);
+            Debug.SysLog("RealRuins finished patching at {0} ({1} msec)", DateTime.Now, (DateTime.Now - startTime).TotalMilliseconds);
 
             if (RealRuins_ModSettings.allowDownloads && !RealRuins_ModSettings.offlineMode) {
                 SnapshotManager.Instance.LoadSomeSnapshots();
@@ -97,6 +97,7 @@ namespace RealRuins
             }
         }
 
+        /*
         [HarmonyPatch(typeof(GenHostility), "AnyHostileActiveThreatToPlayer", typeof(Map))]
         class PlayerThreat_Patch {
             static bool Prefix(ref bool __result, Map map) {
@@ -113,9 +114,27 @@ namespace RealRuins
                 }
                 return true;
             }
-        }
+        }*/
 
-
+/*
+        [HarmonyPatch(typeof(Scenario), "GetFirstConfigPage")]
+        class WindowContents_Patch {
+            public static void DoWindowContentsPostfix(Rect rect, Page_ConfigureStartingPawns __instance) {
+                //IL_00b4: Unknown result type (might be due to invalid IL or missing references)
+                Vector2 vector = new Vector2(150f, 38f);
+                float y = rect.height + 45f;
+                if (Widgets.ButtonText(new Rect(rect.x + rect.width / 2f - vector.x / 2f, y, vector.x, vector.y), Translator.Translate("EdB.PC.Page.Button.PrepareCarefully"), true, false, true)) {
+                    try {
+                        Page_RealRuins pageRealRuins = new Page_RealRuins();
+                        Find.UIRoot.windows.Add(pageRealRuins);
+                    } catch (Exception ex) {
+                        //Find.get_WindowStack().Add(new DialogInitializationError());
+                        //SoundStarter.PlayOneShot(SoundDefOf.ClickReject, SoundInfo.op_Implicit(null));
+                        throw ex;
+                    }
+                }
+            }
+        }*/
     }
 
     public static class Art_Extensions {

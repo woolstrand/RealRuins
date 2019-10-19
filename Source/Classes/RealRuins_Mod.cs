@@ -5,7 +5,6 @@ using System.Text;
 using System.Reflection;
 
 using Verse;
-using HugsLib;
 using RimWorld;
 using UnityEngine;
 
@@ -92,7 +91,7 @@ namespace RealRuins {
         public void GetSettings() {
             GetSettings<RealRuins_ModSettings>();
             if (RealRuins_ModSettings.defaultScatterOptions == null) {
-                Debug.Message("Scatter settings is null! setting default");
+                Debug.Warning("Scatter settings is null! setting default");
                 RealRuins_ModSettings.defaultScatterOptions = ScatterOptions.Default;
             }
             //Debug.Message("Settings scatter: {1}", RealRuins_ModSettings.defaultScatterOptions);
@@ -170,7 +169,6 @@ namespace RealRuins {
             left.CheckboxLabeled(Text_Option_DisableHaulables, ref RealRuins_ModSettings.defaultScatterOptions.disableSpawnItems, Text_Option_DisableHaulablesTT);
             left.CheckboxLabeled(Text_Option_WallsAndDoorsOnly, ref RealRuins_ModSettings.defaultScatterOptions.wallsDoorsOnly, Text_Option_WallsAndDoorsOnlyTT);
             left.CheckboxLabeled(Text_Option_Proximity, ref RealRuins_ModSettings.defaultScatterOptions.enableProximity, Text_Option_ProximityTT);
-            left.CheckboxLabeled(Text_Option_CaravanReforming, ref RealRuins_ModSettings.allowInstantCaravanReform, Text_Option_CaravanReformingTT);
             left.CheckboxLabeled(Text_Option_StartWithourRuins, ref RealRuins_ModSettings.startWithoutRuins, Text_Option_StartWithourRuinsTT);
 
             left.Gap(15);
@@ -208,6 +206,14 @@ namespace RealRuins {
 
             if (right.ButtonText(Text_Option_ResetToDefaults, null)) {
                 ResetSettings();
+            }
+
+            if (right.ButtonText("RealRuins.MapsModuleButton".Translate(), null)) {
+                Page_RealRuins page = new Page_RealRuins();
+                Find.WindowStack.TryRemove(typeof(Dialog_VanillaModSettings));
+                Find.WindowStack.TryRemove(typeof(HugsLib.Settings.Dialog_ModSettings));
+
+                Find.WindowStack.Add(page);
             }
 
             right.End();
