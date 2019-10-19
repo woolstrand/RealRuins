@@ -65,10 +65,11 @@ namespace RealRuins
         public override void Generate(Map map, GenStepParams parms) {
             //skip generation due to low blueprints count
             if (SnapshotStoreManager.Instance.StoredSnapshotsCount() < 10) {
-                Debug.Message("Skipping ruins gerenation due to low blueprints count.");
+                Debug.Error(Debug.Scatter, "Skipping ruins gerenation due to low blueprints count.");
                 return;
             }
 
+            //Skip generation for starting tile if corresponding settings flag is set
             if (RealRuins_ModSettings.startWithoutRuins) {
                 int homes = 0;
                 var allMaps = Find.Maps;
@@ -79,18 +80,14 @@ namespace RealRuins
                     }
                 }
 
-                //Debug.Message("Player homes count: {0}, ticks: {1} ({2})", homes, Find.TickManager.TicksGame, Find.TickManager.TicksAbs);
                 if (homes == 1 && Find.TickManager.TicksGame < 10) return; //single home => we're generating that single home => that's starting map => no ruins here if this option is selected.
             }
 
-            bool shouldReturn = false;
+            //Skip generation on other ruins world objects
             foreach (WorldObject wo in Find.World.worldObjects.ObjectsAt(map.Tile))
             {
-                if (!(wo is Site site)) continue;
-                shouldReturn = true;
+                if (wo is RealRuinsPOIWorldObject || wo is AbandonedBaseWorldObject) return;
             }
-            
-            if (shouldReturn) return;
             
             if (!map.TileInfo.WaterCovered) {
 
@@ -131,8 +128,8 @@ namespace RealRuins
                 //number of ruins based on density settings
                 var num = (int)((float)map.Area / 10000.0f) * Rand.Range(1 * totalDensity, 2 * totalDensity);
 
-                Debug.Message("dist {0}, dens {1} (x{2}), scale x{3} ({4}-{5}), scav {6}, deter {7}", distanceToSettlement, currentOptions.densityMultiplier, densityMultiplier, scaleMultiplier, currentOptions.minRadius, currentOptions.maxRadius, currentOptions.scavengingMultiplier, currentOptions.deteriorationMultiplier);
-                Debug.Message("Spawning {0} ruin chunks", num);
+                Debug.Log(Debug.Scatter, "dist {0}, dens {1} (x{2}), scale x{3} ({4}-{5}), scav {6}, deter {7}", distanceToSettlement, currentOptions.densityMultiplier, densityMultiplier, scaleMultiplier, currentOptions.minRadius, currentOptions.maxRadius, currentOptions.scavengingMultiplier, currentOptions.deteriorationMultiplier);
+                Debug.Log(Debug.Scatter, "Spawning {0} ruin chunks", num);
                 BaseGen.globalSettings.map = map;
 
                 bool shouldUnpause = false;
@@ -144,13 +141,20 @@ namespace RealRuins
 
                 CoverageMap coverageMap = CoverageMap.EmptyCoverageMap(map);
 
-
                 for (int i = 0; i < num; i++) {
                     //We use copy of scatteroptions because each scatteroptions represents separate chunk with separate location, size, maps, etc.
                     //should use struct instead? is it compatible with IExposable?
                     ResolveParams rp = default(ResolveParams);
-                    rp.SetCustom<ScatterOptions>(Constants.ScatterOptions, currentOptions.Copy());
-                    rp.SetCustom<CoverageMap>(Constants.CoverageMap, coverageMap);
+                    rp.SetCustom(Constants.ScatterOptions, currentOptions.Copy());
+                    rp.SetCustom(Constants.CoverageMap, coverageMap);
+
+                    if (Rand.Chance(currentOptions.hostileChance)) {
+                        if (Rand.Chance(0.8f)) {
+                            rp.SetCustom(Constants.ForcesGenerators, new List<AbstractDefenderForcesGenerator> { new AnimalInhabitantsForcesGenerator() });
+                        } else {
+                            rp.SetCustom(Constants.ForcesGenerators, new List<AbstractDefenderForcesGenerator> { new MechanoidsForcesGenerator(0) });
+                        }
+                    }
                     rp.faction = Find.FactionManager.OfAncientsHostile;
                     var center = CellFinder.RandomNotEdgeCell(10, map);
                     rp.rect = new CellRect(center.x, center.z, 1, 1); //after generation will be extended to a real size
@@ -184,7 +188,7 @@ namespace RealRuins
             //Debug.Message("Overridden LARGE generate");
 
                 string filename = map.Parent.GetComponent<RuinedBaseComp>()?.blueprintFileName;
-                Debug.Message("Preselected file name is {0}", filename);
+                Debug.Log(Debug.Scatter, "Preselected file name is {0}", filename);
 
                 currentOptions = RealRuins_ModSettings.defaultScatterOptions.Copy(); //store as instance variable to keep accessible on subsequent ScatterAt calls
 
@@ -211,9 +215,12 @@ namespace RealRuins
 
                 ResolveParams resolveParams = default(ResolveParams);
                 BaseGen.globalSettings.map = map;
-                resolveParams.SetCustom<ScatterOptions>(Constants.ScatterOptions, currentOptions);
+                resolveParams.SetCustom(Constants.ScatterOptions, currentOptions);
                 resolveParams.faction = Find.FactionManager.OfAncientsHostile;
+                resolveParams.SetCustom(Constants.ForcesGenerators, new List<AbstractDefenderForcesGenerator> { new BattleRoyaleForcesGenerator() });
                 resolveParams.rect = new CellRect(0, 0, map.Size.x, map.Size.z);
+                BaseGen.symbolStack.Push("chargeBatteries", resolveParams);
+                BaseGen.symbolStack.Push("refuel", resolveParams);
                 BaseGen.symbolStack.Push("scatterRuins", resolveParams);
 
 
@@ -226,98 +233,22 @@ namespace RealRuins
                     }
                 }
 
-                
-                //adding starting party
-                //don't doing it via basegen because of uh oh i don't remember, something with pawn location control
-
-                if (uncoveredCost > 0 || currentOptions.startingPartyPoints > 0) {
-                    float pointsCost = 0;
-                    if (currentOptions.startingPartyPoints > 0) {
-                        pointsCost = currentOptions.startingPartyPoints;
-                    } else {
-                        pointsCost = uncoveredCost / 10.0f;
-                        FloatRange defaultPoints = new FloatRange(pointsCost * 0.7f,
-                            Math.Min(12000.0f, pointsCost * 2.0f));
-                        Debug.Message("Adding starting party. Remaining points: {0}. Used points range: {1}",
-                            currentOptions.uncoveredCost, defaultPoints);
-
-                    }
-                    pointsCost *= Find.Storyteller.difficulty.threatScale;
-                    ScatterStartingParties((int)pointsCost, currentOptions.allowFriendlyRaids, map);
-
-                }
-
-                BaseGen.symbolStack.Push("chargeBatteries", resolveParams);
-                BaseGen.symbolStack.Push("refuel", resolveParams);
 
                 BaseGen.Generate();
 
 
-        }
 
-        private void ScatterStartingParties(int points, bool allowFriendly, Map map) {
-            
-            while (points > 0) {
-                int pointsUsed = Rand.Range(200, Math.Min(3000, points / 5));
-
-                IntVec3 rootCell = CellFinder.RandomNotEdgeCell(30, map);
-                CellFinder.TryFindRandomSpawnCellForPawnNear(rootCell, map, out IntVec3 result);
-                if (result.IsValid) {
-                    Faction faction = null;
-                    if (allowFriendly) {
-                        Find.FactionManager.TryGetRandomNonColonyHumanlikeFaction(out faction, false);
-                    } else {
-                        faction = Find.FactionManager.RandomEnemyFaction();
-                    }
-
-                    if (faction == null) faction = Find.FactionManager.AllFactions.RandomElement(); 
-
-                    SpawnGroup(pointsUsed, new CellRect(result.x - 10, result.z - 10, 20, 20), faction, map);
-                    points -= pointsUsed;
+            //adding starting party
+            //don't doing it via basegen because of uh oh i don't remember, something with pawn location control
+            List<AbstractDefenderForcesGenerator> generators = resolveParams.GetCustom<List<AbstractDefenderForcesGenerator>>(Constants.ForcesGenerators);
+            if (generators != null) {
+                foreach (AbstractDefenderForcesGenerator generator in generators) {
+                    generator.GenerateStartingParty(map, resolveParams);
                 }
             }
         }
 
-        private void SpawnGroup(int points, CellRect locationRect, Faction faction, Map map) {
-            PawnGroupMakerParms pawnGroupMakerParms = new PawnGroupMakerParms();
-            pawnGroupMakerParms.groupKind = PawnGroupKindDefOf.Combat;
-            pawnGroupMakerParms.tile = map.Tile;
-            pawnGroupMakerParms.points = points;
-            pawnGroupMakerParms.faction = faction;
-            pawnGroupMakerParms.generateFightersOnly = true;
-            pawnGroupMakerParms.raidStrategy = RaidStrategyDefOf.ImmediateAttack;
-            pawnGroupMakerParms.forceOneIncap = false;
-            pawnGroupMakerParms.seed = Rand.Int;
 
-            List<Pawn> pawns = PawnGroupMakerUtility.GeneratePawns(pawnGroupMakerParms).ToList();
-            CellRect rect = locationRect;
-
-            Debug.Message("Rect: {0}, {1} - {2}, {3}", rect.BottomLeft.x, rect.BottomLeft.z, rect.TopRight.x, rect.TopRight.z);
-
-            if (pawns == null) {
-                Debug.Message("Pawns list is null");
-            }
-
-            foreach (Pawn p in pawns) {
-
-                bool result = CellFinder.TryFindRandomSpawnCellForPawnNear(locationRect.RandomCell, map, out IntVec3 location);
-
-                if (result) {
-                    GenSpawn.Spawn(p, location, map, Rot4.Random);
-                }
-            }
-
-            LordJob lordJob = null;
-//            if (Rand.Chance(0.7f) || ) {
-                lordJob = new LordJob_AssaultColony(faction, canKidnap: false, canTimeoutOrFlee: Rand.Chance(0.5f));
- //           } else {
- //               lordJob = new LordJob_Steal();
- //           }
-
-            if (lordJob != null) {
-                LordMaker.MakeNewLord(faction, lordJob, map, pawns);
-            }
-        }
     }
     
     class GenStep_ScatterMediumRealRuins : GenStep {
@@ -332,62 +263,59 @@ namespace RealRuins
 
 
         public override void Generate(Map map, GenStepParams parms) {
-            if (!map.TileInfo.WaterCovered) {
+
+            Debug.Log(Debug.Scatter, "Medium generate");
                 Find.TickManager.Pause();
 
                 currentOptions = RealRuins_ModSettings.defaultScatterOptions.Copy(); //store as instance variable to keep accessible on subsequent ScatterAt calls
 
                 currentOptions.minRadius = 24;
                 currentOptions.maxRadius = 50;   
-                currentOptions.scavengingMultiplier = 0.5f;
+                currentOptions.scavengingMultiplier = 0.1f;
                 currentOptions.deteriorationMultiplier = 0.1f;
                 currentOptions.hostileChance = 0.8f;
                 currentOptions.itemCostLimit = 800;
 
-                currentOptions.minimumCostRequired = 5000;
-                currentOptions.minimumDensityRequired = 0.2f;
-                currentOptions.minimumAreaRequired = 1000;
+                currentOptions.minimumCostRequired = 25000;
+                currentOptions.minimumDensityRequired = 0.01f;
+                currentOptions.minimumAreaRequired = 4000;
                 currentOptions.deleteLowQuality = false; //do not delete since we have much higher requirements for base ruins
                 currentOptions.shouldKeepDefencesAndPower = true;
 
                 ResolveParams rp = default(ResolveParams);
                 BaseGen.globalSettings.map = map;
+                rp.rect = new CellRect(0, 0, map.Size.x, map.Size.z);
                 rp.SetCustom<ScatterOptions>(Constants.ScatterOptions, currentOptions);
                 rp.faction = Find.FactionManager.OfAncientsHostile;
+                BaseGen.symbolStack.Push("chargeBatteries", rp);
+                BaseGen.symbolStack.Push("refuel", rp);
                 BaseGen.symbolStack.Push("scatterRuins", rp);
 
 
-                ResolveParams resolveParams = default(ResolveParams);
-                resolveParams.rect = CellRect.CenteredOn(map.Center, currentOptions.minRadius + (currentOptions.maxRadius - currentOptions.maxRadius) / 2);
-                BaseGen.globalSettings.map = map;
-                BaseGen.globalSettings.mainRect = resolveParams.rect;
-
                 if (Rand.Chance(0.5f * Find.Storyteller.difficulty.threatScale)) {
-                    float pointsCost = Math.Abs(Rand.Gaussian()) * 500 * Find.Storyteller.difficulty.threatScale; 
+                    float pointsCost = Math.Abs(Rand.Gaussian()) * 500 * Find.Storyteller.difficulty.threatScale;
 
-                    resolveParams.faction = Find.FactionManager.RandomEnemyFaction();
-                    resolveParams.singlePawnLord = LordMaker.MakeNewLord(resolveParams.faction,
-                        new LordJob_AssaultColony(resolveParams.faction, false, false, true, true), map, null);
+                rp.faction = Find.FactionManager.RandomEnemyFaction();
+                rp.singlePawnLord = LordMaker.MakeNewLord(rp.faction,
+                        new LordJob_AssaultColony(rp.faction, false, false, true, true), map, null);
 
-                    resolveParams.pawnGroupKindDef = (resolveParams.pawnGroupKindDef ?? PawnGroupKindDefOf.Settlement);
+                rp.pawnGroupKindDef = (rp.pawnGroupKindDef ?? PawnGroupKindDefOf.Settlement);
 
-                    if (resolveParams.pawnGroupMakerParams == null) {
-                        resolveParams.pawnGroupMakerParams = new PawnGroupMakerParms();
-                        resolveParams.pawnGroupMakerParams.tile = map.Tile;
-                        resolveParams.pawnGroupMakerParams.faction = resolveParams.faction;
-                        PawnGroupMakerParms pawnGroupMakerParams = resolveParams.pawnGroupMakerParams;
+                    if (rp.pawnGroupMakerParams == null) {
+                    rp.pawnGroupMakerParams = new PawnGroupMakerParms();
+                    rp.pawnGroupMakerParams.tile = map.Tile;
+                    rp.pawnGroupMakerParams.faction = rp.faction;
+                        PawnGroupMakerParms pawnGroupMakerParams = rp.pawnGroupMakerParams;
                         pawnGroupMakerParams.points = pointsCost;
                     }
 
-                    BaseGen.symbolStack.Push("pawnGroup", resolveParams);
+                    BaseGen.symbolStack.Push("pawnGroup", rp);
 
                 }
 
-                BaseGen.symbolStack.Push("chargeBatteries", resolveParams);
-                BaseGen.symbolStack.Push("refuel", resolveParams);
                     
                 BaseGen.Generate();
-            }
+          
         }
 
     }

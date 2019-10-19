@@ -6,14 +6,14 @@ using Verse;
 
 namespace RealRuins {
     public class TransportPodsArrivalAction_VisitRuins : TransportPodsArrivalAction {
-        private Site site;
+        private MapParent site;
 
         private PawnsArrivalModeDef arrivalMode;
 
         public TransportPodsArrivalAction_VisitRuins() {
         }
 
-        public TransportPodsArrivalAction_VisitRuins(Site site, PawnsArrivalModeDef arrivalMode) {
+        public TransportPodsArrivalAction_VisitRuins(MapParent site, PawnsArrivalModeDef arrivalMode) {
             this.site = site;
             this.arrivalMode = arrivalMode;
         }
@@ -40,20 +40,25 @@ namespace RealRuins {
         }
 
         public override void Arrived(List<ActiveDropPodInfo> pods, int tile) {
-            Debug.Message("Overridden arrive pods");
+            Debug.Log("Overridden arrive pods");
             Thing lookTarget = TransportPodsArrivalActionUtility.GetLookTarget(pods);
             bool flag = !site.HasMap;
             Map orGenerateMap = GetOrGenerateMapUtility.GetOrGenerateMap(site.Tile, RuinedBaseWorker.MapSize, null);
             if (flag) {
                 Find.TickManager.Notify_GeneratedPotentiallyHostileMap();
                 PawnRelationUtility.Notify_PawnsSeenByPlayer_Letter_Send(orGenerateMap.mapPawns.AllPawns, "LetterRelatedPawnsInMapWherePlayerLanded".Translate(Faction.OfPlayer.def.pawnsPlural), LetterDefOf.NeutralEvent, informEvenIfSeenBefore: true);
+
+                Find.LetterStack.ReceiveLetter("LetterLabelTransportPodsArrivedAtRuins".Translate(), "LetterTransportPodsArrivedAtRuins".Translate().CapitalizeFirst(), LetterDefOf.ThreatBig, lookTarget, null, null);
+            } else {
+                Messages.Message("MessageTransportPodsArrived".Translate(), lookTarget, MessageTypeDefOf.TaskCompletion);
             }
-            Messages.Message("MessageTransportPodsArrived".Translate(), lookTarget, MessageTypeDefOf.TaskCompletion);
             arrivalMode.Worker.TravelingTransportPodsArrived(pods, orGenerateMap);
         }
 
-        public static FloatMenuAcceptanceReport CanVisit(IEnumerable<IThingHolder> pods, Site site) {
-            if (site == null || !site.Spawned || !site.core.def.transportPodsCanLandAndGenerateMap) {
+
+
+        public static FloatMenuAcceptanceReport CanVisit(IEnumerable<IThingHolder> pods, MapParent site) {
+            if (site == null || !site.Spawned) {
                 return false;
             }
             if (!TransportPodsArrivalActionUtility.AnyNonDownedColonist(pods)) {
@@ -65,7 +70,7 @@ namespace RealRuins {
             return true;
         }
 
-        public static IEnumerable<FloatMenuOption> GetFloatMenuOptions(CompLaunchable representative, IEnumerable<IThingHolder> pods, Site site) {
+        public static IEnumerable<FloatMenuOption> GetFloatMenuOptions(CompLaunchable representative, IEnumerable<IThingHolder> pods, MapParent site) {
             foreach (FloatMenuOption floatMenuOption in TransportPodsArrivalActionUtility.GetFloatMenuOptions(() => CanVisit(pods, site), () => new TransportPodsArrivalAction_VisitRuins(site, PawnsArrivalModeDefOf.EdgeDrop), "DropAtEdge".Translate(), representative, site.Tile)) {
                 yield return floatMenuOption;
             }

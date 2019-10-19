@@ -20,7 +20,7 @@ namespace RealRuins {
                 
 
                 if (bp == null) {
-                    Debug.Message("Corrupted XML at path {0}, removing", filename);
+                    Debug.Error(Debug.Store, "Corrupted XML at path {0}, removing", filename);
                     SnapshotStoreManager.Instance.RemoveBlueprintWithName(filename);
                     continue;
                 }
@@ -33,7 +33,7 @@ namespace RealRuins {
                     //Debug.Message("Qualified, using.");
                     return bp;
                 } else if (removeNonQualified) {
-                    Debug.Message("Non-qualified XML at path {0}, removing", filename);
+                    Debug.Warning(Debug.Store, "Non-qualified XML at path {0}, removing", filename);
                     SnapshotStoreManager.Instance.RemoveBlueprintWithName(filename);
                 }
             }

@@ -36,13 +36,29 @@ namespace RealRuins {
             if (!TryFindTile(out int tile)) {
                 return false;
             }
-            if (!SiteMakerHelper.TryFindSiteParams_SingleSitePart(DefDatabase<SiteCoreDef>.GetNamed("RuinedBaseSite"), (string)null, out SitePartDef sitePart, out Faction faction2, null, true, null)) {
-                return false;
+
+            AbandonedBaseWorldObject site = (AbandonedBaseWorldObject)WorldObjectMaker.MakeWorldObject(DefDatabase<WorldObjectDef>.GetNamed("AbandonedBase"));
+            site.Tile = tile;
+            site.SetFaction(null);
+            Find.WorldObjects.Add(site);
+
+            string filename = null;
+            Blueprint bp = BlueprintFinder.FindRandomBlueprintWithParameters(out filename, 6400, 0.01f, 30000, maxAttemptsCount: 50);
+
+            RuinedBaseComp comp = site.GetComponent<RuinedBaseComp>();
+            if (comp == null) {
+                Debug.Warning("Component is null");
+            } else {
+                Debug.Warning("Starting scavenging...");
+                int cost = 10000;
+                if (bp != null) {
+                    cost = (int)bp.totalCost;
+                }
+                comp.blueprintFileName = filename;
+                comp.StartScavenging(cost);
             }
 
-            int randomInRange = SiteTuning.QuestSiteTimeoutDaysRange.RandomInRange;
-            Site site = CreateSite(tile, sitePart, randomInRange, faction2);
-            if (site == null) return false;
+
 
             var lifetime = (int)(Math.Pow(site.GetComponent<RuinedBaseComp>().currentCapCost / 1000, 0.41) * 1.1);
             string letterText = GetLetterText(faction, lifetime);
@@ -55,30 +71,6 @@ namespace RealRuins {
             return TileFinder.TryFindNewSiteTile(out tile, itemStashQuestSiteDistanceRange.min, itemStashQuestSiteDistanceRange.max, false, true, -1);
         }
 
-        public static Site CreateSite(int tile, SitePartDef sitePart, int days, Faction siteFaction) {
-            
-            Site site = SiteMaker.MakeSite(DefDatabase<SiteCoreDef>.GetNamed("RuinedBaseSite"), sitePart, tile, siteFaction, true, null);
-
-            site.sitePartsKnown = true;
-
-            string filename = null;
-            Blueprint bp = BlueprintFinder.FindRandomBlueprintWithParameters(out filename, 6400, 0.01f, 30000, maxAttemptsCount: 50);
-            if (bp == null) return null;
-
-            Debug.Message("Trying to gt comp");
-            
-            RuinedBaseComp comp = site.GetComponent<RuinedBaseComp>();
-            if (comp == null) {
-                Debug.Message("Component is null");
-            } else {
-                comp.blueprintFileName = filename;
-                comp.StartScavenging((int)bp.totalCost);
-            }
-
-            Debug.Message("Found blueprint with name {0} and stored", filename);
-            Find.WorldObjects.Add(site);
-            return site;
-        }
 
         private string GetLetterText(Faction alliedFaction, int timeoutDays) {
             string text = string.Format(def.letterText, alliedFaction.leader.LabelShort, alliedFaction.def.leaderTitle, alliedFaction.Name, timeoutDays).CapitalizeFirst();

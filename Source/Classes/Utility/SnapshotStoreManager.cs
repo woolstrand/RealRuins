@@ -35,6 +35,14 @@ namespace RealRuins
         private int totalFileCount = 0;
        
 
+        public static string GamePath(string seed, int mapSize, float coverage) {
+            return string.Format("{0}-{1}-{2}", seed.SanitizeForFileSystem(), mapSize, (int)(coverage * 100));
+        }
+
+        public static string CurrentGamePath() {
+            return GamePath(Find.World.info.seedString, Find.World.info.initialMapSize.x, Find.World.PlanetCoverage);
+        }
+
         public SnapshotStoreManager() {
             MoveFilesIfNeeded();
             GetSnapshotsFolderPath();
@@ -52,7 +60,7 @@ namespace RealRuins
             string[] oldFiles = Directory.GetFiles(oldRootFolder);
             
             DateTime startTime = DateTime.Now;
-            Debug.Message("RealRuins: Started moving {0} files at {1}", oldFiles.Length, startTime);
+            Debug.SysLog("Started moving {0} files at {1}", oldFiles.Length, startTime);
 
             foreach (string fullPath in oldFiles) {
                 string filename = Path.GetFileName(fullPath);
@@ -69,7 +77,7 @@ namespace RealRuins
                 }
             }
 
-            Debug.Message("RealRuins: finished at {0} ({1} msec)", DateTime.Now, (DateTime.Now - startTime).TotalMilliseconds);
+            Debug.SysLog("finished at {0} ({1} msec)", DateTime.Now, (DateTime.Now - startTime).TotalMilliseconds);
 
             try {
                 Directory.Delete(oldRootFolder);
@@ -100,14 +108,26 @@ namespace RealRuins
             StoreBinaryData(Encoding.UTF8.GetBytes(buffer), blueprintName);
         }
 
-        public void StoreBinaryData(byte[] buffer, string blueprintName) {
+        public void StoreBinaryData(byte[] buffer, string blueprintName, string gameName = null) {
 
             new Thread(() => {
                 string filename = blueprintName + ".bp";
+                string path = GetSnapshotsFolderPath();
+                if (gameName != null) {
+                    path = Path.Combine(path, gameName);
+                }
                 if (RealRuins.SingleFile) {
                     filename = "jeluder.bp";
                 }
 
+                DirectoryInfo directoryInfo = new DirectoryInfo(path);
+                if (!directoryInfo.Exists) {
+                    try {
+                        directoryInfo.Create();
+                    } catch {
+                        Debug.Error(Debug.Store, "Can't access store path");
+                    }
+                }
 
                 //when storing a file you need to remove older version of snapshots of the same game
                 string[] parts = filename.Split('=');
@@ -116,7 +136,7 @@ namespace RealRuins
                     if (int.TryParse(parts[0], out date)) {
                         parts[0] = "*";
                         string mask = string.Join("=", parts);
-                        string[] files = Directory.GetFiles(GetSnapshotsFolderPath(), mask);
+                        string[] files = Directory.GetFiles(path, mask);
                         foreach (string existingFile in files) {
                             int existingFileDate = 0;
                             string[] existingFileParts = existingFile.Split('-');
@@ -133,7 +153,7 @@ namespace RealRuins
                     }
                 }
                 //writing file in all cases except "newer version available"
-                File.WriteAllBytes(Path.Combine(GetSnapshotsFolderPath(), filename), buffer);
+                File.WriteAllBytes(Path.Combine(path, filename), buffer);
                 RecalculateFilesSize();
 
             }).Start();
@@ -149,7 +169,7 @@ namespace RealRuins
             if (files.Length == 0) return null;
 
             int index = Rand.Range(0, files.Length);
-            Debug.Message("files length: {0} count {1}, selected: {2}", files.Length, files.Count(), index);
+            Debug.Log(Debug.Store, "files length: {0} count {1}, selected: {2}", files.Length, files.Count(), index);
             return files[index];
         }
 
@@ -160,6 +180,18 @@ namespace RealRuins
                 if (filename == null) return null; //no more valid files. sorry, no party.
             } while (filename == null);
             return filename;
+        }
+
+        public string SnapshotNameFor(string snapshotId, string gameName) {
+            if (gameName == null) {
+                return GetSnapshotsFolderPath() + "/" + snapshotId + ".bp";
+            } else {
+                return GetSnapshotsFolderPath() + "/" + gameName + "/" + snapshotId + ".bp";
+            }
+        }
+
+        public bool SnapshotExists(string snapshotId, string gameName) {
+            return File.Exists(SnapshotNameFor(snapshotId, gameName));
         }
 
         public int StoredSnapshotsCount() {
@@ -174,12 +206,12 @@ namespace RealRuins
             }
         }
 
-        public List<string> FilterOutExistingItems(List<string> source) {
+        public List<string> FilterOutExistingItems(List<string> source, string gamePath = null) {
 
             List<string> result = new List<string>();
 
             foreach (string item in source) {
-                if (!File.Exists(GetSnapshotsFolderPath() + "/" + item + ".bp")) { 
+                if (!File.Exists(SnapshotNameFor(item, gamePath))) { 
                     result.Add(item);
                 }
             }
