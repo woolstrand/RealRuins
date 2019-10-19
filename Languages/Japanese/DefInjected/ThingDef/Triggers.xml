@@ -1,8 +1,16 @@
-<?xml version="1.0" encoding="utf-8"?>
-<LanguageData>
+<Defs>
+  <ThingDef ParentName="EtherealThingBase">
+    <defName>RaidTrigger</defName>
+    <label>rough floor</label>
+    <thingClass>RealRuins.RaidTrigger</thingClass>
+    <tickerType>Normal</tickerType>
+  </ThingDef>
 
-  <RaidTrigger.label>遺跡襲撃フラグ</RaidTrigger.label>
-  <TrippingTrigger.label>遺跡本性出現フラグ</TrippingTrigger.label>
+  <ThingDef ParentName="EtherealThingBase">
+    <defName>TrippingTrigger</defName>
+    <label>rough floor</label>
+    <thingClass>RealRuins.TrippingTrigger</thingClass>
+    <tickerType>Normal</tickerType>
+  </ThingDef>
 
-
-</LanguageData>
+</Defs>
