@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LanguageData>
 
+  <!-- not used anymore, left here for compatibility -->
+
   <RuinedBaseSite.label>放棄された拠点</RuinedBaseSite.label>
   <RuinedBaseSite.description>どうして以前の住人たちがこの拠点を去ったのか、どこへ行ったのかは誰も知りませんが、恐らくこの場所に貴重なアイテムや機械が沢山あるでしょう。</RuinedBaseSite.description>
-
 
 </LanguageData>
