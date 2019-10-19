@@ -169,7 +169,6 @@ namespace RealRuins {
             left.CheckboxLabeled(Text_Option_DisableHaulables, ref RealRuins_ModSettings.defaultScatterOptions.disableSpawnItems, Text_Option_DisableHaulablesTT);
             left.CheckboxLabeled(Text_Option_WallsAndDoorsOnly, ref RealRuins_ModSettings.defaultScatterOptions.wallsDoorsOnly, Text_Option_WallsAndDoorsOnlyTT);
             left.CheckboxLabeled(Text_Option_Proximity, ref RealRuins_ModSettings.defaultScatterOptions.enableProximity, Text_Option_ProximityTT);
-            left.CheckboxLabeled(Text_Option_CaravanReforming, ref RealRuins_ModSettings.allowInstantCaravanReform, Text_Option_CaravanReformingTT);
             left.CheckboxLabeled(Text_Option_StartWithourRuins, ref RealRuins_ModSettings.startWithoutRuins, Text_Option_StartWithourRuinsTT);
 
             left.Gap(15);

@@ -65,4 +65,22 @@ Quick fixes of some annoying ruins event bugs.
 		</content>                                 
 	</HugsLib.UpdateFeatureDef>
 
+	<HugsLib.UpdateFeatureDef ParentName="UpdateFeatureBase">
+		<defName>RealRuins_2_0_0</defName>
+		<assemblyVersion>2.0.0</assemblyVersion>
+		<content>
+|&lt;b&gt;Planetary Ruins!&lt;/b&gt;
+Now you can visit all bases of all players who played their games on a planet with the same coverage, map size and seed. Some bases will be spawned as ruins (and you can explore them) and some will be spawned as factions' properties, so you can attack them with the same conseqences as for attacking a regular faction base.
+To load planetary ruins you need to go to Options -&gt; Mod Settings -&gt; Real Ruins - Planetary Ruins and hit the load button.
+If you're about to start a new game, you can check how many places on the map you can get for a particular seed, map size and planet coverage by visiting https://woolstrand.art	
+Please note that this feature is still in beta and it's highly recommended to make a backup save game before trying. However, this feature won't influence your gameplay in any way until you manually load planetary ruins.
+
+|&lt;b&gt;Caravan reforming changes&lt;/b&gt;
+Ok, finally I managed to make caravan reforming in a way it supposed to be. Now you can reform caravan via standard caravan menu, but after that pawns will load caravan in the same way they load it on your home map. They will bring all items to a caravan packing spot and then leave via map edge. And a lot of things may happen while they're doing it!
+
+|&lt;b&gt;Other changes&lt;/b&gt;
+There are also a bit of stability changes, less bugs and error messages when importing some kind of maps, no more minified things issues and some more small changes I even can't recall now.
+		</content>                                 
+	</HugsLib.UpdateFeatureDef>
+
 </Defs>

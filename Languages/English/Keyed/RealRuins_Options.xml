@@ -110,10 +110,10 @@
   <RealRuins.DescPOI7>A large military base with lots of stationary weapons, several dozens of personnel and reinforcements ready to arrive.</RealRuins.DescPOI7>
   <RealRuins.DescPOI8>From distance it looks like a large hangar filled with goods. And a lot of guards.</RealRuins.DescPOI8>
   <RealRuins.DescPOI9>Small building which looks like a communication center. Probably just a temporary military camp with just a few guards.</RealRuins.DescPOI9>
-  <RealRuins.DescPOI10>Remainings of some buildings, bits of furniture, broken workbenches, pipes and metal bars. You can't tell what was there once long ago, everything left is just an empty ruins.</RealRuins.DescPOI10>
+  <RealRuins.DescPOI10>Remainings of some buildings, bits of furniture, broken workbenches, pipes and metal bars. You can't tell what it was long ago, everything left is just empty ruins.</RealRuins.DescPOI10>
   <RealRuins.DescPOI11>Heavily guarded stronghold. Extremely well defended with tons of stationary weapons, troops and reinforcements.</RealRuins.DescPOI11>
 
-  <RealRuins.POINowRuined>Once this place was full of life, but now it's abandoned, no one knows why. So better beware of all kind of dangers.</RealRuins.POINowRuined>
+  <RealRuins.POINowRuined>Once this place was full of life, but now it's abandoned, no one knows why. So better beware of all kinds of danger.</RealRuins.POINowRuined>
 
   <RealRuins.EnterPOI>Enter {0}</RealRuins.EnterPOI>
   <RealRuins.AttackPOI>Attack {0}</RealRuins.AttackPOI>
