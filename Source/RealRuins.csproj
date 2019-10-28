@@ -60,7 +60,29 @@
     </Reference>
     <None Include="..\About\About.xml" />
     <None Include="..\About\Preview.png" />
-    <None Include="..\Languages\**" />
+    <None Include="..\Languages\English\Keyed\RealRuins_Options.xml">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="..\Languages\French\DefInjected\Sites\Cores\RuinedBase.xml" />
+    <None Include="..\Languages\French\DefInjected\StoryTeller\Incidents_World_Quests.xml" />
+    <None Include="..\Languages\French\DefInjected\StoryTeller\WorldObjects.xml" />
+    <None Include="..\Languages\French\Keyed\RealRuins_Options.xml" />
+    <None Include="..\Languages\German\DefInjected\IncidentDef\Incidents.xml" />
+    <None Include="..\Languages\German\DefInjected\SiteCoreDef\RuinedBase.xml" />
+    <None Include="..\Languages\German\DefInjected\WorldObjectDef\WorldObjects.xml" />
+    <None Include="..\Languages\German\Keyed\RealRuins_Options.xml" />
+    <None Include="..\Languages\Japanese\DefInjected\IncidentDef\Incidents.xml" />
+    <None Include="..\Languages\Japanese\DefInjected\SiteCoreDef\RuinedBase.xml" />
+    <None Include="..\Languages\Japanese\DefInjected\ThingDef\Triggers.xml" />
+    <None Include="..\Languages\Japanese\DefInjected\ThoughtDef\Thoughts_Scavenging.xml" />
+    <None Include="..\Languages\Japanese\DefInjected\WorldObjectDef\WorldObjects.xml" />
+    <None Include="..\Languages\Japanese\Keyed\RealRuins_Options.xml" />
+    <None Include="..\Languages\Japanese\LanguageInfo.xml" />
+    <None Include="..\Languages\Russian\DefInjected\Sites\Cores\RuinedBase.xml" />
+    <None Include="..\Languages\Russian\DefInjected\Storyteller\Incidents_World_Quests.xml" />
+    <None Include="..\Languages\Russian\DefInjected\Storyteller\WorldObjects.xml" />
+    <None Include="..\Languages\Russian\DefInjected\Thoughts\Thoughts_Scavenging.xml" />
+    <None Include="..\Languages\Russian\Keyed\RealRuins_Options.xml" />
     <None Include="..\Patches\**" />
   </ItemGroup>
   <ItemGroup>

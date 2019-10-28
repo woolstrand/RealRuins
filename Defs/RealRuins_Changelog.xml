@@ -83,4 +83,12 @@ There are also a bit of stability changes, less bugs and error messages when imp
 		</content>                                 
 	</HugsLib.UpdateFeatureDef>
 
+	<HugsLib.UpdateFeatureDef ParentName="UpdateFeatureBase">
+		<defName>RealRuins_2_0_1</defName>
+		<assemblyVersion>2.0.1</assemblyVersion>
+		<content>
+|&lt;b&gt;Caravan forming selector!&lt;/b&gt;
+So, now you can select one of three ways of reforming caravan after ruins event. "Automatic" is a regular reform like you have on your home map. "Instant" is instant reform like in previous version. "Manual" is also one of two previous types where you need to collect all items manually and leave via map edge.
+		</content>                                 
+	</HugsLib.UpdateFeatureDef>
 </Defs>

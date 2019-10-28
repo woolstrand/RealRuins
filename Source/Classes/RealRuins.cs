@@ -97,44 +97,65 @@ namespace RealRuins
             }
         }
 
-        /*
+        [HarmonyPatch(typeof(FormCaravanComp), "get_Reform")]
+        class FormCaravanComp_Patch {
+            static bool Prefix(FormCaravanComp __instance, ref bool __result) {
+                if (__instance.parent is AbandonedBaseWorldObject ||
+                    __instance.parent is RealRuinsPOIWorldObject) {
+                    switch (RealRuins_ModSettings.caravanReformType) {
+                        case 0: //default
+                            return true; //again, return to standard flow
+                        case 1: //always allow instant reform
+                            __result = true;
+                            return false;
+                        case 2: //always hand-picking
+                            __result = true; //it looks like instant reform, but world object will game think there are still enemies
+                            return false;
+                    }
+                    return false;
+                } else {
+                    return true;
+                }
+            }
+        }
+
+
         [HarmonyPatch(typeof(GenHostility), "AnyHostileActiveThreatToPlayer", typeof(Map))]
         class PlayerThreat_Patch {
             static bool Prefix(ref bool __result, Map map) {
-                if (RealRuins_ModSettings.allowInstantCaravanReform) {
+                if (RealRuins_ModSettings.caravanReformType != 2) {
                     return true; //ignore if setting is off
-                } else if (map.Parent is Site) {
-                    if (((Site)(map.Parent))?.core?.def?.defName == "RuinedBaseSite") {
-                        RuinedBaseComp comp = (map.Parent as WorldObject)?.GetComponent<RuinedBaseComp>();
-                        if (comp?.mapExitLocked == true) {
-                            __result = true; //Always think there is something hostile in an abandoned base event if it was not explicitly unlocket dy the map itself
-                            return false; //prevent original method execution
-                        }
+                } else if (map.Parent is AbandonedBaseWorldObject ||
+                           map.Parent is RealRuinsPOIWorldObject) {
+                    RuinedBaseComp comp = (map.Parent as WorldObject)?.GetComponent<RuinedBaseComp>();
+                    if (comp?.mapExitLocked == true) {
+                        __result = true; //Always think there is something hostile in an abandoned base event if it was not explicitly unlocket dy the map itself
+                        return false; //prevent original method execution
                     }
                 }
                 return true;
             }
-        }*/
+        }
 
-/*
-        [HarmonyPatch(typeof(Scenario), "GetFirstConfigPage")]
-        class WindowContents_Patch {
-            public static void DoWindowContentsPostfix(Rect rect, Page_ConfigureStartingPawns __instance) {
-                //IL_00b4: Unknown result type (might be due to invalid IL or missing references)
-                Vector2 vector = new Vector2(150f, 38f);
-                float y = rect.height + 45f;
-                if (Widgets.ButtonText(new Rect(rect.x + rect.width / 2f - vector.x / 2f, y, vector.x, vector.y), Translator.Translate("EdB.PC.Page.Button.PrepareCarefully"), true, false, true)) {
-                    try {
-                        Page_RealRuins pageRealRuins = new Page_RealRuins();
-                        Find.UIRoot.windows.Add(pageRealRuins);
-                    } catch (Exception ex) {
-                        //Find.get_WindowStack().Add(new DialogInitializationError());
-                        //SoundStarter.PlayOneShot(SoundDefOf.ClickReject, SoundInfo.op_Implicit(null));
-                        throw ex;
+        /*
+                [HarmonyPatch(typeof(Scenario), "GetFirstConfigPage")]
+                class WindowContents_Patch {
+                    public static void DoWindowContentsPostfix(Rect rect, Page_ConfigureStartingPawns __instance) {
+                        //IL_00b4: Unknown result type (might be due to invalid IL or missing references)
+                        Vector2 vector = new Vector2(150f, 38f);
+                        float y = rect.height + 45f;
+                        if (Widgets.ButtonText(new Rect(rect.x + rect.width / 2f - vector.x / 2f, y, vector.x, vector.y), Translator.Translate("EdB.PC.Page.Button.PrepareCarefully"), true, false, true)) {
+                            try {
+                                Page_RealRuins pageRealRuins = new Page_RealRuins();
+                                Find.UIRoot.windows.Add(pageRealRuins);
+                            } catch (Exception ex) {
+                                //Find.get_WindowStack().Add(new DialogInitializationError());
+                                //SoundStarter.PlayOneShot(SoundDefOf.ClickReject, SoundInfo.op_Implicit(null));
+                                throw ex;
+                            }
+                        }
                     }
-                }
-            }
-        }*/
+                }*/
     }
 
     public static class Art_Extensions {

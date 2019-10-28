@@ -64,6 +64,8 @@ namespace RealRuins {
         public static string Text_Option_StartWithourRuins = "RealRuins_MapOptions_StartWithoutRuins";
         public static string Text_Option_StartWithourRuinsTT = "RealRuins_MapOptions_StartWithoutRuinsTT";
 
+        public static string[] CaravanReformOptions = { "RealRuins.Reform.Automatic", "RealRuins.Reform.Instant", "RealRuins.Reform.Manual" };
+
         // fast regex from xml:
         //<RealRuins_M..Options_([^>]*)>[^<]*<\/([^>]*)>     ===>     public static string Text_Option_$1 = "$2";
 
@@ -126,6 +128,7 @@ namespace RealRuins {
         }
 
         public override void DoSettingsWindowContents(Rect rect) {
+
             Rect rect2 = rect.LeftPart(0.45f).Rounded();
             Rect rect3 = rect.RightPart(0.45f).Rounded();
             Listing_Standard left = new Listing_Standard();
@@ -170,6 +173,27 @@ namespace RealRuins {
             left.CheckboxLabeled(Text_Option_WallsAndDoorsOnly, ref RealRuins_ModSettings.defaultScatterOptions.wallsDoorsOnly, Text_Option_WallsAndDoorsOnlyTT);
             left.CheckboxLabeled(Text_Option_Proximity, ref RealRuins_ModSettings.defaultScatterOptions.enableProximity, Text_Option_ProximityTT);
             left.CheckboxLabeled(Text_Option_StartWithourRuins, ref RealRuins_ModSettings.startWithoutRuins, Text_Option_StartWithourRuinsTT);
+
+            Rect ttrect = left.GetRect(30f);
+            Widgets.Label(ttrect.LeftHalf(), "RealRuins.CaravanReformType".Translate());
+            bool result = Widgets.ButtonText(ttrect.RightHalf(), CaravanReformOptions[Math.Min(2, RealRuins_ModSettings.caravanReformType)].Translate());
+            left.Gap(30f);
+            
+            if (result) {
+                List<FloatMenuOption> list = new List<FloatMenuOption>();
+                
+                for (int i = 0; i < 3; i ++) {
+                    string text = CaravanReformOptions[i].Translate();
+                    int value = i;
+                    FloatMenuOption item = new FloatMenuOption(text, delegate
+                    {
+                        RealRuins_ModSettings.caravanReformType = value;
+                    });
+                    list.Add(item);
+                }
+                Find.WindowStack.Add(new FloatMenu(list));
+            }
+            TooltipHandler.TipRegion(ttrect, "RealRuins.CaravanReformTooltip".Translate());
 
             left.Gap(15);
             if (left.ButtonText(Text_Option_ResetToDefaults, null)) {
