@@ -21,7 +21,7 @@ namespace RealRuins {
             }
 
             if (biomeStrict && tileInfo.biomeName != Find.WorldGrid.tiles[tileInfo.tile].biome.defName) {
-                Debug.Log(Debug.POI, "Skipped blueprint due to wrong biome");
+                Debug.Warning(Debug.POI, "Skipped blueprint due to wrong biome");
                 return false;
             }
 
@@ -32,19 +32,19 @@ namespace RealRuins {
             }
 
             if (tileInfo.originX + bp.width > Find.World.info.initialMapSize.x || tileInfo.originZ + bp.height > Find.World.info.initialMapSize.z) {
-                Debug.Log(Debug.POI, "Skipped because of exceeding size");
+                Debug.Warning(Debug.POI, "Skipped because of exceeding size ({{0} + {1} > {2} && {3} + {4} > {5})", tileInfo.originX, bp.width, Find.World.info.initialMapSize.x, tileInfo.originZ, bp.height, Find.World.info.initialMapSize.z);
                 return false;
             }
 
             BlueprintAnalyzer ba = new BlueprintAnalyzer(bp);
             ba.Analyze();
             if (costStrict && (ba.result.totalItemsCost < 1000)) {
-                Debug.Log(Debug.POI, "Skipped blueprint due to low total cost or tiles count");
+                Debug.Warning(Debug.POI, "Skipped blueprint due to low total cost or tiles count");
                 return false;
             }
 
-            if (ba.result.occupiedTilesCount < 100 || ba.result.totalArea < 400) {
-                Debug.Log(Debug.POI, "Skipped blueprint due to low area and items count");
+            if (ba.result.occupiedTilesCount < 50 || ba.result.totalArea < 200) {
+                Debug.Warning(Debug.POI, "Skipped blueprint due to low area ({0}) and/or items count {1}", ba.result.totalArea, ba.result.occupiedTilesCount);
                 return false;
             }
 

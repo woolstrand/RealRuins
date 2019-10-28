@@ -152,4 +152,10 @@
   <RealRuins.PlanetarySettignsCaption>Real Ruins - Planetary Ruins Settings</RealRuins.PlanetarySettignsCaption>
   <RealRuins.NeedsGameInProgress>You have to be in an ongoing game to use this menu</RealRuins.NeedsGameInProgress>
 
+  <RealRuins.CaravanReformType>Caravan reform type</RealRuins.CaravanReformType>
+  <RealRuins.Reform.Automatic>Automatic</RealRuins.Reform.Automatic>
+  <RealRuins.Reform.Instant>Instant</RealRuins.Reform.Instant>
+  <RealRuins.Reform.Manual>Manual</RealRuins.Reform.Manual>
+  <RealRuins.CaravanReformTooltip>Way of caravan reforming in Real Ruins events. "Automatic" is the same way as caravan is formed on your home map. "Instant" allows instant reform via button on the world map. "Manual" is for manual items pickup and leaving via map edge.</RealRuins.CaravanReformTooltip>
+
 </LanguageData>

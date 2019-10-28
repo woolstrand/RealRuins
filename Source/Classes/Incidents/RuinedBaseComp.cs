@@ -136,6 +136,30 @@ namespace RealRuins {
                    // parent as MapParent
                 }
             }
+
+
+            if (RealRuins_ModSettings.caravanReformType == 2 && ParentHasMap) {
+                if (state == RuinedBaseState.FightingWaves) {
+                    CheckTriggers();
+                } else if (state == RuinedBaseState.WaitingForEnemiesToBeDefeated) {
+                    //AnyHostileActiveThreatToPlayer is a proxy call to AnyHostileActiveThreatTo, but it is postfixed with additional check by this mod.
+                    //Here I want to do original check, without my postfix, so I call directly the checking method. So-so solution, but cant think of anything better AND worthwhile
+                    if (!GenHostility.AnyHostileActiveThreatTo((parent as MapParent).Map, Faction.OfPlayer)) {
+                        unlockTargetTime = Find.TickManager.TicksGame + Rand.Range(30000, 30000 + currentCapCost);
+                        state = RuinedBaseState.WaitingTimeoutAfterEnemiesDefeat;
+                        //Debug.Message("no more hostiles. time: {0}, unlocktime: {1}", Find.TickManager.TicksGame, unlockTargetTime);
+                    }
+                } else if (state == RuinedBaseState.WaitingTimeoutAfterEnemiesDefeat) {
+                    if (Find.TickManager.TicksGame > unlockTargetTime) {
+                        state = RuinedBaseState.WaitingToBeInformed;
+                        string text = "RealRuins.NoMoreEnemies".Translate();
+                        Messages.Message(text, parent, MessageTypeDefOf.PositiveEvent);
+                        state = RuinedBaseState.InformedWaitingForLeaving;
+                    }
+                }
+            }
+
+
         }
 
         public override string CompInspectStringExtra() {

@@ -152,5 +152,12 @@
   <RealRuins.PlanetarySettignsCaption>Real Ruins - Руины на карте мира</RealRuins.PlanetarySettignsCaption>
   <RealRuins.NeedsGameInProgress>Вам необходимо загрузить или начать новую игру, чтобы воспользоваться этой функцией.</RealRuins.NeedsGameInProgress>
 
+  <RealRuins.CaravanReformType>Переформирование каравана</RealRuins.CaravanReformType>
+  <RealRuins.Reform.Automatic>Автоматическое</RealRuins.Reform.Automatic>
+  <RealRuins.Reform.Instant>Моментальное</RealRuins.Reform.Instant>
+  <RealRuins.Reform.Manual>Ручное</RealRuins.Reform.Manual>
+  <RealRuins.CaravanReformTooltip>Способ переформирования каравана при покидании локации события из Real Ruins. "Автоматическое" - точно такое же формирование, как на домашней карте. "Моментальное" позволяет моментально переформировать караван по кнопке на карте мира. "Ручное" - все вещи необходимо поднять вручную и покинуть карту через зеленую область на границе.</RealRuins.CaravanReformTooltip>
+
+
 
 </LanguageData>
