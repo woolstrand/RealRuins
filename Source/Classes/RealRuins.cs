@@ -53,7 +53,7 @@ namespace RealRuins
         }
 
         
-        [HarmonyPatch(typeof(UIRoot_Entry), "Init", new Type[0])]
+        [HarmonyPatch(typeof(UIRoot_Entry), nameof(UIRoot_Entry.Init))]
         static class UIRoot_Entry_Init_Patch {
             static void Postfix() {
                 if (RealRuins_ModSettings.allowDownloads && !RealRuins_ModSettings.offlineMode && SnapshotStoreManager.Instance.StoredSnapshotsCount() < 100) {
