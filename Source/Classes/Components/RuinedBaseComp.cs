@@ -128,7 +128,9 @@ namespace RealRuins {
                 }
             }
 
-            if (ParentHasMap && parent.Faction != Faction.OfPlayer) {
+            //Do not remember if faction of pristine ruins does matter somehow. It actually shouldn't.
+            //This should be removed, but just in case it is needed for some reason, I'll leave it, but add check fro reformingType = 1 (instant reforing), because for other modes this yields caravan items unloading.
+            if (ParentHasMap && parent.Faction != Faction.OfPlayer && RealRuins_ModSettings.caravanReformType == 1) {
                 if (!GenHostility.AnyHostileActiveThreatToPlayer((parent as MapParent).Map)) {
                     //show letter about enemies defeated
                     Debug.Log(Debug.Generic, "pristine ruins was cleared, changing faction");

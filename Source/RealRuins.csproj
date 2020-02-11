@@ -40,8 +40,17 @@
       <HintPath>..\..\..\..\..\workshop\content\294100\818773962\Assemblies\0Harmony.dll</HintPath>
     </Reference>
     <Reference Include="Assembly-CSharp">
-      <HintPath>..\..\..\..\..\..\..\Assembly-CSharp.dll</HintPath>
+      <HintPath>..\..\..\RimWorldWin64_Data\Managed\Assembly-CSharp.dll</HintPath>
       <Private>False</Private>
+    </Reference>
+    <Reference Include="Assembly-CSharp-firstpass">
+      <HintPath>..\..\..\RimWorldWin64_Data\Managed\Assembly-CSharp-firstpass.dll</HintPath>
+    </Reference>
+    <Reference Include="AWSSDK.Core">
+      <HintPath>..\..\..\RimWorldWin64_Data\Managed\AWSSDK.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="AWSSDK.S3">
+      <HintPath>..\..\..\RimWorldWin64_Data\Managed\AWSSDK.S3.dll</HintPath>
     </Reference>
     <Reference Include="HugsLib, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -86,6 +95,8 @@
     <None Include="..\Patches\**" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Classes\Components\FormCaravanFromRuinsComp.cs" />
+    <Compile Include="Classes\Components\WorldObjectCompProperties_FormCaravanFromRuins.cs" />
     <Compile Include="Classes\Debug.cs" />
     <Compile Include="Classes\DynamicMapObjects\BlueprintAnalyzer.cs" />
     <Compile Include="Classes\DynamicMapObjects\CaravanArrivalAction_VisitRealRuinsPOI.cs" />
@@ -94,19 +105,19 @@
     <Compile Include="Classes\DynamicMapObjects\GenStep_ScatterPOIRuins.cs" />
     <Compile Include="Classes\DynamicMapObjects\MapRuinsStore.cs" />
     <Compile Include="Classes\DynamicMapObjects\PlanetTileInfo.cs" />
-    <Compile Include="Classes\DynamicMapObjects\RealRuinsPOIComp.cs" />
+    <Compile Include="Classes\Components\RealRuinsPOIComp.cs" />
     <Compile Include="Classes\DynamicMapObjects\RealRuinsPOIFactory.cs" />
     <Compile Include="Classes\DynamicMapObjects\TransportPodsArrivalAction_VisitRuinsPOI.cs" />
-    <Compile Include="Classes\DynamicMapObjects\WorldObjectCompProperties_RealRuinsPOI.cs" />
+    <Compile Include="Classes\Components\WorldObjectCompProperties_RealRuinsPOI.cs" />
     <Compile Include="Classes\Incidents\AbandonedBaseWorldObject.cs" />
     <Compile Include="Classes\Incidents\CaravanArrivalAction_VisitAbandonedBase.cs" />
     <Compile Include="Classes\Incidents\IncidentWorker_CaravanFoundRuins.cs" />
     <Compile Include="Classes\Incidents\IncidentWorker_RuinsFound.cs" />
-    <Compile Include="Classes\Incidents\RuinedBaseComp.cs" />
+    <Compile Include="Classes\Components\RuinedBaseComp.cs" />
     <Compile Include="Classes\Incidents\RuinedBaseWorker.cs" />
     <Compile Include="Classes\Incidents\SmallRuinsWorldObject.cs" />
     <Compile Include="Classes\Incidents\TransportPodsArrivalAction_VisitRuins.cs" />
-    <Compile Include="Classes\Incidents\WorldObjectCompProperties_RuinedBase.cs" />
+    <Compile Include="Classes\Components\WorldObjectCompProperties_RuinedBase.cs" />
     <Compile Include="Classes\Page_RealRuins.cs" />
     <Compile Include="Classes\DynamicMapObjects\RealRuinsPOIWorldObject.cs" />
     <Compile Include="Classes\RealRuinsPlanetary_Mod.cs" />

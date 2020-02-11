@@ -97,6 +97,7 @@ namespace RealRuins
             }
         }
 
+        /*
         [HarmonyPatch(typeof(FormCaravanComp), "get_Reform")]
         class FormCaravanComp_Patch {
             static bool Prefix(FormCaravanComp __instance, ref bool __result) {
@@ -117,10 +118,39 @@ namespace RealRuins
                     return true;
                 }
             }
+        }*/
+
+        //RimWorld caravan forming dialog has two modes: reform and form. 
+        // * "Reform" shows all items including items which are currently in colonists' inventories, BUT reformed caravan leaves instantly.
+        // * "Form" makes colonists go through the map and pick up all items, but it shows only items which are stored in home area.
+        // I need this dialog to show all items, but without instant caravan reforming. Unfortunately, it can be done either with extensive copy-pasting of original code or via method swizzlilng via reflections.
+        [HarmonyPatch(typeof(Dialog_FormCaravan), "TryReformCaravan")]
+        class DialogFormCaravan_Patch {
+            static bool Prefix(Dialog_FormCaravan __instance, ref bool __result) {
+                if (RealRuins_ModSettings.caravanReformType == 1) {
+                    return true; //proceed with instant reforming if instant reforming is on
+                } else {
+                    Map map = (Map)(typeof(Dialog_FormCaravan).GetField("map", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(__instance));
+                    if (map.Parent is AbandonedBaseWorldObject) {
+                        //if this is a pristine ruins event map, invoke regular caravan forming INSTEAD of instant caravan forming.
+                        int destinationTile = (int)(typeof(Dialog_FormCaravan).GetField("destinationTile", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(__instance));
+                        if (destinationTile < 0) {
+                            Messages.Message("MessageMustChooseRouteFirst".Translate(), MessageTypeDefOf.RejectInput, historical: false);
+                            return false;
+                        }
+
+                        bool result = (bool)(typeof(Dialog_FormCaravan).GetMethod("TryFormAndSendCaravan", BindingFlags.NonPublic | BindingFlags.Instance).Invoke(__instance, null));
+                        if (result) {
+                            __instance.Close(doCloseSound: false);
+                        }
+                        return false;
+                    }
+                }
+                return true;
+            }
         }
 
-
-        [HarmonyPatch(typeof(GenHostility), "AnyHostileActiveThreatToPlayer", typeof(Map))]
+        /*[HarmonyPatch(typeof(GenHostility), "AnyHostileActiveThreatToPlayer", typeof(Map))]
         class PlayerThreat_Patch {
             static bool Prefix(ref bool __result, Map map) {
                 if (RealRuins_ModSettings.caravanReformType != 2) {
@@ -129,13 +159,13 @@ namespace RealRuins
                            map.Parent is RealRuinsPOIWorldObject) {
                     RuinedBaseComp comp = (map.Parent as WorldObject)?.GetComponent<RuinedBaseComp>();
                     if (comp?.mapExitLocked == true) {
-                        __result = true; //Always think there is something hostile in an abandoned base event if it was not explicitly unlocket dy the map itself
+                        __result = true; //Always think there is something hostile in an abandoned base event if it was not explicitly unlocked by the map itself
                         return false; //prevent original method execution
                     }
                 }
                 return true;
             }
-        }
+        }*/
 
         /*
                 [HarmonyPatch(typeof(Scenario), "GetFirstConfigPage")]
