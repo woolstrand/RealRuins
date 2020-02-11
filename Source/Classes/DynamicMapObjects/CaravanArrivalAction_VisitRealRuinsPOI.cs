@@ -68,7 +68,7 @@ namespace RealRuins {
             Map map = orGenerateMap;
 
             bool draftColonists = (mapParent.Faction != null && mapParent.Faction != Faction.OfPlayer);
-            CaravanEnterMapUtility.Enter(caravan, orGenerateMap, CaravanEnterMode.Edge, CaravanDropInventoryMode.UnloadIndividually, draftColonists);
+            CaravanEnterMapUtility.Enter(caravan, orGenerateMap, CaravanEnterMode.Edge, CaravanDropInventoryMode.DoNotDrop, draftColonists);
         }
 
 

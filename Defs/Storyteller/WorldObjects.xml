@@ -7,16 +7,11 @@
     <expandingIcon>true</expandingIcon>
     <expandingIconPriority>10</expandingIconPriority>
     <mapGenerator>RealRuinsAbandonedBase</mapGenerator>
-    <canBePlayerHome>true</canBePlayerHome>
-
-    <IncidentTargetTags>
-      <li>Map_TempIncident</li>
-    </IncidentTargetTags>
 
     <comps>
       <li Class="RealRuins.WorldObjectCompProperties_RuinedBase" />
       <li Class="WorldObjectCompProperties_TimedForcedExit" />
-      <li Class="WorldObjectCompProperties_FormCaravan" />
+      <li Class="RealRuins.WorldObjectCompProperties_FormCaravanFromRuins" />
     </comps>
   </WorldObjectDef>
 

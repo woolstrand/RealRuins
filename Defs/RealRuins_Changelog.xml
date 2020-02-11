@@ -91,4 +91,14 @@ There are also a bit of stability changes, less bugs and error messages when imp
 So, now you can select one of three ways of reforming caravan after ruins event. "Automatic" is a regular reform like you have on your home map. "Instant" is instant reform like in previous version. "Manual" is also one of two previous types where you need to collect all items manually and leave via map edge.
 		</content>                                 
 	</HugsLib.UpdateFeatureDef>
+
+	<HugsLib.UpdateFeatureDef ParentName="UpdateFeatureBase">
+		<defName>RealRuins_2_0_2</defName>
+		<assemblyVersion>2.0.2</assemblyVersion>
+		<content>
+|&lt;b&gt;Caravan forming issue resolved&lt;/b&gt;
+1. Fixed issue with automatic items unloading upon arriving on event or POI locations.
+2. Now both Automatic and Manual caravan forming options work in the same way. They both allow manual items picking and they both allow homemap-style caravan forming (even when there are enemies, so watch your pawns!). Instant caravan reforming option is still available and it works the same way as before, instantly reforming caravan if there are no enemies nearby.
+		</content>                                 
+	</HugsLib.UpdateFeatureDef>
 </Defs>

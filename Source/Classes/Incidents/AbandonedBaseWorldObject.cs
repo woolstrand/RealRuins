@@ -14,6 +14,8 @@ namespace RealRuins {
         public override Color ExpandingIconColor => Color.white;
         private Material cachedMat;
 
+        private bool hasStartedCountdown = false;
+
         public override Material Material {
             get {
                 if (cachedMat == null) {
@@ -49,7 +51,11 @@ namespace RealRuins {
 
         public override void Tick() {
             base.Tick();
-            if (HasMap) {
+            if (HasMap && !hasStartedCountdown) {
+                GetComponent<TimedForcedExit>().StartForceExitAndRemoveMapCountdown(15 * 60000);
+                hasStartedCountdown = true;
+            }
+            /*if (HasMap) {
                 if (!GenHostility.AnyHostileActiveThreatToPlayer(Map)) {
                     if (Faction != Faction.OfPlayer) {
                         SetFaction(Faction.OfPlayer);
@@ -59,7 +65,7 @@ namespace RealRuins {
                         SetFaction(null); //reset faction to forbid fast caravan reform and add green border
                     }
                 }
-            }
+            }*/
         }
 
         public override bool ShouldRemoveMapNow(out bool alsoRemoveWorldObject) {
