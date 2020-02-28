@@ -47,8 +47,8 @@ namespace RealRuins {
             Thing lookTarget = TransportPodsArrivalActionUtility.GetLookTarget(pods);
             bool flag = !site.HasMap;
 
-            string letterText = null;
-            string letterCaption = null;
+            TaggedString letterText = null;
+            TaggedString letterCaption = null;
             LetterDef letterDef = LetterDefOf.NeutralEvent;
             if (flag) {
                 if (site.Faction == null) {
@@ -66,7 +66,7 @@ namespace RealRuins {
             Find.LetterStack.ReceiveLetter(letterCaption, letterText, letterDef, lookTarget, null, null);
 
 
-            Map orGenerateMap = GetOrGenerateMapUtility.GetOrGenerateMap(site.Tile, RuinedBaseWorker.MapSize, null);
+            Map orGenerateMap = GetOrGenerateMapUtility.GetOrGenerateMap(site.Tile, new IntVec3(250, 0, 250), null);
             if (flag) {
                 Find.TickManager.Notify_GeneratedPotentiallyHostileMap();
                 PawnRelationUtility.Notify_PawnsSeenByPlayer_Letter_Send(orGenerateMap.mapPawns.AllPawns, "LetterRelatedPawnsInMapWherePlayerLanded".Translate(Faction.OfPlayer.def.pawnsPlural), LetterDefOf.NeutralEvent, informEvenIfSeenBefore: true);
@@ -97,7 +97,7 @@ namespace RealRuins {
         }
 
 
-        private void AffectRelationsIfNeeded(ref string letterText) {
+        private void AffectRelationsIfNeeded(ref TaggedString letterText) {
             if (site.Faction == null || site.Faction == Faction.OfPlayer) {
                 return;
             }

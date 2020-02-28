@@ -15,6 +15,12 @@ namespace RealRuins {
         private int ticksLeft = 200; // shows how many ticks left before auto triggering (if trigger is not triggered yet) or before raid itself (if trigger was triggered by any means)
         private int referenceTimeoutAfterTriggered = 200;
 
+        public float TargetPriorityFactor {
+            get {
+                return 0.0f;
+            }
+        }
+
         public Thing Thing => this;
 
         public LocalTargetInfo TargetCurrentlyAimingAt => null;

@@ -2,7 +2,8 @@
 <ModMetaData>
 	<name>Real Ruins</name>
 	<author>telewre</author>
-	<supportedVersions><li>1.0</li></supportedVersions>
+	<supportedVersions><li>1.1</li></supportedVersions>
+	<packageId>Woolstrand.RealRuins.Mod</packageId>
 	<description>
 &lt;i&gt;"Everyone is dead or gone. This story is over.
 Perhaps someone else will find a use for the ruins of this place."&lt;/i&gt;

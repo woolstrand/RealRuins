@@ -8,13 +8,18 @@ using RimWorld.BaseGen;
 using Verse;
 
 namespace RealRuins {
-    public class SymbolResolver_RuinsScatterer : SymbolResolver {
+    class RuinsScatterer {
 
-        public override void Resolve(ResolveParams rp) {
-            ScatterOptions options = rp.GetCustom<ScatterOptions>(Constants.ScatterOptions);
-            if (options == null) return;
+        //ResolveParams's GetCustom/SetCustom is broken now, and it is a sealed (WHY??!) struct (WHY??!?!?) so I neither can fix it, nor make a dirty hack.
+        //Seems like I have to abandon this approach and make direct calls.
+        static public void Scatter(ResolveParams rp, ScatterOptions options, CoverageMap coverage, List<AbstractDefenderForcesGenerator> generators) {
+            Debug.Log(Debug.Scatter, "Resolving ruins scatteing symbol of basegen stack");
+            if (options == null) {
+                Debug.Warning(Debug.Scatter, "Scatter options are null, aborting");
+                return;
+            }
 
-            //Debug.Message("Loading blueprint of size {0} - {1} to deploy at {2}, {3}", options.minRadius, options.maxRadius, rp.rect.minX, rp.rect.minZ);
+            Debug.Log(Debug.Scatter, "Loading blueprint of size {0} - {1} to deploy at {2}, {3}", options.minRadius, options.maxRadius, rp.rect.minX, rp.rect.minZ);
 
             Blueprint bp = null;
             Map map = BaseGen.globalSettings.map;
@@ -25,6 +30,7 @@ namespace RealRuins {
                 bp = BlueprintFinder.FindRandomBlueprintWithParameters(out filename, options.minimumAreaRequired, options.minimumDensityRequired, 15, removeNonQualified: true);
                 if (string.IsNullOrEmpty(filename)) {
                     //still null = no suitable blueprints, fail.
+                    Debug.Warning(Debug.Scatter, "Bluepring name was null and could not find another suitable blueprint, skipping");
                     return;
                 }
             }
@@ -55,7 +61,7 @@ namespace RealRuins {
 
             //Debug.PrintIntMap(bp.wallMap, delta: 1);
 
-            BlueprintTransferUtility btu = new BlueprintTransferUtility(bp, map, rp); //prepare blueprint transferrer
+            BlueprintTransferUtility btu = new BlueprintTransferUtility(bp, map, rp, options); //prepare blueprint transferrer
             btu.RemoveIncompatibleItems(); //remove incompatible items 
             bp.UpdateBlueprintStats(true); //Update total cost, items count, etc
 
@@ -64,12 +70,11 @@ namespace RealRuins {
             ScavengingProcessor sp = new ScavengingProcessor();
             sp.RaidAndScavenge(bp, options); //scavenge remaining items according to scavenge options
 
-            btu.Transfer(); //transfer blueprint
+            btu.Transfer(coverage); //transfer blueprint
 
-            List<AbstractDefenderForcesGenerator> generators = rp.GetCustom<List<AbstractDefenderForcesGenerator>>(Constants.ForcesGenerators);
             if (generators != null) {
                 foreach (AbstractDefenderForcesGenerator generator in generators) {
-                    generator.GenerateForces(map, rp);
+                    generator.GenerateForces(map, rp, options);
                 }
             }
 
@@ -78,6 +83,7 @@ namespace RealRuins {
                                          //rp.GetCustom<CoverageMap>(Constants.CoverageMap).DebugPrint();
             }
 
+            Debug.Log(Debug.Scatter, "Chunk scattering finished, moving");
         }
     }
 }

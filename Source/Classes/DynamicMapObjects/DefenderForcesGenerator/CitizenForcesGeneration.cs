@@ -18,12 +18,11 @@ namespace RealRuins{
             faction = factionOverride;
         }
 
-        public override void GenerateForces(Map map, ResolveParams rp) {
+        public override void GenerateForces(Map map, ResolveParams rp, ScatterOptions options) {
 
         }
 
-        public override void GenerateStartingParty(Map map, ResolveParams rp) {
-            ScatterOptions currentOptions = rp.GetCustom<ScatterOptions>(Constants.ScatterOptions);
+        public override void GenerateStartingParty(Map map, ResolveParams rp, ScatterOptions currentOptions) {
             float uncoveredCost = currentOptions.uncoveredCost;
 
             Faction faction = rp.faction;

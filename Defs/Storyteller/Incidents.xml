@@ -1,9 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <Defs>
   <IncidentDef>
-		<defName>Quest_PristineRuins</defName>
-		<label>nearby ruins found</label>
-		<category>WorldQuest</category>
+    <defName>Quest_PristineRuins</defName>
+    <label>nearby ruins found</label>
+    <category>GiveQuest</category>
     <targetTags>
       <li>World</li>
     </targetTags>
@@ -17,7 +17,7 @@
   <IncidentDef>
     <defName>SmallRuinsFound</defName>
     <label>small ruins found</label>
-		<category>Misc</category>
+    <category>Misc</category>
     <targetTags>
       <li>Caravan</li>
       <li>Map_TempIncident</li>
@@ -31,11 +31,11 @@
       <AridShrubland>10</AridShrubland>
       <TropicalRainforest>10</TropicalRainforest>
       <Desert>15</Desert>
-			<Tundra>15</Tundra>
+      <Tundra>15</Tundra>
       <TropicalSwamp>15</TropicalSwamp>
       <TemperateSwamp>15</TemperateSwamp>
       <ColdBog>25</ColdBog>
-			<ExtremeDesert>25</ExtremeDesert>
+      <ExtremeDesert>25</ExtremeDesert>
       <IceSheet>35</IceSheet>
       <SeaIce>60</SeaIce>
     </mtbDaysByBiome>

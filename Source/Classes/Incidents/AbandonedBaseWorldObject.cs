@@ -9,6 +9,7 @@ using RimWorld.Planet;
 using UnityEngine;
 
 namespace RealRuins {
+    [StaticConstructorOnStartup]
     class AbandonedBaseWorldObject: MapParent {
         public override Texture2D ExpandingIcon => ContentFinder<Texture2D>.Get("ruinedbase");
         public override Color ExpandingIconColor => Color.white;

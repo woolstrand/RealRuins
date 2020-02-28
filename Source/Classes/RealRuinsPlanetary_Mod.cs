@@ -15,7 +15,6 @@ namespace RealRuins {
 
         public RealRuinsPlanetary_Mod(ModContentPack content)
         : base(content) {
-            embeddedPage = new Page_RealRuins();
         }
 
         public override string SettingsCategory() {
@@ -23,6 +22,10 @@ namespace RealRuins {
         }
 
         public override void DoSettingsWindowContents(Rect rect) {
+            if (embeddedPage == null) {
+                embeddedPage = new Page_RealRuins();
+            }
+
             embeddedPage.DoWindowContents(rect, standalone: false);
         }
     }

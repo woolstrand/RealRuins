@@ -43,7 +43,7 @@ namespace RealRuins {
             Debug.Log("Overridden arrive pods");
             Thing lookTarget = TransportPodsArrivalActionUtility.GetLookTarget(pods);
             bool flag = !site.HasMap;
-            Map orGenerateMap = GetOrGenerateMapUtility.GetOrGenerateMap(site.Tile, RuinedBaseWorker.MapSize, null);
+            Map orGenerateMap = GetOrGenerateMapUtility.GetOrGenerateMap(site.Tile, new IntVec3(250, 0, 250), null);
             if (flag) {
                 Find.TickManager.Notify_GeneratedPotentiallyHostileMap();
                 PawnRelationUtility.Notify_PawnsSeenByPlayer_Letter_Send(orGenerateMap.mapPawns.AllPawns, "LetterRelatedPawnsInMapWherePlayerLanded".Translate(Faction.OfPlayer.def.pawnsPlural), LetterDefOf.NeutralEvent, informEvenIfSeenBefore: true);

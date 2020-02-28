@@ -19,10 +19,7 @@ namespace RealRuins {
                 return false;
             }
 
-            int tile;
-            Faction faction;
-
-            return Find.FactionManager.RandomNonHostileFaction(false, false, false, TechLevel.Undefined) != null && TryFindTile(out tile) && SiteMakerHelper.TryFindRandomFactionFor(DefDatabase<SiteCoreDef>.GetNamed("RuinedBaseSite"), null, out faction, true, null);
+            return Find.FactionManager.RandomNonHostileFaction(false, false, false, TechLevel.Undefined) != null;
         }
 
         protected override bool TryExecuteWorker(IncidentParms parms) {

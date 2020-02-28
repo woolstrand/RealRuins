@@ -424,10 +424,12 @@ namespace RealRuins {
         }
 
 
-        public BlueprintTransferUtility(Blueprint blueprint, Map map, ResolveParams rp) {
+        public BlueprintTransferUtility(Blueprint blueprint, Map map, ResolveParams rp, ScatterOptions options) {
             this.blueprint = blueprint;
             this.map = map;
             this.rp = rp;
+            this.options = options;
+
             mapOriginX = rp.rect.minX + rp.rect.Width / 2 - blueprint.width / 2;
             mapOriginZ = rp.rect.minZ + rp.rect.Height / 2 - blueprint.height / 2;
 
@@ -442,7 +444,6 @@ namespace RealRuins {
                 mapOriginZ = map.Size.z - blueprint.height - 1;
             }
 
-            options = rp.GetCustom<ScatterOptions>(Constants.ScatterOptions);
             if (options.overridePosition != IntVec3.Zero) {
                 if (!options.centerIfExceedsBounds || (options.overridePosition.x + blueprint.width < map.Size.x && options.overridePosition.z + blueprint.height < map.Size.z)) {
                     mapOriginX = options.overridePosition.x;
@@ -528,7 +529,7 @@ namespace RealRuins {
             //Debug.Message("Blueprint transfer utility did remove {0}/{1} incompatible items. New cost: {2}", removedItems, totalItems, blueprint.totalCost);
         }
 
-        public void Transfer() {
+        public void Transfer(CoverageMap coverageMap) {
             //Planting blueprint
             float totalCost = 0;
             int transferredTerrains = 0;
@@ -538,8 +539,7 @@ namespace RealRuins {
 
             //update rect to actual placement rect using width and height
             rp.rect = new CellRect(mapOriginX, mapOriginZ, blueprint.width, blueprint.height);
-            CoverageMap coverageMap = null;
-            rp.TryGetCustom<CoverageMap>(Constants.CoverageMap, out coverageMap);
+            
 
             for (int z = 0; z < blueprint.height; z++) {
                 for (int x = 0; x < blueprint.width; x++) {
@@ -694,14 +694,14 @@ namespace RealRuins {
 
                     if (filthMap[x, z] <= 0 || Rand.Chance(0.2f)) continue;
 
-                    FilthMaker.MakeFilth(mapLocation, map, filthDef[0], Rand.Range(0, 3));
+                    FilthMaker.TryMakeFilth(mapLocation, map, filthDef[0], Rand.Range(0, 3));
 
                     while (Rand.Value > 0.7) {
-                        FilthMaker.MakeFilth(mapLocation, map, filthDef[Rand.Range(0, 2)], Rand.Range(1, 5));
+                        FilthMaker.TryMakeFilth(mapLocation, map, filthDef[Rand.Range(0, 2)], Rand.Range(1, 5));
                     }
 
                     if (options.shouldKeepDefencesAndPower && Rand.Chance(0.05f)) {
-                        FilthMaker.MakeFilth(mapLocation, map, ThingDefOf.Filth_Blood, Rand.Range(1, 5));
+                        FilthMaker.TryMakeFilth(mapLocation, map, ThingDefOf.Filth_Blood, Rand.Range(1, 5));
                     }
 
                     if (Rand.Chance(0.01f)) { //chance to spawn slag chunk

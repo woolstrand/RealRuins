@@ -47,8 +47,8 @@ namespace RealRuins {
             Map orGenerateMap = GetOrGenerateMapUtility.GetOrGenerateMap(mapParent.Tile, null);
             Pawn t = caravan.PawnsListForReading[0];
 
-            string letterText = null;
-            string letterCaption = null;
+            TaggedString letterText = null;
+            TaggedString letterCaption = null;
             LetterDef letterDef = LetterDefOf.NeutralEvent;
             if (flag) {
                 if (mapParent.Faction == null) {
@@ -82,7 +82,7 @@ namespace RealRuins {
             return CaravanArrivalActionUtility.GetFloatMenuOptions(() => CanEnter(caravan, mapParent), () => new CaravanArrivalAction_VisitRealRuinsPOI(mapParent), "EnterMap".Translate(mapParent.Label), caravan, mapParent.Tile, mapParent);
         }
 
-        private void AffectRelationsIfNeeded(ref string letterText) {
+        private void AffectRelationsIfNeeded(ref TaggedString letterText) {
             if (mapParent.Faction == null || mapParent.Faction == Faction.OfPlayer) {
                 return;
             }

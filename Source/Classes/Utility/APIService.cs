@@ -43,7 +43,7 @@ namespace RealRuins {
                             }
                             throw new Exception("timed out");
                         }
-                        if (request.isError) {
+                        if (request.isHttpError || request.isNetworkError) {
                             throw new Exception(request.error);
                         }
                         HttpStatusCode httpStatusCode = (HttpStatusCode)request.responseCode;

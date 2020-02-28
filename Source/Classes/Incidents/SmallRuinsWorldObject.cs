@@ -2,6 +2,7 @@ using RimWorld.Planet;
 using Verse;
 
 namespace RealRuins {
+    [StaticConstructorOnStartup]
     public class SmallRuinsWorldObject : MapParent {
         public override bool ShouldRemoveMapNow(out bool alsoRemoveWorldObject)
         {
