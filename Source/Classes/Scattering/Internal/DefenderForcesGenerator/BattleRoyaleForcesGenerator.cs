@@ -9,8 +9,7 @@ using Verse.AI.Group;
 
 namespace RealRuins {
     class BattleRoyaleForcesGenerator : AbstractDefenderForcesGenerator {
-        public override void GenerateForces(Map map, ResolveParams rp) {
-            ScatterOptions options = rp.GetCustom<ScatterOptions>(Constants.ScatterOptions);
+        public override void GenerateForces(Map map, ResolveParams rp, ScatterOptions options) {
             if (options == null) return;
 
             int addedTriggers = 0;
@@ -65,8 +64,7 @@ namespace RealRuins {
             }
         }
 
-        public override void GenerateStartingParty(Map map, ResolveParams rp) {
-            ScatterOptions currentOptions = rp.GetCustom<ScatterOptions>(Constants.ScatterOptions);
+        public override void GenerateStartingParty(Map map, ResolveParams rp, ScatterOptions currentOptions) {
             float uncoveredCost = currentOptions.uncoveredCost;
 
             if (uncoveredCost > 0 || currentOptions.startingPartyPoints > 0) {

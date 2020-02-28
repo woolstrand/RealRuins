@@ -12,9 +12,11 @@ using Verse.AI;
 using Verse.AI.Group;
 using Verse;
 using RimWorld.BaseGen;
+using System.Runtime.CompilerServices;
 
 namespace RealRuins
 {
+
 
     class GenStep_ScatterRealRuins : GenStep {
         public override int SeedPart {
@@ -145,22 +147,20 @@ namespace RealRuins
                     //We use copy of scatteroptions because each scatteroptions represents separate chunk with separate location, size, maps, etc.
                     //should use struct instead? is it compatible with IExposable?
                     ResolveParams rp = default(ResolveParams);
-                    rp.SetCustom(Constants.ScatterOptions, currentOptions.Copy());
-                    rp.SetCustom(Constants.CoverageMap, coverageMap);
 
+                    List<AbstractDefenderForcesGenerator> generators = new List<AbstractDefenderForcesGenerator>();
                     if (Rand.Chance(currentOptions.hostileChance)) {
                         if (Rand.Chance(0.8f)) {
-                            rp.SetCustom(Constants.ForcesGenerators, new List<AbstractDefenderForcesGenerator> { new AnimalInhabitantsForcesGenerator() });
+                            generators = new List<AbstractDefenderForcesGenerator> { new AnimalInhabitantsForcesGenerator() };
                         } else {
-                            rp.SetCustom(Constants.ForcesGenerators, new List<AbstractDefenderForcesGenerator> { new MechanoidsForcesGenerator(0) });
+                            generators = new List<AbstractDefenderForcesGenerator> { new MechanoidsForcesGenerator(0) };
                         }
                     }
                     rp.faction = Find.FactionManager.OfAncientsHostile;
                     var center = CellFinder.RandomNotEdgeCell(10, map);
                     rp.rect = new CellRect(center.x, center.z, 1, 1); //after generation will be extended to a real size
-                    BaseGen.symbolStack.Push("scatterRuins", rp);
+                    RuinsScatterer.Scatter(rp, currentOptions.Copy(), coverageMap, generators);
                 }
-                BaseGen.Generate();
 
                 if (shouldUnpause) {
                     //Debug.Message("Finished spawning, unpausing");
@@ -187,63 +187,61 @@ namespace RealRuins
             Find.TickManager.Pause();
             //Debug.Message("Overridden LARGE generate");
 
-                string filename = map.Parent.GetComponent<RuinedBaseComp>()?.blueprintFileName;
-                Debug.Log(Debug.Scatter, "Preselected file name is {0}", filename);
+            string filename = map.Parent.GetComponent<RuinedBaseComp>()?.blueprintFileName;
+            Debug.Log(Debug.Scatter, "Preselected file name is {0}", filename);
 
-                currentOptions = RealRuins_ModSettings.defaultScatterOptions.Copy(); //store as instance variable to keep accessible on subsequent ScatterAt calls
+            currentOptions = RealRuins_ModSettings.defaultScatterOptions.Copy(); //store as instance variable to keep accessible on subsequent ScatterAt calls
 
-                currentOptions.minRadius = 200;
-                currentOptions.maxRadius = 200;
-                currentOptions.scavengingMultiplier = 0.1f;
-                currentOptions.deteriorationMultiplier = 0.0f;
-                currentOptions.hostileChance = 1.0f;
-
-               
-                currentOptions.blueprintFileName = filename;
-                currentOptions.costCap = map.Parent.GetComponent<RuinedBaseComp>()?.currentCapCost ?? -1;
-                currentOptions.startingPartyPoints =(int)(map.Parent.GetComponent<RuinedBaseComp>()?.raidersActivity ?? -1);
-                currentOptions.minimumCostRequired = 100000;
-                currentOptions.minimumDensityRequired = 0.015f;
-                currentOptions.minimumAreaRequired = 6400;
-                currentOptions.deleteLowQuality = false; //do not delete since we have much higher requirements for base ruins
-                currentOptions.shouldKeepDefencesAndPower = true;
-                currentOptions.shouldLoadPartOnly = false;
-                currentOptions.shouldAddRaidTriggers = Find.Storyteller.difficulty.allowBigThreats;
-                currentOptions.claimableBlocks = false;
-                currentOptions.enableDeterioration = false;
+            currentOptions.minRadius = 200;
+            currentOptions.maxRadius = 200;
+            currentOptions.scavengingMultiplier = 0.1f;
+            currentOptions.deteriorationMultiplier = 0.0f;
+            currentOptions.hostileChance = 1.0f;
 
 
-                ResolveParams resolveParams = default(ResolveParams);
-                BaseGen.globalSettings.map = map;
-                resolveParams.SetCustom(Constants.ScatterOptions, currentOptions);
-                resolveParams.faction = Find.FactionManager.OfAncientsHostile;
-                resolveParams.SetCustom(Constants.ForcesGenerators, new List<AbstractDefenderForcesGenerator> { new BattleRoyaleForcesGenerator() });
-                resolveParams.rect = new CellRect(0, 0, map.Size.x, map.Size.z);
-                BaseGen.symbolStack.Push("chargeBatteries", resolveParams);
-                BaseGen.symbolStack.Push("refuel", resolveParams);
-                BaseGen.symbolStack.Push("scatterRuins", resolveParams);
+            currentOptions.blueprintFileName = filename;
+            currentOptions.costCap = map.Parent.GetComponent<RuinedBaseComp>()?.currentCapCost ?? -1;
+            currentOptions.startingPartyPoints = (int)(map.Parent.GetComponent<RuinedBaseComp>()?.raidersActivity ?? -1);
+            currentOptions.minimumCostRequired = 100000;
+            currentOptions.minimumDensityRequired = 0.015f;
+            currentOptions.minimumAreaRequired = 6400;
+            currentOptions.deleteLowQuality = false; //do not delete since we have much higher requirements for base ruins
+            currentOptions.shouldKeepDefencesAndPower = true;
+            currentOptions.shouldLoadPartOnly = false;
+            currentOptions.shouldAddRaidTriggers = Find.Storyteller.difficulty.allowBigThreats;
+            currentOptions.claimableBlocks = false;
+            currentOptions.enableDeterioration = false;
 
 
-                BaseGen.globalSettings.mainRect = resolveParams.rect;
+            ResolveParams resolveParams = default(ResolveParams);
+            BaseGen.globalSettings.map = map;
+            resolveParams.faction = Find.FactionManager.OfAncientsHostile;
+            resolveParams.rect = new CellRect(0, 0, map.Size.x, map.Size.z);
+            List<AbstractDefenderForcesGenerator> generators = new List<AbstractDefenderForcesGenerator> { new BattleRoyaleForcesGenerator() };
 
-                float uncoveredCost = currentOptions.uncoveredCost;
-                if (uncoveredCost < 0) {
-                    if (Rand.Chance(0.5f)) {
-                        uncoveredCost = -uncoveredCost; //adding really small party
-                    }
+
+            BaseGen.globalSettings.mainRect = resolveParams.rect;
+
+            float uncoveredCost = currentOptions.uncoveredCost;
+            if (uncoveredCost < 0) {
+                if (Rand.Chance(0.5f)) {
+                    uncoveredCost = -uncoveredCost; //adding really small party
                 }
+            }
 
 
-                BaseGen.Generate();
+            RuinsScatterer.Scatter(resolveParams, currentOptions, null, generators);
+            BaseGen.symbolStack.Push("chargeBatteries", resolveParams);
+            BaseGen.symbolStack.Push("refuel", resolveParams);
+            BaseGen.Generate();
 
 
 
             //adding starting party
             //don't doing it via basegen because of uh oh i don't remember, something with pawn location control
-            List<AbstractDefenderForcesGenerator> generators = resolveParams.GetCustom<List<AbstractDefenderForcesGenerator>>(Constants.ForcesGenerators);
             if (generators != null) {
                 foreach (AbstractDefenderForcesGenerator generator in generators) {
-                    generator.GenerateStartingParty(map, resolveParams);
+                    generator.GenerateStartingParty(map, resolveParams, currentOptions);
                 }
             }
         }

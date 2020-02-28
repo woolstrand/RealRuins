@@ -9,6 +9,7 @@ using RimWorld;
 using Verse;
 
 namespace RealRuins {
+    [StaticConstructorOnStartup]
     class RealRuinsPOIWorldObject : MapParent {
 
         public override Texture2D ExpandingIcon => ContentFinder<Texture2D>.Get("poi-" + GetComponent<RealRuinsPOIComp>().poiType);

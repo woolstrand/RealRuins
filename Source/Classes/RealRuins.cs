@@ -4,7 +4,7 @@ using System.Reflection;
 using System.Collections.Generic;
 using System.IO;
 
-using Harmony;
+using HarmonyLib;
 using Verse;
 using RimWorld;
 using UnityEngine;
@@ -30,9 +30,9 @@ namespace RealRuins
         static RealRuins() {
             DateTime startTime = DateTime.Now;
             Debug.SysLog("RealRuins started patching at {0}", startTime);
-            var harmony = HarmonyInstance.Create("com.woolstrand.realruins");
-
+            var harmony = new Harmony("com.woolstrand.realruins");
             harmony.PatchAll(Assembly.GetExecutingAssembly());
+
             Debug.SysLog("RealRuins finished patching at {0} ({1} msec)", DateTime.Now, (DateTime.Now - startTime).TotalMilliseconds);
 
             if (RealRuins_ModSettings.allowDownloads && !RealRuins_ModSettings.offlineMode) {
@@ -53,6 +53,7 @@ namespace RealRuins
         }
 
         
+        
         [HarmonyPatch(typeof(UIRoot_Entry), "Init", new Type[0])]
         static class UIRoot_Entry_Init_Patch {
             static void Postfix() {
@@ -64,7 +65,7 @@ namespace RealRuins
         }
         
 
-        [HarmonyPatch(typeof(GameDataSaveLoader), "SaveGame")]
+        [HarmonyPatch(typeof(GameDataSaveLoader), "SaveGame", typeof(string))]
         class SaveGame_Patch {
             static void Postfix() {
                 SnapshotSaver.SaveSnapshot();
@@ -89,36 +90,13 @@ namespace RealRuins
         
         [HarmonyPatch(typeof(TaleReference), "GenerateText")]
         class TaleReference_GenerateText_Patch {
-            static bool Prefix(TaleReference __instance, ref string __result) {
+            static bool Prefix(TaleReference __instance, ref TaggedString __result) {
                 if (!(__instance is BakedTaleReference reference)) return true;
-                __result = reference.bakedTale;
+                __result = new TaggedString(reference.bakedTale);
                // Debug.Message("Set result of generate text to {0}", __result);
                 return false;
             }
         }
-
-        /*
-        [HarmonyPatch(typeof(FormCaravanComp), "get_Reform")]
-        class FormCaravanComp_Patch {
-            static bool Prefix(FormCaravanComp __instance, ref bool __result) {
-                if (__instance.parent is AbandonedBaseWorldObject ||
-                    __instance.parent is RealRuinsPOIWorldObject) {
-                    switch (RealRuins_ModSettings.caravanReformType) {
-                        case 0: //default
-                            return true; //again, return to standard flow
-                        case 1: //always allow instant reform
-                            __result = true;
-                            return false;
-                        case 2: //always hand-picking
-                            __result = true; //it looks like instant reform, but world object will game think there are still enemies
-                            return false;
-                    }
-                    return false;
-                } else {
-                    return true;
-                }
-            }
-        }*/
 
         //RimWorld caravan forming dialog has two modes: reform and form. 
         // * "Reform" shows all items including items which are currently in colonists' inventories, BUT reformed caravan leaves instantly.
@@ -149,43 +127,7 @@ namespace RealRuins
                 return true;
             }
         }
-
-        /*[HarmonyPatch(typeof(GenHostility), "AnyHostileActiveThreatToPlayer", typeof(Map))]
-        class PlayerThreat_Patch {
-            static bool Prefix(ref bool __result, Map map) {
-                if (RealRuins_ModSettings.caravanReformType != 2) {
-                    return true; //ignore if setting is off
-                } else if (map.Parent is AbandonedBaseWorldObject ||
-                           map.Parent is RealRuinsPOIWorldObject) {
-                    RuinedBaseComp comp = (map.Parent as WorldObject)?.GetComponent<RuinedBaseComp>();
-                    if (comp?.mapExitLocked == true) {
-                        __result = true; //Always think there is something hostile in an abandoned base event if it was not explicitly unlocked by the map itself
-                        return false; //prevent original method execution
-                    }
-                }
-                return true;
-            }
-        }*/
-
-        /*
-                [HarmonyPatch(typeof(Scenario), "GetFirstConfigPage")]
-                class WindowContents_Patch {
-                    public static void DoWindowContentsPostfix(Rect rect, Page_ConfigureStartingPawns __instance) {
-                        //IL_00b4: Unknown result type (might be due to invalid IL or missing references)
-                        Vector2 vector = new Vector2(150f, 38f);
-                        float y = rect.height + 45f;
-                        if (Widgets.ButtonText(new Rect(rect.x + rect.width / 2f - vector.x / 2f, y, vector.x, vector.y), Translator.Translate("EdB.PC.Page.Button.PrepareCarefully"), true, false, true)) {
-                            try {
-                                Page_RealRuins pageRealRuins = new Page_RealRuins();
-                                Find.UIRoot.windows.Add(pageRealRuins);
-                            } catch (Exception ex) {
-                                //Find.get_WindowStack().Add(new DialogInitializationError());
-                                //SoundStarter.PlayOneShot(SoundDefOf.ClickReject, SoundInfo.op_Implicit(null));
-                                throw ex;
-                            }
-                        }
-                    }
-                }*/
+        
     }
 
     public static class Art_Extensions {

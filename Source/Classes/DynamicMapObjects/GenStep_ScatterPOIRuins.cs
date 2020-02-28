@@ -92,9 +92,7 @@ namespace RealRuins {
 
             ResolveParams resolveParams = default(ResolveParams);
             BaseGen.globalSettings.map = map;
-            resolveParams.SetCustom<ScatterOptions>(Constants.ScatterOptions, currentOptions);
             resolveParams.faction = map.ParentFaction;
-            resolveParams.SetCustom(Constants.ForcesGenerators, generators);
             resolveParams.rect = new CellRect(currentOptions.overridePosition.x, currentOptions.overridePosition.z, map.Size.x - currentOptions.overridePosition.x, map.Size.z - currentOptions.overridePosition.z);
 
 
@@ -107,19 +105,21 @@ namespace RealRuins {
                 ManTurrets((int)(poiComp.mannableCount * 1.25f + 1), resolveParams, map);
             }
 
+
+            RuinsScatterer.Scatter(resolveParams, currentOptions, null, generators);
+
             //ok, but why LIFO? Queue looks more suitable for map generation.
             //Looks like it was done for nested symbols resolving, but looks strange anyway.
+
             BaseGen.symbolStack.Push("chargeBatteries", resolveParams);
             BaseGen.symbolStack.Push("ensureCanHoldRoof", resolveParams);
             BaseGen.symbolStack.Push("refuel", resolveParams);
-            BaseGen.symbolStack.Push("scatterRuins", resolveParams);
 
             BaseGen.Generate();
 
-            List<AbstractDefenderForcesGenerator> f_generators = resolveParams.GetCustom<List<AbstractDefenderForcesGenerator>>(Constants.ForcesGenerators);
-            if (f_generators != null) {
-                foreach (AbstractDefenderForcesGenerator generator in f_generators) {
-                    generator.GenerateStartingParty(map, resolveParams);
+            if (generators != null) {
+                foreach (AbstractDefenderForcesGenerator generator in generators) {
+                    generator.GenerateStartingParty(map, resolveParams, currentOptions);
                 }
             }
 

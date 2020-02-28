@@ -9,9 +9,8 @@ using Verse.AI.Group;
 
 namespace RealRuins {
     class AnimalInhabitantsForcesGenerator : AbstractDefenderForcesGenerator {
-        public override void GenerateForces(Map map, ResolveParams rp) {
+        public override void GenerateForces(Map map, ResolveParams rp, ScatterOptions options) {
             Debug.Log(Debug.ForceGen, "Animal forces generation");
-            ScatterOptions options = rp.GetCustom<ScatterOptions>(Constants.ScatterOptions);
             CellRect rect = rp.rect;
 
             /*if (rect.minX < 15 || rect.minZ < 15 || rect.maxX > map.Size.x - 15 || rect.maxZ > map.Size.z - 15) {
@@ -44,10 +43,10 @@ namespace RealRuins {
                 PawnKindDef currentPawnKindDef = pawnKindDef;
                 PawnGenerationRequest request =
                     new PawnGenerationRequest(currentPawnKindDef, faction, PawnGenerationContext.NonPlayer, tile, true, false, false, //allowDead is last
-                    false, true, false, 1f,
-                    false, true, true, false,
+                    false, true, true, 1f,
+                    false, true, true, true,
                     false, false, false,
-                    null, null, null, null,
+                    true, 0, null, 1, null, null, null,
                     null, null, null, null);
 
                 IntVec3 cell = IntVec3.Invalid;
@@ -58,7 +57,7 @@ namespace RealRuins {
                 if (cell != IntVec3.Invalid) {
                     Pawn pawn = PawnGenerator.GeneratePawn(request);
 
-                    FilthMaker.MakeFilth(cell, map, ThingDefOf.Filth_Blood, 5);
+                    FilthMaker.TryMakeFilth(cell, map, ThingDefOf.Filth_Blood, 5);
                     GenSpawn.Spawn(pawn, cell, map, WipeMode.Vanish);
 
                     lord.AddPawn(pawn);
@@ -69,7 +68,7 @@ namespace RealRuins {
             }
         }
 
-        public override void GenerateStartingParty(Map map, ResolveParams rp) {
+        public override void GenerateStartingParty(Map map, ResolveParams rp, ScatterOptions options) {
         }
     }
 }
