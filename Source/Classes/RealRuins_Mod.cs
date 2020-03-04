@@ -65,6 +65,7 @@ namespace RealRuins {
         public static string Text_Option_StartWithourRuinsTT = "RealRuins_MapOptions_StartWithoutRuinsTT";
 
         public static string[] CaravanReformOptions = { "RealRuins.Reform.Automatic", "RealRuins.Reform.Instant", "RealRuins.Reform.Manual" };
+        public static string[] LogLevelOptions = { "RealRuins.LogLevel.All", "RealRuins.LogLevel.Warnings", "RealRuins.LogLevel.Errors" };
 
         // fast regex from xml:
         //<RealRuins_M..Options_([^>]*)>[^<]*<\/([^>]*)>     ===>     public static string Text_Option_$1 = "$2";
@@ -162,7 +163,7 @@ namespace RealRuins {
             Widgets.Label(ttrect.LeftHalf(), "RealRuins.CaravanReformType".Translate());
             bool result = Widgets.ButtonText(ttrect.RightHalf(), CaravanReformOptions[Math.Min(2, RealRuins_ModSettings.caravanReformType)].Translate());
             left.Gap(30f);
-            
+
             if (result) {
                 List<FloatMenuOption> list = new List<FloatMenuOption>();
                 
@@ -178,8 +179,8 @@ namespace RealRuins {
                 Find.WindowStack.Add(new FloatMenu(list));
             }
             TooltipHandler.TipRegion(ttrect, "RealRuins.CaravanReformTooltip".Translate());
-
             left.Gap(15);
+
             if (left.ButtonText(Text_Option_ResetToDefaults.Translate(), null)) {
                 ResetSettings();
             }
@@ -215,6 +216,27 @@ namespace RealRuins {
             if (right.ButtonText(Text_Option_ResetToDefaults.Translate(), null)) {
                 ResetSettings();
             }
+
+            Rect ggrect = right.GetRect(30f);
+            Widgets.Label(ggrect.LeftHalf(), "RealRuins.LogLevel".Translate());
+            bool eresult = Widgets.ButtonText(ggrect.RightHalf(), LogLevelOptions[Math.Min(2, RealRuins_ModSettings.logLevel)].Translate());
+            right.Gap(30f);
+            if (eresult) {
+                List<FloatMenuOption> list = new List<FloatMenuOption>();
+
+                for (int i = 0; i < 3; i++) {
+                    string text = LogLevelOptions[i].Translate();
+                    int value = i;
+                    FloatMenuOption item = new FloatMenuOption(text, delegate {
+                        RealRuins_ModSettings.logLevel = value;
+                    });
+                    list.Add(item);
+                }
+                Find.WindowStack.Add(new FloatMenu(list));
+            }
+            right.Gap(15);
+
+
 
             if (right.ButtonText("RealRuins.MapsModuleButton".Translate(), null)) {
                 Page_RealRuins page = new Page_RealRuins();

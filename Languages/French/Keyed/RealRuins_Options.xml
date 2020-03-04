@@ -143,4 +143,8 @@
   <RealRuins.PlanetarySettignsCaption>Real Ruins - Planetary Ruins Settings</RealRuins.PlanetarySettignsCaption>
   <RealRuins.NeedsGameInProgress>You have to be in an ongoing game to use this menu</RealRuins.NeedsGameInProgress>
 
+  <RealRuins.LogLevel>Log level</RealRuins.LogLevel>
+  <RealRuins.LogLevel.All>Log everything</RealRuins.LogLevel.All>
+  <RealRuins.LogLevel.Warnings>Warnings and errors</RealRuins.LogLevel.Warnings>
+  <RealRuins.LogLevel.Errors>Errors only</RealRuins.LogLevel.Errors>
 </LanguageData>

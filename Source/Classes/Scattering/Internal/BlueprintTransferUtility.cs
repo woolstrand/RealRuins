@@ -35,20 +35,24 @@ namespace RealRuins {
 
         // Clear the cell from other destroyable objects
         private bool ClearCell(IntVec3 location, Map map, bool shouldForceClear = true) {
-            List<Thing> items = map.thingGrid.ThingsListAt(location);
-            foreach (Thing item in items) {
-                if (!item.def.destroyable) {
-                    return false;
+            try {
+                List<Thing> items = map.thingGrid.ThingsListAt(location);
+                foreach (Thing item in items) {
+                    if (!item.def.destroyable) {
+                        return false;
+                    }
+                    if (item.def.mineable && !shouldForceClear) {//mountain is destroyable only when forcing
+                        return false;
+                    }
                 }
-                if (item.def.mineable && !shouldForceClear) {//mountain is destroyable only when forcing
-                    return false;
-                }
-            }
 
-            for (int index = items.Count - 1; index >= 0; index--) {
-                items[index].Destroy(DestroyMode.Vanish);
+                for (int index = items.Count - 1; index >= 0; index--) {
+                    items[index].Destroy(DestroyMode.Vanish);
+                }
+                return true;
+            } catch {
+                return false;
             }
-            return true;
         }
 
 
@@ -328,12 +332,15 @@ namespace RealRuins {
 
                 Thing thing = ThingMaker.MakeThing(thingDef, stuffDef);
 
+                
                 if (thing != null) {
                     if (itemTile.innerItems != null && thing is IThingHolder) {
                         //Debug.Message("Found inners");
                         foreach (ItemTile innerTile in itemTile.innerItems) {
                             Thing innerThing = MakeThingFromItemTile(innerTile, true);
-                            ((IThingHolder)thing).GetDirectlyHeldThings().TryAdd(innerThing);
+                            if (innerThing != null) {
+                                ((IThingHolder)thing).GetDirectlyHeldThings().TryAdd(innerThing);
+                            }
                         }
                         if (thing.GetInnerIfMinified() == null) return null;
                     }
@@ -686,35 +693,38 @@ namespace RealRuins {
             }
             filthMap.Blur(2);
 
-
             for (int z = 0; z < blueprint.height; z++) {
                 for (int x = 0; x < blueprint.width; x++) {
-                    IntVec3 mapLocation = new IntVec3(x + mapOriginX, 0, z + mapOriginZ);
-                    if (!mapLocation.InBounds(map)) continue;
+                    try {
+                        IntVec3 mapLocation = new IntVec3(x + mapOriginX, 0, z + mapOriginZ);
+                        if (!mapLocation.InBounds(map)) continue;
 
-                    if (filthMap[x, z] <= 0 || Rand.Chance(0.2f)) continue;
+                        if (filthMap[x, z] <= 0 || Rand.Chance(0.2f)) continue;
 
-                    FilthMaker.TryMakeFilth(mapLocation, map, filthDef[0], Rand.Range(0, 3));
+                        FilthMaker.TryMakeFilth(mapLocation, map, filthDef[0], Rand.Range(0, 3));
 
-                    while (Rand.Value > 0.7) {
-                        FilthMaker.TryMakeFilth(mapLocation, map, filthDef[Rand.Range(0, 2)], Rand.Range(1, 5));
-                    }
-
-                    if (options.shouldKeepDefencesAndPower && Rand.Chance(0.05f)) {
-                        FilthMaker.TryMakeFilth(mapLocation, map, ThingDefOf.Filth_Blood, Rand.Range(1, 5));
-                    }
-
-                    if (Rand.Chance(0.01f)) { //chance to spawn slag chunk
-                        List<Thing> things = map.thingGrid.ThingsListAt(mapLocation);
-                        bool canPlace = true;
-                        foreach (Thing t in things) {
-                            if (t.def.fillPercent > 0.5) canPlace = false;
+                        while (Rand.Value > 0.7) {
+                            FilthMaker.TryMakeFilth(mapLocation, map, filthDef[Rand.Range(0, 2)], Rand.Range(1, 5));
                         }
 
-                        if (canPlace) {
-                            Thing slag = ThingMaker.MakeThing(ThingDefOf.ChunkSlagSteel);
-                            GenSpawn.Spawn(slag, mapLocation, map, new Rot4(Rand.Range(0, 4)));
+                        if (options.shouldKeepDefencesAndPower && Rand.Chance(0.05f)) {
+                            FilthMaker.TryMakeFilth(mapLocation, map, ThingDefOf.Filth_Blood, Rand.Range(1, 5));
                         }
+
+                        if (Rand.Chance(0.01f)) { //chance to spawn slag chunk
+                            List<Thing> things = map.thingGrid.ThingsListAt(mapLocation);
+                            bool canPlace = true;
+                            foreach (Thing t in things) {
+                                if (t.def.fillPercent > 0.5) canPlace = false;
+                            }
+
+                            if (canPlace) {
+                                Thing slag = ThingMaker.MakeThing(ThingDefOf.ChunkSlagSteel);
+                                GenSpawn.Spawn(slag, mapLocation, map, new Rot4(Rand.Range(0, 4)));
+                            }
+                        }
+                    } catch (Exception) {
+                        //what a pity
                     }
                 }
             }

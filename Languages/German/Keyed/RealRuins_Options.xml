@@ -144,4 +144,8 @@
   <RealRuins.Reform.Manual>Manual</RealRuins.Reform.Manual>
   <RealRuins.CaravanReformTooltip>Way of caravan reforming in Real Ruins events. "Automatic" is the same way as caravan is formed on your home map. "Instant" allows instant reform via button on the world map. "Manual" is for manual items pickup and leaving via map edge.</RealRuins.CaravanReformTooltip>
 
+  <RealRuins.LogLevel>Log level</RealRuins.LogLevel>
+  <RealRuins.LogLevel.All>Log everything</RealRuins.LogLevel.All>
+  <RealRuins.LogLevel.Warnings>Warnings and errors</RealRuins.LogLevel.Warnings>
+  <RealRuins.LogLevel.Errors>Errors only</RealRuins.LogLevel.Errors>
 </LanguageData>

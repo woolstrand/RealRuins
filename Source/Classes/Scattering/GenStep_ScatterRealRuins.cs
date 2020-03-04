@@ -144,22 +144,26 @@ namespace RealRuins
                 CoverageMap coverageMap = CoverageMap.EmptyCoverageMap(map);
 
                 for (int i = 0; i < num; i++) {
-                    //We use copy of scatteroptions because each scatteroptions represents separate chunk with separate location, size, maps, etc.
-                    //should use struct instead? is it compatible with IExposable?
-                    ResolveParams rp = default(ResolveParams);
+                    try {
+                        //We use copy of scatteroptions because each scatteroptions represents separate chunk with separate location, size, maps, etc.
+                        //should use struct instead? is it compatible with IExposable?
+                        ResolveParams rp = default(ResolveParams);
 
-                    List<AbstractDefenderForcesGenerator> generators = new List<AbstractDefenderForcesGenerator>();
-                    if (Rand.Chance(currentOptions.hostileChance)) {
-                        if (Rand.Chance(0.8f)) {
-                            generators = new List<AbstractDefenderForcesGenerator> { new AnimalInhabitantsForcesGenerator() };
-                        } else {
-                            generators = new List<AbstractDefenderForcesGenerator> { new MechanoidsForcesGenerator(0) };
+                        List<AbstractDefenderForcesGenerator> generators = new List<AbstractDefenderForcesGenerator>();
+                        if (Rand.Chance(currentOptions.hostileChance)) {
+                            if (Rand.Chance(0.8f)) {
+                                generators = new List<AbstractDefenderForcesGenerator> { new AnimalInhabitantsForcesGenerator() };
+                            } else {
+                                generators = new List<AbstractDefenderForcesGenerator> { new MechanoidsForcesGenerator(0) };
+                            }
                         }
+                        rp.faction = Find.FactionManager.OfAncientsHostile;
+                        var center = CellFinder.RandomNotEdgeCell(10, map);
+                        rp.rect = new CellRect(center.x, center.z, 1, 1); //after generation will be extended to a real size
+                        RuinsScatterer.Scatter(rp, currentOptions.Copy(), coverageMap, generators);
+                    } catch {
+                        Debug.Warning(Debug.Scatter, "Could not scatter a single ruins chunk.");
                     }
-                    rp.faction = Find.FactionManager.OfAncientsHostile;
-                    var center = CellFinder.RandomNotEdgeCell(10, map);
-                    rp.rect = new CellRect(center.x, center.z, 1, 1); //after generation will be extended to a real size
-                    RuinsScatterer.Scatter(rp, currentOptions.Copy(), coverageMap, generators);
                 }
 
                 if (shouldUnpause) {

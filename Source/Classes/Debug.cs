@@ -17,7 +17,7 @@ namespace RealRuins {
 
 
         public static bool active = true;
-        public static int logLevel = 0; //0: all, 1: warnings, 2: errors
+        public static int logLevel => RealRuins_ModSettings.logLevel; //0: all, 1: warnings, 2: errors
 
         public static void Log(string format, params object[] args) {
             Log(Generic, format, args);

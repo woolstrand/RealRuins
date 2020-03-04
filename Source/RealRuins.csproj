@@ -28,7 +28,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>none</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>..\Assemblies\</OutputPath>
+    <OutputPath>..\1.1\Assemblies\</OutputPath>
     <DefineConstants>
     </DefineConstants>
     <ErrorReport>prompt</ErrorReport>
@@ -36,27 +36,28 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
+    <None Include="app.config" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
     <None Include="README.md" />
-    <Reference Include="0Harmony, Version=2.0.0.5, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Assemblies\0Harmony.dll</HintPath>
+    <Reference Include="0Harmony">
+      <HintPath>..\..\..\..\SteamLibrary\steamapps\workshop\content\294100\2009463077\Assemblies\0Harmony.dll</HintPath>
     </Reference>
     <Reference Include="Assembly-CSharp">
-      <HintPath>..\..\..\RimWorldWin64_Data\Managed\Assembly-CSharp.dll</HintPath>
+      <HintPath>..\..\..\..\SteamLibrary\steamapps\common\RimWorld\RimWorldWin64_Data\Managed\Assembly-CSharp.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Assembly-CSharp-firstpass">
-      <HintPath>..\..\..\RimWorldWin64_Data\Managed\Assembly-CSharp-firstpass.dll</HintPath>
+      <HintPath>..\..\..\..\SteamLibrary\steamapps\common\RimWorld\RimWorldWin64_Data\Managed\Assembly-CSharp-firstpass.dll</HintPath>
     </Reference>
-    <Reference Include="AWSSDK.Core">
-      <HintPath>..\..\..\RimWorldWin64_Data\Managed\AWSSDK.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="AWSSDK.S3">
-      <HintPath>..\..\..\RimWorldWin64_Data\Managed\AWSSDK.S3.dll</HintPath>
+    <Reference Include="HarmonyMod">
+      <HintPath>..\..\..\..\SteamLibrary\steamapps\workshop\content\294100\2009463077\Assemblies\HarmonyMod.dll</HintPath>
     </Reference>
     <Reference Include="HugsLib, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\workshop\content\294100\818773962\Assemblies\HugsLib.dll</HintPath>
+      <HintPath>..\..\..\..\SteamLibrary\steamapps\workshop\content\294100\818773962\v1.1\Assemblies\HugsLib.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="System" />
@@ -66,7 +67,7 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
     <Reference Include="Unity.TextMeshPro">
-      <HintPath>..\..\..\RimWorldWin64_Data\Managed\Unity.TextMeshPro.dll</HintPath>
+      <HintPath>..\..\..\..\SteamLibrary\steamapps\common\RimWorld\RimWorldWin64_Data\Managed\Unity.TextMeshPro.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine">
       <HintPath>..\..\..\RimWorldWin64_Data\Managed\UnityEngine.dll</HintPath>
@@ -99,16 +100,16 @@
     <None Include="..\Languages\Russian\Keyed\RealRuins_Options.xml" />
     <None Include="..\Patches\**" />
     <Reference Include="UnityEngine.CoreModule">
-      <HintPath>..\..\..\RimWorldWin64_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
+      <HintPath>..\..\..\..\SteamLibrary\steamapps\common\RimWorld\RimWorldWin64_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.IMGUIModule">
-      <HintPath>..\..\..\RimWorldWin64_Data\Managed\UnityEngine.IMGUIModule.dll</HintPath>
+      <HintPath>..\..\..\..\SteamLibrary\steamapps\common\RimWorld\RimWorldWin64_Data\Managed\UnityEngine.IMGUIModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.UnityWebRequestModule">
-      <HintPath>..\..\..\RimWorldWin64_Data\Managed\UnityEngine.UnityWebRequestModule.dll</HintPath>
+      <HintPath>..\..\..\..\SteamLibrary\steamapps\common\RimWorld\RimWorldWin64_Data\Managed\UnityEngine.UnityWebRequestModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.UnityWebRequestWWWModule">
-      <HintPath>..\..\..\RimWorldWin64_Data\Managed\UnityEngine.UnityWebRequestWWWModule.dll</HintPath>
+      <HintPath>..\..\..\..\SteamLibrary\steamapps\common\RimWorld\RimWorldWin64_Data\Managed\UnityEngine.UnityWebRequestWWWModule.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -170,6 +171,11 @@
     <Compile Include="Classes\Utility\SnapshotManager.cs" />
     <Compile Include="Classes\Utility\SnapshotStoreManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Content Include="MapGenerators_RealRuins.xml" />
@@ -187,13 +193,18 @@
     <StartProgram>$(SolutionDir)..\..\RimWorldWin.exe</StartProgram>
   </PropertyGroup>
   <PropertyGroup>
-    <PostBuildEvent>xcopy /T /E /I /Y "$(TargetDir)..\About" "$(TargetDir)..\..\RealRuins\About"
-copy /Y "$(TargetDir)..\About\About-Release.xml" "$(TargetDir)..\..\RealRuins\About\About.xml"
-copy /Y "$(TargetDir)..\About\Preview.png" "$(TargetDir)..\..\RealRuins\About\Preview.png"
-xcopy /E /I /Y "$(TargetDir)..\Assemblies" "$(TargetDir)..\..\RealRuins\Assemblies"
-xcopy /E /I /Y "$(TargetDir)..\Defs" "$(TargetDir)..\..\RealRuins\Defs"
-xcopy /E /I /Y "$(TargetDir)..\Languages" "$(TargetDir)..\..\RealRuins\Languages"
-xcopy /E /I /Y "$(TargetDir)..\Patches" "$(TargetDir)..\..\RealRuins\Patches"
+    <PostBuildEvent>xcopy /T /E /I /Y "$(TargetDir)..\..\About" "E:\SteamLibrary\steamapps\common\RimWorld\Mods\RealRuins\About"
+copy /Y "$(TargetDir)..\..\About\About.xml" "E:\SteamLibrary\steamapps\common\RimWorld\Mods\RealRuins\About\About.xml"
+copy /Y "$(TargetDir)..\..\About\PublishedFileId.txt" "E:\SteamLibrary\steamapps\common\RimWorld\Mods\RealRuins\About\PublishedFileId.txt"
+copy /Y "$(TargetDir)..\..\About\Manifest.xml" "E:\SteamLibrary\steamapps\common\RimWorld\Mods\RealRuins\About\Manifest.xml"
+copy /Y "$(TargetDir)..\..\About\Preview.png" "E:\SteamLibrary\steamapps\common\RimWorld\Mods\RealRuins\About\Preview.png"
+copy /Y "$(TargetDir)..\..\LoadFolders.xml" "E:\SteamLibrary\steamapps\common\RimWorld\Mods\RealRuins\LoadFolders.xml"
+xcopy /E /I /Y "$(TargetDir)..\..\Assemblies" "E:\SteamLibrary\steamapps\common\RimWorld\Mods\RealRuins\Assemblies"
+xcopy /E /I /Y "$(TargetDir)..\..\Defs" "E:\SteamLibrary\steamapps\common\RimWorld\Mods\RealRuins\Defs"
+xcopy /E /I /Y "$(TargetDir)..\..\Languages" "E:\SteamLibrary\steamapps\common\RimWorld\Mods\RealRuins\Languages"
+xcopy /E /I /Y "$(TargetDir)..\..\Patches" "E:\SteamLibrary\steamapps\common\RimWorld\Mods\RealRuins\Patches"
+xcopy /E /I /Y "$(TargetDir)..\..\Textures" "E:\SteamLibrary\steamapps\common\RimWorld\Mods\RealRuins\Textures"
+xcopy /E /I /Y "$(TargetDir)..\..\1.1" "E:\SteamLibrary\steamapps\common\RimWorld\Mods\RealRuins\1.1"
 </PostBuildEvent>
   </PropertyGroup>
 </Project>
