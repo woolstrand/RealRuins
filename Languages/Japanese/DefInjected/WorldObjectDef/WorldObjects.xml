@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LanguageData>
 
-  <RuinedBase.label>前哨基地(放棄)</RuinedBase.label>
-  <RuinedBase.description>放棄された前哨基地</RuinedBase.description>
+  <!-- <AbandonedBase.label>放棄拠点</AbandonedBase.label> -->
+  <!-- <AbandonedBase.description>放棄された拠点</AbandonedBase.description> -->
+
+  <RealRuinsPOI.label>集合建築物</RealRuinsPOI.label>
+  <RealRuinsPOI.description>調査に値する集合した多くの建築物群</RealRuinsPOI.description>
 
   <CaravanSmallRuinsWorldObject.label>小さな遺跡</CaravanSmallRuinsWorldObject.label>
   <CaravanSmallRuinsWorldObject.description>近くで発見した小さな遺跡</CaravanSmallRuinsWorldObject.description>
-
 
 </LanguageData>

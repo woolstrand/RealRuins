@@ -158,6 +158,11 @@
   <RealRuins.Reform.Manual>Ручное</RealRuins.Reform.Manual>
   <RealRuins.CaravanReformTooltip>Способ переформирования каравана при покидании локации события из Real Ruins. "Автоматическое" - точно такое же формирование, как на домашней карте. "Моментальное" позволяет моментально переформировать караван по кнопке на карте мира. "Ручное" - все вещи необходимо поднять вручную и покинуть карту через зеленую область на границе.</RealRuins.CaravanReformTooltip>
 
+  <RealRuins.LogLevel>Log level</RealRuins.LogLevel>
+  <RealRuins.LogLevel.All>Log everything</RealRuins.LogLevel.All>
+  <RealRuins.LogLevel.Warnings>Warnings and errors</RealRuins.LogLevel.Warnings>
+  <RealRuins.LogLevel.Errors>Errors only</RealRuins.LogLevel.Errors>
+
 
 
 </LanguageData>

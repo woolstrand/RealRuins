@@ -94,7 +94,7 @@ namespace RealRuins {
             };
 
             void failureHandler(Exception ex) {
-                Debug.Warning(Debug.Loader, string.Format("Exception during loading object: {0}", ex), true);
+                Debug.Warning(Debug.Loader, string.Format("Could not load maps list, but that's ok if you already have enough maps.", ex), true);
                 completionHandler(false, null);
             }
 
@@ -135,7 +135,7 @@ namespace RealRuins {
             };
 
             void failureHandler(Exception ex) {
-                Debug.Error(Debug.Loader, string.Format("Exception during loading object: {0}", ex), true);
+                Debug.Error(Debug.Loader, string.Format("Could not load maps list. Try not to alt-tab while waiting for maps loading."), true);
                 completionHandler(false, null);
             }
 
@@ -156,7 +156,7 @@ namespace RealRuins {
             };
 
             void failureHandler(Exception ex) {
-                Debug.Error(Debug.Loader, string.Format("Exception during loading map by link {1}: {0}", ex, link), true);
+                Debug.Warning(Debug.Loader, string.Format("Could not load a blueprint, but that's not a problem if you already have enough. If your storage is empty, try manual download and do not alt-tab while loading."), true);
                 completionHandler(false, null);
             }
 
