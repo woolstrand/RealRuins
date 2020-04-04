@@ -47,7 +47,7 @@ namespace RealRuins {
                 }
 
                 for (int index = items.Count - 1; index >= 0; index--) {
-                    items[index].Destroy(DestroyMode.Vanish);
+                    items[index].DeSpawn(DestroyMode.Vanish);
                 }
                 return true;
             } catch {
@@ -271,7 +271,6 @@ namespace RealRuins {
 
 
             } catch (Exception e) {
-                //Debug.Message("Exception while creating pawn: {0}", e);
                 return PawnGenerator.GeneratePawn(PawnKindDefOf.AncientSoldier, rp.faction);
             }
         }
@@ -425,7 +424,7 @@ namespace RealRuins {
                 }
                 return thing;
             } catch (Exception e) {
-                //Debug.Message("Failed to spawn item {0} because of {1}", itemTile.defName, e);
+                Debug.Log(Debug.BlueprintTransfer, "Failed to spawn item {0} because of {1}", itemTile.defName, e);
                 return null;
             }
         }
@@ -436,6 +435,8 @@ namespace RealRuins {
             this.map = map;
             this.rp = rp;
             this.options = options;
+
+            Debug.Log("Transferring bluepring of faction {0}", rp.faction.Name);
 
             mapOriginX = rp.rect.minX + rp.rect.Width / 2 - blueprint.width / 2;
             mapOriginZ = rp.rect.minZ + rp.rect.Height / 2 - blueprint.height / 2;
@@ -580,10 +581,12 @@ namespace RealRuins {
                         }
                     }
 
+
                     //Check if thepoint is in allowed bounds of the map
                     if (!mapLocation.InBounds(map) || mapLocation.InNoBuildEdgeArea(map)) {
                         continue; //ignore invalid cells
                     }
+
 
                     //Construct terrain if some specific terrain stored in the blueprint
                     if (blueprint.terrainMap[x, z] != null) {
@@ -596,10 +599,12 @@ namespace RealRuins {
                         }
                     }
 
+
                     //construct roof evetywhere if we doing complete transfer (ignoring outside: room with index 1).
                     if (blueprint.roofMap[x, z] == true && options.overwritesEverything && blueprint.wallMap[x, z] != 1) {
                         map.roofGrid.SetRoof(mapLocation, RoofDefOf.RoofConstructed);
                     }
+
 
 
                     //Add items
@@ -607,8 +612,10 @@ namespace RealRuins {
 
                         totalItems += blueprint.itemsMap[x, z].Count;
 
-                        bool cellIsAlreadyCleared = false;
+                        
                         foreach (ItemTile itemTile in blueprint.itemsMap[x, z]) {
+
+                            /*
                             if (!cellIsAlreadyCleared) { //first item to be spawned should also clear place for itself. we can't do it beforehand because we don't know if it will be able and get a chance to be spawned.
                                 bool forceCleaning = (blueprint.wallMap[x, z] > 1) && Rand.Chance(0.9f);
 
@@ -618,6 +625,8 @@ namespace RealRuins {
                                     cellIsAlreadyCleared = true;
                                 }
                             }
+                            Debug.Log(Debug.BlueprintTransfer, "Cell cleaned");
+                            */
 
                             Thing thing = MakeThingFromItemTile(itemTile);
                             if (thing != null) {
@@ -640,7 +649,7 @@ namespace RealRuins {
                                         //Debug.Message("Ticked");
 
                                     } catch (Exception e) {
-                                        //Debug.Message("Exception while tried to perform tick for {0} of cost {1}", thing.def.defName, itemTile.cost);
+                                        Debug.Log(Debug.BlueprintTransfer, "Exception while tried to perform tick for {0} of cost {1}", thing.def.defName, itemTile.cost);
                                         thing.Destroy();
                                         throw e;
                                     }
@@ -661,6 +670,8 @@ namespace RealRuins {
                                             thing.HitPoints = (thing.HitPoints - 10) / Rand.Range(5, 20) + Rand.Range(1, 10); //things in marsh or river are really in bad condition
                                         }
                                     }
+                                    Debug.Log(Debug.BlueprintTransfer, "Item completed");
+
                                     transferredTiles++;
                                     totalCost += itemTile.cost;
                                 } catch (Exception e) {
@@ -671,12 +682,13 @@ namespace RealRuins {
                         }
                     }
                 }
-
-                if (options.shouldKeepDefencesAndPower) {
-                    RestoreDefencesAndPower();
-                }
-                options.uncoveredCost = totalCost;
             }
+
+            Debug.Log(Debug.BlueprintTransfer, "Finished transferring");
+            if (options.shouldKeepDefencesAndPower) {
+                RestoreDefencesAndPower();
+            }
+            options.uncoveredCost = totalCost;
             Debug.Log(Debug.BlueprintTransfer, "Transferred blueprint of size {0}x{1}, age {2}, total cost of approximately {3}. Items: {4}/{5}, terrains: {6}/{7}", blueprint.width, blueprint.height, -blueprint.dateShift, totalCost, transferredTiles, totalItems, transferredTerrains, totalTerrains);
         }
 
