@@ -40,7 +40,7 @@ namespace RealRuins {
             float powerThreshold = (Math.Abs(Rand.Gaussian(0.5f, 1)) * powerMax) + 1;
             float cumulativePower = 0;
 
-            Faction faction = Faction.OfAncientsHostile;
+            Faction faction = Faction.OfMechanoids;
 
             Lord lord = LordMaker.MakeNewLord(lordJob: new LordJob_DefendPoint(rect.CenterCell), faction: faction, map: map, startingPawns: null);
             int tile = map.Tile;
@@ -76,6 +76,7 @@ namespace RealRuins {
                 } else {
                     break; //no more suitable cells
                 }
+                Debug.Log(Debug.ForceGen, "Spawned mechanoid of faction {0}", faction.Name);
             }
         }
 
