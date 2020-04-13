@@ -436,7 +436,7 @@ namespace RealRuins {
             this.rp = rp;
             this.options = options;
 
-            Debug.Log("Transferring bluepring of faction {0}", rp.faction.Name);
+            Debug.Log("Transferring blueprint of faction {0}", rp.faction.Name);
 
             mapOriginX = rp.rect.minX + rp.rect.Width / 2 - blueprint.width / 2;
             mapOriginZ = rp.rect.minZ + rp.rect.Height / 2 - blueprint.height / 2;
@@ -537,6 +537,7 @@ namespace RealRuins {
             //Debug.Message("Blueprint transfer utility did remove {0}/{1} incompatible items. New cost: {2}", removedItems, totalItems, blueprint.totalCost);
         }
 
+
         public void Transfer(CoverageMap coverageMap) {
             //Planting blueprint
             float totalCost = 0;
@@ -568,7 +569,7 @@ namespace RealRuins {
                 }
             }
 
-
+            Debug.Extra(Debug.BlueprintTransfer, "Transferring map objects");
             for (int z = 0; z < blueprint.height; z++) {
                 for (int x = 0; x < blueprint.width; x++) {
 
@@ -606,6 +607,7 @@ namespace RealRuins {
                     }
 
 
+                    Debug.Extra(Debug.BlueprintTransfer, "Transferred terrain and roof at cell ({0}, {1})", x, z);
 
                     //Add items
                     if (blueprint.itemsMap[x, z] != null && blueprint.itemsMap[x, z].Count > 0/* && cellUsed[mapLocation.x, mapLocation.z] == false*/) {
@@ -615,23 +617,28 @@ namespace RealRuins {
                         
                         foreach (ItemTile itemTile in blueprint.itemsMap[x, z]) {
 
-                            /*
-                            if (!cellIsAlreadyCleared) { //first item to be spawned should also clear place for itself. we can't do it beforehand because we don't know if it will be able and get a chance to be spawned.
-                                bool forceCleaning = (blueprint.wallMap[x, z] > 1) && Rand.Chance(0.9f);
-
-                                if (!ClearCell(mapLocation, map, forceCleaning)) {
-                                    break; //if cell was not cleared successfully -> break things placement cycle and move on to the next item
-                                } else {
-                                    cellIsAlreadyCleared = true;
-                                }
-                            }
-                            Debug.Log(Debug.BlueprintTransfer, "Cell cleaned");
-                            */
-
+                            Debug.Extra(Debug.BlueprintTransfer, "Creating thing {2} at cell ({0}, {1})", x, z, itemTile.defName);
                             Thing thing = MakeThingFromItemTile(itemTile);
                             if (thing != null) {
                                 try {
-                                    GenSpawn.Spawn(thing, mapLocation, map, new Rot4(itemTile.rot));
+                                    Rot4 rotation = new Rot4(itemTile.rot);
+                                    //check if there is anything we have to despawn in order to spawn our new item
+                                    //we have to do this, because many dubs bad hygiene items enter endless cycle when removed during mapgen.
+                                    foreach (IntVec3 occupiedCell in GenAdj.CellsOccupiedBy(mapLocation, rotation, thing.def.Size)) {
+                                        foreach (Thing existingItem in map.thingGrid.ThingsAt(occupiedCell).ToList()) {
+                                            if (GenSpawn.SpawningWipes(thing.def, existingItem.def)) {
+                                                if (thing.def.thingClass.ToString().Contains("DubsBadHygiene")) throw new Exception("Can't spawn item because it will destroy Dubs Bad Hygiene Item and it will lead to app freeze.");
+                                                existingItem.Destroy(DestroyMode.Vanish);
+                                            }
+                                        }
+                                    }
+
+
+
+
+                                    
+                                    GenSpawn.Spawn(thing, mapLocation, map, rotation);
+                                    Debug.Extra(Debug.BlueprintTransfer, "Spawned");
                                     try {
                                         switch (thing.def.tickerType) {
                                             case TickerType.Never:
@@ -675,7 +682,7 @@ namespace RealRuins {
                                     transferredTiles++;
                                     totalCost += itemTile.cost;
                                 } catch (Exception e) {
-                                    //Debug.Message("Failed to spawn item {0} of cost {1} because of exception", thing, itemTile.cost);
+                                    Debug.Extra(Debug.BlueprintTransfer, "Failed to spawn item {0} of cost {1} because of exception {2}", thing, itemTile.cost, e.Message);
                                     //ignore
                                 }
                             }
