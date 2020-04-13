@@ -143,12 +143,12 @@ namespace RealRuins
             var titleProp = art.GetType().GetField("titleInt", System.Reflection.BindingFlags.NonPublic
                                                                | System.Reflection.BindingFlags.Instance);
             //Debug.Message("Got title prop");
-            titleProp.SetValue(art, title);
+            titleProp.SetValue(art, new TaggedString(title));
 
             var authProp = art.GetType().GetField("authorNameInt", System.Reflection.BindingFlags.NonPublic
                                                                | System.Reflection.BindingFlags.Instance);
             //Debug.Message("Got author prop");
-            authProp.SetValue(art, author);
+            authProp.SetValue(art, new TaggedString(author));
 
         }
     }

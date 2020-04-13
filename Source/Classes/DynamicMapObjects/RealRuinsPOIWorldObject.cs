@@ -31,6 +31,9 @@ namespace RealRuins {
             }
         }
 
+        public RealRuinsPOIWorldObject() {
+        }
+
         public override IEnumerable<FloatMenuOption> GetFloatMenuOptions(Caravan caravan) {
             foreach (FloatMenuOption floatMenuOption in base.GetFloatMenuOptions(caravan)) {
                 yield return floatMenuOption;

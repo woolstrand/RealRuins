@@ -26,6 +26,9 @@ namespace RealRuins {
             }
         }
 
+        public AbandonedBaseWorldObject() {
+        }
+
         public override IEnumerable<FloatMenuOption> GetFloatMenuOptions(Caravan caravan) {
             foreach (FloatMenuOption floatMenuOption in base.GetFloatMenuOptions(caravan)) {
                 yield return floatMenuOption;

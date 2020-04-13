@@ -1,5 +1,7 @@
 ﻿using System;
 using Verse;
+using System.Collections;
+using System.Collections.Generic;
 
 namespace RealRuins {
 
@@ -14,6 +16,8 @@ namespace RealRuins {
         public const string Scatter = "Scatter";
         public const string Event = "Event";
         public const string ForceGen = "ForceGen";
+
+        public static List<string> extras = new List<string> {"BlueprintTransfer"};
 
 
         public static bool active = true;
@@ -33,6 +37,12 @@ namespace RealRuins {
 
         public static void SysLog(string format, params object[] args) {
             Message("System", format, args);
+        }
+
+        public static void Extra(string part, string format, params object[] args) {
+            if (logLevel == 0 && extras.Contains(part)) {
+                Message(part, format, args);
+            }
         }
 
         public static void Log(string part, string format, params object[] args) {

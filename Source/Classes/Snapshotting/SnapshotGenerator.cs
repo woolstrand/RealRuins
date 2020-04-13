@@ -161,9 +161,9 @@ namespace RealRuins {
 
                 CompArt a = thing.TryGetComp<CompArt>();
                 if (a != null && a.Active) {
-                    writer.WriteAttributeString("artAuthor", a.AuthorName);
+                    writer.WriteAttributeString("artAuthor", a.AuthorName.RawText);
                     writer.WriteAttributeString("artTitle", a.Title);
-                    writer.WriteAttributeString("artDescription", a.GenerateImageDescription());
+                    writer.WriteAttributeString("artDescription", a.GenerateImageDescription().RawText);
                 }
 
                 ThingWithComps thingWithComps = thing as ThingWithComps;
@@ -177,7 +177,7 @@ namespace RealRuins {
                     }
                     if (textComp != null) {
                         string text = (string)(textComp?.GetType()?.GetField("text")?.GetValue(textComp));
-                        if (text != null) {
+                        if (text != null && text is string) {
                             writer.WriteAttributeString("text", text);
                         }
                     }
