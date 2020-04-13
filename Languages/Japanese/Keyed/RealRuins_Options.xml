@@ -25,7 +25,7 @@
   <RealRuins_MapOptions_Deterioration>遺跡の劣化率</RealRuins_MapOptions_Deterioration>
   <RealRuins_MapOptions_Scavengers>回収業者の活動係数</RealRuins_MapOptions_Scavengers>
   <RealRuins_MapOptions_CostLimit>アイテム価値の上限を制限</RealRuins_MapOptions_CostLimit>
-  <RealRuins_MapOptions_DisableHaulables>再展示可能なアイテムを無効</RealRuins_MapOptions_DisableHaulables>
+  <RealRuins_MapOptions_DisableHaulables>再設置可能なアイテムを無効</RealRuins_MapOptions_DisableHaulables>
   <RealRuins_MapOptions_WallsAndDoorsOnly>壁と扉だけ配置</RealRuins_MapOptions_WallsAndDoorsOnly>
   <RealRuins_MapOptions_DisableDecoration>特殊アイテム(骨)を無効</RealRuins_MapOptions_DisableDecoration>
   <RealRuins_MapOptions_DisableTraps>特殊アイテム(罠)を無効</RealRuins_MapOptions_DisableTraps>
@@ -156,9 +156,10 @@
   <RealRuins.Reform.Instant>簡易</RealRuins.Reform.Instant>
   <RealRuins.Reform.Manual>手動</RealRuins.Reform.Manual>
   <RealRuins.CaravanReformTooltip>「遺跡を発見」イベントの後でキャラバン編成方法。「自動」は、コロニーマップと同じ編成方法です。「簡易」はワールドマップ上で簡単に編成可能です。「手動」はマップ外縁部から脱出し、アイテムは実際に移動して回収します。</RealRuins.CaravanReformTooltip>
-  <RealRuins.LogLevel>Log level</RealRuins.LogLevel>
-  <RealRuins.LogLevel.All>Log everything</RealRuins.LogLevel.All>
-  <RealRuins.LogLevel.Warnings>Warnings and errors</RealRuins.LogLevel.Warnings>
-  <RealRuins.LogLevel.Errors>Errors only</RealRuins.LogLevel.Errors>
+
+  <RealRuins.LogLevel>ログレベル</RealRuins.LogLevel>
+  <RealRuins.LogLevel.All>全て記録する</RealRuins.LogLevel.All>
+  <RealRuins.LogLevel.Warnings>警告とエラーを記録</RealRuins.LogLevel.Warnings>
+  <RealRuins.LogLevel.Errors>エラーのみ記録</RealRuins.LogLevel.Errors>
 
 </LanguageData>
