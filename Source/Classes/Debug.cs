@@ -17,7 +17,7 @@ namespace RealRuins {
         public const string Event = "Event";
         public const string ForceGen = "ForceGen";
 
-        public static List<string> extras = new List<string> {"BlueprintTransfer"};
+        public static List<string> extras = new List<string>();//{"BlueprintTransfer", "Scatter"};
 
 
         public static bool active = true;

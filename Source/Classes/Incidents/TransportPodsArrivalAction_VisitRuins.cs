@@ -40,10 +40,11 @@ namespace RealRuins {
         }
 
         public override void Arrived(List<ActiveDropPodInfo> pods, int tile) {
-            Debug.Log("Overridden arrive pods");
+            Debug.Log("Overridden arrive pods - visit ruins");
             Thing lookTarget = TransportPodsArrivalActionUtility.GetLookTarget(pods);
             bool flag = !site.HasMap;
-            Map orGenerateMap = GetOrGenerateMapUtility.GetOrGenerateMap(site.Tile, new IntVec3(250, 0, 250), null);
+            Map orGenerateMap = GetOrGenerateMapUtility.GetOrGenerateMap(site.Tile, /*new IntVec3(250, 0, 250),*/ null);
+            Debug.Log("Generated encounter map, which is {0}", orGenerateMap?.ToString() ?? "NULL");
             if (flag) {
                 Find.TickManager.Notify_GeneratedPotentiallyHostileMap();
                 PawnRelationUtility.Notify_PawnsSeenByPlayer_Letter_Send(orGenerateMap.mapPawns.AllPawns, "LetterRelatedPawnsInMapWherePlayerLanded".Translate(Faction.OfPlayer.def.pawnsPlural), LetterDefOf.NeutralEvent, informEvenIfSeenBefore: true);
@@ -52,6 +53,7 @@ namespace RealRuins {
             } else {
                 Messages.Message("MessageTransportPodsArrived".Translate(), lookTarget, MessageTypeDefOf.TaskCompletion);
             }
+
             arrivalMode.Worker.TravelingTransportPodsArrived(pods, orGenerateMap);
         }
 

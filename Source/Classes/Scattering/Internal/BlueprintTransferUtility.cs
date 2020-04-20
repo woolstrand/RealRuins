@@ -38,6 +38,8 @@ namespace RealRuins {
             try {
                 List<Thing> items = map.thingGrid.ThingsListAt(location);
                 foreach (Thing item in items) {
+                    if (item.def.thingClass.ToString().Contains("DubsBadHygiene")) return false; //Don't mess with bad hygiene because it put app into an endless cycle on removal
+
                     if (!item.def.destroyable) {
                         return false;
                     }
@@ -282,12 +284,12 @@ namespace RealRuins {
                     //Debug.Message("Trying to create new inner item {0}", itemTile.defName);
                 }
 
-                if (itemTile.defName == "Pawn") {
+                if (itemTile.defName.ToLower() == "pawn") {
                     //Debug.Message("Now need to instantiate pawn");
                     return MakePawnWithRawXml(itemTile.itemXml);
                 }
 
-                if (itemTile.defName == "Corpse") {
+                if (itemTile.defName.ToLower() == "corpse") {
                     if (itemTile.innerItems != null) {
                         //Debug.Message("Creating corpse");
                         Pawn p = (Pawn)MakeThingFromItemTile(itemTile.innerItems.First());
@@ -307,7 +309,7 @@ namespace RealRuins {
                     return null;
                 }
 
-                if (itemTile.defName.Contains("Corpse") || itemTile.defName.Contains("Minified")) { //should bypass older minified things and corpses
+                if (itemTile.defName.ToLower().Contains("corpse") || itemTile.defName.ToLower().Contains("minified")) { //should bypass older minified things and corpses
                     if ((!itemTile.innerItems?.Any()) ?? true) return null;
                 }
 
@@ -438,6 +440,10 @@ namespace RealRuins {
 
             Debug.Log("Transferring blueprint of faction {0}", rp.faction.Name);
 
+            if (blueprint == null) { Debug.Error(Debug.BlueprintTransfer, "Attempting to configure transfer utility with empty blueprint!"); }
+            if (map == null) { Debug.Error(Debug.BlueprintTransfer, "Attempting to configure transfer utility with empty map!"); }
+            if (options == null) { Debug.Error(Debug.BlueprintTransfer, "Attempting to configure transfer utility with empty options!"); }
+
             mapOriginX = rp.rect.minX + rp.rect.Width / 2 - blueprint.width / 2;
             mapOriginZ = rp.rect.minZ + rp.rect.Height / 2 - blueprint.height / 2;
 
@@ -466,75 +472,89 @@ namespace RealRuins {
         public void RemoveIncompatibleItems() {
             //Each item should be checked if it can be placed or not. This should help preventing situations when simulated scavenging removes things which anyway won't be placed.
             //For each placed item it's cost should be calculated
-            int totalItems = 0;
-            int removedItems = 0;
-            for (int x = 0; x < blueprint.width; x++) {
-                for (int z = 0; z < blueprint.height; z++) {
+            if (blueprint.roofMap == null) Debug.Log(Debug.BlueprintTransfer, "Trying to process blueprint with empty roof map");
+            if (map == null) Debug.Log(Debug.BlueprintTransfer, "Trying to process blueprint but map is still null");
 
-                    if (blueprint.itemsMap[x, z] == null) { blueprint.itemsMap[x, z] = new List<ItemTile>(); }//to make thngs easier add empty list to every cell
+            try {
+                int totalItems = 0;
+                int removedItems = 0;
+                for (int x = 0; x < blueprint.width; x++) {
+                    for (int z = 0; z < blueprint.height; z++) {
 
-                    IntVec3 mapLocation = new IntVec3(x + mapOriginX, 0, z + mapOriginZ);
-                    if (!mapLocation.InBounds(map)) continue;
+                        Debug.Extra(Debug.BlueprintTransfer, "Starting cell {0} {1}...", x, z);
+                        if (blueprint.itemsMap[x, z] == null) { blueprint.itemsMap[x, z] = new List<ItemTile>(); }//to make thngs easier add empty list to every cell
 
-                    List<ItemTile> items = blueprint.itemsMap[x, z];
-                    TerrainTile terrain = blueprint.terrainMap[x, z];
-                    TerrainDef terrainDef = null;
+                        IntVec3 mapLocation = new IntVec3(x + mapOriginX, 0, z + mapOriginZ);
+                        if (!mapLocation.InBounds(map)) continue;
 
-                    if (terrain != null) {
-                        terrainDef = DefDatabase<TerrainDef>.GetNamed(terrain.defName, false);
-                        if (terrainDef == null) {
-                            blueprint.terrainMap[x, z] = null; //no terrain def means terrain can't be generated.
-                            terrain = null;
-                        }
-                    }
+                        List<ItemTile> items = blueprint.itemsMap[x, z];
+                        TerrainTile terrain = blueprint.terrainMap[x, z];
+                        TerrainDef terrainDef = null;
 
-                    TerrainDef existingTerrain = map.terrainGrid.TerrainAt(mapLocation);
-                    if (terrainDef != null && terrainDef.terrainAffordanceNeeded != null && !existingTerrain.affordances.Contains(terrainDef.terrainAffordanceNeeded)) {
-                        terrainDef = null;
-                        blueprint.terrainMap[x, z] = null; //erase terrain if underlying terrain can't support it.
-                        blueprint.roofMap[x, z] = false; //removing roof as well just in case
-                    }
-
-                    List<ItemTile> itemsToRemove = new List<ItemTile>();
-                    foreach (ItemTile item in items) {
-                        totalItems++;
-
-                        ThingDef thingDef = DefDatabase<ThingDef>.GetNamed(item.defName, false);
-                        if (thingDef == null) {
-                            itemsToRemove.Add(item);
-                            continue;
+                        if (terrain != null) {
+                            terrainDef = DefDatabase<TerrainDef>.GetNamed(terrain.defName, false);
+                            if (terrainDef == null) {
+                                blueprint.terrainMap[x, z] = null; //no terrain def means terrain can't be generated.
+                                terrain = null;
+                            }
                         }
 
-                        if (!options.overwritesEverything && thingDef.terrainAffordanceNeeded != null) {
-                            if (thingDef.EverTransmitsPower && options.shouldKeepDefencesAndPower) continue; //ignore affordances for power transmitters if we need to keep defence systems
+                        TerrainDef existingTerrain = map.terrainGrid?.TerrainAt(mapLocation);
+                        if (existingTerrain != null &&  terrainDef != null && 
+                            existingTerrain.affordances != null &&
+                            terrainDef.terrainAffordanceNeeded != null && !existingTerrain.affordances.Contains(terrainDef.terrainAffordanceNeeded)) {
+                            terrainDef = null;
+                            blueprint.terrainMap[x, z] = null; //erase terrain if underlying terrain can't support it.
+                            blueprint.roofMap[x, z] = false; //removing roof as well just in case
+                        }
 
-                            if (terrainDef != null && terrainDef.terrainAffordanceNeeded != null && existingTerrain.affordances.Contains(terrainDef.terrainAffordanceNeeded)) {
-                                if (!terrainDef.affordances.Contains(thingDef.terrainAffordanceNeeded)) { //if new terrain can be placed over existing terrain, checking if an item can be placed over a new terrain
-                                    itemsToRemove.Add(item);
-                                    blueprint.roofMap[x, z] = false;
-                                }
-                            } else {
-                                if (!existingTerrain.affordances.Contains(thingDef.terrainAffordanceNeeded)) {//otherwise checking if the item can be placed over the existing terrain.
-                                    itemsToRemove.Add(item);
-                                    blueprint.roofMap[x, z] = false;
+                        Debug.Extra(Debug.BlueprintTransfer, "Preprocessed cell {0} {1}, moving to items...", x, z);
+                        List<ItemTile> itemsToRemove = new List<ItemTile>();
+                        foreach (ItemTile item in items) {
+                            totalItems++;
+
+                            ThingDef thingDef = DefDatabase<ThingDef>.GetNamed(item.defName, false);
+                            if (thingDef == null) {
+                                itemsToRemove.Add(item);
+                                continue;
+                            }
+
+                            Debug.Extra(Debug.BlueprintTransfer, "Making thorough check for thing {0}", item.defName);
+                            if (!options.overwritesEverything && thingDef.terrainAffordanceNeeded != null) {
+                                if (thingDef.EverTransmitsPower && options.shouldKeepDefencesAndPower) continue; //ignore affordances for power transmitters if we need to keep defence systems
+
+                                if (terrainDef != null && terrainDef.terrainAffordanceNeeded != null && existingTerrain.affordances.Contains(terrainDef.terrainAffordanceNeeded)) {
+                                    if (!terrainDef.affordances.Contains(thingDef.terrainAffordanceNeeded)) { //if new terrain can be placed over existing terrain, checking if an item can be placed over a new terrain
+                                        itemsToRemove.Add(item);
+                                        blueprint.roofMap[x, z] = false;
+                                    }
+                                } else {
+                                    if (!(existingTerrain.affordances?.Contains(thingDef.terrainAffordanceNeeded) ?? true)) {//otherwise checking if the item can be placed over the existing terrain.
+                                        itemsToRemove.Add(item);
+                                        blueprint.roofMap[x, z] = false;
+                                    }
                                 }
                             }
                         }
-                    }
 
-                    foreach (ItemTile item in itemsToRemove) {
-                        if (item.isWall || item.isDoor) {
-                            blueprint.RemoveWall(item.location.x, item.location.z);
+                        foreach (ItemTile item in itemsToRemove) {
+                            if (item.isWall || item.isDoor) {
+                                blueprint.RemoveWall(item.location.x, item.location.z);
+                            }
+
+                            items.Remove(item);
+                            removedItems++;
                         }
-
-                        items.Remove(item);
-                        removedItems++;
                     }
                 }
-            }
 
-            blueprint.UpdateBlueprintStats(true);
-            //Debug.Message("Blueprint transfer utility did remove {0}/{1} incompatible items. New cost: {2}", removedItems, totalItems, blueprint.totalCost);
+
+                Debug.Extra(Debug.BlueprintTransfer, "Finished check, recalculating stats");
+                blueprint.UpdateBlueprintStats(true);
+                Debug.Log(Debug.BlueprintTransfer, "Blueprint transfer utility did remove {0}/{1} incompatible items. New cost: {2}", removedItems, totalItems, blueprint.totalCost);
+            } catch (Exception e) {
+                Debug.Error(Debug.BlueprintTransfer, "Exception while trying to cleanup blueprint details. This should not normally happen, so please report this case: {0}", e.ToString());
+            }
         }
 
 
@@ -548,7 +568,8 @@ namespace RealRuins {
 
             //update rect to actual placement rect using width and height
             rp.rect = new CellRect(mapOriginX, mapOriginZ, blueprint.width, blueprint.height);
-            
+
+            Debug.Extra(Debug.BlueprintTransfer, "Clearing map...");
 
             for (int z = 0; z < blueprint.height; z++) {
                 for (int x = 0; x < blueprint.width; x++) {
@@ -677,7 +698,7 @@ namespace RealRuins {
                                             thing.HitPoints = (thing.HitPoints - 10) / Rand.Range(5, 20) + Rand.Range(1, 10); //things in marsh or river are really in bad condition
                                         }
                                     }
-                                    Debug.Log(Debug.BlueprintTransfer, "Item completed");
+                                    Debug.Extra(Debug.BlueprintTransfer, "Item completed");
 
                                     transferredTiles++;
                                     totalCost += itemTile.cost;
