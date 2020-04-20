@@ -192,7 +192,7 @@ namespace RealRuins
             //Debug.Message("Overridden LARGE generate");
 
             string filename = map.Parent.GetComponent<RuinedBaseComp>()?.blueprintFileName;
-            Debug.Log(Debug.Scatter, "Preselected file name is {0}", filename);
+            Debug.Log(Debug.Scatter, "Large Ruins - Preselected file name is {0}", filename);
 
             currentOptions = RealRuins_ModSettings.defaultScatterOptions.Copy(); //store as instance variable to keep accessible on subsequent ScatterAt calls
 

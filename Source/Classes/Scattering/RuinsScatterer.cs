@@ -13,7 +13,7 @@ namespace RealRuins {
         //ResolveParams's GetCustom/SetCustom is broken now, and it is a sealed (WHY??!) struct (WHY??!?!?) so I neither can fix it, nor make a dirty hack.
         //Seems like I have to abandon this approach and make direct calls.
         static public void Scatter(ResolveParams rp, ScatterOptions options, CoverageMap coverage, List<AbstractDefenderForcesGenerator> generators) {
-            Debug.Log(Debug.Scatter, "Resolving ruins scatteing symbol of basegen stack");
+            Debug.Log(Debug.Scatter, "Running stand-alone scatterer");
             if (options == null) {
                 Debug.Warning(Debug.Scatter, "Scatter options are null, aborting");
                 return;
@@ -27,8 +27,8 @@ namespace RealRuins {
 
             //probably should split scattering options into several distinct objects
             string filename = options.blueprintFileName;
-            if (string.IsNullOrEmpty(filename)) {
-                bp = BlueprintFinder.FindRandomBlueprintWithParameters(out filename, options.minimumAreaRequired, options.minimumDensityRequired, 15, removeNonQualified: true);
+            if (string.IsNullOrEmpty(filename) || !BlueprintLoader.CanLoadBlueprintAtPath(filename)) {
+                bp = BlueprintFinder.FindRandomBlueprintWithParameters(out filename, options.minimumAreaRequired, options.minimumDensityRequired, 15, removeNonQualified: options.deleteLowQuality);
                 if (string.IsNullOrEmpty(filename)) {
                     //still null = no suitable blueprints, fail.
                     Debug.Warning(Debug.Scatter, "Blueprint name was null and could not find another suitable blueprint, skipping");
@@ -53,6 +53,9 @@ namespace RealRuins {
                 Debug.Warning(Debug.Scatter, "Blueprint is still null after attempting to load any qualifying, returning");
                 return;
             }
+
+
+            Debug.Extra(Debug.Scatter, "Blueprint loaded, cutting and searching for rooms");
             bp.CutIfExceedsBounds(map.Size);
 
             // Here we have our blueprint loaded and ready to action. Doing stuff:
@@ -61,19 +64,26 @@ namespace RealRuins {
             options.roomMap = bp.wallMap;
 
             //Debug.PrintIntMap(bp.wallMap, delta: 1);
+            Debug.Extra(Debug.Scatter, "Rooms traversed, initializing transfer utility");
 
             BlueprintTransferUtility btu = new BlueprintTransferUtility(bp, map, rp, options); //prepare blueprint transferrer
+            Debug.Extra(Debug.Scatter, "Initialized, removing incompatible items...");
+
             btu.RemoveIncompatibleItems(); //remove incompatible items 
+            Debug.Extra(Debug.Scatter, "Recalculating stats...");
+
             bp.UpdateBlueprintStats(true); //Update total cost, items count, etc
 
+            Debug.Extra(Debug.Scatter, "Deteriorating...");
             DeteriorationProcessor.Process(bp, options); //create deterioration maps and do deterioration
 
+            Debug.Extra(Debug.Scatter, "Scavenging...");
             ScavengingProcessor sp = new ScavengingProcessor();
             sp.RaidAndScavenge(bp, options); //scavenge remaining items according to scavenge options
 
-            Debug.Log(Debug.Scatter, "[{0} s] Prepared, about to start transferring.", DateTime.UtcNow.Subtract(start).TotalSeconds);
+            Debug.Extra(Debug.Scatter, "[{0} s] Prepared, about to start transferring.", DateTime.UtcNow.Subtract(start).TotalSeconds);
             btu.Transfer(coverage); //transfer blueprint
-            Debug.Log(Debug.Scatter, "[{0} s] Transferred.", DateTime.UtcNow.Subtract(start).TotalSeconds);
+            Debug.Extra(Debug.Scatter, "[{0} s] Transferred.", DateTime.UtcNow.Subtract(start).TotalSeconds);
 
             if (generators != null) {
                 foreach (AbstractDefenderForcesGenerator generator in generators) {
@@ -86,7 +96,7 @@ namespace RealRuins {
                 btu.AddFilthAndRubble(); //add filth and rubble
                                          //rp.GetCustom<CoverageMap>(Constants.CoverageMap).DebugPrint();
             }
-            Debug.Log(Debug.Scatter, "[{0} s] Spiced up with rubble. Completed.", DateTime.UtcNow.Subtract(start).TotalSeconds);
+            Debug.Extra(Debug.Scatter, "[{0} s] Spiced up with rubble. Completed.", DateTime.UtcNow.Subtract(start).TotalSeconds);
 
             Debug.Log(Debug.Scatter, "Chunk scattering finished, moving");
         }

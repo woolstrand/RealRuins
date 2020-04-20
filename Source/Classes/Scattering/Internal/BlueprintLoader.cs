@@ -18,6 +18,14 @@ using RimWorld;
 namespace RealRuins {
 
     class BlueprintLoader {
+        public static bool CanLoadBlueprintAtPath(string path) {
+            if (File.Exists(path) || File.Exists(path + ".xml")) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+
         public static Blueprint LoadWholeBlueprintAtPath(string path) {
             BlueprintLoader loader = new BlueprintLoader(path);
             try {
