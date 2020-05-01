@@ -438,11 +438,11 @@ namespace RealRuins {
             this.rp = rp;
             this.options = options;
 
-            Debug.Log("Transferring blueprint of faction {0}", rp.faction.Name);
+            Debug.Log("Transferring blueprint of faction {0}", rp.faction?.Name ?? "none");
 
-            if (blueprint == null) { Debug.Error(Debug.BlueprintTransfer, "Attempting to configure transfer utility with empty blueprint!"); }
-            if (map == null) { Debug.Error(Debug.BlueprintTransfer, "Attempting to configure transfer utility with empty map!"); }
-            if (options == null) { Debug.Error(Debug.BlueprintTransfer, "Attempting to configure transfer utility with empty options!"); }
+            if (blueprint == null) { Debug.Error(Debug.BlueprintTransfer, "Attempting to configure transfer utility with empty blueprint!"); return; }
+            if (map == null) { Debug.Error(Debug.BlueprintTransfer, "Attempting to configure transfer utility with empty map!"); return;  }
+            if (options == null) { Debug.Error(Debug.BlueprintTransfer, "Attempting to configure transfer utility with empty options!"); return;  }
 
             mapOriginX = rp.rect.minX + rp.rect.Width / 2 - blueprint.width / 2;
             mapOriginZ = rp.rect.minZ + rp.rect.Height / 2 - blueprint.height / 2;
@@ -573,20 +573,23 @@ namespace RealRuins {
 
             for (int z = 0; z < blueprint.height; z++) {
                 for (int x = 0; x < blueprint.width; x++) {
-                    IntVec3 mapLocation = new IntVec3(x + mapOriginX, 0, z + mapOriginZ);
-                    //Check if thepoint is in allowed bounds of the map
-                    if (!mapLocation.InBounds(map) || mapLocation.InNoBuildEdgeArea(map)) {
-                        continue; //ignore invalid cells
-                    }
-
-                    if (options.overwritesEverything || Rand.Chance(0.6f)) {
-                        if (blueprint.terrainMap[x, z] != null ||
-                            blueprint.itemsMap[x, z].Count > 0 ||
-                            blueprint.wallMap[x, z] > 1) {
-                            ClearCell(mapLocation, map, true);
+                    try {
+                        IntVec3 mapLocation = new IntVec3(x + mapOriginX, 0, z + mapOriginZ);
+                        //Check if thepoint is in allowed bounds of the map
+                        if (!mapLocation.InBounds(map) || mapLocation.InNoBuildEdgeArea(map)) {
+                            continue; //ignore invalid cells
                         }
-                    }
 
+                        if (options.overwritesEverything || Rand.Chance(0.6f)) {
+                            if (blueprint.terrainMap[x, z] != null ||
+                                blueprint.itemsMap[x, z].Count > 0 ||
+                                blueprint.wallMap[x, z] > 1) {
+                                ClearCell(mapLocation, map, true);
+                            }
+                        }
+                    } catch (Exception e) {
+                        Debug.Warning(Debug.BlueprintTransfer, "Failed to clean cell at {0}, {1} because of {2}", x, z, e);
+                    }
                 }
             }
 
@@ -609,26 +612,29 @@ namespace RealRuins {
                         continue; //ignore invalid cells
                     }
 
-
-                    //Construct terrain if some specific terrain stored in the blueprint
-                    if (blueprint.terrainMap[x, z] != null) {
-                        totalTerrains++;
-                        TerrainDef blueprintTerrain = TerrainDef.Named(blueprint.terrainMap[x, z].defName);
-                        if (!map.terrainGrid.TerrainAt(mapLocation).IsWater) {
-                            map.terrainGrid.SetTerrain(mapLocation, blueprintTerrain);
-                            totalCost += blueprint.terrainMap[x, z].cost;
-                            transferredTerrains++;
+                    try {
+                        //Construct terrain if some specific terrain stored in the blueprint
+                        if (blueprint.terrainMap[x, z] != null) {
+                            totalTerrains++;
+                            TerrainDef blueprintTerrain = TerrainDef.Named(blueprint.terrainMap[x, z].defName);
+                            if (!map.terrainGrid.TerrainAt(mapLocation).IsWater) {
+                                map.terrainGrid.SetTerrain(mapLocation, blueprintTerrain);
+                                totalCost += blueprint.terrainMap[x, z].cost;
+                                transferredTerrains++;
+                            }
                         }
+
+
+                        //construct roof evetywhere if we doing complete transfer (ignoring outside: room with index 1).
+                        if (blueprint.roofMap[x, z] == true && options.overwritesEverything && blueprint.wallMap[x, z] != 1) {
+                            map.roofGrid.SetRoof(mapLocation, RoofDefOf.RoofConstructed);
+                        }
+
+
+                        Debug.Extra(Debug.BlueprintTransfer, "Transferred terrain and roof at cell ({0}, {1})", x, z);
+                    } catch (Exception e) {
+                        Debug.Warning(Debug.BlueprintTransfer, "Failed to transfer terrain {0} at {1}, {2} because of {3}", blueprint.terrainMap[x, z].defName, x, z, e);
                     }
-
-
-                    //construct roof evetywhere if we doing complete transfer (ignoring outside: room with index 1).
-                    if (blueprint.roofMap[x, z] == true && options.overwritesEverything && blueprint.wallMap[x, z] != 1) {
-                        map.roofGrid.SetRoof(mapLocation, RoofDefOf.RoofConstructed);
-                    }
-
-
-                    Debug.Extra(Debug.BlueprintTransfer, "Transferred terrain and roof at cell ({0}, {1})", x, z);
 
                     //Add items
                     if (blueprint.itemsMap[x, z] != null && blueprint.itemsMap[x, z].Count > 0/* && cellUsed[mapLocation.x, mapLocation.z] == false*/) {
@@ -677,7 +683,7 @@ namespace RealRuins {
                                         //Debug.Message("Ticked");
 
                                     } catch (Exception e) {
-                                        Debug.Log(Debug.BlueprintTransfer, "Exception while tried to perform tick for {0} of cost {1}", thing.def.defName, itemTile.cost);
+                                        Debug.Log(Debug.BlueprintTransfer, "Exception while tried to perform tick for {0} of cost {1}, retrhrowing...", thing.def.defName, itemTile.cost);
                                         thing.Destroy();
                                         throw e;
                                     }
@@ -703,7 +709,7 @@ namespace RealRuins {
                                     transferredTiles++;
                                     totalCost += itemTile.cost;
                                 } catch (Exception e) {
-                                    Debug.Extra(Debug.BlueprintTransfer, "Failed to spawn item {0} of cost {1} because of exception {2}", thing, itemTile.cost, e.Message);
+                                    Debug.Warning(Debug.BlueprintTransfer, "Failed to spawn item {0} of cost {1} because of exception {2}", thing, itemTile.cost, e.Message);
                                     //ignore
                                 }
                             }

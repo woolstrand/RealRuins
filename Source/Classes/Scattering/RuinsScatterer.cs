@@ -69,7 +69,7 @@ namespace RealRuins {
             BlueprintTransferUtility btu = new BlueprintTransferUtility(bp, map, rp, options); //prepare blueprint transferrer
             Debug.Extra(Debug.Scatter, "Initialized, removing incompatible items...");
 
-            btu.RemoveIncompatibleItems(); //remove incompatible items 
+            btu?.RemoveIncompatibleItems(); //remove incompatible items 
             Debug.Extra(Debug.Scatter, "Recalculating stats...");
 
             bp.UpdateBlueprintStats(true); //Update total cost, items count, etc
@@ -82,19 +82,30 @@ namespace RealRuins {
             sp.RaidAndScavenge(bp, options); //scavenge remaining items according to scavenge options
 
             Debug.Extra(Debug.Scatter, "[{0} s] Prepared, about to start transferring.", DateTime.UtcNow.Subtract(start).TotalSeconds);
-            btu.Transfer(coverage); //transfer blueprint
-            Debug.Extra(Debug.Scatter, "[{0} s] Transferred.", DateTime.UtcNow.Subtract(start).TotalSeconds);
+            try {
+                btu.Transfer(coverage); //transfer blueprint
+                Debug.Extra(Debug.Scatter, "[{0} s] Transferred.", DateTime.UtcNow.Subtract(start).TotalSeconds);
+            } catch (Exception e) {
+                Debug.Error(Debug.BlueprintTransfer, "Failed to transfer blueprint due to {0}", e);
+            }
 
             if (generators != null) {
                 foreach (AbstractDefenderForcesGenerator generator in generators) {
-                    generator.GenerateForces(map, rp, options);
+                    try {
+                        generator.GenerateForces(map, rp, options);
+                    } catch (Exception e) {
+                        Debug.Error(Debug.BlueprintTransfer, "Failed to generate forces: {0}", e);
+                    }
                 }
             }
             Debug.Log(Debug.Scatter, "[{0} s] Generated forces.", DateTime.UtcNow.Subtract(start).TotalSeconds);
 
             if (options.shouldAddFilth) {
-                btu.AddFilthAndRubble(); //add filth and rubble
-                                         //rp.GetCustom<CoverageMap>(Constants.CoverageMap).DebugPrint();
+                try {
+                    btu.AddFilthAndRubble(); //add filth and rubble
+                } catch (Exception e) {
+                    Debug.Warning(Debug.BlueprintTransfer, "Failed to add filth and rubble: {0}", e);
+                }
             }
             Debug.Extra(Debug.Scatter, "[{0} s] Spiced up with rubble. Completed.", DateTime.UtcNow.Subtract(start).TotalSeconds);
 

@@ -158,6 +158,13 @@
   <RealRuins.Reform.Manual>Ручное</RealRuins.Reform.Manual>
   <RealRuins.CaravanReformTooltip>Способ переформирования каравана при покидании локации события из Real Ruins. "Автоматическое" - точно такое же формирование, как на домашней карте. "Моментальное" позволяет моментально переформировать караван по кнопке на карте мира. "Ручное" - все вещи необходимо поднять вручную и покинуть карту через зеленую область на границе.</RealRuins.CaravanReformTooltip>
 
+  <RealRuins.ForceMultiplier>Множитель сложности событий</RealRuins.ForceMultiplier>
+  <RealRuins.AbsoluteWealthCap>Абсолютное ограничение богатства руин</RealRuins.AbsoluteWealthCap>
+  <RealRuins.LeaveVanillaRuins>Оставить стандартные руины</RealRuins.LeaveVanillaRuins>
+  <RealRuins.ForceMultiplierTT>Позволяет управлять количеством и силой противников в событиях этого мода (не влияет на планетарные руины!)</RealRuins.ForceMultiplierTT>
+  <RealRuins.AbsoluteWealthCapTT>Максимальная стоимость, которой будет ограничено богатство руин в событиях. При определении стоимости деревянные стены и двери не учитываются. Не влияет на планетарные руины.</RealRuins.AbsoluteWealthCapTT>
+  <RealRuins.LeaveVanillaRuinsTT>Если включено, то на карте будут появляться вперемешку и руины из мода, и стандартные руины</RealRuins.LeaveVanillaRuinsTT>
+
   <RealRuins.LogLevel>Log level</RealRuins.LogLevel>
   <RealRuins.LogLevel.All>Log everything</RealRuins.LogLevel.All>
   <RealRuins.LogLevel.Warnings>Warnings and errors</RealRuins.LogLevel.Warnings>

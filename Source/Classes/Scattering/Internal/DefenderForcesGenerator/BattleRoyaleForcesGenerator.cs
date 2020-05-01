@@ -15,6 +15,7 @@ namespace RealRuins {
             int addedTriggers = 0;
             float ratio = 10;
             float remainingCost = options.uncoveredCost * (Rand.Value + 0.5f); //cost estimation as seen by other factions
+            Debug.Log(Debug.ForceGen, "Running battle royale force generation with remaining cost of {0} (while uncovered is {1})", remainingCost, options.uncoveredCost);
 
             float initialCost = remainingCost;
 

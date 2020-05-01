@@ -67,6 +67,8 @@ namespace RealRuins {
         public static string[] CaravanReformOptions = { "RealRuins.Reform.Automatic", "RealRuins.Reform.Instant", "RealRuins.Reform.Manual" };
         public static string[] LogLevelOptions = { "RealRuins.LogLevel.All", "RealRuins.LogLevel.Warnings", "RealRuins.LogLevel.Errors" };
 
+        private Vector2 scrollPosition = new Vector2(0, 0);
+
         // fast regex from xml:
         //<RealRuins_M..Options_([^>]*)>[^<]*<\/([^>]*)>     ===>     public static string Text_Option_$1 = "$2";
 
@@ -113,9 +115,11 @@ namespace RealRuins {
         }
 
         public override void DoSettingsWindowContents(Rect rect) {
+            Rect innerRect = new Rect(0, 0, rect.width - 20, 800);
 
-            Rect rect2 = rect.LeftPart(0.45f).Rounded();
-            Rect rect3 = rect.RightPart(0.45f).Rounded();
+            Widgets.BeginScrollView(rect, ref scrollPosition, innerRect);
+            Rect rect2 = innerRect.LeftPart(0.45f).Rounded();
+            Rect rect3 = innerRect.RightPart(0.45f).Rounded();
             Listing_Standard left = new Listing_Standard();
             Listing_Standard right = new Listing_Standard();
 
@@ -154,10 +158,16 @@ namespace RealRuins {
             left.Label(Text_Option_DisableTraps.Translate(), -1, Text_Option_DisableTrapsTT.Translate());
             left.Label(Text_Option_DisableHostiles.Translate(), -1, Text_Option_DisableHostilesTT.Translate());
             left.Gap(15);
+            left.Label("RealRuins.ForceMultiplier".Translate() + ": x" + RealRuins_ModSettings.forceMultiplier.ToString("F"), -1, "RealRuins.ForceMultiplierTT".Translate());
+            left.Label("RealRuins.AbsoluteWealthCap".Translate() + ": " + ((int)RealRuins_ModSettings.ruinsCostCap).ToString("C"), -1, "RealRuins.AbsoluteWealthCapTT".Translate());
+            
+            left.Gap(15);
+
             left.CheckboxLabeled(Text_Option_DisableHaulables.Translate(), ref RealRuins_ModSettings.defaultScatterOptions.disableSpawnItems, Text_Option_DisableHaulablesTT.Translate());
             left.CheckboxLabeled(Text_Option_WallsAndDoorsOnly.Translate(), ref RealRuins_ModSettings.defaultScatterOptions.wallsDoorsOnly, Text_Option_WallsAndDoorsOnlyTT.Translate());
             left.CheckboxLabeled(Text_Option_Proximity.Translate(), ref RealRuins_ModSettings.defaultScatterOptions.enableProximity, Text_Option_ProximityTT.Translate());
             left.CheckboxLabeled(Text_Option_StartWithourRuins.Translate(), ref RealRuins_ModSettings.startWithoutRuins, Text_Option_StartWithourRuinsTT.Translate());
+            left.CheckboxLabeled("RealRuins.LeaveVanillaRuins".Translate(), ref RealRuins_ModSettings.preserveStandardRuins, "RealRuins.LeaveVanillaRuinsTT".Translate());
 
             Rect ttrect = left.GetRect(30f);
             Widgets.Label(ttrect.LeftHalf(), "RealRuins.CaravanReformType".Translate());
@@ -213,6 +223,10 @@ namespace RealRuins {
             RealRuins_ModSettings.defaultScatterOptions.trapChance = right.Slider(RealRuins_ModSettings.defaultScatterOptions.trapChance, 0.0f, 0.01f);
             RealRuins_ModSettings.defaultScatterOptions.hostileChance = right.Slider(RealRuins_ModSettings.defaultScatterOptions.hostileChance, 0.0f, 1.0f);
 
+            right.Gap(15);
+            RealRuins_ModSettings.forceMultiplier = right.Slider(RealRuins_ModSettings.forceMultiplier, 0.0f, 2.0f);
+            RealRuins_ModSettings.ruinsCostCap = (float)Math.Exp(right.Slider((float)Math.Log(RealRuins_ModSettings.ruinsCostCap), 6.908f, 20.0f));
+
             if (right.ButtonText(Text_Option_ResetToDefaults.Translate(), null)) {
                 ResetSettings();
             }
@@ -247,6 +261,7 @@ namespace RealRuins {
             }
 
             right.End();
+            Widgets.EndScrollView();
         }
     }
 }

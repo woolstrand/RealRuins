@@ -14,10 +14,12 @@ namespace RealRuins {
         public const string Analyzer = "Analyzer";
         public const string POI = "POI";
         public const string Scatter = "Scatter";
+        public const string PawnGen = "PawnGen";
+        public const string ThingGen = "ThingGen";
         public const string Event = "Event";
         public const string ForceGen = "ForceGen";
 
-        public static List<string> extras = new List<string>();//{"BlueprintTransfer", "Scatter"};
+        public static List<string> extras = new List<string> /*(); */ {"PawnGen", "ThingGen"/*, "BlueprintTransfer", "Scatter"*/, "ForceGen"};
 
 
         public static bool active = true;

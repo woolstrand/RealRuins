@@ -157,6 +157,13 @@
   <RealRuins.Reform.Manual>手動</RealRuins.Reform.Manual>
   <RealRuins.CaravanReformTooltip>「遺跡を発見」イベントの後でキャラバン編成方法。「自動」は、コロニーマップと同じ編成方法です。「簡易」はワールドマップ上で簡単に編成可能です。「手動」はマップ外縁部から脱出し、アイテムは実際に移動して回収します。</RealRuins.CaravanReformTooltip>
 
+  <RealRuins.ForceMultiplier>Events threat scale</RealRuins.ForceMultiplier>
+  <RealRuins.AbsoluteWealthCap>Absolute wealth cap for events</RealRuins.AbsoluteWealthCap>
+  <RealRuins.LeaveVanillaRuins>Leave vanilla ruins</RealRuins.LeaveVanillaRuins>
+  <RealRuins.ForceMultiplierTT>Tune this to make ruins event more or less difficult</RealRuins.ForceMultiplierTT>
+  <RealRuins.AbsoluteWealthCapTT>Determines absolute wealth cap for ruins events. Wooden walls and doors are not counted against total wealth.</RealRuins.AbsoluteWealthCapTT>
+  <RealRuins.LeaveVanillaRuinsTT>If checked, both real ruins and vanilla ruins will be spawned</RealRuins.LeaveVanillaRuinsTT>
+
   <RealRuins.LogLevel>ログレベル</RealRuins.LogLevel>
   <RealRuins.LogLevel.All>全て記録する</RealRuins.LogLevel.All>
   <RealRuins.LogLevel.Warnings>警告とエラーを記録</RealRuins.LogLevel.Warnings>

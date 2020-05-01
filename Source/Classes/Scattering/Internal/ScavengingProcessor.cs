@@ -158,16 +158,30 @@ namespace RealRuins {
             var initialCount = tilesByCost.Count;
 
             var filteredItems = tilesByCost.Where(item => item.cost > 20).ToList();
-            if (filteredItems.Count == 0) {
+            var filteredCost = 0f;
+            filteredItems.ForEach(tile => filteredCost += tile.cost);
+
+            if (filteredItems.Count == 0 || totalCost - filteredCost > options.costCap) {
                 filteredItems = tilesByCost;
             }
+
+            Debug.Log(Debug.BlueprintTransfer, "TilesByCost: {0} items, filteredTiles: {1} items of cost {2}", tilesByCost.Count, filteredItems.Count, filteredCost);
 
             while (filteredItems.Count > 0 && totalCost > options.costCap) {
                 var tile = filteredItems.RandomElement();
                 totalCost -= tile.cost;
                 filteredItems.Remove(tile);
                 if (tile is ItemTile) {
-                    blueprint.itemsMap[tile.location.x, tile.location.z].Remove(tile as ItemTile);
+                    var itemTile = tile as ItemTile;
+                    if (itemTile.isWall && !itemTile.isDoor) {
+                        itemTile.defName = "Wall";
+                        itemTile.stuffDef = "Wood";
+                    } else if (itemTile.isDoor) {
+                        itemTile.defName = "Door";
+                        itemTile.stuffDef = "Wood";
+                    } else { 
+                        blueprint.itemsMap[tile.location.x, tile.location.z].Remove(tile as ItemTile);
+                    }
                 }
                 if (tile is TerrainTile) {
                     blueprint.terrainMap[tile.location.x, tile.location.z] = null;

@@ -143,6 +143,13 @@
   <RealRuins.PlanetarySettignsCaption>Real Ruins - Planetary Ruins Settings</RealRuins.PlanetarySettignsCaption>
   <RealRuins.NeedsGameInProgress>You have to be in an ongoing game to use this menu</RealRuins.NeedsGameInProgress>
 
+  <RealRuins.ForceMultiplier>Events threat scale</RealRuins.ForceMultiplier>
+  <RealRuins.AbsoluteWealthCap>Absolute wealth cap for events</RealRuins.AbsoluteWealthCap>
+  <RealRuins.LeaveVanillaRuins>Leave vanilla ruins</RealRuins.LeaveVanillaRuins>
+  <RealRuins.ForceMultiplierTT>Tune this to make ruins event more or less difficult</RealRuins.ForceMultiplierTT>
+  <RealRuins.AbsoluteWealthCapTT>Determines absolute wealth cap for ruins events. Wooden walls and doors are not counted against total wealth.</RealRuins.AbsoluteWealthCapTT>
+  <RealRuins.LeaveVanillaRuinsTT>If checked, both real ruins and vanilla ruins will be spawned</RealRuins.LeaveVanillaRuinsTT>
+
   <RealRuins.LogLevel>Log level</RealRuins.LogLevel>
   <RealRuins.LogLevel.All>Log everything</RealRuins.LogLevel.All>
   <RealRuins.LogLevel.Warnings>Warnings and errors</RealRuins.LogLevel.Warnings>

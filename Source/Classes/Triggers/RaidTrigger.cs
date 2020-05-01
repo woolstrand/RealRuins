@@ -60,7 +60,7 @@ namespace RealRuins {
 
                     Thing thing = GenClosest.ClosestThing_Global(base.Position, searchSet, 10.0f);
                     if (thing != null) {
-                        ticksLeft = (int)Math.Abs(Rand.Gaussian(0, 200));
+                        ticksLeft = (int)Math.Abs(Rand.Gaussian(0, referenceTimeoutAfterTriggered));
                         triggered = true;
                         Debug.Log("Battle", "Triggered raid at {0}, {1} of value {2} after {3} long ticks (approximately max speed seconds)", base.Position.x, base.Position.z, value, ticksLeft);
                     }
