@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <Patch>
-	<Operation Class="PatchOperationReplace">
-		<xpath>Defs/MapGeneratorDef[@Name = "MapCommonBase"]/genSteps/li[text() = "ScatterRuinsSimple"]/text()</xpath>
-		<value>ScatterRealRuins</value>
+	<Operation Class="PatchOperationAdd">
+		<xpath>Defs/MapGeneratorDef[@Name = "MapCommonBase"]/genSteps</xpath>
+		<value>
+			<li>ScatterRealRuins</li>
+		</value>
 	</Operation>
 </Patch>
 

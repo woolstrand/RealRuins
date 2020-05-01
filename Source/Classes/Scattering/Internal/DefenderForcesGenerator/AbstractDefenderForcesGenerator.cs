@@ -16,8 +16,8 @@ namespace RealRuins {
         public abstract void GenerateStartingParty(Map map, ResolveParams rp, ScatterOptions options);
 
         public float ScalePointsToDifficulty(float points) {
-            Debug.Log("Scaling difficulty from {0} points to {1}", points, points * Find.Storyteller.difficulty.threatScale);
-            return points * Find.Storyteller.difficulty.threatScale;
+            Debug.Log("Scaling difficulty from {0} points to {1}", points, points * Find.Storyteller.difficulty.threatScale * RealRuins_ModSettings.forceMultiplier);
+            return points * Find.Storyteller.difficulty.threatScale * RealRuins_ModSettings.forceMultiplier;
         }
     }
 }

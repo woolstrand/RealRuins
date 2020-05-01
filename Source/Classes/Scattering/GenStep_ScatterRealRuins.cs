@@ -65,6 +65,11 @@ namespace RealRuins
 
 
         public override void Generate(Map map, GenStepParams parms) {
+            //add standard ruins along with real.
+            if (RealRuins_ModSettings.preserveStandardRuins) {
+                GenStep scatterOriginalRuins = new GenStep_ScatterRuinsSimple();
+                scatterOriginalRuins.Generate(map, parms);
+            }
             //skip generation due to low blueprints count
             if (SnapshotStoreManager.Instance.StoredSnapshotsCount() < 10) {
                 Debug.Error(Debug.Scatter, "Skipping ruins gerenation due to low blueprints count.");
@@ -206,7 +211,7 @@ namespace RealRuins
             currentOptions.blueprintFileName = filename;
             currentOptions.costCap = map.Parent.GetComponent<RuinedBaseComp>()?.currentCapCost ?? -1;
             currentOptions.startingPartyPoints = (int)(map.Parent.GetComponent<RuinedBaseComp>()?.raidersActivity ?? -1);
-            currentOptions.minimumCostRequired = 100000;
+            currentOptions.minimumCostRequired = (int)Math.Min(100000.0f, RealRuins_ModSettings.ruinsCostCap);
             currentOptions.minimumDensityRequired = 0.015f;
             currentOptions.minimumAreaRequired = 6400;
             currentOptions.deleteLowQuality = false; //do not delete since we have much higher requirements for base ruins

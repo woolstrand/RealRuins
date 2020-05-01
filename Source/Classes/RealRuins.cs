@@ -10,6 +10,7 @@ using RimWorld;
 using UnityEngine;
 using RimWorld.Planet;
 using HugsLib;
+using RimWorld.BaseGen;
 
 namespace RealRuins
 {
@@ -87,7 +88,17 @@ namespace RealRuins
                 }
             }
         }
+
         
+        [HarmonyPatch(typeof(GenStep_ScatterRuinsSimple), "ScatterAt", typeof(IntVec3), typeof(Map), typeof(GenStepParams), typeof(int))]
+        class GenStep_ScatterRuinsSimple_ScatterAt_Patch {
+            static bool Prefix(GenStep_ScatterRuinsSimple __instance) {
+                if (RealRuins_ModSettings.preserveStandardRuins) return true;
+                else return false;
+            }
+        }
+       
+
         [HarmonyPatch(typeof(TaleReference), "GenerateText")]
         class TaleReference_GenerateText_Patch {
             static bool Prefix(TaleReference __instance, ref TaggedString __result) {

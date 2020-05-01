@@ -40,7 +40,7 @@ namespace RealRuins {
             Find.WorldObjects.Add(site);
 
             string filename = null;
-            Blueprint bp = BlueprintFinder.FindRandomBlueprintWithParameters(out filename, 6400, 0.01f, 30000, maxAttemptsCount: 50);
+            Blueprint bp = BlueprintFinder.FindRandomBlueprintWithParameters(out filename, 6400, 0.01f, (int)Math.Min(30000, RealRuins_ModSettings.ruinsCostCap), maxAttemptsCount: 50);
 
             RuinedBaseComp comp = site.GetComponent<RuinedBaseComp>();
             if (comp == null) {
@@ -49,7 +49,7 @@ namespace RealRuins {
                 Debug.Warning("Starting scavenging...");
                 int cost = 10000;
                 if (bp != null) {
-                    cost = (int)bp.totalCost;
+                    cost = (int)Math.Min(bp.totalCost, RealRuins_ModSettings.ruinsCostCap);
                 }
                 comp.blueprintFileName = filename;
                 comp.StartScavenging(cost);
