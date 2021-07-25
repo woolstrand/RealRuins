@@ -38,120 +38,120 @@
   <RealRuins_MapOptions_DisableHostilesTT></RealRuins_MapOptions_DisableHostilesTT>
   <RealRuins_MapOptions_ClaimableTT>Les structures non exigibles ne peuvent pas être réparées ou déconstruites </RealRuins_MapOptions_ClaimableTT>
 
-  <RealRuins_MapOptions_EnableProximity>Consideration de proximité des colonies</RealRuins_MapOptions_EnableProximity>
+  <RealRuins_MapOptions_EnableProximity>Considération de proximité des colonies</RealRuins_MapOptions_EnableProximity>
   <RealRuins_MapOptions_EnableProximityTT>La proximité de peuplement influence les paramètres de génération: les ruines sont plus denses près des villes, mais aussi plus désertes.</RealRuins_MapOptions_EnableProximityTT>
 
   <!-- Caravan entered map -->
   <LetterLabelCaravanEnteredRuins> La caravane est arrivée aux ruines</LetterLabelCaravanEnteredRuins>  
   <LetterCaravanEnteredRuins>{0} est arrivé aux ruines de la base abandonnée et est prêt à commencer à fouiller.</LetterCaravanEnteredRuins>
 
-  <RealRuins.CaravanFoundRuins>During their travel {0} spotted a bunch of destroyed buildings nearby, which seem to be in a better condition than usual. Probably there still are some valuables left. On the other hand, there might be wild animals lair, mechanoids nest or raiders outpost: there should be a reason why those buildings seem untouched.</RealRuins.CaravanFoundRuins>
-  <RealRuins.CaravanFoundRuins.Investigate>Investigate</RealRuins.CaravanFoundRuins.Investigate>
-  <RealRuins.CaravanFoundRuinsTitle>Small ruins spotted nearby</RealRuins.CaravanFoundRuinsTitle>
+  <RealRuins.CaravanFoundRuins>Au cours de leur voyage, {0} a repéré un tas de bâtiments détruits à proximité, qui semblent être en meilleur état que d'habitude. Il reste probablement des objets de valeur. D'un autre côté, il peut y avoir un repaire d'animaux sauvages, un nid de mécanoïdes ou un avant-poste de pillards : il doit y avoir une raison pour laquelle ces bâtiments semblent intacts.</RealRuins.CaravanFoundRuins>
+  <RealRuins.CaravanFoundRuins.Investigate>Enquêter</RealRuins.CaravanFoundRuins.Investigate>
+  <RealRuins.CaravanFoundRuinsTitle>Petites ruines repérées à proximité</RealRuins.CaravanFoundRuinsTitle>
 
   <!-- Art -->
-  <DeterioratedArtDescription>This item is too worn and damaged. You can tell for sure it was a beautiful art object once, but now you can hardly guess what it was about.</DeterioratedArtDescription>
+  <DeterioratedArtDescription>Cet article est trop usé et endommagé. Vous pouvez dire avec certitude que c'était un bel objet d'art autrefois, mais maintenant vous pouvez à peine deviner de quoi il s'agissait.</DeterioratedArtDescription>
 
 
-  <RealRuins_ModOptions_Reset>Reset settings to defaults</RealRuins_ModOptions_Reset>
-  <RealRuins_MapOptions_CaravanReforming>Enable instant caravan reforming between raids</RealRuins_MapOptions_CaravanReforming>
-  <RealRuins_MapOptions_CaravanReformingTT>Normally during ruins scavenging events you should not be able to reform caravan instantly right after the initial hostile party is defeated. By design you had to manually search for loot, pick up and leave using map edge even if there are no hostile units right now. However, if you prefer the old way with overpowered instant reform feature, you can enable this feature</RealRuins_MapOptions_CaravanReformingTT>
+  <RealRuins_ModOptions_Reset>Réinitialiser les paramètres aux valeurs par défaut</RealRuins_ModOptions_Reset>
+  <RealRuins_MapOptions_CaravanReforming>Activer la reformation instantanée de la caravane entre les raids</RealRuins_MapOptions_CaravanReforming>
+  <RealRuins_MapOptions_CaravanReformingTT>Normalement, pendant les événements de récupération de ruines, vous ne devriez pas être en mesure de reformer la caravane instantanément juste après la défaite du groupe hostile initial. De par sa conception, vous deviez rechercher manuellement le butin, ramasser et partir en utilisant le bord de la carte même s'il n'y a pas d'unités hostiles pour le moment. Cependant, si vous préférez l'ancienne méthode avec une fonction de refonte instantanée de la caravane, vous pouvez activer cette fonction.</RealRuins_MapOptions_CaravanReformingTT>
 
   <!-- Ruins info -->
-  <RealRuins.RuinsWealth>Wealth: </RealRuins.RuinsWealth>
-  <RealRuins.RuinsActivity>Raiders presence: </RealRuins.RuinsActivity>
+  <RealRuins.RuinsWealth>Richesse: </RealRuins.RuinsWealth>
+  <RealRuins.RuinsActivity>Présence de pillards: </RealRuins.RuinsActivity>
 
-  <RealRuins.RuinsWealth.0>almost zero (&lt;10K)</RealRuins.RuinsWealth.0>
-  <RealRuins.RuinsWealth.1>low</RealRuins.RuinsWealth.1>
-  <RealRuins.RuinsWealth.2>medium</RealRuins.RuinsWealth.2>
-  <RealRuins.RuinsWealth.3>high (&gt;1M)</RealRuins.RuinsWealth.3>
-  <RealRuins.RuinsWealth.4>extremely high (&gt;10M)</RealRuins.RuinsWealth.4>
+  <RealRuins.RuinsWealth.0>presque zéro (&lt;10K)</RealRuins.RuinsWealth.0>
+  <RealRuins.RuinsWealth.1>bas</RealRuins.RuinsWealth.1>
+  <RealRuins.RuinsWealth.2>moyen</RealRuins.RuinsWealth.2>
+  <RealRuins.RuinsWealth.3>haut (&gt;1M)</RealRuins.RuinsWealth.3>
+  <RealRuins.RuinsWealth.4>très haut (&gt;10M)</RealRuins.RuinsWealth.4>
 
-  <RealRuins.RuinsActivity.0>almost none</RealRuins.RuinsActivity.0>
-  <RealRuins.RuinsActivity.1>low</RealRuins.RuinsActivity.1>
-  <RealRuins.RuinsActivity.2>medium</RealRuins.RuinsActivity.2>
-  <RealRuins.RuinsActivity.3>high</RealRuins.RuinsActivity.3>
-  <RealRuins.RuinsActivity.4>extreme</RealRuins.RuinsActivity.4>
+  <RealRuins.RuinsActivity.0>presque aucune</RealRuins.RuinsActivity.0>
+  <RealRuins.RuinsActivity.1>basse</RealRuins.RuinsActivity.1>
+  <RealRuins.RuinsActivity.2>moyenne</RealRuins.RuinsActivity.2>
+  <RealRuins.RuinsActivity.3>haute</RealRuins.RuinsActivity.3>
+  <RealRuins.RuinsActivity.4>extrême</RealRuins.RuinsActivity.4>
   
   <!-- Ruins messages -->
-  <RealRuins.NoMoreEnemies>Looks like no one's gonna show up anymore. You can safely pack up and leave. (Instant caravan reform allowed)</RealRuins.NoMoreEnemies>
+  <RealRuins.NoMoreEnemies>On dirait que plus personne ne va se montrer. Vous pouvez faire vos bagages en toute sécurité et partir. (Caravane instantanée autorisée)</RealRuins.NoMoreEnemies>
 
   <!-- POI captions and descriptions -->
-  <RealRuins.CaptionPOI0>Small military base</RealRuins.CaptionPOI0>
-  <RealRuins.CaptionPOI1>Military outpost</RealRuins.CaptionPOI1>
-  <RealRuins.CaptionPOI2>Temporary camp</RealRuins.CaptionPOI2>
-  <RealRuins.CaptionPOI3>City</RealRuins.CaptionPOI3>
-  <RealRuins.CaptionPOI4>Factory</RealRuins.CaptionPOI4>
-  <RealRuins.CaptionPOI5>Research center</RealRuins.CaptionPOI5>
-  <RealRuins.CaptionPOI6>Power plant</RealRuins.CaptionPOI6>
-  <RealRuins.CaptionPOI7>Large military base</RealRuins.CaptionPOI7>
-  <RealRuins.CaptionPOI8>Warehouse</RealRuins.CaptionPOI8>
-  <RealRuins.CaptionPOI9>Comm center</RealRuins.CaptionPOI9>
-  <RealRuins.CaptionPOI10>Ruins</RealRuins.CaptionPOI10>
-  <RealRuins.CaptionPOI11>Stronghold</RealRuins.CaptionPOI11>
+  <RealRuins.CaptionPOI0>Petite base militaire</RealRuins.CaptionPOI0>
+  <RealRuins.CaptionPOI1>Avant-poste militaire</RealRuins.CaptionPOI1>
+  <RealRuins.CaptionPOI2>Campement temporaire</RealRuins.CaptionPOI2>
+  <RealRuins.CaptionPOI3>Ville</RealRuins.CaptionPOI3>
+  <RealRuins.CaptionPOI4>Usine</RealRuins.CaptionPOI4>
+  <RealRuins.CaptionPOI5>Centre de recherche</RealRuins.CaptionPOI5>
+  <RealRuins.CaptionPOI6>Centrale électrique</RealRuins.CaptionPOI6>
+  <RealRuins.CaptionPOI7>Grande base militaire</RealRuins.CaptionPOI7>
+  <RealRuins.CaptionPOI8>Entrepôt</RealRuins.CaptionPOI8>
+  <RealRuins.CaptionPOI9>Centre de communication</RealRuins.CaptionPOI9>
+  <RealRuins.CaptionPOI10>Ruines</RealRuins.CaptionPOI10>
+  <RealRuins.CaptionPOI11>Forteresse</RealRuins.CaptionPOI11>
 
 
-  <RealRuins.DescPOI0>A small group of buildings, presumably of military kind. Probably an armoury or a small transit military base. It can have several stationary weapons and a dozen or two soldiers.</RealRuins.DescPOI0>
-  <RealRuins.DescPOI1>A very small military outpost, couple of rooms, couple of turrets, couple of soldiers.</RealRuins.DescPOI1>
-  <RealRuins.DescPOI2>A temporary camp set up to mine resources, hunt or as a trans-shipment point.</RealRuins.DescPOI2>
-  <RealRuins.DescPOI3>A large thriving city. Even though it usually does not have massive walls or a lot of stationary weapons, it can request powerful reinforcements in case of an assault.</RealRuins.DescPOI3>
-  <RealRuins.DescPOI4>Those buildings contain a lot of workbenches and produced goods. Most likely the factory is well guarded.</RealRuins.DescPOI4>
-  <RealRuins.DescPOI5>Research and development center is focused on production, but goods are more sophisticated and pricey than in a regular factory. Most likely it's well guarded and guards will call reinforcements as soon as you decide to assault.</RealRuins.DescPOI5>
-  <RealRuins.DescPOI6>A group of buildings focused primarily on power production.</RealRuins.DescPOI6>
-  <RealRuins.DescPOI7>A large military base with lots of stationary weapons, several dozens of personnel and reinforcements ready to arrive.</RealRuins.DescPOI7>
-  <RealRuins.DescPOI8>From distance it looks like a large hangar filled with goods. And a lot of guards.</RealRuins.DescPOI8>
-  <RealRuins.DescPOI9>Small building which looks like a communication center. Probably just a temporary military camp with just a few guards.</RealRuins.DescPOI9>
-  <RealRuins.DescPOI10>Remainings of some buildings, bits of furniture, broken workbenches, pipes and metal bars. You can't tell what was there once long ago, everything left is just an empty ruins.</RealRuins.DescPOI10>
-  <RealRuins.DescPOI11>Heavily guarded stronghold. Extremely well defended with tons of stationary weapons, troops and reinforcements.</RealRuins.DescPOI11>
+  <RealRuins.DescPOI0>Un petit groupe de bâtiments, vraisemblablement de type militaire. Probablement une armurerie ou une petite base militaire de transit. Il peut avoir plusieurs armes fixes et une douzaine ou deux soldats.</RealRuins.DescPOI0>
+  <RealRuins.DescPOI1>Un tout petit avant-poste militaire, quelques pièces, quelques tourelles, quelques soldats.</RealRuins.DescPOI1>
+  <RealRuins.DescPOI2>Un campement temporaire mis en place pour extraire des ressources, chasser ou comme point de transbordement.</RealRuins.DescPOI2>
+  <RealRuins.DescPOI3>Une grande ville prospère. Même s'il n'a généralement pas de murs massifs ou beaucoup d'armes fixes, il peut demander de puissants renforts en cas d'assaut.</RealRuins.DescPOI3>
+  <RealRuins.DescPOI4>Ces bâtiments contiennent beaucoup d'établis et de produits fabriqués. L'usine est probablement bien gardée.</RealRuins.DescPOI4>
+  <RealRuins.DescPOI5>Le centre de recherche et développement est axé sur la production, mais les produits sont plus sophistiqués et plus chers que dans une usine ordinaire. Très probablement, il est bien gardé et les gardes appelleront des renforts dès que vous déciderez d'attaquer.</RealRuins.DescPOI5>
+  <RealRuins.DescPOI6>Un ensemble de bâtiments axé principalement sur la production d'électricité.</RealRuins.DescPOI6>
+  <RealRuins.DescPOI7>Une grande base militaire avec beaucoup d'armes stationnaires, plusieurs dizaines de personnel et des renforts prêts à arriver.</RealRuins.DescPOI7>
+  <RealRuins.DescPOI8>De loin, cela ressemble à un grand hangar rempli de marchandises. Et beaucoup de gardes.</RealRuins.DescPOI8>
+  <RealRuins.DescPOI9>Petit immeuble qui ressemble à un centre de communication. Probablement juste un camp militaire temporaire avec juste quelques gardes.</RealRuins.DescPOI9>
+  <RealRuins.DescPOI10>Restes de quelques bâtiments, morceaux de meubles, établis cassés, tuyaux et barres métalliques. Vous ne pouvez pas dire ce qui était là il y a longtemps, tout ce qui reste n'est que des ruines vides.</RealRuins.DescPOI10>
+  <RealRuins.DescPOI11>Forteresse fortement gardée. Extrêmement bien défendu avec des tonnes d'armes stationnaires, de troupes et de renforts.</RealRuins.DescPOI11>
 
-  <RealRuins.POINowRuined>Once this place was full of life, but now it's abandoned, no one knows why. So better beware of all kind of dangers.</RealRuins.POINowRuined>
+  <RealRuins.POINowRuined>Autrefois cet endroit était plein de vie, mais maintenant il est abandonné, personne ne sait pourquoi. Mieux vaut donc se méfier de toutes sortes de dangers.</RealRuins.POINowRuined>
 
-  <RealRuins.EnterPOI>Enter {0}</RealRuins.EnterPOI>
-  <RealRuins.AttackPOI>Attack {0}</RealRuins.AttackPOI>
+  <RealRuins.EnterPOI>Entrer {0}</RealRuins.EnterPOI>
+  <RealRuins.AttackPOI>Attaquer {0}</RealRuins.AttackPOI>
 
-  <RealRuins.CaravanEnteringPOI>Entering {0}</RealRuins.CaravanEnteringPOI>
+  <RealRuins.CaravanEnteringPOI>Entre {0}</RealRuins.CaravanEnteringPOI>
 
-  <LetterLabelCaravanEnteredUnownedPOI>Caravan arrived</LetterLabelCaravanEnteredUnownedPOI>
-  <LetterCaravanEnteredUnownedPOI>{0} has arrived at destination. Proceed with caution.</LetterCaravanEnteredUnownedPOI>
-  <LetterLabelCaravanAttackedPOI>Caravan is attacking</LetterLabelCaravanAttackedPOI>
-  <LetterCaravanAttackedPOI>{0} is attacking other faction's property.</LetterCaravanAttackedPOI>
-  <LetterTransportPodsArrivedInUnownedPOI>Transport pods have arrived at destination.</LetterTransportPodsArrivedInUnownedPOI>
-  <LetterLabelTransportPodsAttackedPOI>Transport pods have arrived</LetterLabelTransportPodsAttackedPOI>
-  <LetterTransportPodsAttackedPOI>Transport pods have arrived at destination. Attack has begun.</LetterTransportPodsAttackedPOI>
-  <LetterLabelTransportPodsArrivedAtRuins>Transport pods have arrived at ruins</LetterLabelTransportPodsArrivedAtRuins>
-  <LetterTransportPodsArrivedAtRuins>Transport pods have arrived at ruins</LetterTransportPodsArrivedAtRuins>
+  <LetterLabelCaravanEnteredUnownedPOI>Caravane arrivée</LetterLabelCaravanEnteredUnownedPOI>
+  <LetterCaravanEnteredUnownedPOI>{0} est arrivé à destination. Procédez avec prudence.</LetterCaravanEnteredUnownedPOI>
+  <LetterLabelCaravanAttackedPOI>La caravane attaque</LetterLabelCaravanAttackedPOI>
+  <LetterCaravanAttackedPOI>{0} attaque la propriété d'une autre faction.</LetterCaravanAttackedPOI>
+  <LetterTransportPodsArrivedInUnownedPOI>Les nacelles de transport sont arrivées à destination.</LetterTransportPodsArrivedInUnownedPOI>
+  <LetterLabelTransportPodsAttackedPOI>Les cosses de transport sont arrivées</LetterLabelTransportPodsAttackedPOI>
+  <LetterTransportPodsAttackedPOI>Les nacelles de transport sont arrivées à destination. L'attaque a commencé.</LetterTransportPodsAttackedPOI>
+  <LetterLabelTransportPodsArrivedAtRuins>Les nacelles de transport sont arrivées aux ruines</LetterLabelTransportPodsArrivedAtRuins>
+  <LetterTransportPodsArrivedAtRuins>Les nacelles de transport sont arrivées aux ruines</LetterTransportPodsArrivedAtRuins>
 
   <!-- POI load dialog -->
-  <RealRuins.LoadBlueprintsCaption>Load blueprints for planet</RealRuins.LoadBlueprintsCaption>
-  <RealRuins.LoadBlueprints>Load blueprints</RealRuins.LoadBlueprints>
-  <RealRuins.Close>Close</RealRuins.Close>
-  <RealRuins.Idle>Idle</RealRuins.Idle>
-  <RealRuins.Searching>Searching for blueprints...</RealRuins.Searching>
-  <RealRuins.Loading>Loading blueprints: </RealRuins.Loading>
-  <RealRuins.Processing>Processing blueprints: </RealRuins.Processing>
-  <RealRuins.Completed>Completed!</RealRuins.Completed>
-  <RealRuins.BiomeFiltering>Biome filtering</RealRuins.BiomeFiltering>
-  <RealRuins.BiomeFilteringTT>Exclude maps with missing or mismatching biome</RealRuins.BiomeFilteringTT>
-  <RealRuins.CostFiltering>Cost filtering</RealRuins.CostFiltering>
-  <RealRuins.CostFilteringTT>Exclude maps with too low cost (lower than average "empty" map)</RealRuins.CostFilteringTT>
-  <RealRuins.AreaFiltering>Area and items filtering</RealRuins.AreaFiltering>
-  <RealRuins.AreaFilteringTT>Exclude maps with too small area and too low items count</RealRuins.AreaFilteringTT>
-  <RealRuins.UsedMaps>Maps used: </RealRuins.UsedMaps>
-  <RealRuins.DroppedMaps>Maps dropped: </RealRuins.DroppedMaps>
+  <RealRuins.LoadBlueprintsCaption>Charger des plans pour la planète</RealRuins.LoadBlueprintsCaption>
+  <RealRuins.LoadBlueprints>Charger les plans</RealRuins.LoadBlueprints>
+  <RealRuins.Close>Fermer</RealRuins.Close>
+  <RealRuins.Idle>Inactif</RealRuins.Idle>
+  <RealRuins.Searching>Recherche de plans...</RealRuins.Searching>
+  <RealRuins.Loading>Chargement des plans :</RealRuins.Loading>
+  <RealRuins.Processing>Traitement des plans :</RealRuins.Processing>
+  <RealRuins.Completed>Complété!</RealRuins.Completed>
+  <RealRuins.BiomeFiltering>Filtrage des biomes</RealRuins.BiomeFiltering>
+  <RealRuins.BiomeFilteringTT>Exclure les cartes avec un biome manquant ou incompatible</RealRuins.BiomeFilteringTT>
+  <RealRuins.CostFiltering>Filtrage des coûts</RealRuins.CostFiltering>
+  <RealRuins.CostFilteringTT>Exclure les cartes dont le coût est trop faible (carte « vide » inférieure à la moyenne)</RealRuins.CostFilteringTT>
+  <RealRuins.AreaFiltering>Filtrage des zones et des éléments</RealRuins.AreaFiltering>
+  <RealRuins.AreaFilteringTT>Exclure les cartes avec une zone trop petite et un nombre d'éléments trop faible</RealRuins.AreaFilteringTT>
+  <RealRuins.UsedMaps>Cartes utilisées :</RealRuins.UsedMaps>
+  <RealRuins.DroppedMaps>Cartes supprimées :</RealRuins.DroppedMaps>
 
-  <RealRuins.MapsModuleButton>Import blueprints for this planet (BETA)</RealRuins.MapsModuleButton>
-  <RealRuins.PlanetarySettignsCaption>Real Ruins - Planetary Ruins Settings</RealRuins.PlanetarySettignsCaption>
-  <RealRuins.NeedsGameInProgress>You have to be in an ongoing game to use this menu</RealRuins.NeedsGameInProgress>
+  <RealRuins.MapsModuleButton>Importer des plans pour cette planète (BÊTA)</RealRuins.MapsModuleButton>
+  <RealRuins.PlanetarySettignsCaption>Real Ruins - Paramètres des Ruines Planétaires</RealRuins.PlanetarySettignsCaption>
+  <RealRuins.NeedsGameInProgress>Vous devez être dans une partie en cours pour utiliser ce menu</RealRuins.NeedsGameInProgress>
 
-  <RealRuins.ForceMultiplier>Events threat scale</RealRuins.ForceMultiplier>
-  <RealRuins.AbsoluteWealthCap>Absolute wealth cap for events</RealRuins.AbsoluteWealthCap>
-  <RealRuins.LeaveVanillaRuins>Leave vanilla ruins</RealRuins.LeaveVanillaRuins>
-  <RealRuins.ForceMultiplierTT>Tune this to make ruins event more or less difficult</RealRuins.ForceMultiplierTT>
-  <RealRuins.AbsoluteWealthCapTT>Determines absolute wealth cap for ruins events. Wooden walls and doors are not counted against total wealth.</RealRuins.AbsoluteWealthCapTT>
-  <RealRuins.LeaveVanillaRuinsTT>If checked, both real ruins and vanilla ruins will be spawned</RealRuins.LeaveVanillaRuinsTT>
+  <RealRuins.ForceMultiplier>Échelle de la menace des événements</RealRuins.ForceMultiplier>
+  <RealRuins.AbsoluteWealthCap>Plafond de richesse absolu pour les événements</RealRuins.AbsoluteWealthCap>
+  <RealRuins.LeaveVanillaRuins>Supprimer les ruines vanilla</RealRuins.LeaveVanillaRuins>
+  <RealRuins.ForceMultiplierTT>Réglez ceci pour rendre l'événement des ruines plus ou moins difficile</RealRuins.ForceMultiplierTT>
+  <RealRuins.AbsoluteWealthCapTT>Détermine le plafond de richesse absolu pour les événements de ruines. Les murs et les portes en bois ne sont pas comptés dans la richesse totale.</RealRuins.AbsoluteWealthCapTT>
+  <RealRuins.LeaveVanillaRuinsTT>Si coché, les vraies ruines et les ruines vanille seront générées</RealRuins.LeaveVanillaRuinsTT>
 
   <RealRuins.LogLevel>Log level</RealRuins.LogLevel>
   <RealRuins.LogLevel.All>Log everything</RealRuins.LogLevel.All>
-  <RealRuins.LogLevel.Warnings>Warnings and errors</RealRuins.LogLevel.Warnings>
-  <RealRuins.LogLevel.Errors>Errors only</RealRuins.LogLevel.Errors>
+  <RealRuins.LogLevel.Warnings>Avertissements et erreurs</RealRuins.LogLevel.Warnings>
+  <RealRuins.LogLevel.Errors>Erreurs uniquement</RealRuins.LogLevel.Errors>
 </LanguageData>
