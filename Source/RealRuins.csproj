@@ -206,7 +206,9 @@ xcopy /E /I /Y "$(TargetDir)..\..\Languages" "E:\SteamLibrary\steamapps\common\R
 xcopy /E /I /Y "$(TargetDir)..\..\Patches" "E:\SteamLibrary\steamapps\common\RimWorld\Mods\RealRuins\Patches"
 xcopy /E /I /Y "$(TargetDir)..\..\Textures" "E:\SteamLibrary\steamapps\common\RimWorld\Mods\RealRuins\Textures"
 xcopy /E /I /Y "$(TargetDir)..\..\1.1" "E:\SteamLibrary\steamapps\common\RimWorld\Mods\RealRuins\1.1"
-copy /Y "$(TargetDir)..\..\1.3\RealRuins.dll" "E:\SteamLibrary\steamapps\common\RimWorld\Mods\RealRuins\1.3"
+xcopy /S /Q /Y /F "$(TargetDir)..\..\1.3\Assemblies\RealRuins.dll" "E:\SteamLibrary\steamapps\common\RimWorld\Mods\RealRuins\1.3\Assemblies\"
+xcopy /E /I /Y "$(TargetDir)..\..\1.3\Defs" "E:\SteamLibrary\steamapps\common\RimWorld\Mods\RealRuins\1.3\Defs"
+xcopy /E /I /Y "$(TargetDir)..\..\1.3\Patches" "E:\SteamLibrary\steamapps\common\RimWorld\Mods\RealRuins\1.3\Patches"
 </PostBuildEvent>
   </PropertyGroup>
 </Project>
