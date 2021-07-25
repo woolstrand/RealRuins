@@ -64,8 +64,8 @@ namespace RealRuins {
         }
 
         private bool TryFindTile(out int tile) {
-            IntRange itemStashQuestSiteDistanceRange = new IntRange(5, 30);
-            return TileFinder.TryFindNewSiteTile(out tile, itemStashQuestSiteDistanceRange.min, itemStashQuestSiteDistanceRange.max, false, true, -1);
+            IntRange ruinsRange = new IntRange(5, 30);
+            return TileFinder.TryFindNewSiteTile(out tile, ruinsRange.min, ruinsRange.max, false, TileFinderMode.Random, -1, true);
         }
 
 
