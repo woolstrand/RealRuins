@@ -46,7 +46,7 @@ namespace RealRuins {
                     false, true, true, 1f,
                     false, true, true, true,
                     false, false, false,
-                    true, 0, null, 1, null, null, null,
+                    true, 0, 0, null, 1, null, null, null,
                     null, null, null, null);
 
                 IntVec3 cell = IntVec3.Invalid;

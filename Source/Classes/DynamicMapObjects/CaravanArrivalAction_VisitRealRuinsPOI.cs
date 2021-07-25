@@ -88,11 +88,9 @@ namespace RealRuins {
             }
 
             FactionRelationKind playerRelationKind = mapParent.Faction.PlayerRelationKind;
-            if (!mapParent.Faction.HostileTo(Faction.OfPlayer)) {
-                mapParent.Faction.TrySetRelationKind(Faction.OfPlayer, FactionRelationKind.Hostile, canSendLetter: false);
-            } else if (mapParent.Faction.TryAffectGoodwillWith(Faction.OfPlayer, -50, canSendMessage: false, canSendHostilityLetter: false)) {
-                letterText = letterText + "RelationsWith".Translate(mapParent.Faction.Name) + ": " + (-50).ToStringWithSign();
-            }
+            Faction.OfPlayer.TryAffectGoodwillWith(mapParent.Faction, Faction.OfPlayer.GoodwillToMakeHostile(mapParent.Faction),
+                canSendMessage: false, canSendHostilityLetter: false, HistoryEventDefOf.AttackedSettlement);
+//            letterText = letterText + "RelationsWith".Translate(mapParent.Faction.Name) + ": " + (-50).ToStringWithSign();
             mapParent.Faction.TryAppendRelationKindChangedInfo(ref letterText, playerRelationKind, mapParent.Faction.PlayerRelationKind);
         }
     }
