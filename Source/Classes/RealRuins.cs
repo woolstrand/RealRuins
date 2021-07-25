@@ -108,6 +108,13 @@ namespace RealRuins
                 return false;
             }
         }
+/*
+        [HarmonyPatch(typeof(SRTSStatic), "getFM")]
+        class SRTSStatic_getFM_Patch {
+            static bool Prefix(SRTSStatic __instance, ref IEnumerable<FloatMenuOption> __result, ) {
+                
+            }
+        }*/
 
         //RimWorld caravan forming dialog has two modes: reform and form. 
         // * "Reform" shows all items including items which are currently in colonists' inventories, BUT reformed caravan leaves instantly.

@@ -59,17 +59,6 @@ namespace RealRuins {
                 GetComponent<TimedForcedExit>().StartForceExitAndRemoveMapCountdown(15 * 60000);
                 hasStartedCountdown = true;
             }
-            /*if (HasMap) {
-                if (!GenHostility.AnyHostileActiveThreatToPlayer(Map)) {
-                    if (Faction != Faction.OfPlayer) {
-                        SetFaction(Faction.OfPlayer);
-                    }
-                } else {
-                    if (Faction == Faction.OfPlayer) {
-                        SetFaction(null); //reset faction to forbid fast caravan reform and add green border
-                    }
-                }
-            }*/
         }
 
         public override bool ShouldRemoveMapNow(out bool alsoRemoveWorldObject) {
