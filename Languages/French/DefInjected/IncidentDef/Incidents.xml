@@ -1,0 +1,7 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<LanguageData>
+  <Quest_PristineRuins.label>découvertes de ruines à proximité</Quest_PristineRuins.label>
+  <Quest_PristineRuins.letterText>{0}, {1} de {2}, nous a envoyé un message. Vos éclaireurs ont découvert un ancien complexe dans un état presque intact. Personne ne sait où ni pourquoi les anciens résidents sont allés, alors soyez prêt à tout. Les rumeurs se propagent rapidement, vous ne serez donc probablement pas le seul à vouloir réclamer le trésor. Et comme le trésor peut être énorme, il peut aussi s'agir de forces hostiles. Et dépêchez-vous, dans {3} jours, vous ne trouverez que des murs nus.</Quest_PristineRuins.letterText>
+  <Quest_PristineRuins.letterLabel>Ruines intactes découvertes à proximité</Quest_PristineRuins.letterLabel>
+  <SmallRuinsFound.label>découverte de petites ruines</SmallRuinsFound.label>
+</LanguageData>
