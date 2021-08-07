@@ -1,0 +1,9 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<LanguageData>
+  <AbandonedBase.label>遗迹</AbandonedBase.label>
+  <AbandonedBase.description>废弃基地的遗迹</AbandonedBase.description>
+  <RealRuinsPOI.label>集体建筑物</RealRuinsPOI.label>
+  <RealRuinsPOI.description>值得调查的建筑群</RealRuinsPOI.description>
+  <CaravanSmallRuinsWorldObject.label>小型遗迹</CaravanSmallRuinsWorldObject.label>
+  <CaravanSmallRuinsWorldObject.description>在附近发现的小型遗迹</CaravanSmallRuinsWorldObject.description>
+</LanguageData>
