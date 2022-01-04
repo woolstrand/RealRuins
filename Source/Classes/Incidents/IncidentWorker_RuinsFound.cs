@@ -65,7 +65,7 @@ namespace RealRuins {
 
         private bool TryFindTile(out int tile) {
             IntRange ruinsRange = new IntRange(5, 30);
-            return TileFinder.TryFindNewSiteTile(out tile, ruinsRange.min, ruinsRange.max, false, TileFinderMode.Random, -1, true);
+            return TileFinder.TryFindNewSiteTile(out tile, ruinsRange.min, ruinsRange.max, false, TileFinderMode.Random, -1, false);
         }
 
 
