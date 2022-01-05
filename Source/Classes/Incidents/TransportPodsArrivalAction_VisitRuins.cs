@@ -1,5 +1,4 @@
-﻿// RimWorld.Planet.TransportPodsArrivalAction_VisitSite
-using RimWorld;
+﻿using RimWorld;
 using RimWorld.Planet;
 using System.Collections.Generic;
 using Verse;
@@ -43,6 +42,7 @@ namespace RealRuins {
             Debug.Log("Overridden arrive pods - visit ruins");
             Thing lookTarget = TransportPodsArrivalActionUtility.GetLookTarget(pods);
             bool flag = !site.HasMap;
+
             Map orGenerateMap = GetOrGenerateMapUtility.GetOrGenerateMap(site.Tile, /*new IntVec3(250, 0, 250),*/ null);
             Debug.Log("Generated encounter map, which is {0}", orGenerateMap?.ToString() ?? "NULL");
             if (flag) {

@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using RimWorld;
+﻿using RimWorld;
 using RimWorld.Planet;
 using System.Collections.Generic;
 using Verse;
@@ -17,6 +13,7 @@ namespace RealRuins {
         }
 
         public TransportPodsArrivalAction_VisitRuinsPOI(MapParent site, PawnsArrivalModeDef arrivalMode) {
+            Debug.Log("Creating visit ruins action with mode {0}", arrivalMode);
             this.site = site;
             this.arrivalMode = arrivalMode;
         }
@@ -43,10 +40,11 @@ namespace RealRuins {
         }
 
         public override void Arrived(List<ActiveDropPodInfo> pods, int tile) {
-            Debug.Log("Overridden arrive pods - visit POI");
+            Debug.Log("Overridden arrive pods - visit POI, mode: {0}", arrivalMode);
             Thing lookTarget = TransportPodsArrivalActionUtility.GetLookTarget(pods);
             bool flag = !site.HasMap;
 
+            // If no map created (first entry) we need to prepare a letter describing relationship change
             TaggedString letterText = null;
             TaggedString letterCaption = null;
             LetterDef letterDef = LetterDefOf.NeutralEvent;
@@ -65,12 +63,15 @@ namespace RealRuins {
             AffectRelationsIfNeeded(ref letterText);
             Find.LetterStack.ReceiveLetter(letterCaption, letterText, letterDef, lookTarget, null, null);
 
-
-            Map orGenerateMap = GetOrGenerateMapUtility.GetOrGenerateMap(site.Tile, new IntVec3(250, 0, 250), null);
+            Map orGenerateMap = GetOrGenerateMapUtility.GetOrGenerateMap(site.Tile, null);
+            Debug.Log("Generated POI map, which is {0}", orGenerateMap?.ToString() ?? "NULL");
             if (flag) {
                 Find.TickManager.Notify_GeneratedPotentiallyHostileMap();
                 PawnRelationUtility.Notify_PawnsSeenByPlayer_Letter_Send(orGenerateMap.mapPawns.AllPawns, "LetterRelatedPawnsInMapWherePlayerLanded".Translate(Faction.OfPlayer.def.pawnsPlural), LetterDefOf.NeutralEvent, informEvenIfSeenBefore: true);
+            } else {
+                Messages.Message("MessageTransportPodsArrived".Translate(), lookTarget, MessageTypeDefOf.TaskCompletion);
             }
+
             arrivalMode.Worker.TravelingTransportPodsArrived(pods, orGenerateMap);
         }
 
