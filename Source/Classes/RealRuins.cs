@@ -12,6 +12,8 @@ using RimWorld.Planet;
 using HugsLib;
 using RimWorld.BaseGen;
 
+using SRTS;
+
 namespace RealRuins
 {
     [StaticConstructorOnStartup]
@@ -108,13 +110,59 @@ namespace RealRuins
                 return false;
             }
         }
-/*
+
+        // Using passthrough patching to update iterator-typed value
         [HarmonyPatch(typeof(SRTSStatic), "getFM")]
         class SRTSStatic_getFM_Patch {
-            static bool Prefix(SRTSStatic __instance, ref IEnumerable<FloatMenuOption> __result, ) {
+            static IEnumerable<FloatMenuOption> Postfix(IEnumerable<FloatMenuOption> options, WorldObject wobj, IEnumerable<IThingHolder> ih, CompLaunchableSRTS comp, Caravan car) {
+                // On some reason this method is called TWICE: once with empty collection (as expected), the second time with what I returned just before.
+                // So to avoid doubling I have to skip all code if there already are options. Not sure how it will work in future, but hope everything will be fine.
+                if (options.Count() > 0) {
+                    return options;
+                }
                 
+                IEnumerable<FloatMenuOption> newOptions = Enumerable.Empty<FloatMenuOption>();
+                newOptions.ConcatIfNotNull(options);
+
+                if (wobj is RealRuinsPOIWorldObject) {
+                    newOptions = SRTSArrivalActionUtility.GetFloatMenuOptions(
+                        () => FloatMenuAcceptanceReport.WasAccepted,
+                        () => new TransportPodsArrivalAction_VisitRuinsPOI(wobj as MapParent, PawnsArrivalModeDefOf.EdgeDrop),
+                        wobj.Label + ": " + Translator.Translate("DropAtEdge"),
+                        comp,
+                        wobj.Tile,
+                        car);
+
+                    newOptions = newOptions.Concat(SRTSArrivalActionUtility.GetFloatMenuOptions(
+                        () => FloatMenuAcceptanceReport.WasAccepted,
+                        () => new TransportPodsArrivalAction_VisitRuinsPOI(wobj as MapParent, PawnsArrivalModeDefOf.CenterDrop),
+                        wobj.Label + ": " + Translator.Translate("DropInCenter"),
+                        comp,
+                        wobj.Tile,
+                        car));
+                } else if (wobj is AbandonedBaseWorldObject) {
+                    newOptions = SRTSArrivalActionUtility.GetFloatMenuOptions(
+                        () => FloatMenuAcceptanceReport.WasAccepted,
+                        () => new TransportPodsArrivalAction_VisitRuins(wobj as MapParent, PawnsArrivalModeDefOf.EdgeDrop),
+                        wobj.Label + ": " + Translator.Translate("DropAtEdge"),
+                        comp,
+                        wobj.Tile,
+                        car);
+
+                    newOptions = newOptions.Concat(SRTSArrivalActionUtility.GetFloatMenuOptions(
+                        () => FloatMenuAcceptanceReport.WasAccepted,
+                        () => new TransportPodsArrivalAction_VisitRuins(wobj as MapParent, PawnsArrivalModeDefOf.CenterDrop),
+                        wobj.Label + ": " + Translator.Translate("DropInCenter"),
+                        comp,
+                        wobj.Tile,
+                        car));
+                }
+
+                Debug.Log("SRTS PATCH", "Got {0} options, added {1} more", options.Count(), newOptions.Count());
+
+                return newOptions;
             }
-        }*/
+        }
 
         //RimWorld caravan forming dialog has two modes: reform and form. 
         // * "Reform" shows all items including items which are currently in colonists' inventories, BUT reformed caravan leaves instantly.
