@@ -1,0 +1,7 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<LanguageData>
+  <Quest_PristineRuins.label>发现未调查的遗迹</Quest_PristineRuins.label>
+  <Quest_PristineRuins.letterText>{0}、{2}的{1}给我们发来了一条信息。他们的侦察队发现了一个遗迹，他询问我们是否要去那里探索，并提示我们其他势力会在{3}日后抵达那个遗迹。</Quest_PristineRuins.letterText>
+  <Quest_PristineRuins.letterLabel>发现未调查的遗迹</Quest_PristineRuins.letterLabel>
+  <SmallRuinsFound.label>发现了小型遗迹</SmallRuinsFound.label>
+</LanguageData>
