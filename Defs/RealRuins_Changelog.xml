@@ -101,4 +101,34 @@ So, now you can select one of three ways of reforming caravan after ruins event.
 2. Now both Automatic and Manual caravan forming options work in the same way. They both allow manual items picking and they both allow homemap-style caravan forming (even when there are enemies, so watch your pawns!). Instant caravan reforming option is still available and it works the same way as before, instantly reforming caravan if there are no enemies nearby.
 		</content>                                 
 	</HugsLib.UpdateFeatureDef>
+
+	<HugsLib.UpdateFeatureDef ParentName="UpdateFeatureBase">
+		<defName>RealRuins_2_1_0</defName>
+		<assemblyVersion>2.1</assemblyVersion>
+		<content>
+|&lt;b&gt;Version 1.1 compatibility&lt;/b&gt;
+Looks like the mod works again with 1.1 game version.
+		</content>                                 
+	</HugsLib.UpdateFeatureDef>
+
+	<HugsLib.UpdateFeatureDef ParentName="UpdateFeatureBase">
+		<defName>RealRuins_2_2_0</defName>
+		<assemblyVersion>2.2</assemblyVersion>
+		<content>
+|&lt;b&gt;Version 1.3 compatibility&lt;/b&gt;
+Looks like the mod works again with 1.3 game version.
+
+Updated French translation. New translation by qux.
+		</content>                                 
+	</HugsLib.UpdateFeatureDef>
+
+	<HugsLib.UpdateFeatureDef ParentName="UpdateFeatureBase">
+		<defName>RealRuins_2_3_0</defName>
+		<assemblyVersion>2.3.0</assemblyVersion>
+		<content>
+|&lt;b&gt;SRTS Expanded compatibility added&lt;/b&gt;
+Now you can fly directly to ruins event or world map POI using your ship. The same "drop at edge" and "drop in center" options are accessible. Have fun!
+P.S.: some new features are on the way, see here: https://www.patreon.com/posts/60705988
+		</content>                                 
+	</HugsLib.UpdateFeatureDef>
 </Defs>
