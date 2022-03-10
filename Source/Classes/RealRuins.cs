@@ -87,7 +87,7 @@ namespace RealRuins
 
             //Create a specific method for a specific type from the generic above
             var mGenericPOI = m.MakeGenericMethod(typeof(TransportPodsArrivalAction_VisitRuinsPOI));
-            var mGenericRuins = m.MakeGenericMethod(typeof(TransportPodsArrivalAction_VisitRuinsPOI));
+            var mGenericRuins = m.MakeGenericMethod(typeof(TransportPodsArrivalAction_VisitRuins));
 
             // Lambdas are not objects, so we can't pass them into object[] array, we have to make them into delegates
             var accReport = new Func<FloatMenuAcceptanceReport>(() => FloatMenuAcceptanceReport.WasAccepted);

@@ -5,9 +5,9 @@
 	<supportedVersions>
 		<li>1.0</li>
 		<li>1.1</li>
-    <li>1.2</li>
-    <li>1.3</li>
-  </supportedVersions>
+		<li>1.2</li>
+		<li>1.3</li>
+	</supportedVersions>
 	<modDependencies>
 		<li>
 			<packageId>UnlimitedHugs.HugsLib</packageId>
@@ -28,7 +28,7 @@ Have you ever wondered who is that person which will find a use for those ruins?
 With this mod it might be any other RimWord player, and you will find ruins of other players' bases as well.
 
 This mod periodically uploads your base to the server database, and when a new map is generated, this database provides pieces of those stored bases as templates for abandoned ruins.
-Probably you'll find just empty dirty shelter with badly damaged wooden bed and a pair of chairs. Probably you'll be lucky enough to find someone's silver vault before scavengers from the nearest settlement arrive.
+Probably you'll find just an empty dirty shelter with badly damaged wooden bed and a pair of chairs. Probably you'll be lucky enough to find someone's silver vault before scavengers from the nearest settlement arrive.
 
 This mod can be added anytime, it won't break your saves and will take effect when you enter into a new map, either starting a new game or with a caravan.
 

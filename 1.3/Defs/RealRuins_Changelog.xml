@@ -121,4 +121,16 @@ Looks like the mod works again with 1.3 game version.
 Updated French translation. New translation by qux.
 		</content>                                 
 	</HugsLib.UpdateFeatureDef>
+
+	<HugsLib.UpdateFeatureDef ParentName="UpdateFeatureBase">
+		<defName>RealRuins_2_3_0</defName>
+		<assemblyVersion>2.3.0</assemblyVersion>
+		<content>
+|&lt;b&gt;SRTS Expanded compatibility added&lt;/b&gt;
+Now you can fly directly to ruins event or world map POI using your ship. The same "drop at edge" and "drop in center" options are accessible. Have fun!
+Added simplified chinese translation by Juijote.
+
+P.S.: some new features are on the way, see here: https://www.patreon.com/posts/60705988
+		</content>                                 
+	</HugsLib.UpdateFeatureDef>
 </Defs>
