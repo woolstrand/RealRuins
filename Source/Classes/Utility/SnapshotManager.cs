@@ -153,7 +153,7 @@ namespace RealRuins {
         private void LoadNextSnapshot(string gamePath = null) {
             string next = snapshotsToLoad.Pop();
 
-            //Debug.Log(Debug.Store, "Loading snapshot {0}", next);
+            Debug.Log(Debug.Store, "Loading snapshot {0}", next);
 
             APIService service = new APIService();
             service.LoadMap(next, delegate (bool success, byte[] data) {
@@ -162,6 +162,7 @@ namespace RealRuins {
                     storeManager.StoreBinaryData(data, next, gamePath);
                 } else {
                     failedSnapshotsCount++;
+                    Debug.Warning(Debug.Store, "Failed loading snapshot {0}", next);
                 }
 
                 progress?.Invoke(loadedSnapshotsCount, snapshotsToLoadCount);

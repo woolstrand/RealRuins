@@ -1,0 +1,17 @@
+
+
+xcopy /T /E /I /Y "$(TargetDir)..\..\About" "E:\SteamLibrary\steamapps\common\RimWorld\Mods\RealRuins\About"
+copy /Y "$(TargetDir)..\..\About\About.xml" "E:\SteamLibrary\steamapps\common\RimWorld\Mods\RealRuins\About\About.xml"
+copy /Y "$(TargetDir)..\..\About\PublishedFileId.txt" "E:\SteamLibrary\steamapps\common\RimWorld\Mods\RealRuins\About\PublishedFileId.txt"
+copy /Y "$(TargetDir)..\..\About\Manifest.xml" "E:\SteamLibrary\steamapps\common\RimWorld\Mods\RealRuins\About\Manifest.xml"
+copy /Y "$(TargetDir)..\..\About\Preview.png" "E:\SteamLibrary\steamapps\common\RimWorld\Mods\RealRuins\About\Preview.png"
+copy /Y "$(TargetDir)..\..\LoadFolders.xml" "E:\SteamLibrary\steamapps\common\RimWorld\Mods\RealRuins\LoadFolders.xml"
+xcopy /E /I /Y "$(TargetDir)..\..\Assemblies" "E:\SteamLibrary\steamapps\common\RimWorld\Mods\RealRuins\Assemblies"
+xcopy /E /I /Y "$(TargetDir)..\..\Defs" "E:\SteamLibrary\steamapps\common\RimWorld\Mods\RealRuins\Defs"
+xcopy /E /I /Y "$(TargetDir)..\..\Languages" "E:\SteamLibrary\steamapps\common\RimWorld\Mods\RealRuins\Languages"
+xcopy /E /I /Y "$(TargetDir)..\..\Patches" "E:\SteamLibrary\steamapps\common\RimWorld\Mods\RealRuins\Patches"
+xcopy /E /I /Y "$(TargetDir)..\..\Textures" "E:\SteamLibrary\steamapps\common\RimWorld\Mods\RealRuins\Textures"
+xcopy /E /I /Y "$(TargetDir)..\..\1.1" "E:\SteamLibrary\steamapps\common\RimWorld\Mods\RealRuins\1.1"
+xcopy /S /Q /Y /F "$(TargetDir)..\..\1.3\Assemblies\RealRuins.dll" "E:\SteamLibrary\steamapps\common\RimWorld\Mods\RealRuins\1.3\Assemblies\"
+xcopy /E /I /Y "$(TargetDir)..\..\1.3\Defs" "E:\SteamLibrary\steamapps\common\RimWorld\Mods\RealRuins\1.3\Defs"
+xcopy /E /I /Y "$(TargetDir)..\..\1.3\Patches" "E:\SteamLibrary\steamapps\common\RimWorld\Mods\RealRuins\1.3\Patches"

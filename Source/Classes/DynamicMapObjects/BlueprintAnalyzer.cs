@@ -59,6 +59,7 @@ namespace RealRuins {
         public List<string> randomMostValueableItemDefNames;
 
         public BlueprintAnalyzerResult result { get; private set; }
+        public bool shouldSuppressLogging = true;
 
         private Dictionary<string, ItemStatRecord> itemStats;
         private ScatterOptions options;
@@ -143,11 +144,19 @@ namespace RealRuins {
         }
   
         public void Analyze() {
-            Debug.Log("analyzing blueprint {0} with options {1}", blueprint, options);
+            if (!shouldSuppressLogging) {
+                Debug.Log(Debug.Analyzer, "analyzing blueprint {0} with options {1}", blueprint, options);
+            }
+
             blueprint.FindRooms();
-            Debug.Log("Rooms found");
+            if (!shouldSuppressLogging) {
+                Debug.Log(Debug.Analyzer, "Rooms found");
+            }
+
             BlueprintPreprocessor.ProcessBlueprint(blueprint, options);
-            Debug.Log("Blueprint processed");
+            if (!shouldSuppressLogging) {
+                Debug.Log(Debug.Analyzer, "Blueprint processed");
+            }
 
             result = new BlueprintAnalyzerResult();
             result.totalArea = blueprint.width * blueprint.height;
@@ -159,7 +168,10 @@ namespace RealRuins {
             }
 
             blueprint.UpdateBlueprintStats(includeCost: true);
-            Debug.Log(Debug.Analyzer, "Analyzing map");
+            if (!shouldSuppressLogging) {
+                Debug.Log(Debug.Analyzer, "Analyzing map");
+            }
+
             for (int y = 0; y < blueprint.height; y++) {
                 for (int x = 0; x < blueprint.width; x++) {
                     List<ItemTile> tiles = blueprint.itemsMap[x, y] ?? new List<ItemTile>();
@@ -171,7 +183,9 @@ namespace RealRuins {
 
             this.mannableCount = result.mannableCount;
             determinedType = supposedType();
-            Debug.Log(Debug.Analyzer, "Type is {0} by {1}", determinedType, result.ToString());
+            if (!shouldSuppressLogging) {
+                Debug.Log(Debug.Analyzer, "Type is {0} by {1}", determinedType, result.ToString());
+            }
         }
 
         private POIType supposedType() {
@@ -204,7 +218,9 @@ namespace RealRuins {
             militaryPower = (float)(result.defensiveItemsCount * 250) / result.internalArea + 1;
             prodScore = result.productionItemsCount * 10 + (result.haulableStacksCount * 5 / result.internalArea);
 
-            Debug.Log(Debug.Analyzer, "military features: {0}. power: {1}. prod: {2}.", militaryFeatures, militaryPower, prodScore);
+            if (!shouldSuppressLogging) {
+                Debug.Log(Debug.Analyzer, "military features: {0}. power: {1}. prod: {2}.", militaryFeatures, militaryPower, prodScore);
+            }
 
             if (militaryFeatures < 3 && prodScore <= 50) {
                 if (result.internalArea < 2000 && result.bedsCount > 0 && result.totalItemsCost < 30000) {

@@ -8,4 +8,9 @@
     <StartProgram>D:\Program Files %28x86%29\Steam\Steam.exe</StartProgram>
     <StartArguments>-applaunch 294100</StartArguments>
   </PropertyGroup>
+  <PropertyGroup Condition=" '$(RunConfiguration)' == 'Default Mac' ">
+    <StartProgram>..\..\..\..\..\..\Applications\Steam.app\Contents\MacOS\steam_osx</StartProgram>
+    <StartArguments>steam://rungameid/294100
+</StartArguments>
+  </PropertyGroup>
 </Project>

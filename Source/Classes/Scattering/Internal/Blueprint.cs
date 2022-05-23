@@ -17,6 +17,8 @@ namespace RealRuins {
         // ------------ blueprint internal data structures --------------
         public int width { get; private set; }
         public int height { get; private set; }
+        public int originX { get; private set; }
+        public int originZ { get; private set; }
         public readonly Version version;
 
         public float totalCost { get; private set; }
@@ -50,10 +52,12 @@ namespace RealRuins {
 
 
 
-        public Blueprint(int width, int height, Version version) {
+        public Blueprint(int originX, int originZ, int width, int height, Version version) {
             this.version = version;
             this.width = width;
             this.height = height;
+            this.originX = originX;
+            this.originZ = originZ;
             wallMap = new int[width, height];
             roofMap = new bool[width, height];
             itemsMap = new List<ItemTile>[width, height];
@@ -286,7 +290,7 @@ namespace RealRuins {
             int relocatedTilesCount = 0;
 
 
-            Blueprint result = new Blueprint(maxX - minX, maxZ - minZ, version);
+            Blueprint result = new Blueprint(originX, originZ, maxX - minX, maxZ - minZ, version);
             for (int z = minZ; z < maxZ; z++) {
                 for (int x = minX; x < maxX; x++) {
                     var relativeLocation = new IntVec3(x - minX, 0, z - minZ);
