@@ -13,38 +13,42 @@ namespace RealRuins {
         public static bool CreatePOI(PlanetTileInfo tileInfo, string gameName, bool biomeStrict, bool costStrict, bool itemsStrict) {
 
             if (tileInfo.tile >= Find.WorldGrid.TilesCount) {
+                Debug.Log(Debug.POI, "[3] Skipped: Tile {0} was not found in world (among {1} tiles)", tileInfo.tile, Find.WorldGrid.TilesCount);
                 return false;
             }
 
             if (!TileFinder.IsValidTileForNewSettlement(tileInfo.tile)) {
+                Debug.Log(Debug.POI, "[3] Skipped: Tile {0} is not valid for a new settlement.", tileInfo.tile);
                 return false;
             }
 
             if (biomeStrict && tileInfo.biomeName != Find.WorldGrid.tiles[tileInfo.tile].biome.defName) {
-                Debug.Warning(Debug.POI, "Skipped blueprint due to wrong biome");
+                Debug.Log(Debug.POI, "[3] Skipped: Filtered by biome (biome filter is ON)");
                 return false;
             }
 
             string filename = SnapshotStoreManager.Instance.SnapshotNameFor(tileInfo.mapId, gameName);
             Blueprint bp = BlueprintLoader.LoadWholeBlueprintAtPath(filename);
             if (bp == null) {
+                Debug.Log(Debug.POI, "[3] Skipped: Blueprint loader failed.");
                 return false;
             }
 
-            if (tileInfo.originX + bp.width > Find.World.info.initialMapSize.x || tileInfo.originZ + bp.height > Find.World.info.initialMapSize.z) {
-                Debug.Warning(Debug.POI, "Skipped because of exceeding size ({{0} + {1} > {2} && {3} + {4} > {5})", tileInfo.originX, bp.width, Find.World.info.initialMapSize.x, tileInfo.originZ, bp.height, Find.World.info.initialMapSize.z);
+            if (bp.originX + bp.width > Find.World.info.initialMapSize.x || bp.originZ + bp.height > Find.World.info.initialMapSize.z) {
+                Debug.Log(Debug.POI, "2");
+                Debug.Log(Debug.POI, "[3] Skipped: Blueprint doesn't fit onto target map ({0} + {1} > {2} && {3} + {4} > {5})", bp.originX, bp.width, Find.World.info.initialMapSize.x, bp.originZ, bp.height, Find.World.info.initialMapSize.z);
                 return false;
             }
 
             BlueprintAnalyzer ba = new BlueprintAnalyzer(bp);
             ba.Analyze();
             if (costStrict && (ba.result.totalItemsCost < 1000)) {
-                Debug.Warning(Debug.POI, "Skipped blueprint due to low total cost or tiles count");
+                Debug.Log(Debug.POI, "[3] Skipped: Low total cost or tiles count (cost/size filtering is ON)");
                 return false;
             }
 
             if (ba.result.occupiedTilesCount < 50 || ba.result.totalArea < 200) {
-                Debug.Warning(Debug.POI, "Skipped blueprint due to low area ({0}) and/or items count {1}", ba.result.totalArea, ba.result.occupiedTilesCount);
+                Debug.Log(Debug.POI, "[3] Skipped: Low area ({0}) and/or items count ({1}). (filtering not related to cost/size setting ON or OFF)", ba.result.totalArea, ba.result.occupiedTilesCount);
                 return false;
             }
 
@@ -56,16 +60,20 @@ namespace RealRuins {
             }
 
             RealRuinsPOIWorldObject site = TryCreateWorldObject(tileInfo.tile, faction);
-            if (site == null) return false;
+            if (site == null) {
+                Debug.Log(Debug.POI, "[3] Skipped: Could not create world object.");
+                return false;
+            }
 
             RealRuinsPOIComp comp = site.GetComponent<RealRuinsPOIComp>();
             if (comp == null) {
-                Debug.Error(Debug.BlueprintTransfer, "POI Component is null!");
+                Debug.Error(Debug.BlueprintTransfer, "[3] POI Component is null!");
+                return false;
             } else {
                 comp.blueprintName = tileInfo.mapId;
                 comp.gameName = gameName;
-                comp.originX = tileInfo.originX;
-                comp.originZ = tileInfo.originZ;
+                comp.originX = bp.originX;
+                comp.originZ = bp.originZ;
                 comp.poiType = (int)poiType;
                 comp.militaryPower = ba.militaryPower;
                 comp.mannableCount = ba.mannableCount;

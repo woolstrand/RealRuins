@@ -162,14 +162,19 @@ namespace RealRuins {
             foreach (PlanetTileInfo t in mapTiles) {
                 blueprintsProcessedCount++;
                 if (biomeStrict) {
-                    if (t.originX == 0 && t.originZ == 0 || t.biomeName == null) continue;
+                    if (t.originX == 0 && t.originZ == 0 || t.biomeName == null) {
+                        Debug.Log(Debug.POI, "Skipped: Biome filtering is on, but blueprint does not contain biome or location information");
+                        continue;
+                    }
                 }
                 try {
                     if (RealRuinsPOIFactory.CreatePOI(t, SnapshotStoreManager.CurrentGamePath(), biomeStrict, costStrict, areaStrict)) {
                         blueprintsUsed++;
+                    } else {
+                        Debug.Log(Debug.POI, "CreatePOI returned false.");
                     }
-                } catch {
-                    //just skip blueprint
+                } catch (Exception e) {
+                    Debug.Log(Debug.POI, $"CreatePOI failed with exception {e}");
                 }
             }
         }

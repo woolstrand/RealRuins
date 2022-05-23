@@ -30,7 +30,7 @@ namespace RealRuins {
 
 
             Debug.Log("Spawning POI: Preselected file name is {0}", filename);
-            Debug.Log("Location is {0} {1}", poiComp.originX, poiComp.originZ);
+            Debug.Log("Location (PRESUMABLY WRONG) is {0} {1}", poiComp.originX, poiComp.originZ);
 
             currentOptions = RealRuins_ModSettings.defaultScatterOptions.Copy(); //store as instance variable to keep accessible on subsequent ScatterAt calls
 
@@ -73,10 +73,11 @@ namespace RealRuins {
                 currentOptions.overwritesEverything = true;
             }
 
-            currentOptions.overridePosition = new IntVec3(poiComp.originX, 0, poiComp.originZ);
-            currentOptions.centerIfExceedsBounds = true;
 
             var bp = BlueprintLoader.LoadWholeBlueprintAtPath(filename);
+
+            currentOptions.overridePosition = new IntVec3(bp.originX, 0, bp.originZ);
+            currentOptions.centerIfExceedsBounds = true;
 
             //FOR DEBUG LOGGING
             //var a = new BlueprintAnalyzer(bp, currentOptions);
@@ -84,8 +85,8 @@ namespace RealRuins {
 
             Debug.Log(Debug.BlueprintTransfer, "Trying to place POI map at tile {0}, at {1},{2} to {3},{4} ({5}x{6})",
                 map.Parent.Tile,
-                poiComp.originX, poiComp.originZ,
-                poiComp.originX + bp.width, poiComp.originZ + bp.height,
+                bp.originX, bp.originZ,
+                bp.originX + bp.width, bp.originZ + bp.height,
                 bp.width, bp.height);
 
             var generators = GeneratorsForBlueprint(bp, poiComp, map.Parent.Faction);

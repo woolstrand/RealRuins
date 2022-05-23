@@ -8,6 +8,7 @@ using System.Xml;
 
 using Verse;
 using RimWorld;
+using RealRuins.Classes.Utility;
 
 /**
  * This class loads a particular blueprint as much as possible for current game setup.
@@ -32,6 +33,7 @@ namespace RealRuins {
                 loader.LoadBlueprint();
                 return loader.blueprint;
             } catch (Exception) {
+                Debug.Log(Debug.Loader, "[2] Exception while loading or processing blueprint");
                 return null;
             }
         }
@@ -56,7 +58,7 @@ namespace RealRuins {
         }
 
         private void LoadBlueprint() {
-            Debug.Log(Debug.BlueprintTransfer, "Loading blueprint at path {0}", snapshotName);
+            Debug.Log(Debug.BlueprintTransfer, "[0] Loading blueprint at path {0}", snapshotName);
 
             string deflatedName = snapshotName;
             if (Path.GetExtension(snapshotName).Equals(".bp")) {
@@ -69,13 +71,31 @@ namespace RealRuins {
             }
 
             XmlDocument snapshot = new XmlDocument();
-            snapshot.Load(deflatedName);
+            try {
+                snapshot.Load(deflatedName);
+                Debug.Log(Debug.BlueprintTransfer, "[1] Loaded XML file, XML is valid, processing...");
+            } catch {
+                Debug.Log(Debug.BlueprintTransfer, "[2] Failed to load, recovering...");
+                BlueprintRecoveryService recovery = new BlueprintRecoveryService(deflatedName);
+                bool success = recovery.TryRecoverInPlace();
+                if (success)
+                {
+                    snapshot.Load(deflatedName);
+                    Debug.Log(Debug.BlueprintTransfer, "[2.1] Recovered!");
+                }
+                else {
+                    Debug.Log(Debug.BlueprintTransfer, "[2.1] Failed to recover");
+                    throw;
+                }
+            }
 
             XmlNodeList elemList = snapshot.GetElementsByTagName("cell");
             int blueprintWidth = int.Parse(snapshot.FirstChild.Attributes["width"].Value);
             int blueprintHeight = int.Parse(snapshot.FirstChild.Attributes["height"].Value);
+            int originX = int.Parse(snapshot.FirstChild.Attributes["x"].Value);
+            int originZ = int.Parse(snapshot.FirstChild.Attributes["z"].Value);
             Version blueprintVersion = new Version(snapshot.FirstChild?.Attributes["version"]?.Value ?? "0.0.0.0");
-            blueprint = new Blueprint(blueprintWidth, blueprintHeight, blueprintVersion);
+            blueprint = new Blueprint(originX, originZ, blueprintWidth, blueprintHeight, blueprintVersion);
 
             //Snapshot year is an in-game year when snapshot was taken. Thus, all corpse ages, death times, art events and so on are in between of 5500 and [snapshotYear]
             blueprint.snapshotYear = int.Parse(snapshot.FirstChild.Attributes["inGameYear"]?.Value ?? "5600");
