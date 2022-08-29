@@ -45,7 +45,6 @@ namespace RealRuins {
             foreach (FloatMenuOption floatMenuOption in TransportPodsArrivalAction_VisitRuins.GetFloatMenuOptions(representative, pods, this)) {
                 yield return floatMenuOption;
             }
-            //foreach ()
         }
 
         public override IEnumerable<Gizmo> GetGizmos() {

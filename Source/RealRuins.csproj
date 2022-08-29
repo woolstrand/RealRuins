@@ -213,12 +213,17 @@
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
     <Compile Include="Classes\Utility\BlueprintRecoveryService.cs" />
+    <Compile Include="Classes\Quest\QuestNode_FindBlueprint.cs" />
+    <Compile Include="Classes\Quest\QuestNode_GenerateRuinsObject.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="MapGenerators_RealRuins.xml" />
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Connected Services\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Classes\Quest\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

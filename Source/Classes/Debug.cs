@@ -18,6 +18,7 @@ namespace RealRuins {
         public const string ThingGen = "ThingGen";
         public const string Event = "Event";
         public const string ForceGen = "ForceGen";
+        public const string QuestNode_Find = "QuestNode_Find";
 
         public static List<string> extras = new List<string> /*(); */ {"PawnGen", "ThingGen"/*, "BlueprintTransfer", "Scatter"*/, "ForceGen"};
 
