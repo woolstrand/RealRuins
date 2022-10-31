@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LanguageData>
+  <AbandonedBase.label>廢棄基地</AbandonedBase.label>
+  <AbandonedBase.description>老舊基地的遺跡。</AbandonedBase.description>
+  <RealRuinsPOI.label>遺跡</RealRuinsPOI.label>
+  <RealRuinsPOI.description>尚未有人探索的古老的建築群。</RealRuinsPOI.description>
+  <CaravanSmallRuinsWorldObject.label>小型遺跡</CaravanSmallRuinsWorldObject.label>
+  <CaravanSmallRuinsWorldObject.description>尚未有人探索的幾座古老建築。</CaravanSmallRuinsWorldObject.description>
+</LanguageData>
