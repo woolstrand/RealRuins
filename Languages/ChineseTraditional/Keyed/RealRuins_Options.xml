@@ -24,7 +24,7 @@
   <RealRuins_MapOptions_Size>碎片尺寸最小值</RealRuins_MapOptions_Size>
   <RealRuins_MapOptions_Size_Max>碎片尺寸最大值</RealRuins_MapOptions_Size_Max>
   <RealRuins_MapOptions_Deterioration>附加的風化程度</RealRuins_MapOptions_Deterioration>
-  <RealRuins_MapOptions_Scavengers>尋寶者活躍系數</RealRuins_MapOptions_Scavengers>
+  <RealRuins_MapOptions_Scavengers>尋寶者活躍係數</RealRuins_MapOptions_Scavengers>
   <RealRuins_MapOptions_CostLimit>限制物品最高價值</RealRuins_MapOptions_CostLimit>
   <RealRuins_MapOptions_DisableHaulables>禁止生成可運輸物品</RealRuins_MapOptions_DisableHaulables>
   <RealRuins_MapOptions_WallsAndDoorsOnly>僅生成牆和門</RealRuins_MapOptions_WallsAndDoorsOnly>
@@ -107,120 +107,71 @@
   <RealRuins.DescPOI3>一個繁榮的大城市。儘管它通常沒有巨大的牆城或大量的陣地武器，但它可以在受到攻擊時請求強大的增援。</RealRuins.DescPOI3>
   <RealRuins.DescPOI4>這些建築內可能存在很多工作台、原料以及產品。但很可能會配備精良的守衛。</RealRuins.DescPOI4>
   <RealRuins.DescPOI5>研發中心負責生產比普通工廠更複雜、更昂貴的產品。除了可能配備精良的守衛之外，一旦你決定進攻，守衛就會請求增援。</RealRuins.DescPOI5>
-  <!-- -->
-  <RealRuins.DescPOI6>A group of buildings focused primarily on power production.</RealRuins.DescPOI6>
-  <!-- -->
-  <RealRuins.DescPOI7>A large military base with lots of stationary weapons, several dozens of personnel and reinforcements ready to arrive.</RealRuins.DescPOI7>
-  <!-- -->
-  <RealRuins.DescPOI8>From distance it looks like a large hangar filled with goods. And a lot of guards.</RealRuins.DescPOI8>
-  <!-- -->
-  <RealRuins.DescPOI9>Small building which looks like a communication center. Probably just a temporary military camp with just a few guards.</RealRuins.DescPOI9>
-  <!-- -->
-  <RealRuins.DescPOI10>Remainings of some buildings, bits of furniture, broken workbenches, pipes and metal bars. You can't tell what it was long ago, everything left is just empty ruins.</RealRuins.DescPOI10>
-  <!-- -->
-  <RealRuins.DescPOI11>Heavily guarded stronghold. Extremely well defended with tons of stationary weapons, troops and reinforcements.</RealRuins.DescPOI11>
+  <RealRuins.DescPOI6>主要由發電設備組成的建築群。</RealRuins.DescPOI6>
+  <RealRuins.DescPOI7>一個擁有大量陣地武器的大型軍事基地，駐守著大量的兵力及隨時可抵達的增援。</RealRuins.DescPOI7>
+  <RealRuins.DescPOI8>遠遠看起來像是個堆滿貨物的大型機房，配備著大量的守衛。</RealRuins.DescPOI8>
+  <RealRuins.DescPOI9>看起來像是通訊站的小型建築。也許只是個臨時的軍營，只有幾名士兵看守著。</RealRuins.DescPOI9>
+  <RealRuins.DescPOI10>一片殘破的建築，充滿了損壞的家具、工作台及各種廢棄物，空蕩蕩的廢墟，看不出已經荒廢在這邊多長的歲月了。</RealRuins.DescPOI10>
+  <RealRuins.DescPOI11>戒備森嚴的要塞。配備大量的陣地武器、部隊和增援，擁有強大的自衛能力。</RealRuins.DescPOI11>
 
-  <!-- -->
-  <RealRuins.POINowRuined>Once this place was full of life, but now it's abandoned, no one knows why. So better beware of all kinds of danger.</RealRuins.POINowRuined>
+  <RealRuins.POINowRuined>這裡曾是個生氣勃勃的地方，但現在卻已被遺棄，沒有人知道發生了什麼事。所以最好小心提防各種潛在的危險。</RealRuins.POINowRuined>
 
-  <!-- -->
-  <RealRuins.EnterPOI>Enter {0}</RealRuins.EnterPOI>
-  <!-- -->
-  <RealRuins.AttackPOI>Attack {0}</RealRuins.AttackPOI>
+  <RealRuins.EnterPOI>探索: {0}</RealRuins.EnterPOI>
+  <RealRuins.AttackPOI>攻擊: {0}</RealRuins.AttackPOI>
 
-  <!-- -->
-  <RealRuins.CaravanEnteringPOI>Entering {0}</RealRuins.CaravanEnteringPOI>
+  <RealRuins.CaravanEnteringPOI>前往地點: {0}</RealRuins.CaravanEnteringPOI>
 
-  <!-- -->
-  <LetterLabelCaravanEnteredUnownedPOI>Caravan arrived</LetterLabelCaravanEnteredUnownedPOI>
-  <!-- -->
-  <LetterCaravanEnteredUnownedPOI>{0} has arrived at destination. Proceed with caution.</LetterCaravanEnteredUnownedPOI>
-  <!-- -->
-  <LetterLabelCaravanAttackedPOI>Caravan is attacking</LetterLabelCaravanAttackedPOI>
-  <!-- -->
-  <LetterCaravanAttackedPOI>{0} is attacking other faction's property.</LetterCaravanAttackedPOI>
-  <!-- -->
-  <LetterTransportPodsArrivedInUnownedPOI>Transport pods have arrived at destination.</LetterTransportPodsArrivedInUnownedPOI>
-  <!-- -->
-  <LetterLabelTransportPodsAttackedPOI>Transport pods have arrived</LetterLabelTransportPodsAttackedPOI>
-  <!-- -->
-  <LetterTransportPodsAttackedPOI>Transport pods have arrived at destination. Attack has begun.</LetterTransportPodsAttackedPOI>
-  <!-- -->
-  <LetterLabelTransportPodsArrivedAtRuins>Transport pods have arrived at ruins</LetterLabelTransportPodsArrivedAtRuins>
-  <!-- -->
-  <LetterTransportPodsArrivedAtRuins>Transport pods have arrived at ruins</LetterTransportPodsArrivedAtRuins>
+  <LetterLabelCaravanEnteredUnownedPOI>商隊抵達</LetterLabelCaravanEnteredUnownedPOI>
+  <LetterCaravanEnteredUnownedPOI>{0}已抵達目的地。請步步為營, 小心謹慎。</LetterCaravanEnteredUnownedPOI>
+  <LetterLabelCaravanAttackedPOI>商隊襲擊</LetterLabelCaravanAttackedPOI>
+  <LetterCaravanAttackedPOI>{0}正在攻擊其它派系的資產。</LetterCaravanAttackedPOI>
+  <LetterTransportPodsArrivedInUnownedPOI>運輸艙抵達目的地。</LetterTransportPodsArrivedInUnownedPOI>
+  <LetterLabelTransportPodsAttackedPOI>運輸艙抵達目的地。</LetterLabelTransportPodsAttackedPOI>
+  <LetterTransportPodsAttackedPOI>運輸艙抵達目的地。開始攻行動。</LetterTransportPodsAttackedPOI>
+  <LetterLabelTransportPodsArrivedAtRuins>運輸艙抵達遺跡</LetterLabelTransportPodsArrivedAtRuins>
+  <LetterTransportPodsArrivedAtRuins>運輸艙已抵達遺跡</LetterTransportPodsArrivedAtRuins>
 
   <!-- POI load dialog -->
-  <!-- -->
-  <RealRuins.LoadBlueprintsCaption>Load blueprints for planet</RealRuins.LoadBlueprintsCaption>
-  <!-- -->
-  <RealRuins.LoadBlueprints>Load blueprints</RealRuins.LoadBlueprints>
-  <!-- -->
-  <RealRuins.Close>Close</RealRuins.Close>
-  <!-- -->
-  <RealRuins.Idle>Idle</RealRuins.Idle>
-  <!-- -->
-  <RealRuins.Searching>Searching for blueprints...</RealRuins.Searching>
-  <!-- -->
-  <RealRuins.Loading>Loading blueprints: </RealRuins.Loading>
-  <!-- -->
-  <RealRuins.Processing>Processing blueprints: </RealRuins.Processing>
-  <!-- -->
-  <RealRuins.Completed>Completed!</RealRuins.Completed>
-  <!-- -->
-  <RealRuins.BiomeFiltering>Biome filtering</RealRuins.BiomeFiltering>
-  <!-- -->
-  <RealRuins.BiomeFilteringTT>Exclude maps with missing or mismatching biome</RealRuins.BiomeFilteringTT>
-  <!-- -->
-  <RealRuins.CostFiltering>Cost filtering</RealRuins.CostFiltering>
-  <!-- -->
-  <RealRuins.CostFilteringTT>Exclude maps with too low cost (lower than average "empty" map)</RealRuins.CostFilteringTT>
-  <!-- -->
-  <RealRuins.AreaFiltering>Area and items filtering</RealRuins.AreaFiltering>
-  <!-- -->
-  <RealRuins.AreaFilteringTT>Exclude maps with too small area and too low items count</RealRuins.AreaFilteringTT>
-  <!-- -->
-  <RealRuins.UsedMaps>Maps used: </RealRuins.UsedMaps>
-  <!-- -->
-  <RealRuins.DroppedMaps>Maps dropped: </RealRuins.DroppedMaps>
+  <RealRuins.LoadBlueprintsCaption>載入整個行星的藍圖</RealRuins.LoadBlueprintsCaption>
+  <RealRuins.LoadBlueprints>載入藍圖</RealRuins.LoadBlueprints>
+  <RealRuins.Close>關閉</RealRuins.Close>
+  <RealRuins.Idle>待機</RealRuins.Idle>
+  <RealRuins.Searching>搜尋藍圖...</RealRuins.Searching>
+  <RealRuins.Loading>載入藍圖: </RealRuins.Loading>
+  <RealRuins.Processing>分析藍圖: </RealRuins.Processing>
+  <RealRuins.Completed>完成!</RealRuins.Completed>
+  <RealRuins.BiomeFiltering>過濾生物群系</RealRuins.BiomeFiltering>
+  <RealRuins.BiomeFilteringTT>排除與地圖不符合或不相容的生物群系。</RealRuins.BiomeFilteringTT>
+  <RealRuins.CostFiltering>過濾價值</RealRuins.CostFiltering>
+  <RealRuins.CostFilteringTT>排除價值過低的地圖。(低於平均被認定為 "廢墟" 的價值)</RealRuins.CostFilteringTT>
+  <RealRuins.AreaFiltering>過濾區域及物品</RealRuins.AreaFiltering>
+  <RealRuins.AreaFilteringTT>排除太小或物品太少的地圖。</RealRuins.AreaFilteringTT>
+  <RealRuins.UsedMaps>被使用的地圖: </RealRuins.UsedMaps>
+  <RealRuins.DroppedMaps>被丟棄的地圖: </RealRuins.DroppedMaps>
+
+  <RealRuins.MapsModuleButton>匯入藍圖到行星(BETA)</RealRuins.MapsModuleButton>
+  <RealRuins.PlanetarySettignsCaption>真實遺跡 - 星球遺跡設定</RealRuins.PlanetarySettignsCaption>
+  <RealRuins.NeedsGameInProgress>必須在遊戲中才能使用此設定。</RealRuins.NeedsGameInProgress>
+
+  <RealRuins.CaravanReformType>商隊重組形式</RealRuins.CaravanReformType>
+  <RealRuins.Reform.Automatic>自動</RealRuins.Reform.Automatic>
+  <RealRuins.Reform.Instant>即時</RealRuins.Reform.Instant>
+  <RealRuins.Reform.Manual>手動</RealRuins.Reform.Manual>
+  <RealRuins.CaravanReformTooltip>在遺跡中重組商隊的方式。"自動" 與原始在基地上生成商隊的方式相同。"即時" 允許通過世界地圖上的按鈕即時重組。"手動" 需要自行撿拾物品並透過移動到地圖邊緣來組成商隊。</RealRuins.CaravanReformTooltip>
+
+  <RealRuins.ForceMultiplier>事件難度係數</RealRuins.ForceMultiplier>
+  <RealRuins.AbsoluteWealthCap>事件總價值硬上限</RealRuins.AbsoluteWealthCap>
+  <RealRuins.LeaveVanillaRuins>留下原版遺跡</RealRuins.LeaveVanillaRuins>
+  <RealRuins.ForceMultiplierTT>改變此參數來調整事件的難度。</RealRuins.ForceMultiplierTT>
+  <RealRuins.AbsoluteWealthCapTT>設定事件的總價值上限。木牆和木門不列入計算。</RealRuins.AbsoluteWealthCapTT>
+  <RealRuins.LeaveVanillaRuinsTT>如果啟用，原版遺跡及真實遺跡事件都會出現。</RealRuins.LeaveVanillaRuinsTT>
 
   <!-- -->
-  <RealRuins.MapsModuleButton>Import blueprints for this planet (BETA)</RealRuins.MapsModuleButton>
+  <RealRuins.LogLevel>日誌等級</RealRuins.LogLevel>
   <!-- -->
-  <RealRuins.PlanetarySettignsCaption>Real Ruins - Planetary Ruins Settings</RealRuins.PlanetarySettignsCaption>
+  <RealRuins.LogLevel.All>所有資料</RealRuins.LogLevel.All>
   <!-- -->
-  <RealRuins.NeedsGameInProgress>You have to be in an ongoing game to use this menu</RealRuins.NeedsGameInProgress>
-
+  <RealRuins.LogLevel.Warnings>錯誤(errors)及警告(warnings)</RealRuins.LogLevel.Warnings>
   <!-- -->
-  <RealRuins.CaravanReformType>Caravan reform type</RealRuins.CaravanReformType>
-  <!-- -->
-  <RealRuins.Reform.Automatic>Automatic</RealRuins.Reform.Automatic>
-  <!-- -->
-  <RealRuins.Reform.Instant>Instant</RealRuins.Reform.Instant>
-  <!-- -->
-  <RealRuins.Reform.Manual>Manual</RealRuins.Reform.Manual>
-  <!-- -->
-  <RealRuins.CaravanReformTooltip>Way of caravan reforming in Real Ruins events. "Automatic" is the same way as caravan is formed on your home map. "Instant" allows instant reform via button on the world map. "Manual" is for manual items pickup and leaving via map edge.</RealRuins.CaravanReformTooltip>
-
-  <!-- -->
-  <RealRuins.ForceMultiplier>Events threat scale</RealRuins.ForceMultiplier>
-  <!-- -->
-  <RealRuins.AbsoluteWealthCap>Absolute wealth cap for events</RealRuins.AbsoluteWealthCap>
-  <!-- -->
-  <RealRuins.LeaveVanillaRuins>Leave vanilla ruins</RealRuins.LeaveVanillaRuins>
-  <!-- -->
-  <RealRuins.ForceMultiplierTT>Tune this to make ruins event more or less difficult</RealRuins.ForceMultiplierTT>
-  <!-- -->
-  <RealRuins.AbsoluteWealthCapTT>Determines absolute wealth cap for ruins events. Wooden walls and doors are not counted against total wealth.</RealRuins.AbsoluteWealthCapTT>
-  <!-- -->
-  <RealRuins.LeaveVanillaRuinsTT>If checked, both real ruins and vanilla ruins will be spawned</RealRuins.LeaveVanillaRuinsTT>
-
-  <!-- -->
-  <RealRuins.LogLevel>Log level</RealRuins.LogLevel>
-  <!-- -->
-  <RealRuins.LogLevel.All>Log everything</RealRuins.LogLevel.All>
-  <!-- -->
-  <RealRuins.LogLevel.Warnings>Warnings and errors</RealRuins.LogLevel.Warnings>
-  <!-- -->
-  <RealRuins.LogLevel.Errors>Errors only</RealRuins.LogLevel.Errors>
+  <RealRuins.LogLevel.Errors>僅錯誤(errors)</RealRuins.LogLevel.Errors>
 </LanguageData>
