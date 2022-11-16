@@ -115,7 +115,6 @@ namespace RealRuins {
             pawnGroupMakerParms.points = points;
             pawnGroupMakerParms.faction = faction;
             pawnGroupMakerParms.generateFightersOnly = false;
-            pawnGroupMakerParms.forceOneIncap = false;
             pawnGroupMakerParms.seed = Rand.Int;
 
             List<Pawn> pawns = PawnGroupMakerUtility.GeneratePawns(pawnGroupMakerParms).ToList();

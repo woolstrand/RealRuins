@@ -6,6 +6,7 @@ using Verse;
 using System.Collections.Generic;
 using System.Linq;
 using System;
+using UnityEngine;
 
 namespace RealRuins {
     public class IncidentWorker_RuinsFound : IncidentWorker {
@@ -23,6 +24,7 @@ namespace RealRuins {
         }
 
         protected override bool TryExecuteWorker(IncidentParms parms) {
+            Debug.Log(Debug.Event, "Starting incident worker for ruins major event");
             Faction faction = parms.faction;
             if (faction == null) {
                 faction = Find.FactionManager.RandomNonHostileFaction(false, false, false, TechLevel.Undefined);
@@ -34,32 +36,46 @@ namespace RealRuins {
                 return false;
             }
 
-            AbandonedBaseWorldObject site = (AbandonedBaseWorldObject)WorldObjectMaker.MakeWorldObject(DefDatabase<WorldObjectDef>.GetNamed("AbandonedBase"));
-            site.Tile = tile;
-            site.SetFaction(null);
-            Find.WorldObjects.Add(site);
+            AbandonedBaseWorldObject worldObject = (AbandonedBaseWorldObject)WorldObjectMaker.MakeWorldObject(DefDatabase<WorldObjectDef>.GetNamed("AbandonedBase"));
+            worldObject.Tile = tile;
+            worldObject.SetFaction(null);
+            Find.WorldObjects.Add(worldObject);
+            Debug.Log(Debug.Event, "Created world object");
 
             string filename = null;
             Blueprint bp = BlueprintFinder.FindRandomBlueprintWithParameters(out filename, 6400, 0.01f, (int)Math.Min(30000, RealRuins_ModSettings.ruinsCostCap), maxAttemptsCount: 50);
-
-            RuinedBaseComp comp = site.GetComponent<RuinedBaseComp>();
-            if (comp == null) {
-                Debug.Warning("Component is null");
+            if (bp != null) {
+                Debug.Log(Debug.Event, "Found suitable blueprint at path {0}", filename);
             } else {
-                Debug.Warning("Starting scavenging...");
-                int cost = 10000;
-                if (bp != null) {
-                    cost = (int)Math.Min(bp.totalCost, RealRuins_ModSettings.ruinsCostCap);
-                }
-                comp.blueprintFileName = filename;
-                comp.StartScavenging(cost);
+                Debug.Warning(Debug.Event, "Could not found suitable blueprint!");
+                return false;
             }
 
+            RuinedBaseComp comp = worldObject.GetComponent<RuinedBaseComp>();
+            if (comp == null) {
+                Debug.Error(Debug.Event, "RuinedBase component is null during abandoned base event creation.");
+                return false;
+            } else {
+                comp.blueprintFileName = filename;
+                // Here we have to determine starting value. Ruins value will decrease over time (lore: scavenged by other factions)
+                // However, we do not want it to be initially larger than total wealth cap.
 
+                float costCap = RealRuins_ModSettings.ruinsCostCap;
+                float startingCap = Math.Min(costCap, bp.totalCost);
+                if (startingCap > int.MaxValue) {
+                    startingCap = int.MaxValue; //not sure why StartScavenging takes int as input, but don't want to change it now.
+                }
 
-            var lifetime = (int)(Math.Pow(site.GetComponent<RuinedBaseComp>().currentCapCost / 1000, 0.41) * 1.1);
+                Debug.Log(Debug.Event, "Initial cost set to {0} (blueprint cost {1}, settings cap {2}", startingCap, bp.totalCost, costCap);
+                comp.StartScavenging((int)startingCap);
+                // Start scavenging here means "store initial cap and begin counting down".
+                // Actual scavenging will happen during mapgen step.
+            }
+
+            var lifetime = (int)(Math.Pow(worldObject.GetComponent<RuinedBaseComp>().currentCapCost / 1000, 0.41) * 1.1);
             string letterText = GetLetterText(faction, lifetime);
-            Find.LetterStack.ReceiveLetter(def.letterLabel, letterText, def.letterDef, site, faction, null);
+            Find.LetterStack.ReceiveLetter(def.letterLabel, letterText, def.letterDef, worldObject, faction, null);
+            Debug.Log(Debug.Event, "Event preparations completed, blueprint is ready and stored, letter sent.");
             return true;
         }
 

@@ -18,7 +18,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\1.3\Assemblies\</OutputPath>
+    <OutputPath>..\1.4\Assemblies\</OutputPath>
     <DefineConstants>DEBUG</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -51,37 +51,12 @@
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
     <None Include="README.md" />
-    <Reference Include="0Harmony">
-      <HintPath>..\..\..\..\SteamLibrary\steamapps\workshop\content\294100\2009463077\Current\Assemblies\0Harmony.dll</HintPath>
-    </Reference>
-    <Reference Include="Assembly-CSharp">
-      <HintPath>..\..\..\..\SteamLibrary\steamapps\common\RimWorld\RimWorldWin64_Data\Managed\Assembly-CSharp.dll</HintPath>
-    </Reference>
-    <Reference Include="Assembly-CSharp-firstpass">
-      <HintPath>..\..\..\..\SteamLibrary\steamapps\common\RimWorld\RimWorldWin64_Data\Managed\Assembly-CSharp-firstpass.dll</HintPath>
-    </Reference>
-    <Reference Include="HarmonyMod">
-      <HintPath>..\..\..\..\SteamLibrary\steamapps\workshop\content\294100\2009463077\Current\Assemblies\HarmonyMod.dll</HintPath>
-    </Reference>
-    <Reference Include="HugsLib">
-      <HintPath>..\..\..\..\SteamLibrary\steamapps\workshop\content\294100\818773962\v1.3\Assemblies\HugsLib.dll</HintPath>
-    </Reference>
-    <Reference Include="SRTS">
-      <HintPath>..\..\..\..\SteamLibrary\steamapps\workshop\content\294100\1845423808\v1.2\Assemblies\SRTS.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
-    <Reference Include="Unity.TextMeshPro">
-      <HintPath>..\..\..\..\SteamLibrary\steamapps\common\RimWorld\RimWorldWin64_Data\Managed\Unity.TextMeshPro.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEngine">
-      <HintPath>..\..\..\RimWorldWin64_Data\Managed\UnityEngine.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
     <None Include="..\About\About.xml" />
     <None Include="..\About\Preview.png" />
     <None Include="..\Languages\English\Keyed\RealRuins_Options.xml">
@@ -108,18 +83,6 @@
     <None Include="..\Languages\Russian\DefInjected\Thoughts\Thoughts_Scavenging.xml" />
     <None Include="..\Languages\Russian\Keyed\RealRuins_Options.xml" />
     <None Include="..\Patches\**" />
-    <Reference Include="UnityEngine.CoreModule">
-      <HintPath>..\..\..\..\SteamLibrary\steamapps\common\RimWorld\RimWorldWin64_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEngine.IMGUIModule">
-      <HintPath>..\..\..\..\SteamLibrary\steamapps\common\RimWorld\RimWorldWin64_Data\Managed\UnityEngine.IMGUIModule.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEngine.UnityWebRequestModule">
-      <HintPath>..\..\..\..\SteamLibrary\steamapps\common\RimWorld\RimWorldWin64_Data\Managed\UnityEngine.UnityWebRequestModule.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEngine.UnityWebRequestWWWModule">
-      <HintPath>..\..\..\..\SteamLibrary\steamapps\common\RimWorld\RimWorldWin64_Data\Managed\UnityEngine.UnityWebRequestWWWModule.dll</HintPath>
-    </Reference>
     <Reference Include="Assembly-CSharp-firstpass">
       <HintPath>..\..\..\..\rr_support\Assembly-CSharp-firstpass.dll</HintPath>
     </Reference>
@@ -141,11 +104,47 @@
     <Reference Include="UnityEngine.UnityWebRequestWWWModule">
       <HintPath>..\..\..\..\rr_support\UnityEngine.UnityWebRequestWWWModule.dll</HintPath>
     </Reference>
-    <Reference Include="HugsLib">
-      <HintPath>..\..\..\..\rr_support\mods\HugsLib.dll</HintPath>
-    </Reference>
     <Reference Include="SRTS">
       <HintPath>..\..\..\..\rr_support\mods\SRTS.dll</HintPath>
+    </Reference>
+    <Reference Include="0Harmony">
+      <HintPath>..\..\..\Library\Application Support\Steam\steamapps\workshop\content\294100\2009463077\Current\Assemblies\0Harmony.dll</HintPath>
+    </Reference>
+    <Reference Include="HarmonyMod">
+      <HintPath>..\..\..\Library\Application Support\Steam\steamapps\workshop\content\294100\2009463077\Current\Assemblies\HarmonyMod.dll</HintPath>
+    </Reference>
+    <Reference Include="HugsLib">
+      <HintPath>..\..\..\Library\Application Support\Steam\steamapps\workshop\content\294100\818773962\v1.4\Assemblies\HugsLib.dll</HintPath>
+    </Reference>
+    <Reference Include="SRTS">
+      <HintPath>..\..\..\Library\Application Support\Steam\steamapps\workshop\content\294100\1845423808\Assemblies\SRTS.dll</HintPath>
+    </Reference>
+    <Reference Include="Assembly-CSharp-firstpass">
+      <HintPath>..\DLL_Cache\Assembly-CSharp-firstpass.dll</HintPath>
+    </Reference>
+    <Reference Include="Assembly-CSharp">
+      <HintPath>..\DLL_Cache\Assembly-CSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="Unity.TextMeshPro">
+      <HintPath>..\DLL_Cache\Unity.TextMeshPro.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.CoreModule">
+      <HintPath>..\DLL_Cache\UnityEngine.CoreModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine">
+      <HintPath>..\DLL_Cache\UnityEngine.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.IMGUIModule">
+      <HintPath>..\DLL_Cache\UnityEngine.IMGUIModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.UnityWebRequestModule">
+      <HintPath>..\DLL_Cache\UnityEngine.UnityWebRequestModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.UnityWebRequestWWWModule">
+      <HintPath>..\DLL_Cache\UnityEngine.UnityWebRequestWWWModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.TextRenderingModule">
+      <HintPath>..\DLL_Cache\UnityEngine.TextRenderingModule.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

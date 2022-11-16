@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
+<?xml version="1.0" encoding="utf-8" ?>
 <Defs>
 
 	<!-- Empty ruins -->
@@ -17,7 +17,7 @@
 	</GenStepDef>
 
   <GenStepDef>
-    <defName>ScatterBaseRuins</defName>
+    <defName>RealRuins.ScatterBaseRuins</defName>
     <linkWithSite>RuinedBaseSite</linkWithSite>
     <order>450</order>
     <genStep Class="RealRuins.GenStep_ScatterLargeRealRuins">
@@ -46,7 +46,7 @@
     <genSteps>
       <li>RocksFromGrid</li>
       <li>ScatterDeepResourceLumps</li>
-      <li>ScatterBaseRuins</li>
+      <li>RealRuins.ScatterBaseRuins</li>
       <li>SettlementPower</li>
     </genSteps>
   </MapGeneratorDef>

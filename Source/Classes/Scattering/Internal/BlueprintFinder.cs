@@ -30,10 +30,9 @@ namespace RealRuins {
                 //Debug.Message("size: {0}x{1} (needed {2}). density {3} (needed {4}). cost {5} (needed {6})", bp.width, bp.height, minArea, bp.itemsDensity, minDensity, bp.totalCost, minCost);
 
                 if (bp.height * bp.width > minArea && bp.itemsDensity > minDensity && bp.totalCost >= minCost) {
-                    //Debug.Message("Qualified, using.");
                     return bp;
                 } else if (removeNonQualified) {
-                    Debug.Warning(Debug.Store, "Non-qualified XML at path {0}, removing", filename);
+                    Debug.Log(Debug.Store, "Non-qualified XML at path {0}, removing", filename);
                     SnapshotStoreManager.Instance.RemoveBlueprintWithName(filename);
                 }
             }
