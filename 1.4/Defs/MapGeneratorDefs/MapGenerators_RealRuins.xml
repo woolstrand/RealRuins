@@ -1,24 +1,22 @@
-<?xml version="1.0" encoding="utf-8" ?>
+﻿<?xml version="1.0" encoding="utf-8" ?>
 <Defs>
-
-	<!-- Empty ruins -->
-	<GenStepDef>
-		<defName>ScatterRealRuins</defName>
-		<order>301</order>
-		<genStep Class="RealRuins.GenStep_ScatterRealRuins">
-		</genStep>
-	</GenStepDef>
-
-	<GenStepDef>
-		<defName>ScatterMediumRealRuins</defName>
-		<order>302</order>
-		<genStep Class="RealRuins.GenStep_ScatterMediumRealRuins">
-		</genStep>
-	</GenStepDef>
+  <!-- Empty ruins -->
+  <GenStepDef>
+    <defName>ScatterRealRuins</defName>
+    <order>301</order>
+    <genStep Class="RealRuins.GenStep_ScatterRealRuins">
+    </genStep>
+  </GenStepDef>
 
   <GenStepDef>
-    <defName>RealRuins.ScatterBaseRuins</defName>
-    <linkWithSite>RuinedBaseSite</linkWithSite>
+    <defName>ScatterMediumRealRuins</defName>
+    <order>302</order>
+    <genStep Class="RealRuins.GenStep_ScatterMediumRealRuins">
+    </genStep>
+  </GenStepDef>
+
+  <GenStepDef>
+    <defName>ScatterBaseRuins</defName>
     <order>450</order>
     <genStep Class="RealRuins.GenStep_ScatterLargeRealRuins">
     </genStep>
@@ -35,7 +33,6 @@
     <defName>RealRuinsPOI</defName>
     <genSteps>
       <li>RocksFromGrid</li>
-      <li>ScatterDeepResourceLumps</li>
       <li>ScatterPOIRuins</li>
       <li>SettlementPower</li>
     </genSteps>
@@ -45,8 +42,7 @@
     <defName>RealRuinsAbandonedBase</defName>
     <genSteps>
       <li>RocksFromGrid</li>
-      <li>ScatterDeepResourceLumps</li>
-      <li>RealRuins.ScatterBaseRuins</li>
+      <li>ScatterBaseRuins</li>
       <li>SettlementPower</li>
     </genSteps>
   </MapGeneratorDef>
