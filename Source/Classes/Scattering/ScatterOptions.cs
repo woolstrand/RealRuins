@@ -47,7 +47,7 @@ namespace RealRuins {
         public bool forceFullHitPoints = false; //forces all HP to be maxed
         public bool canHaveFood = true;
         public bool shouldAddFilth = true;
-        public IntVec3 overridePosition = IntVec3.Zero;
+        public IntVec3 overridePosition = new IntVec3(0, 0, 0);
         public bool overwritesEverything = false; //if true, each item, terrain and even empty cell inside a room removes everything from that tile
         public bool centerIfExceedsBounds = false;
         public string blueprintFileName = null;

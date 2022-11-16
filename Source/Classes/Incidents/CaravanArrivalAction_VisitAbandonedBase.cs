@@ -21,7 +21,6 @@ namespace RealRuins {
         }
 
         public override void Arrived(Caravan caravan) {
-
             if (!mapParent.HasMap) {
                 LongEventHandler.QueueLongEvent(delegate {
                     DoEnter(caravan);
@@ -33,9 +32,12 @@ namespace RealRuins {
 
 
         private void DoEnter(Caravan caravan) {
+            Debug.Log(Debug.Event, "Major event entering.");
             Pawn t = caravan.PawnsListForReading[0];
             bool flag = mapParent.Faction == null || mapParent.Faction.HostileTo(Faction.OfPlayer);
+            Debug.Log(Debug.Event, "Will generate map now.........");
             Map orGenerateMap = GetOrGenerateMapUtility.GetOrGenerateMap(mapParent.Tile, null);
+            Debug.Log(Debug.Event, "Map generated");
 
             Find.LetterStack.ReceiveLetter("LetterLabelCaravanEnteredRuins".Translate(), "LetterCaravanEnteredRuins".Translate(caravan.Label).CapitalizeFirst(), LetterDefOf.ThreatBig, t, null, null);
 
@@ -44,7 +46,6 @@ namespace RealRuins {
             CaravanEnterMode enterMode = CaravanEnterMode.Edge;
             bool draftColonists = flag;
             CaravanEnterMapUtility.Enter(caravan, map, enterMode, CaravanDropInventoryMode.DoNotDrop, draftColonists, null);
-
         }
 
 

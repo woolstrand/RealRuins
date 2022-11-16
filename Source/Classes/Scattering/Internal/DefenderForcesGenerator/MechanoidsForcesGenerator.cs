@@ -53,12 +53,8 @@ namespace RealRuins {
                                                   select kind).RandomElementByWeight((PawnKindDef kind) => 1f / kind.combatPower);
 
                 PawnGenerationRequest request =
-                    new PawnGenerationRequest(currentPawnKindDef, faction, PawnGenerationContext.NonPlayer, tile, true, false, false, //allowDead is last
-                    false, true, true, 1f,
-                    false, true, true, true,
-                    false, false, false,
-                    true, 0, 0, null, 1, null, null, null,
-                    null, null, null, null);
+                    new PawnGenerationRequest(currentPawnKindDef, faction: faction, tile: tile, forceGenerateNewPawn: true,
+                    mustBeCapableOfViolence: true, forceAddFreeWarmLayerIfNeeded: true, excludeBiologicalAgeRange: new FloatRange(0, 16));
 
                 IntVec3 cell = IntVec3.Invalid;
 //                if (!CellFinder.TryFindRandomCellInsideWith(rect, (IntVec3 x) => x.Standable(map) && options.roomMap[x.x - rect.minX, x.z - rect.minZ] > 1, out cell)) {
