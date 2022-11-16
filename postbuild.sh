@@ -19,14 +19,14 @@ cp -R ../Textures /Users/woolstrand/Library/Application\ Support/Steam/steamapps
 
 cp -R ../1.1 /Users/woolstrand/Library/Application\ Support/Steam/steamapps/common/RimWorld/RimWorldMac.app/Mods/RealRuins
 
-# --- 1.3 ---
+# --- 1.4 ---
 
-mkdir -p /Users/woolstrand/Library/Application\ Support/Steam/steamapps/common/RimWorld/RimWorldMac.app/Mods/RealRuins/1.3/Assemblies
+mkdir -p /Users/woolstrand/Library/Application\ Support/Steam/steamapps/common/RimWorld/RimWorldMac.app/Mods/RealRuins/1.4/Assemblies
 
-cp -R ../1.3/Assemblies/RealRuins.dll /Users/woolstrand/Library/Application\ Support/Steam/steamapps/common/RimWorld/RimWorldMac.app/Mods/RealRuins/1.3/Assemblies/RealRuins.dll
+rm -f /Users/woolstrand/Library/Application\ Support/Steam/steamapps/common/RimWorld/RimWorldMac.app/Mods/RealRuins/1.4/Assemblies/*.dll
 
-cp -R ../1.3/Defs /Users/woolstrand/Library/Application\ Support/Steam/steamapps/common/RimWorld/RimWorldMac.app/Mods/RealRuins/1.3
+cp -R ../1.4/Assemblies/RealRuins.dll /Users/woolstrand/Library/Application\ Support/Steam/steamapps/common/RimWorld/RimWorldMac.app/Mods/RealRuins/1.4/Assemblies/RealRuins.dll
 
-cp -R ../1.3/Patches /Users/woolstrand/Library/Application\ Support/Steam/steamapps/common/RimWorld/RimWorldMac.app/Mods/RealRuins/1.3
+cp -R ../1.4/Defs /Users/woolstrand/Library/Application\ Support/Steam/steamapps/common/RimWorld/RimWorldMac.app/Mods/RealRuins/1.4
 
-
+cp -R ../1.4/Patches /Users/woolstrand/Library/Application\ Support/Steam/steamapps/common/RimWorld/RimWorldMac.app/Mods/RealRuins/1.4
