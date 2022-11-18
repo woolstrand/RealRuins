@@ -111,7 +111,7 @@ namespace RealRuins {
 
                 // ==== STORY AND APPEARANCE ====
                 var storyNode = root.SelectSingleNode("saveable[@Class='Pawn_StoryTracker']");
-                if (storyNode != null) {
+                if (storyNode != null) {/*
                     Backstory bs = null;
                     string childhoodDef = storyNode.SelectSingleNode("childhood")?.InnerText;
                     if (BackstoryDatabase.TryGetWithIdentifier(childhoodDef, out bs)) {
@@ -163,7 +163,7 @@ namespace RealRuins {
 
                             p.story.traits.allTraits.Add(t);
                         }
-                    }
+                    }*/
                 }
 
                 // ==== SKILLS ====
@@ -286,7 +286,9 @@ namespace RealRuins {
 
                 if (itemTile.defName.ToLower() == "pawn") {
                     //Debug.Message("Now need to instantiate pawn");
-                    return MakePawnWithRawXml(itemTile.itemXml);
+                    // TEMPORARY DISABLED
+                    return null;
+                    //return MakePawnWithRawXml(itemTile.itemXml);
                 }
 
                 if (itemTile.defName.ToLower() == "corpse") {
@@ -458,7 +460,7 @@ namespace RealRuins {
                 mapOriginZ = map.Size.z - blueprint.height - 1;
             }
 
-            if (options.overridePosition != IntVec3.Zero) {
+            if (options.overridePosition != new IntVec3(0, 0, 0)) {
                 if (!options.centerIfExceedsBounds || (options.overridePosition.x + blueprint.width < map.Size.x && options.overridePosition.z + blueprint.height < map.Size.z)) {
                     mapOriginX = options.overridePosition.x;
                     mapOriginZ = options.overridePosition.z;

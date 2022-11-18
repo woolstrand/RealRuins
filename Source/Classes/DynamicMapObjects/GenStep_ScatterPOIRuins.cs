@@ -131,7 +131,7 @@ namespace RealRuins {
                 Lord singlePawnLord = LordMaker.MakeNewLord(rp.faction, new LordJob_ManTurrets(), map);
                 PawnKindDef kind = rp.faction.RandomPawnKind();
                 int tile = map.Tile;
-                PawnGenerationRequest value = new PawnGenerationRequest(kind, rp.faction, PawnGenerationContext.NonPlayer, tile, forceGenerateNewPawn: false, newborn: false, allowDead: false, allowDowned: false, canGeneratePawnRelations: true, mustBeCapableOfViolence: true, colonistRelationChanceFactor: 1f, forceAddFreeWarmLayerIfNeeded: false, allowGay: true, allowFood: true, inhabitant: true);
+                PawnGenerationRequest value = new PawnGenerationRequest(kind, rp.faction, PawnGenerationContext.NonPlayer, tile, forceGenerateNewPawn: false, biologicalAgeRange: new FloatRange(16, 300), allowDead: false, allowDowned: false, canGeneratePawnRelations: true, mustBeCapableOfViolence: true, colonistRelationChanceFactor: 1f, forceAddFreeWarmLayerIfNeeded: false, allowGay: true, allowFood: true, inhabitant: true);  ;
                 ResolveParams resolveParams = rp; //copy!
                 resolveParams.singlePawnGenerationRequest = value;
                 resolveParams.singlePawnLord = singlePawnLord;
