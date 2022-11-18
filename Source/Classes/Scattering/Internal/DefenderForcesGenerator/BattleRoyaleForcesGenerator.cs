@@ -117,7 +117,6 @@ namespace RealRuins {
             pawnGroupMakerParms.faction = faction;
             pawnGroupMakerParms.generateFightersOnly = true;
             pawnGroupMakerParms.raidStrategy = RaidStrategyDefOf.ImmediateAttack;
-            pawnGroupMakerParms.forceOneIncap = false;
             pawnGroupMakerParms.seed = Rand.Int;
 
             List<Pawn> pawns = PawnGroupMakerUtility.GeneratePawns(pawnGroupMakerParms).ToList();

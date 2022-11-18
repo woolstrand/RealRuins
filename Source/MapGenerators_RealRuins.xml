@@ -13,15 +13,4 @@
 		</genStep>
 	</GenStepDef>
 
-	<GenStepDef>
-		<defName>ScatterRealRuins</defName>
-		<order>301</order>
-		<genStep Class="Real_Ruins.GenStep_ScatterLargeRealRuins">
-			<allowInWaterBiome>false</allowInWaterBiome>
-			<countPer10kCellsRange>
-				<min>0.02</min>
-				<max>0.07</max>
-			</countPer10kCellsRange>
-		</genStep>
-	</GenStepDef>
 </Defs>
