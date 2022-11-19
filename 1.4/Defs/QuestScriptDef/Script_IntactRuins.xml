@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+  <QuestScriptDef>
+    <defName>RealRuins_IntactRuins</defName>
+    <rootSelectionWeight>1.0</rootSelectionWeight>
+    <canGiveRoyalFavor>false</canGiveRoyalFavor>
+    <autoAccept>true</autoAccept>
+    <questNameRules>
+      <rulesStrings>
+        <li>questName->Intact Ruins</li>
+      </rulesStrings>
+    </questNameRules>
+    <questDescriptionRules>
+      <rulesStrings>
+        <li>questDescription->Intact ruins were found. Run there, stranger!</li>
+      </rulesStrings>
+    </questDescriptionRules>
+    <root Class="QuestNode_Sequence">
+      <nodes>
+        <li Class="QuestNode_GetSiteTile">
+          <storeAs>worldTile</storeAs>
+          <preferCloserTiles>false</preferCloserTiles>
+        </li>
+
+        <li Class="RealRuins.QuestNode_FindBlueprint">
+          <storeAs>blueprintName</storeAs>
+          <storeCostAs>blueprintCachedCost</storeCostAs>
+          <minimumWealth>500000</minimumWealth>
+          <minimumArea>6000</minimumArea>
+          <minimumItemsCount>1000</minimumItemsCount>
+        </li>
+      
+        <li Class="RealRuins.QuestNode_GenerateRuinsObject">
+          <blueprintFilename>$blueprintName</blueprintFilename>
+          <tile>$worldTile</tile>
+          <storeAs>ruins</storeAs>
+        </li>
+        
+        <li Class="QuestNode_SpawnWorldObjects">
+          <worldObjects>$ruins</worldObjects>
+        </li>
+
+        <li Class="QuestNode_WorldObjectTimeout">
+          <worldObject>$ruins</worldObject>
+          <isQuestTimeout>true</isQuestTimeout>
+          <delayTicks>$(randInt(12,28)*60000)</delayTicks>
+          <inSignalDisable>site.MapGenerated</inSignalDisable>
+          <node Class="QuestNode_Sequence">
+            <nodes>
+              <li Class="QuestNode_Letter">
+                <label TKey="LetterLabelQuestExpired">Quest expired: [resolvedQuestName]</label>
+                <text TKey="LetterTextQuestExpired">The discovered ruins location was looted and scavenged. The quest [resolvedQuestName] has expired.</text>
+              </li>
+              <li Class="QuestNode_End">
+                <outcome>Fail</outcome>
+              </li>
+            </nodes>
+          </node>
+        </li>
+
+        <!-- Each outcome is success, if at least someone lives. -->
+        <li Class="QuestNode_Signal">
+          <inSignal>site.Destroyed</inSignal>
+          <node Class="QuestNode_Sequence">
+            <nodes>
+              <li Class="QuestNode_Letter">
+                <label TKey="LetterLabelQuestFailed">Quest failed: [resolvedQuestName]</label>
+                <text TKey="LetterTextQuestFailed">After being discovered, the bandit camp has dispersed. The quest [resolvedQuestName] has ended.</text>
+              </li>
+              <li Class="QuestNode_End">
+                <outcome>Success</outcome>
+              </li>
+            </nodes>
+          </node>
+        </li>
+
+        <li Class="QuestNode_End">
+          <inSignal>site.AllEnemiesDefeated</inSignal>
+          <outcome>Success</outcome>
+        </li>
+      </nodes>
+    </root>
+  </QuestScriptDef>
+</Defs>
