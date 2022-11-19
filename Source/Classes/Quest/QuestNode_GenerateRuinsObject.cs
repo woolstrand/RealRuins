@@ -16,38 +16,44 @@ namespace RealRuins
 		private AbandonedBaseWorldObject TryGenerateWorldObject(Slate slate) {
             var filename = blueprintFilename.GetValue(slate);
             var cachedCost = blueprintCachedCost.GetValue(slate);
+            var cachedCost2 = slate.Get<int>("blueprintCachedCost");
             var tileId = tile.GetValue(slate);
 
-            AbandonedBaseWorldObject site = (AbandonedBaseWorldObject)WorldObjectMaker.MakeWorldObject(DefDatabase<WorldObjectDef>.GetNamed("AbandonedBase"));
-            site.Tile = tileId;
-            site.SetFaction(null);
-            Find.WorldObjects.Add(site);
+            AbandonedBaseWorldObject worldObject = (AbandonedBaseWorldObject)WorldObjectMaker.MakeWorldObject(DefDatabase<WorldObjectDef>.GetNamed("AbandonedBase"));
+            worldObject.Tile = tileId;
+            worldObject.SetFaction(null);
 
-            RuinedBaseComp comp = site.GetComponent<RuinedBaseComp>();
+            RuinedBaseComp comp = worldObject.GetComponent<RuinedBaseComp>();
             if (comp == null) {
                 Debug.Warning("Component is null");
             } else {
-                Debug.Warning("Starting scavenging...");
-                var cost = (int)Math.Min(cachedCost, RealRuins_ModSettings.ruinsCostCap);
                 comp.blueprintFileName = filename;
-                comp.StartScavenging(cost); //passing initial cost to calculate coefficients without need to load bp one more time
+                // Here we have to determine starting value. Ruins value will decrease over time (lore: scavenged by other factions)
+                // However, we do not want it to be initially larger than total wealth cap.
+
+                float costCap = RealRuins_ModSettings.ruinsCostCap;
+                float startingCap = Math.Min(costCap, cachedCost);
+                if (startingCap > int.MaxValue) {
+                    startingCap = int.MaxValue - 1; //not sure why StartScavenging takes int as input, but don't want to change it now.
+                }
+
+                Debug.Log(Debug.Event, "Initial cost set to {0} (blueprint cost {1} OR {3}, settings cap {2}", startingCap, cachedCost, costCap, cachedCost2);
+                comp.StartScavenging((int)startingCap); //passing initial cost to calculate coefficients without need to load bp one more time
             }
 
-            return site;
+            return worldObject;
         }
 
         protected override bool TestRunInt(Slate slate) {
-            var obj = TryGenerateWorldObject(slate);
-            if (obj == null) {
-                return false;
-            } else { 
-                return true;
-            }
+            return true;
+//            var filename = blueprintFilename.GetValue(slate);
+//            return filename != null;
 		}
 
 		protected override void RunInt() {
 			Slate slate = QuestGen.slate;
-			var obj = TryGenerateWorldObject(slate);
+            Debug.Log("QuestNode_GenerateRuinsNode", "slate: {0}", slate);
+            var obj = TryGenerateWorldObject(slate);
             slate.Set(storeAs.GetValue(slate), obj);
 		}
 	}
