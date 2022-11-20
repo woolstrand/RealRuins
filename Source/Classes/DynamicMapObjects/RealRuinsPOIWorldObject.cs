@@ -14,26 +14,61 @@ namespace RealRuins {
     [StaticConstructorOnStartup]
     class RealRuinsPOIWorldObject : MapParent {
 
-        public override Texture2D ExpandingIcon => ContentFinder<Texture2D>.Get("poi-" + GetComponent<RealRuinsPOIComp>().poiType);
-        public override Color ExpandingIconColor => Faction?.Color ?? Color.white;
+        public override Texture2D ExpandingIcon {
+            get {
+                if (GetComponent<RealRuinsPOIComp>().poiType == (int)POIType.Ruins) {
+                    return null;
+                } else {
+                    return ContentFinder<Texture2D>.Get("poi-" + GetComponent<RealRuinsPOIComp>().poiType);
+                }
+            }
+        }
+
+        public override Color ExpandingIconColor => this.Faction == null ? Color.white : this.Faction.Color;
         private Material cachedMat;
         private float wealthOnEnter = 1;
         private Faction originalFaction;
 
         public override string Label => ("RealRuins.CaptionPOI" + GetComponent<RealRuinsPOIComp>().poiType).Translate();
-        
 
-    public override Material Material {
+        private string expandedIconTexturePath {
+            get {
+                switch ((POIType)(GetComponent<RealRuinsPOIComp>().poiType)) {
+                    case POIType.Ruins:
+                        return "World/WorldObjects/TribalSettlement";
+                    case POIType.City:
+                    case POIType.Stronghold:
+                    case POIType.MilitaryBaseLarge:
+                        return "World/WorldObjects/DefaultSettlement";
+                    case POIType.Research:
+                    case POIType.Storage:
+                    case POIType.Factory:
+                    case POIType.PowerPlant:
+                        return "World/WorldObjects/TribalSettlement";
+                    case POIType.Camp:
+                    case POIType.Communication:
+                        return "World/WorldObjects/Sites/GenericSite";
+                    case POIType.MilitaryBaseSmall:
+                    case POIType.Outpost:
+                        return "World/WorldObjects/Sites/Outpost";
+                    default:
+                        return "World/WorldObjects/TribalSettlement";
+                }
+            }
+        }
+
+        public override Material Material {
             get {
                 if (cachedMat == null) {
-                    var color = Color.white;
-                    cachedMat = MaterialPool.MatFrom(color: color, texPath: "World/WorldObjects/Sites/GenericSite", shader: ShaderDatabase.WorldOverlayTransparentLit, renderQueue: WorldMaterials.DynamicObjectRenderQueue);
+                    var color = this.ExpandingIconColor;
+                    if (color == null) { color = Color.white; }
+                    cachedMat = MaterialPool.MatFrom(texPath: this.expandedIconTexturePath, shader: ShaderDatabase.WorldOverlayTransparentLit, color: color, renderQueue: WorldMaterials.DynamicObjectRenderQueue); ;
                 }
                 return cachedMat;
             }
         }
 
-        public RealRuinsPOIWorldObject() {
+        public RealRuinsPOIWorldObject() {         
         }
 
         public override IEnumerable<FloatMenuOption> GetFloatMenuOptions(Caravan caravan) {

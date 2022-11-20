@@ -253,7 +253,7 @@ namespace RealRuins {
 
 
             if (right.ButtonText("RealRuins.MapsModuleButton".Translate(), null)) {
-                Page_RealRuins page = new Page_RealRuins();
+                Page_PlanetaryRuinsLoader page = new Page_PlanetaryRuinsLoader();
                 //Find.WindowStack.TryRemove(typeof(Dialog_VanillaModSettings));
                 Find.WindowStack.TryRemove(typeof(HugsLib.Settings.Dialog_ModSettings));
 

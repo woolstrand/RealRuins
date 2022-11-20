@@ -160,7 +160,28 @@ namespace RealRuins
                 SnapshotStoreManager.Instance.CheckCacheSizeLimits();
             }
         }
-        
+
+        [HarmonyPatch(typeof(Page_SelectStartingSite), "PostOpen")]
+        static class Page_SelectStartingSite_PostOpen_Patch {
+            static void Postfix() {
+                Find.WindowStack.Add(new Page_PlanetaryRuinsLoader());
+                PlanetaryRuinsInitData.shared.state = PlanetaryRuinsState.configuring;
+                PlanetaryRuinsInitData.shared.selectedMapSize = Find.GameInitData.mapSize;
+            }
+        }
+
+        [HarmonyPatch(typeof(Verse.Window), "Close")]
+        static class Window_Close_Patch {
+            static void Postfix(Verse.Window __instance) {
+                if (__instance is Dialog_AdvancedGameConfig) {
+                    if (PlanetaryRuinsInitData.shared.state == PlanetaryRuinsState.configuring &&
+                        Find.GameInitData.mapSize != PlanetaryRuinsInitData.shared.selectedMapSize) {
+                        //add dialog yes/no
+                        Find.WindowStack.Add(new Page_PlanetaryRuinsLoader());
+                    }
+                }
+            }
+        }
 
         [HarmonyPatch(typeof(GameDataSaveLoader), "SaveGame", typeof(string))]
         class SaveGame_Patch {
