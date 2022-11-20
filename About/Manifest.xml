@@ -3,14 +3,14 @@
     <identifier>Real Ruins</identifier>
     <version>2.3.0.0</version>
     <dependencies>
-        <li>HugsLib</li>
+        <li>UnlimitedHugs.HugsLib</li>
     </dependencies>
     <incompatibleWith>
     </incompatibleWith>
     <loadBefore>
     </loadBefore>
     <loadAfter>
-        <li>HugsLib</li>
+        <li>UnlimitedHugs.HugsLib</li>
     </loadAfter>
     <suggests>
     </suggests>
