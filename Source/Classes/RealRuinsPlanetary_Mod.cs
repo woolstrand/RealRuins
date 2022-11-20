@@ -9,9 +9,23 @@ using UnityEngine;
 
 
 namespace RealRuins {
+    public enum PlanetaryRuinsState {
+        disabled,
+        configuring,
+        configured
+    }
+    public class PlanetaryRuinsInitData {
+        public static PlanetaryRuinsInitData shared = new PlanetaryRuinsInitData();
+
+        public int selectedMapSize;
+        public string selectedSeed;
+
+        public PlanetaryRuinsState state;
+    }
+
     public class RealRuinsPlanetary_Mod : Mod {
 
-        Page_RealRuins embeddedPage;
+        Page_PlanetaryRuinsLoader embeddedPage;
 
         public RealRuinsPlanetary_Mod(ModContentPack content)
         : base(content) {
@@ -23,7 +37,7 @@ namespace RealRuins {
 
         public override void DoSettingsWindowContents(Rect rect) {
             if (embeddedPage == null) {
-                embeddedPage = new Page_RealRuins();
+                embeddedPage = new Page_PlanetaryRuinsLoader();
             }
 
             embeddedPage.DoWindowContents(rect, standalone: false);

@@ -170,7 +170,7 @@
     <Compile Include="Classes\Incidents\SmallRuinsWorldObject.cs" />
     <Compile Include="Classes\Incidents\TransportPodsArrivalAction_VisitRuins.cs" />
     <Compile Include="Classes\Components\WorldObjectCompProperties_RuinedBase.cs" />
-    <Compile Include="Classes\Page_RealRuins.cs" />
+    <Compile Include="Classes\Page_PlanetaryRuinsLoader.cs" />
     <Compile Include="Classes\DynamicMapObjects\RealRuinsPOIWorldObject.cs" />
     <Compile Include="Classes\RealRuinsPlanetary_Mod.cs" />
     <Compile Include="Classes\RealRuins_Mod.cs" />

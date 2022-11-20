@@ -18,7 +18,7 @@ namespace RealRuins {
         Completed
     }
 
-    class Page_RealRuins : Window {
+    class Page_PlanetaryRuinsLoader : Window {
 
         public override Vector2 InitialSize => new Vector2(650, 210 + 45 + 38);
 
@@ -36,7 +36,7 @@ namespace RealRuins {
 
         private APIService service = new APIService();
 
-        public Page_RealRuins() {
+        public Page_PlanetaryRuinsLoader() {
             doCloseX = true;
         }
 
@@ -115,7 +115,7 @@ namespace RealRuins {
         private void StartLoadingList() {
             pageState = RuinsPageState.LoadingHeader;
             Debug.Log("Loading list for seed: {0}", Find.World.info.seedString);
-            service.LoadAllMapsForSeed(Find.World.info.seedString, Find.World.info.initialMapSize.x, (int)(Find.World.PlanetCoverage * 100), delegate (bool success, List<PlanetTileInfo> mapTiles) {
+            service.LoadAllMapsForSeed(Find.World.info.seedString, Find.GameInitData.mapSize, (int)(Find.World.PlanetCoverage * 100), delegate (bool success, List<PlanetTileInfo> mapTiles) {
                 if (success) {
                     this.mapTiles = mapTiles;
                     blueprintIds = new List<string>();
