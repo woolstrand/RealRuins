@@ -214,6 +214,7 @@
     <Compile Include="Classes\Utility\BlueprintRecoveryService.cs" />
     <Compile Include="Classes\Quest\QuestNode_FindBlueprint.cs" />
     <Compile Include="Classes\Quest\QuestNode_GenerateRuinsObject.cs" />
+    <Compile Include="Classes\Utility\SmallQuestionDialog.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="MapGenerators_RealRuins.xml" />

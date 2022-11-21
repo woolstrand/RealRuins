@@ -132,21 +132,53 @@
 
   <!-- POI load dialog -->
   <RealRuins.LoadBlueprintsCaption>Load blueprints for planet</RealRuins.LoadBlueprintsCaption>
+
+  <RealRuins.LoadBlueprintsDescription>This feature will load maps of other players who had their colonies on the same planets. Their colonies will be spawned as other factions' settlements and outposts, or as abandoned ruins. Unlike random ruins, those will be placed at their original locations.</RealRuins.LoadBlueprintsDescription>
+  <RealRuins.MapSizeChangeWarning>WARNING: If you're going to change map size, press Done now and download blueprints after changing map size.</RealRuins.MapSizeChangeWarning>
+  <RealRuins.Start>Start</RealRuins.Start>
+  <RealRuins.SkipButtonTitle>Skip</RealRuins.SkipButtonTitle>
+  <RealRuins.StopButtonTitle1>Stop</RealRuins.StopButtonTitle1>
+  <RealRuins.StopButtonTitle2>Enough!</RealRuins.StopButtonTitle2>
+  <RealRuins.StopButtonTitle3>STOP LITTLE POT, STOP!!!</RealRuins.StopButtonTitle3>
+  <RealRuins.ClearPOIs>Remove map objects</RealRuins.ClearPOIs>
+  <RealRuins.DownloadLimit>Download limit (0 for no limit): </RealRuins.DownloadLimit>
+  <RealRuins.TransferLimit>Transfer limit (0 for no limit): </RealRuins.TransferLimit>
+  <RealRuins.AbandonedPercentage>Percentage of abandoned location</RealRuins.AbandonedPercentage>
+
+  <RealRuins.TransferringOptions>Transferring options</RealRuins.TransferringOptions>
+  <RealRuins.LoadingOptions>Loading options</RealRuins.LoadingOptions>
+  <RealRuins.LoadBlueprintsFirst>You need to load blueprints first.</RealRuins.LoadBlueprintsFirst>
   <RealRuins.LoadBlueprints>Load blueprints</RealRuins.LoadBlueprints>
+  <RealRuins.TransferBlueprints>Create outposts</RealRuins.TransferBlueprints>
   <RealRuins.Close>Close</RealRuins.Close>
   <RealRuins.Idle>Idle</RealRuins.Idle>
   <RealRuins.Searching>Searching for blueprints...</RealRuins.Searching>
   <RealRuins.Loading>Loading blueprints: </RealRuins.Loading>
+  <RealRuins.Transferring>Transferring blueprints: </RealRuins.Transferring>
   <RealRuins.Processing>Processing blueprints: </RealRuins.Processing>
   <RealRuins.Completed>Completed!</RealRuins.Completed>
+
+  <RealRuins.TooManyBlueprints.Load.Title>Seems there is a huge load of blueprints!</RealRuins.TooManyBlueprints.Load.Title>
+  <RealRuins.TooManyBlueprints.Load.Text>Server says, this world has {0} blueprints. This can take a while to download and process, and the world map can become cluttered. If it's your first time using this game mode, it's recommended to limit blueprint count.</RealRuins.TooManyBlueprints.Load.Text>
+
+  <RealRuins.TooManyBlueprints.Transfer.Title>A lot of blueprints to process!</RealRuins.TooManyBlueprints.Transfer.Title>
+  <RealRuins.TooManyBlueprints.Transfer.Text>You have {0} blueprints loaded. It may take a lot of time to process and transfer each one of them and it may overpopulate </RealRuins.TooManyBlueprints.Transfer.Text>
+  <RealRuins.TooManyBlueprints.GetAll>Get all blueprints anyway</RealRuins.TooManyBlueprints.GetAll>
+  <RealRuins.TooManyBlueprints.ShowOptions>Show advanced settings and let me decide</RealRuins.TooManyBlueprints.ShowOptions>
+  <RealRuins.TooManyBlueprints.Get500>Get just 500 blueprints</RealRuins.TooManyBlueprints.Get500>
+
+  <RealRuins.TransferringOptions>Transferring options</RealRuins.TransferringOptions>
   <RealRuins.BiomeFiltering>Biome filtering</RealRuins.BiomeFiltering>
   <RealRuins.BiomeFilteringTT>Exclude maps with missing or mismatching biome</RealRuins.BiomeFilteringTT>
   <RealRuins.CostFiltering>Cost filtering</RealRuins.CostFiltering>
   <RealRuins.CostFilteringTT>Exclude maps with too low cost (lower than average "empty" map)</RealRuins.CostFilteringTT>
   <RealRuins.AreaFiltering>Area and items filtering</RealRuins.AreaFiltering>
   <RealRuins.AreaFilteringTT>Exclude maps with too small area and too low items count</RealRuins.AreaFilteringTT>
+  <RealRuins.DiscardAbandoned>Agressive discard</RealRuins.DiscardAbandoned>
+  <RealRuins.DiscardAbandonedTT>Discard all maps that do not qualufy as any specific kind of POIs (this usually drops about a half of all maps)</RealRuins.DiscardAbandonedTT>
+
   <RealRuins.UsedMaps>Maps used: </RealRuins.UsedMaps>
-  <RealRuins.DroppedMaps>Maps dropped: </RealRuins.DroppedMaps>
+  <RealRuins.DroppedMaps>Maps discarded: </RealRuins.DroppedMaps>
 
   <RealRuins.MapsModuleButton>Import blueprints for this planet (BETA)</RealRuins.MapsModuleButton>
   <RealRuins.PlanetarySettignsCaption>Real Ruins - Planetary Ruins Settings</RealRuins.PlanetarySettignsCaption>
