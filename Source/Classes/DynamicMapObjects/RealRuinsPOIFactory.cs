@@ -10,7 +10,7 @@ using RimWorld.Planet;
 
 namespace RealRuins {
     class RealRuinsPOIFactory {
-        public static bool CreatePOI(PlanetTileInfo tileInfo, string gameName, bool biomeStrict, bool costStrict, bool itemsStrict) {
+        public static bool CreatePOI(PlanetTileInfo tileInfo, string gameName, bool biomeStrict, bool costStrict, bool itemsStrict, int abandonedChance = 25, bool aggressiveDiscard = false) {
 
             if (tileInfo.tile >= Find.WorldGrid.TilesCount) {
                 Debug.Log(Debug.POI, "[3] Skipped: Tile {0} was not found in world (among {1} tiles)", tileInfo.tile, Find.WorldGrid.TilesCount);
@@ -42,6 +42,10 @@ namespace RealRuins {
 
             BlueprintAnalyzer ba = new BlueprintAnalyzer(bp);
             ba.Analyze();
+            if (aggressiveDiscard && ba.determinedType == POIType.Ruins) {
+                Debug.Log(Debug.POI, "[3] Skipped: Aggressive discard is ON and POI is ruins");
+                return false;
+            }
             if (costStrict && (ba.result.totalItemsCost < 1000)) {
                 Debug.Log(Debug.POI, "[3] Skipped: Low total cost or tiles count (cost/size filtering is ON)");
                 return false;
@@ -55,7 +59,15 @@ namespace RealRuins {
             var poiType = ba.determinedType;
 
             Faction faction = null;
-            if (Rand.Chance(ba.chanceOfHavingFaction())) {
+            bool baseChance = Rand.Chance(ba.chanceOfHavingFaction());
+            if ((100 - abandonedChance) > 90) {
+                // in case of high probabilities to have a faction we use abandonedness based purely on input parameter
+                baseChance = Rand.Chance((float)(100 - abandonedChance) / 100);
+            } else {
+                // otherwise use both POI type based and parametric input.
+                baseChance = baseChance & Rand.Chance((float)(100 - abandonedChance) / 100);
+            }
+            if (baseChance) {
                 Find.FactionManager.TryGetRandomNonColonyHumanlikeFaction(out faction, false, false, minTechLevel: MinTechLevelForPOIType(poiType));
             }
 
