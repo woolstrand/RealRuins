@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LanguageData>
 
-  <!-- <AbandonedBase.label>放棄拠点</AbandonedBase.label> -->
-  <!-- <AbandonedBase.description>放棄された拠点</AbandonedBase.description> -->
+  <AbandonedBase.label>放棄拠点</AbandonedBase.label>
+  <AbandonedBase.description>放棄された拠点</AbandonedBase.description>
 
   <RealRuinsPOI.label>集合建築物</RealRuinsPOI.label>
   <RealRuinsPOI.description>調査に値する集合した多くの建築物群</RealRuinsPOI.description>
