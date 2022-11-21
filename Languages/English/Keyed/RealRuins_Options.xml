@@ -134,8 +134,11 @@
   <RealRuins.LoadBlueprintsCaption>Load blueprints for planet</RealRuins.LoadBlueprintsCaption>
 
   <RealRuins.LoadBlueprintsDescription>This feature will load maps of other players who had their colonies on the same planets. Their colonies will be spawned as other factions' settlements and outposts, or as abandoned ruins. Unlike random ruins, those will be placed at their original locations.</RealRuins.LoadBlueprintsDescription>
+  <RealRuins.OptionsDescription>In this mode you can control every step. At first you load just count of blueprints for the planet and can adjust how many of them do you want to download as blueprints. Then, after loading, you can adjust how many do you want to be transferred and how filtration should be done. You can stop during each step, remove everything and start over.</RealRuins.OptionsDescription>
   <RealRuins.MapSizeChangeWarning>WARNING: If you're going to change map size, press Done now and download blueprints after changing map size.</RealRuins.MapSizeChangeWarning>
-  <RealRuins.Start>Start</RealRuins.Start>
+  <RealRuins.StartAuto>Load automatically</RealRuins.StartAuto>
+  <RealRuins.GetCount>Load list</RealRuins.GetCount>
+  <RealRuins.MoreOptions>More options...</RealRuins.MoreOptions>
   <RealRuins.SkipButtonTitle>Skip</RealRuins.SkipButtonTitle>
   <RealRuins.StopButtonTitle1>Stop</RealRuins.StopButtonTitle1>
   <RealRuins.StopButtonTitle2>Enough!</RealRuins.StopButtonTitle2>
@@ -143,22 +146,24 @@
   <RealRuins.ClearPOIs>Remove map objects</RealRuins.ClearPOIs>
   <RealRuins.DownloadLimit>Download limit (0 for no limit): </RealRuins.DownloadLimit>
   <RealRuins.TransferLimit>Transfer limit (0 for no limit): </RealRuins.TransferLimit>
-  <RealRuins.AbandonedPercentage>Percentage of abandoned location</RealRuins.AbandonedPercentage>
+  <RealRuins.AbandonedPercentage>Percentage of abandoned locations</RealRuins.AbandonedPercentage>
 
-  <RealRuins.TransferringOptions>Transferring options</RealRuins.TransferringOptions>
-  <RealRuins.LoadingOptions>Loading options</RealRuins.LoadingOptions>
+  <RealRuins.TransferringOptions>Transfer</RealRuins.TransferringOptions>
+  <RealRuins.LoadingOptions>Load</RealRuins.LoadingOptions>
   <RealRuins.LoadBlueprintsFirst>You need to load blueprints first.</RealRuins.LoadBlueprintsFirst>
   <RealRuins.LoadBlueprints>Load blueprints</RealRuins.LoadBlueprints>
   <RealRuins.TransferBlueprints>Create outposts</RealRuins.TransferBlueprints>
+  <RealRuins.RemoveSites>Remove all spawned locations</RealRuins.RemoveSites>
   <RealRuins.Close>Close</RealRuins.Close>
   <RealRuins.Idle>Idle</RealRuins.Idle>
   <RealRuins.Searching>Searching for blueprints...</RealRuins.Searching>
   <RealRuins.Loading>Loading blueprints: </RealRuins.Loading>
   <RealRuins.Transferring>Transferring blueprints: </RealRuins.Transferring>
   <RealRuins.Processing>Processing blueprints: </RealRuins.Processing>
-  <RealRuins.Completed>Completed!</RealRuins.Completed>
+  <RealRuins.Completed>Completed</RealRuins.Completed>
+  <RealRuins.LoadedAmount>Server has {0} blueprints for this planet.</RealRuins.LoadedAmount>
 
-  <RealRuins.TooManyBlueprints.Load.Title>Seems there is a huge load of blueprints!</RealRuins.TooManyBlueprints.Load.Title>
+  <RealRuins.TooManyBlueprints.Load.Title>Seems there is a whole lot of blueprints!</RealRuins.TooManyBlueprints.Load.Title>
   <RealRuins.TooManyBlueprints.Load.Text>Server says, this world has {0} blueprints. This can take a while to download and process, and the world map can become cluttered. If it's your first time using this game mode, it's recommended to limit blueprint count.</RealRuins.TooManyBlueprints.Load.Text>
 
   <RealRuins.TooManyBlueprints.Transfer.Title>A lot of blueprints to process!</RealRuins.TooManyBlueprints.Transfer.Title>

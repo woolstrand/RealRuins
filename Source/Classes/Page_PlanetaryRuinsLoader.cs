@@ -6,6 +6,7 @@ using UnityEngine;
 
 using Verse;
 using RimWorld;
+using RimWorld.Planet;
 using System.Threading;
 using System.Collections;
 
@@ -18,6 +19,12 @@ namespace RealRuins {
         LoadedBlueprints,
         ProcessingBlueprints,
         Completed
+    }
+
+    enum RuinsPageMode {
+        Manual,
+        Default,
+        FullAuto
     }
 
     class Page_PlanetaryRuinsLoader : Window {
@@ -42,6 +49,7 @@ namespace RealRuins {
 
         private bool showLoaderOptions = false;
         private bool showTranferrerOptions = false;
+        private RuinsPageMode mode = RuinsPageMode.Default;
 
         // How many maps will be downloaded in case available number is really large.
         private int downloadLimit = 0;
@@ -75,18 +83,36 @@ namespace RealRuins {
                 return;
             }
 
-            list.Label("RealRuins.LoadBlueprintsDescription".Translate());
-            list.Label(new TaggedString("RealRuins.MapSizeChangeWarning".Translate().Colorize(Color.yellow)));
+            if (showLoaderOptions && showTranferrerOptions) {
+                list.Label("RealRuins.OptionsDescription".Translate());
+            } else {
+                list.Label("RealRuins.LoadBlueprintsDescription".Translate());
+                list.Label(new TaggedString("RealRuins.MapSizeChangeWarning".Translate().Colorize(Color.yellow)));
+            }
             list.Gap();
 
             DrawLoader(list);
             DrawTransferrer(list);
 
+            bool canRemove = blueprintsUsed > 0 && pageState == RuinsPageState.Completed;
+            Rect bottomRect = rect.BottomPartPixels(canRemove ? 65 : 30);
+            Listing_Standard bottomButtons = new Listing_Standard();
+            bottomButtons.Begin(bottomRect);
+
+            if (canRemove) {
+                if (bottomButtons.ButtonText("RealRuins.RemoveSites".Translate())) {
+                    RemoveSites();
+                }
+            }
+
             if (standalone) {
-                if (list.ButtonText("RealRuins.Close".Translate())) {
+                if (bottomButtons.ButtonText("RealRuins.Close".Translate())) {
                     Find.WindowStack.TryRemove(this);
                 }
             }
+
+            bottomButtons.End();
+
             list.End();
         }
 
@@ -99,7 +125,7 @@ namespace RealRuins {
             switch (pageState) {
                 case RuinsPageState.Idle:
                     if (showLoaderOptions) {
-                        if (list.ButtonText("RealRuins.Start".Translate())) {
+                        if (list.ButtonText("RealRuins.GetCount".Translate())) {
                             StartLoadingList();
                         }
                         DrawLoadingOptions(list);
@@ -108,7 +134,8 @@ namespace RealRuins {
                         sublist.Gap(4);
                         sublist.maxOneColumn = false;
                         sublist.ColumnWidth = (list.ColumnWidth - 20) / 2;
-                        if (sublist.ButtonText("RealRuins.Start".Translate())) {
+                        if (sublist.ButtonText("RealRuins.StartAuto".Translate())) {
+                            mode = RuinsPageMode.Default;
                             StartLoadingList();
                         }
                         sublist.NewColumn();
@@ -116,6 +143,7 @@ namespace RealRuins {
                         if (sublist.ButtonText("RealRuins.MoreOptions".Translate())) {
                             showLoaderOptions = true;
                             showTranferrerOptions = true;
+                            mode = RuinsPageMode.Manual;
                         }
                         list.EndSection(sublist);
                     }
@@ -129,7 +157,8 @@ namespace RealRuins {
 
                 case RuinsPageState.LoadedHeader:
                     if (showLoaderOptions) {
-
+                        string loadedText = string.Format("RealRuins.LoadedAmount".Translate(), blueprintsTotalCount);
+                        list.Label(loadedText);
                         DrawLoadingOptions(list);                        
                         if (list.ButtonText("RealRuins.LoadBlueprints".Translate())) {
                             LoadItems();
@@ -160,9 +189,11 @@ namespace RealRuins {
 
         public void DrawTransferrer(Listing_Standard list) {
 
-            Text.Font = GameFont.Medium;
-            list.Label("RealRuins.TransferringOptions".Translate());
-            Text.Font = GameFont.Small;
+            if (showLoaderOptions || mode == RuinsPageMode.Manual || pageState > RuinsPageState.LoadingBlueprints) {
+                Text.Font = GameFont.Medium;
+                list.Label("RealRuins.TransferringOptions".Translate());
+                Text.Font = GameFont.Small;
+            }
 
             string blueprintStats = "RealRuins.Loading".Translate();
             string skipped = "RealRuins.DroppedMaps".Translate() + " --- ";
@@ -173,7 +204,6 @@ namespace RealRuins {
                 case RuinsPageState.LoadingHeader:
                 case RuinsPageState.LoadedHeader:
                 case RuinsPageState.LoadingBlueprints:
-//                    list.Label("RealRuins.LoadBlueprintsFirst".Translate());
                     if (showTranferrerOptions) {
                         DrawTransferOptions(list);
                     }
@@ -183,7 +213,7 @@ namespace RealRuins {
                     if (showTranferrerOptions) {
                         DrawTransferOptions(list);
                         if (list.ButtonText("RealRuins.TransferBlueprints".Translate())) {
-                            LoadItems();
+                            CreateSites();
                         }
                     }
 
@@ -214,7 +244,7 @@ namespace RealRuins {
         }
 
         private void DrawTransferOptions(Listing_Standard list) {
-            if (int.TryParse(list.TextEntryLabeled("RealRuins.DownloadLimit".Translate(), transferLimit.ToString()), out int number)) {
+            if (int.TryParse(list.TextEntryLabeled("RealRuins.TransferLimit".Translate(), transferLimit.ToString()), out int number)) {
                 this.transferLimit = number;
             }
             abandonedPercentage = (int)list.SliderLabeled("RealRuins.AbandonedPercentage".Translate(), (float)abandonedPercentage, 0, 100);
@@ -243,12 +273,12 @@ namespace RealRuins {
                     blueprintsTotalCount = blueprintIds.Count;
                     pageState = RuinsPageState.LoadedHeader;
                     Debug.Log("Loaded list of snapshot names, {0} elements", blueprintsTotalCount);
-                    if (blueprintsTotalCount < 500 && showLoaderOptions == false) {
+                    if (blueprintsTotalCount < 500 && mode != RuinsPageMode.Manual) {
                         // No options and few blueprints -> move to loading right away
                         LoadItems();
                     } else {
                         // If no options shown -> display alert. Otherwise do nothing: user with options on screen knows what to do.
-                        if (showLoaderOptions == false) {
+                        if (mode == RuinsPageMode.Default) {
                             var text = string.Format("RealRuins.TooManyBlueprints.Load.Text".Translate(), blueprintsTotalCount);
                             var dialog = new SmallQuestionDialog("RealRuins.TooManyBlueprints.Load.Title".Translate(),
                                 text,
@@ -260,16 +290,19 @@ namespace RealRuins {
                                         case 0:
                                             downloadLimit = 500;
                                             transferLimit = 500;
+                                            mode = RuinsPageMode.FullAuto;
                                             LoadItems();
                                             break;
                                         case 1:
                                             downloadLimit = 0;
                                             transferLimit = 0;
+                                            mode = RuinsPageMode.FullAuto;
                                             LoadItems();
                                             break;
                                         case 2:
                                             showLoaderOptions = true;
                                             showTranferrerOptions = true;
+                                            mode = RuinsPageMode.Manual;
                                             break;
                                     }
                                 });
@@ -317,13 +350,27 @@ namespace RealRuins {
         // Checks how many blueprints were loaded, check if any alert should be displayed, proceed with transferring if needed
         private void LoadingCompleted() {
             pageState = RuinsPageState.LoadedBlueprints;
-            // no limits, no showing options => if we're here with such settings, the user knows what to do.
-            bool processEverything = downloadLimit == 0 && transferLimit == 0 && !showLoaderOptions && !showTranferrerOptions;
-            if (blueprintsLoadedCount < 500 || processEverything) {
+            if (mode == RuinsPageMode.FullAuto || mode == RuinsPageMode.Default) {
                 CreateSites();
             } else {
                 // do nothing for now, just wait for the user to adjust options.
             }
+        }
+
+        private void RemoveSites() {
+            List<WorldObject> objectsToRemove = new List<WorldObject>();
+            foreach (var obj in Find.WorldObjects.AllWorldObjects) {
+                if (obj is RealRuinsPOIWorldObject) {
+                    objectsToRemove.Add(obj);
+                }
+            }
+
+            foreach (var obj in objectsToRemove) {
+                Find.WorldObjects.Remove(obj);
+            }
+
+            blueprintsUsed = 0;
+            pageState = RuinsPageState.Idle;
         }
 
         private void CreateSites() {
