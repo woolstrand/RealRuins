@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<LanguageData>
+  <RealRuins_ModOptions_Category>真實遺跡</RealRuins_ModOptions_Category>
+
+  <RealRuins_ModOptions_AllowDownloads>允許從遠端資料庫下載遺跡</RealRuins_ModOptions_AllowDownloads>
+
+  <RealRuins_ModOptions_AllowUploads>允許上傳你的基地到遠端資料庫</RealRuins_ModOptions_AllowUploads>
+  
+  <RealRuins_ModOptions_CacheSize>限制本地端快取大小為 </RealRuins_ModOptions_CacheSize>
+  <RealRuins_ModOptions_OfflineMode>僅限本地端模式</RealRuins_ModOptions_OfflineMode>
+  <RealRuins_ModOptions_AllowDownloadsTooltip>若關閉此選項，將不會移除任何已下載資料。</RealRuins_ModOptions_AllowDownloadsTooltip>
+  <RealRuins_ModOptions_AllowUploadsTooltip>建議開啟此選項以協助豐富資料庫，取得更多有趣的基地設計。每次遊戲周期上傳的資料量應該不會超過 MB(megabytes) 等級。</RealRuins_ModOptions_AllowUploadsTooltip>
+  <RealRuins_ModOptions_CacheSizeTooltip>當達到限制的容量時，模此會繼續下載新的遺跡藍圖，並移除舊有的。</RealRuins_ModOptions_CacheSizeTooltip>
+  <RealRuins_ModOptions_OfflineModeTooltip>此模式會刪除所有從遠端下載的資料，且將不會再進行任何上傳及下載的動作。然而，你曾經創建過的基地仍然會儲存在本地端，用以生成你遊戲中的遺跡.</RealRuins_ModOptions_OfflineModeTooltip>
+  <RealRuins_ModOptions_OfflineModeConfirmation>確定要繼續嗎？</RealRuins_ModOptions_OfflineModeConfirmation>
+
+  <RealRuins_ModOptions_CurrentCacheSize>目前本地端快取大小: </RealRuins_ModOptions_CurrentCacheSize>
+  <RealRuins_ModOptions_RemoveAll>清除快取</RealRuins_ModOptions_RemoveAll>
+
+  <RealRuins_ModOptions_DownloadMore>下載更多基地藍圖</RealRuins_ModOptions_DownloadMore>
+  <RealRuins_ModOptions_CurrentCacheCount>快取中藍圖數量: </RealRuins_ModOptions_CurrentCacheCount>
+
+  <RealRuins_MapOptions_Density>遺跡密度</RealRuins_MapOptions_Density>
+  <RealRuins_MapOptions_Size>碎片尺寸最小值</RealRuins_MapOptions_Size>
+  <RealRuins_MapOptions_Size_Max>碎片尺寸最大值</RealRuins_MapOptions_Size_Max>
+  <RealRuins_MapOptions_Deterioration>附加的風化程度</RealRuins_MapOptions_Deterioration>
+  <RealRuins_MapOptions_Scavengers>尋寶者活躍係數</RealRuins_MapOptions_Scavengers>
+  <RealRuins_MapOptions_CostLimit>限制物品最高價值</RealRuins_MapOptions_CostLimit>
+  <RealRuins_MapOptions_DisableHaulables>禁止生成可運輸物品</RealRuins_MapOptions_DisableHaulables>
+  <RealRuins_MapOptions_WallsAndDoorsOnly>僅生成牆和門</RealRuins_MapOptions_WallsAndDoorsOnly>
+  <RealRuins_MapOptions_DisableDecoration>靜態裝飾物</RealRuins_MapOptions_DisableDecoration>
+  <RealRuins_MapOptions_DisableTraps>動態裝飾物</RealRuins_MapOptions_DisableTraps>
+  <RealRuins_MapOptions_DisableHostiles>敵對單位數量</RealRuins_MapOptions_DisableHostiles>
+  <RealRuins_MapOptions_Claimable>令結構可被佔領</RealRuins_MapOptions_Claimable>
+  
+  <RealRuins_MapOptions_DensityTT>在 100x100 的單位內平均可生成的遺跡數量</RealRuins_MapOptions_DensityTT>
+  <RealRuins_MapOptions_SizeTT>遺跡大小在輸入值的 50% ~ 150% 之間隨機選擇</RealRuins_MapOptions_SizeTT>
+  <RealRuins_MapOptions_DeteriorationTT>這個值額外增加了每一個單元被破壞的機率，不會影響其它單元剩餘的生命值。預設值是 0，填入最大值遺跡將一無所有</RealRuins_MapOptions_DeteriorationTT>
+  <RealRuins_MapOptions_ScavengersTT>設為 0 將得到完整未被掠奪過的遺跡</RealRuins_MapOptions_ScavengersTT>
+  <RealRuins_MapOptions_CostLimitTT>所有高於設定價格的物品都會被尋寶者奪走</RealRuins_MapOptions_CostLimitTT>
+  <RealRuins_MapOptions_DisableHaulablesTT>所有可搬運的物資都不會出現，但是仍然可以找到家具</RealRuins_MapOptions_DisableHaulablesTT>
+  <RealRuins_MapOptions_WallsAndDoorsOnlyTT>將會移除所有意義上不是牆或門的物件，且金子打造的建築也會被移除，不會有奇蹟</RealRuins_MapOptions_WallsAndDoorsOnlyTT>
+  <RealRuins_MapOptions_DisableDecorationTT>目前只會生成骸骨</RealRuins_MapOptions_DisableDecorationTT>
+  <RealRuins_MapOptions_DisableTrapsTT>陷阱，地雷跟其它驚喜</RealRuins_MapOptions_DisableTrapsTT>
+  <RealRuins_MapOptions_DisableHostilesTT></RealRuins_MapOptions_DisableHostilesTT>
+  <RealRuins_MapOptions_ClaimableTT>不可佔領的結構無法修復或拆除</RealRuins_MapOptions_ClaimableTT>
+
+  <RealRuins_MapOptions_EnableProximity>考慮與定居點的距離</RealRuins_MapOptions_EnableProximity>
+  <RealRuins_MapOptions_EnableProximityTT>到定居點的距離會影響生成參數：離定居點越近，廢墟越密集，但被掠奪的越多</RealRuins_MapOptions_EnableProximityTT>
+
+  <RealRuins_MapOptions_StartWithoutRuins>起始地圖不會生成遺跡</RealRuins_MapOptions_StartWithoutRuins>
+  <!-- -->
+  <RealRuins_MapOptions_StartWithoutRuinsTT>起始地圖不會生成遺跡，後續的遺跡生成由設定的參數決定</RealRuins_MapOptions_StartWithoutRuinsTT>
+
+  <!-- Caravan entered map -->
+  <LetterLabelCaravanEnteredRuins>商隊抵達遺跡</LetterLabelCaravanEnteredRuins>
+  <LetterCaravanEnteredRuins>{0}已經抵達廢棄的基地遺跡，準備開始尋寶行動。</LetterCaravanEnteredRuins>
+
+  <RealRuins.CaravanFoundRuins>在旅途中，{0}在附近發現了幾座保存良好的老舊建築。其中必定有些值錢的東西。但同時也許是一個機械軍團的基地、野生動物的巢穴或是掠奪者的基地 - 這些建築物如此完整一定有它的原因在</RealRuins.CaravanFoundRuins>
+  <RealRuins.CaravanFoundRuins.Investigate>進入調查</RealRuins.CaravanFoundRuins.Investigate>
+  <RealRuins.CaravanFoundRuinsTitle>發現老舊建築群</RealRuins.CaravanFoundRuinsTitle>
+
+  <RealRuins_ModOptions_Reset>回復初始化設定</RealRuins_ModOptions_Reset>
+  <RealRuins_MapOptions_CaravanReforming>允許即時重組商隊</RealRuins_MapOptions_CaravanReforming>
+  <RealRuins_MapOptions_CaravanReformingTT>通常，在探索遺跡時，即時商隊重組功能會被關閉。你需要手動的探索遺跡並將你想要的物品主動拾起或放置到馱畜身上，然後往邊境移動來進入大地圖，即使現在地圖上已經是安全的。但如果你希望允許即時重組商隊，請啟用此設定</RealRuins_MapOptions_CaravanReformingTT>
+
+  <!-- Art -->
+  <DeterioratedArtDescription>這件物品已經太過老舊且損壞。你可以肯定它曾經是一件美麗的藝術品，但現在已經無法辨別它究竟是什麼了。</DeterioratedArtDescription>
+
+  <!-- Ruins info -->
+  <RealRuins.RuinsWealth>財富: </RealRuins.RuinsWealth>
+  <RealRuins.RuinsActivity>襲擊者出現: </RealRuins.RuinsActivity>
+
+  <RealRuins.RuinsWealth.0>趨近於零 (&lt;10K)</RealRuins.RuinsWealth.0>
+  <RealRuins.RuinsWealth.1>低</RealRuins.RuinsWealth.1>
+  <RealRuins.RuinsWealth.2>中</RealRuins.RuinsWealth.2>
+  <RealRuins.RuinsWealth.3>高 (&gt;1M)</RealRuins.RuinsWealth.3>
+  <RealRuins.RuinsWealth.4>超高 (&gt;10M)</RealRuins.RuinsWealth.4>
+
+  <RealRuins.RuinsActivity.0>幾乎不會</RealRuins.RuinsActivity.0>
+  <RealRuins.RuinsActivity.1>低</RealRuins.RuinsActivity.1>
+  <RealRuins.RuinsActivity.2>中</RealRuins.RuinsActivity.2>
+  <RealRuins.RuinsActivity.3>高</RealRuins.RuinsActivity.3>
+  <RealRuins.RuinsActivity.4>異常的高</RealRuins.RuinsActivity.4>
+  
+  <!-- Ruins messages -->
+  <RealRuins.NoMoreEnemies>附近似乎以杳無人煙，你可以安全的收拾物品並離開。(允許即時重組商隊)</RealRuins.NoMoreEnemies>
+
+  <!-- POI captions and descriptions -->
+  <RealRuins.CaptionPOI0>小型軍事基地</RealRuins.CaptionPOI0>
+  <RealRuins.CaptionPOI1>前線哨站</RealRuins.CaptionPOI1>
+  <RealRuins.CaptionPOI2>臨時營地</RealRuins.CaptionPOI2>
+  <RealRuins.CaptionPOI3>城市</RealRuins.CaptionPOI3>
+  <RealRuins.CaptionPOI4>工廠</RealRuins.CaptionPOI4>
+  <RealRuins.CaptionPOI5>研發中心</RealRuins.CaptionPOI5>
+  <RealRuins.CaptionPOI6>發電廠</RealRuins.CaptionPOI6>
+  <RealRuins.CaptionPOI7>大型軍事基地</RealRuins.CaptionPOI7>
+  <RealRuins.CaptionPOI8>倉庫</RealRuins.CaptionPOI8>
+  <RealRuins.CaptionPOI9>通訊站</RealRuins.CaptionPOI9>
+  <RealRuins.CaptionPOI10>遺跡</RealRuins.CaptionPOI10>
+  <RealRuins.CaptionPOI11>據點</RealRuins.CaptionPOI11>
+
+
+  <RealRuins.DescPOI0>一小群疑似軍事用途的建築。可能是軍械庫或小型運輸軍事基地。它也許有幾個陣地武器和少量(<1x)的士兵。</RealRuins.DescPOI0>
+  <RealRuins.DescPOI1>一個很小的軍事前哨站，幾個房間，幾座砲塔，幾名士兵。</RealRuins.DescPOI1>
+  <RealRuins.DescPOI2>為開採資源、狩獵或作為轉運點而設立的臨時營地。</RealRuins.DescPOI2>
+  <RealRuins.DescPOI3>一個繁榮的大城市。儘管它通常沒有巨大的牆城或大量的陣地武器，但它可以在受到攻擊時請求強大的增援。</RealRuins.DescPOI3>
+  <RealRuins.DescPOI4>這些建築內可能存在很多工作台、原料以及產品。但很可能會配備精良的守衛。</RealRuins.DescPOI4>
+  <RealRuins.DescPOI5>研發中心負責生產比普通工廠更複雜、更昂貴的產品。除了可能配備精良的守衛之外，一旦你決定進攻，守衛就會請求增援。</RealRuins.DescPOI5>
+  <RealRuins.DescPOI6>主要由發電設備組成的建築群。</RealRuins.DescPOI6>
+  <RealRuins.DescPOI7>一個擁有大量陣地武器的大型軍事基地，駐守著大量的兵力及隨時可抵達的增援。</RealRuins.DescPOI7>
+  <RealRuins.DescPOI8>遠遠看起來像是個堆滿貨物的大型機房，配備著大量的守衛。</RealRuins.DescPOI8>
+  <RealRuins.DescPOI9>看起來像是通訊站的小型建築。也許只是個臨時的軍營，只有幾名士兵看守著。</RealRuins.DescPOI9>
+  <RealRuins.DescPOI10>一片殘破的建築，充滿了損壞的家具、工作台及各種廢棄物，空蕩蕩的廢墟，看不出已經荒廢在這邊多長的歲月了。</RealRuins.DescPOI10>
+  <RealRuins.DescPOI11>戒備森嚴的要塞。配備大量的陣地武器、部隊和增援，擁有強大的自衛能力。</RealRuins.DescPOI11>
+
+  <RealRuins.POINowRuined>這裡曾是個生氣勃勃的地方，但現在卻已被遺棄，沒有人知道發生了什麼事。所以最好小心提防各種潛在的危險。</RealRuins.POINowRuined>
+
+  <RealRuins.EnterPOI>探索: {0}</RealRuins.EnterPOI>
+  <RealRuins.AttackPOI>攻擊: {0}</RealRuins.AttackPOI>
+
+  <RealRuins.CaravanEnteringPOI>前往地點: {0}</RealRuins.CaravanEnteringPOI>
+
+  <LetterLabelCaravanEnteredUnownedPOI>商隊抵達</LetterLabelCaravanEnteredUnownedPOI>
+  <LetterCaravanEnteredUnownedPOI>{0}已抵達目的地。請步步為營, 小心謹慎。</LetterCaravanEnteredUnownedPOI>
+  <LetterLabelCaravanAttackedPOI>商隊襲擊</LetterLabelCaravanAttackedPOI>
+  <LetterCaravanAttackedPOI>{0}正在攻擊其它派系的資產。</LetterCaravanAttackedPOI>
+  <LetterTransportPodsArrivedInUnownedPOI>運輸艙抵達目的地。</LetterTransportPodsArrivedInUnownedPOI>
+  <LetterLabelTransportPodsAttackedPOI>運輸艙抵達目的地。</LetterLabelTransportPodsAttackedPOI>
+  <LetterTransportPodsAttackedPOI>運輸艙抵達目的地。開始攻行動。</LetterTransportPodsAttackedPOI>
+  <LetterLabelTransportPodsArrivedAtRuins>運輸艙抵達遺跡</LetterLabelTransportPodsArrivedAtRuins>
+  <LetterTransportPodsArrivedAtRuins>運輸艙已抵達遺跡</LetterTransportPodsArrivedAtRuins>
+
+  <!-- POI load dialog -->
+  <RealRuins.LoadBlueprintsCaption>載入整個行星的藍圖</RealRuins.LoadBlueprintsCaption>
+  <RealRuins.LoadBlueprints>載入藍圖</RealRuins.LoadBlueprints>
+  <RealRuins.Close>關閉</RealRuins.Close>
+  <RealRuins.Idle>待機</RealRuins.Idle>
+  <RealRuins.Searching>搜尋藍圖...</RealRuins.Searching>
+  <RealRuins.Loading>載入藍圖: </RealRuins.Loading>
+  <RealRuins.Processing>分析藍圖: </RealRuins.Processing>
+  <RealRuins.Completed>完成!</RealRuins.Completed>
+  <RealRuins.BiomeFiltering>過濾生物群系</RealRuins.BiomeFiltering>
+  <RealRuins.BiomeFilteringTT>排除與地圖不符合或不相容的生物群系。</RealRuins.BiomeFilteringTT>
+  <RealRuins.CostFiltering>過濾價值</RealRuins.CostFiltering>
+  <RealRuins.CostFilteringTT>排除價值過低的地圖。(低於平均被認定為 "廢墟" 的價值)</RealRuins.CostFilteringTT>
+  <RealRuins.AreaFiltering>過濾區域及物品</RealRuins.AreaFiltering>
+  <RealRuins.AreaFilteringTT>排除太小或物品太少的地圖。</RealRuins.AreaFilteringTT>
+  <RealRuins.UsedMaps>被使用的地圖: </RealRuins.UsedMaps>
+  <RealRuins.DroppedMaps>被丟棄的地圖: </RealRuins.DroppedMaps>
+
+  <RealRuins.MapsModuleButton>匯入藍圖到行星(BETA)</RealRuins.MapsModuleButton>
+  <RealRuins.PlanetarySettignsCaption>真實遺跡 - 星球遺跡設定</RealRuins.PlanetarySettignsCaption>
+  <RealRuins.NeedsGameInProgress>必須在遊戲中才能使用此設定。</RealRuins.NeedsGameInProgress>
+
+  <RealRuins.CaravanReformType>商隊重組形式</RealRuins.CaravanReformType>
+  <RealRuins.Reform.Automatic>自動</RealRuins.Reform.Automatic>
+  <RealRuins.Reform.Instant>即時</RealRuins.Reform.Instant>
+  <RealRuins.Reform.Manual>手動</RealRuins.Reform.Manual>
+  <RealRuins.CaravanReformTooltip>在遺跡中重組商隊的方式。"自動" 與原始在基地上生成商隊的方式相同。"即時" 允許通過世界地圖上的按鈕即時重組。"手動" 需要自行撿拾物品並透過移動到地圖邊緣來組成商隊。</RealRuins.CaravanReformTooltip>
+
+  <RealRuins.ForceMultiplier>事件難度係數</RealRuins.ForceMultiplier>
+  <RealRuins.AbsoluteWealthCap>事件總價值硬上限</RealRuins.AbsoluteWealthCap>
+  <RealRuins.LeaveVanillaRuins>留下原版遺跡</RealRuins.LeaveVanillaRuins>
+  <RealRuins.ForceMultiplierTT>改變此參數來調整事件的難度。</RealRuins.ForceMultiplierTT>
+  <RealRuins.AbsoluteWealthCapTT>設定事件的總價值上限。木牆和木門不列入計算。</RealRuins.AbsoluteWealthCapTT>
+  <RealRuins.LeaveVanillaRuinsTT>如果啟用，原版遺跡及真實遺跡事件都會出現。</RealRuins.LeaveVanillaRuinsTT>
+
+  <!-- -->
+  <RealRuins.LogLevel>日誌等級</RealRuins.LogLevel>
+  <!-- -->
+  <RealRuins.LogLevel.All>所有資料</RealRuins.LogLevel.All>
+  <!-- -->
+  <RealRuins.LogLevel.Warnings>錯誤(errors)及警告(warnings)</RealRuins.LogLevel.Warnings>
+  <!-- -->
+  <RealRuins.LogLevel.Errors>僅錯誤(errors)</RealRuins.LogLevel.Errors>
+</LanguageData>
