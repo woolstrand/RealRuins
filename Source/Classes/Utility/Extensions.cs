@@ -89,12 +89,12 @@ namespace RealRuins {
                 weight = thingDef.GetStatValueAbstract(StatDefOf.Mass, stuffDef);
                 if (weight != 0 && weight != 1.0f) return weight;
             } catch {
-                Debug.Warning(Debug.Generic, "GetStatValue Exception for {0} made of {1}", thingDef, stuffDef);
+                //Debug.Warning(Debug.Generic, "GetStatValue Exception for {0} made of {1}", thingDef, stuffDef);
             }
 
             if (thingDef.costList == null) return 1.0f; //weight is either 1 or 0, no way to calculate real weight, weight 0 is invalid => returning 1.
 
-            //Debug.Message("Weight of {0} was {1}, calculating resursively based on list", thing.defName, weight);
+            //Debug.Message("Weight of {0} was {1}, calculating recursively based on list", thing.defName, weight);
             //Debug.PrintArray(thing.costList.ToArray());
             weight = 0;
             foreach (ThingDefCountClass part in thingDef.costList) {
