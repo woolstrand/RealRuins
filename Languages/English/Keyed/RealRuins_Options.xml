@@ -151,7 +151,8 @@
   <RealRuins.TransferringOptions>Transfer</RealRuins.TransferringOptions>
   <RealRuins.LoadingOptions>Load</RealRuins.LoadingOptions>
   <RealRuins.LoadBlueprintsFirst>You need to load blueprints first.</RealRuins.LoadBlueprintsFirst>
-  <RealRuins.LoadBlueprints>Load blueprints</RealRuins.LoadBlueprints>
+  <RealRuins.LoadBlueprints>Just load</RealRuins.LoadBlueprints>
+  <RealRuins.LoadAndSpawnBlueprints>Load and spawn</RealRuins.LoadAndSpawnBlueprints>
   <RealRuins.TransferBlueprints>Create outposts</RealRuins.TransferBlueprints>
   <RealRuins.RemoveSites>Remove all spawned locations</RealRuins.RemoveSites>
   <RealRuins.Close>Close</RealRuins.Close>
@@ -201,6 +202,13 @@
   <RealRuins.ForceMultiplierTT>Tune this to make ruins event more or less difficult</RealRuins.ForceMultiplierTT>
   <RealRuins.AbsoluteWealthCapTT>Determines absolute wealth cap for ruins events. Wooden walls and doors are not counted against total wealth.</RealRuins.AbsoluteWealthCapTT>
   <RealRuins.LeaveVanillaRuinsTT>If checked, both real ruins and vanilla ruins will be spawned</RealRuins.LeaveVanillaRuinsTT>
+
+  <RealRuins.FactionOwnedStartTile>Tile is occupied</RealRuins.FactionOwnedStartTile>
+  <RealRuins.FactionOwnedStartTileDesc>You're about to enter a tile with a settlement on it, and this settlement belongs to another faction. You can either make it abandoned and settle in ruins, you can make it yours, or you can attack it with your starting party.</RealRuins.FactionOwnedStartTileDesc>
+  <RealRuins.FactionOwnedStartTile.MakeAbandoned>Make abandoned and settle</RealRuins.FactionOwnedStartTile.MakeAbandoned>
+  <RealRuins.FactionOwnedStartTile.CaptureUntouched>Own this tile and settle</RealRuins.FactionOwnedStartTile.CaptureUntouched>
+  <RealRuins.FactionOwnedStartTile.Attack>Attack with starting party</RealRuins.FactionOwnedStartTile.Attack>
+  <RealRuins.FactionOwnedStartTile.Cancel>Cancel</RealRuins.FactionOwnedStartTile.Cancel>
 
   <RealRuins.LogLevel>Log level</RealRuins.LogLevel>
   <RealRuins.LogLevel.All>Log everything</RealRuins.LogLevel.All>

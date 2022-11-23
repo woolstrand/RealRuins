@@ -11,7 +11,7 @@ namespace RealRuins {
         private string[] actions;
         private Action<int> completion;
 
-        public override Vector2 InitialSize => new Vector2(500, 240);
+        public override Vector2 InitialSize => new Vector2(500, 290);
 
         public SmallQuestionDialog(string title, string text, string[] actions, Action<int> completion) {
             this.title = title;
@@ -30,13 +30,16 @@ namespace RealRuins {
             list.Label(text);
 
             int count = actions.Length;
-            int buttonWidth = (((int)(rect.width) - 20 - 10 * (count - 1)) / count);
+            Listing_Standard bottomList = new Listing_Standard();
+            bottomList.Begin(rect.BottomPartPixels(count * 30 + 5));
             for (int i = 0; i < count; i ++) {
-                if (list.ButtonText(actions[i])) {
+                if (bottomList.ButtonText(actions[i])) {
                     completion(i);
                     this.Close();
                 }
             }
+            bottomList.End();
+            list.End();
         }
     }
 }

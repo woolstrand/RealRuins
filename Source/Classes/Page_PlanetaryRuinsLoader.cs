@@ -42,7 +42,7 @@ namespace RealRuins {
         private bool biomeStrict = true;
         private bool costStrict = false;
         private bool areaStrict = false;
-        private bool agressiveDiscard = false;
+        private bool aggressiveDiscard = false;
 
         private bool forceStopLoading = false;
         private bool forceStopTransfer = false;
@@ -53,17 +53,22 @@ namespace RealRuins {
 
         // How many maps will be downloaded in case available number is really large.
         private int downloadLimit = 0;
+        private string downloadLimitString = "0";
 
         // How many maps will be transferred
         private int transferLimit = 0;
+        private string transferLimitString = "0";
 
         private List<string> blueprintIds = null;
         private List<PlanetTileInfo> mapTiles;
 
         private APIService service = new APIService();
 
-        public Page_PlanetaryRuinsLoader() {
+        public Page_PlanetaryRuinsLoader(bool forceCleanup = false) {
             doCloseX = true;
+            if (forceCleanup) {
+                RemoveSites();
+            }
         }
 
         public void DoWindowContents(Rect rect, bool standalone) {
@@ -106,9 +111,11 @@ namespace RealRuins {
             }
 
             if (standalone) {
+                GUI.color = new Color(1f, 0.3f, 0.35f);
                 if (bottomButtons.ButtonText("RealRuins.Close".Translate())) {
                     Find.WindowStack.TryRemove(this);
                 }
+                GUI.color = Color.white;
             }
 
             bottomButtons.End();
@@ -125,10 +132,10 @@ namespace RealRuins {
             switch (pageState) {
                 case RuinsPageState.Idle:
                     if (showLoaderOptions) {
+                        DrawLoadingOptions(list);
                         if (list.ButtonText("RealRuins.GetCount".Translate())) {
                             StartLoadingList();
                         }
-                        DrawLoadingOptions(list);
                     } else {
                         var sublist = list.BeginSection(40, 4, 4);
                         sublist.Gap(4);
@@ -201,8 +208,20 @@ namespace RealRuins {
 
             switch (pageState) {
                 case RuinsPageState.Idle:
-                case RuinsPageState.LoadingHeader:
                 case RuinsPageState.LoadedHeader:
+                    if (showTranferrerOptions) {
+                        DrawTransferOptions(list);
+                        if (list.ButtonText("RealRuins.LoadAndSpawnBlueprints".Translate())) {
+                            mode = RuinsPageMode.FullAuto;
+                            if (pageState == RuinsPageState.Idle) {
+                                StartLoadingList();
+                            } else {
+                                LoadItems();
+                            }
+                        }
+                    }
+                    break;
+                case RuinsPageState.LoadingHeader:
                 case RuinsPageState.LoadingBlueprints:
                     if (showTranferrerOptions) {
                         DrawTransferOptions(list);
@@ -238,21 +257,24 @@ namespace RealRuins {
         }
 
         private void DrawLoadingOptions(Listing_Standard list) {
-            if (int.TryParse(list.TextEntryLabeled("RealRuins.DownloadLimit".Translate(), downloadLimit.ToString()), out int number)) {
+            downloadLimitString = list.TextEntryLabeled("RealRuins.DownloadLimit".Translate(), downloadLimitString);
+            if (int.TryParse(downloadLimitString, out int number)) {
                 this.downloadLimit = number;
             }
         }
 
         private void DrawTransferOptions(Listing_Standard list) {
-            if (int.TryParse(list.TextEntryLabeled("RealRuins.TransferLimit".Translate(), transferLimit.ToString()), out int number)) {
+            transferLimitString = list.TextEntryLabeled("RealRuins.TransferLimit".Translate(), transferLimitString);
+            if (int.TryParse(transferLimitString, out int number)) {
                 this.transferLimit = number;
             }
+
             abandonedPercentage = (int)list.SliderLabeled("RealRuins.AbandonedPercentage".Translate(), (float)abandonedPercentage, 0, 100);
 
             list.CheckboxLabeled("RealRuins.BiomeFiltering".Translate(), ref biomeStrict, "RealRuins.BiomeFilteringTT".Translate());
             list.CheckboxLabeled("RealRuins.CostFiltering".Translate(), ref costStrict, "RealRuins.CostFilteringTT".Translate());
             list.CheckboxLabeled("RealRuins.AreaFiltering".Translate(), ref areaStrict, "RealRuins.AreaFilteringTT".Translate());
-            list.CheckboxLabeled("RealRuins.DiscardAbandoned".Translate(), ref agressiveDiscard, "RealRuins.DiscardAbandonedTT".Translate());
+            list.CheckboxLabeled("RealRuins.DiscardAbandoned".Translate(), ref aggressiveDiscard, "RealRuins.DiscardAbandonedTT".Translate());
         }
 
         public override void DoWindowContents(Rect rect) {
@@ -273,10 +295,9 @@ namespace RealRuins {
                     blueprintsTotalCount = blueprintIds.Count;
                     pageState = RuinsPageState.LoadedHeader;
                     Debug.Log("Loaded list of snapshot names, {0} elements", blueprintsTotalCount);
-                    if (blueprintsTotalCount < 500 && mode != RuinsPageMode.Manual) {
-                        // No options and few blueprints -> move to loading right away
-                        LoadItems();
-                    } else {
+
+                    // If we're in auto mode and have too many blueprints - ask the user what to do
+                    if (blueprintsTotalCount > 500 && mode == RuinsPageMode.Default) {
                         // If no options shown -> display alert. Otherwise do nothing: user with options on screen knows what to do.
                         if (mode == RuinsPageMode.Default) {
                             var text = string.Format("RealRuins.TooManyBlueprints.Load.Text".Translate(), blueprintsTotalCount);
@@ -308,6 +329,13 @@ namespace RealRuins {
                                 });
                             Find.WindowStack.Add(dialog);
                         }
+                    } else {
+                        // other cases
+                        // options shown: user knows what they are doing
+                        // low blueprints count: can proceed
+                        // initially asked for full auto: no need to interrupt
+                        // etc
+                        LoadItems();
                     }
                 } else {
                     pageState = RuinsPageState.Idle;
@@ -399,7 +427,7 @@ namespace RealRuins {
                     }
                 }
                 try {
-                    if (RealRuinsPOIFactory.CreatePOI(t, SnapshotStoreManager.CurrentGamePath(), biomeStrict, costStrict, areaStrict, abandonedPercentage, agressiveDiscard)) {
+                    if (RealRuinsPOIFactory.CreatePOI(t, SnapshotStoreManager.CurrentGamePath(), biomeStrict, costStrict, areaStrict, abandonedPercentage, aggressiveDiscard)) {
                         blueprintsUsed++;
                         if (blueprintsUsed >= transferLimit && transferLimit != 0) {
                             Debug.Log(Debug.POI, "Reached limit of {0} blueprints", transferLimit);
