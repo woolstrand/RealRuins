@@ -192,7 +192,11 @@ namespace RealRuins
             static bool Prefix(Page_SelectStartingSite __instance, ref bool __result) {
                 // We want to allow selecting tiles with ruins on them so you can start your new game on someone's else's base.
                 int selectedTile = Find.WorldInterface.SelectedTile;
-                WorldObject selectedObject = Find.WorldInterface.selector.SelectedObjects.First();
+                var objects = Find.WorldInterface.selector.SelectedObjects;
+                WorldObject selectedObject = null;
+                if (objects.Count > 0) {
+                    selectedObject = objects.First();
+                }
                 if (selectedTile > 0 && selectedObject == null) {
                     selectedObject = Find.WorldObjects.WorldObjectAt<RealRuinsPOIWorldObject>(selectedTile);
                 }
@@ -277,6 +281,12 @@ namespace RealRuins
                             // and we DO NOT need to call original DoNext, we will call it later when everything is settled
                             Debug.Log("StartGame", "Skpping original");
                             return false;
+                        } else if (!forceCallOriginal) {
+                            Debug.Log("StartGame", "Got nil faction, settling in abandoned ruins");
+                            PlanetaryRuinsInitData.shared.startingPOI = selectedObject;
+                            PlanetaryRuinsInitData.shared.startingPOI.SetFaction(null);
+                            PlanetaryRuinsInitData.shared.settleMode = SettleMode.normal;
+                            Find.WorldObjects.Remove(selectedObject);
                         }
                     }
                 }
