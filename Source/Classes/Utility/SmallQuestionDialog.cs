@@ -31,7 +31,7 @@ namespace RealRuins {
 
             int count = actions.Length;
             Listing_Standard bottomList = new Listing_Standard();
-            bottomList.Begin(rect.BottomPartPixels(count * 30 + 5));
+            bottomList.Begin(rect.BottomPartPixels(count * 30 + 10));
             for (int i = 0; i < count; i ++) {
                 if (bottomList.ButtonText(actions[i])) {
                     completion(i);

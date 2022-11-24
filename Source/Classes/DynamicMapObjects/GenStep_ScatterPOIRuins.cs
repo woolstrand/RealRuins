@@ -59,7 +59,7 @@ namespace RealRuins {
 
 
             Debug.Log("Spawning POI: Preselected file name is {0}", filename);
-            Debug.Log("Location (PRESUMABLY WRONG) is {0} {1}", poiComp.originX, poiComp.originZ);
+            Debug.Log("Location is {0} {1}", poiComp.originX, poiComp.originZ);
 
             var bp = BlueprintLoader.LoadWholeBlueprintAtPath(filename);
 
@@ -172,12 +172,12 @@ namespace RealRuins {
             Debug.Log(Debug.Scatter, "Selecting force generators");
             //override forces for any kind of POI if no faction selected
             if (faction == null || (POIType)poiComp.poiType == POIType.Ruins) {
-                if (Rand.Chance(0.25f)) {
+                if (Rand.Chance(0.2f)) {
                     result.Add(new AnimalInhabitantsForcesGenerator());
-                } else if (Rand.Chance(0.333f)) {
+                } else if (Rand.Chance(0.2f)) {
                     result.Add(new MechanoidsForcesGenerator(0));
-                } else if (Rand.Chance(0.5f)) {
-                    result.Add(new CitizenForcesGeneration(1000, Find.FactionManager.RandomEnemyFaction(true, true, false)));
+                } else if (Rand.Chance(0.2f)) {
+                    result.Add(new CitizenForcesGeneration(Rand.RangeInclusive(300, 1000), Find.FactionManager.RandomEnemyFaction(true, true, false)));
                 }
                 Debug.Log(Debug.Scatter, "Selected {0} for abandoned or ruins", result.Count);
                 return result;
