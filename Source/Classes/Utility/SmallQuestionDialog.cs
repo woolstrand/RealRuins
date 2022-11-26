@@ -34,7 +34,9 @@ namespace RealRuins {
             bottomList.Begin(rect.BottomPartPixels(count * 30 + 10));
             for (int i = 0; i < count; i ++) {
                 if (bottomList.ButtonText(actions[i])) {
-                    completion(i);
+                    if (completion != null) {
+                        completion(i);
+                    }
                     this.Close();
                 }
             }
