@@ -166,7 +166,10 @@ namespace RealRuins {
                     if (showLoaderOptions) {
                         string loadedText = string.Format("RealRuins.LoadedAmount".Translate(), blueprintsTotalCount);
                         list.Label(loadedText);
-                        DrawLoadingOptions(list);                        
+                        DrawLoadingOptions(list);
+                        if (blueprintsTotalCount < 30) {
+                            list.Label(new TaggedString("RealRuins.LowCountWarning".Translate().Colorize(Color.yellow)));
+                        }
                         if (list.ButtonText("RealRuins.LoadBlueprints".Translate())) {
                             LoadItems();
                         }
@@ -286,6 +289,15 @@ namespace RealRuins {
             Debug.Log("Loading list for seed: {0}", Find.World.info.seedString);
             service.LoadAllMapsForSeed(Find.World.info.seedString, Find.GameInitData.mapSize, (int)(Find.World.PlanetCoverage * 100), delegate (bool success, List<PlanetTileInfo> mapTiles) {
                 if (success) {
+                    if (mapTiles.Count == 0) {
+                        this.Close();
+                        SmallQuestionDialog q = new SmallQuestionDialog("RealRuins.NoBlueprintsWarning.Caption".Translate(),
+                            "RealRuins.NoBlueprintsWarning.Text".Translate(),
+                            new string[] { "RealRuins.Close".Translate() },
+                            null);
+                        Find.WindowStack.Add(q);
+                    }
+
                     this.mapTiles = mapTiles;
                     blueprintIds = new List<string>();
                     foreach (PlanetTileInfo t in mapTiles) {

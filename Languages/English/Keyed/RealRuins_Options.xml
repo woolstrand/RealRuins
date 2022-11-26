@@ -133,9 +133,12 @@
   <!-- POI load dialog -->
   <RealRuins.LoadBlueprintsCaption>Load blueprints for planet</RealRuins.LoadBlueprintsCaption>
 
-  <RealRuins.LoadBlueprintsDescription>This feature will load maps of other players who had their colonies on the same planets. Their colonies will be spawned as other factions' settlements and outposts, or as abandoned ruins. Unlike random ruins, those will be placed at their original locations.</RealRuins.LoadBlueprintsDescription>
+  <RealRuins.LoadBlueprintsDescription>This feature will load maps of other players who had their colonies on the same planet. Their colonies will be spawned as other factions' settlements and outposts, or as abandoned ruins. Unlike random ruins, those will be placed at their original locations.</RealRuins.LoadBlueprintsDescription>
   <RealRuins.OptionsDescription>In this mode you can control every step. At first you load just count of blueprints for the planet and can adjust how many of them do you want to download as blueprints. Then, after loading, you can adjust how many do you want to be transferred and how filtration should be done. You can stop during each step, remove everything and start over.</RealRuins.OptionsDescription>
   <RealRuins.MapSizeChangeWarning>WARNING: If you're going to change map size, press Done now and download blueprints after changing map size.</RealRuins.MapSizeChangeWarning>
+  <RealRuins.LowCountWarning>You have too few blueprints. If it bothers you, try to select another seed or map settings. You can check the most populated worlds by visiting https://woolstrand.art/view/maps/topseeds</RealRuins.LowCountWarning>
+  <RealRuins.NoBlueprintsWarning.Caption>This world does not contain any maps. It means, nobody have yet played with the same seed, coverage and map size. If you want to have some locations on the world map, try selecting more common seed. You can check the most populated worlds by visiting https://woolstrand.art/view/maps/topseeds</RealRuins.NoBlueprintsWarning.Caption>
+  <RealRuins.NoBlueprintsWarning.Text>This world does not contain any maps. It means, nobody have yet played with the same seed, coverage and map size. If you want to have some locations on the world map, try selecting more common seed. You can check the most populated worlds by visiting https://woolstrand.art/view/maps/topseeds</RealRuins.NoBlueprintsWarning.Text>
   <RealRuins.StartAuto>Load automatically</RealRuins.StartAuto>
   <RealRuins.GetCount>Load list</RealRuins.GetCount>
   <RealRuins.MoreOptions>More options...</RealRuins.MoreOptions>
