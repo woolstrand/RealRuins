@@ -41,11 +41,15 @@ namespace RealRuins
 		}
 
 		protected override bool TestRunInt(Slate slate) {
-			return true;
+            Debug.Log("QuestNode_FindBlueprintNode", "TestRun launched");
+            var filename = "TEST";
+            slate.Set(storeAs.GetValue(slate), filename);
+            return true;
         }
 
 		protected override void RunInt() {
-			Slate slate = QuestGen.slate;
+            Debug.Log("QuestNode_FindBlueprintNode", "Real run launched");
+            Slate slate = QuestGen.slate;
 			var filename = FindBlueprint(slate);
 			if (filename != null) {
 				slate.Set(storeAs.GetValue(slate), filename);
