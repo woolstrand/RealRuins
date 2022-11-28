@@ -2,7 +2,8 @@
 <Defs>
   <QuestScriptDef>
     <defName>RealRuins_IntactRuins</defName>
-    <rootSelectionWeight>1.0</rootSelectionWeight>
+    <rootSelectionWeight>0.3</rootSelectionWeight>
+    <rootMinPoints>0</rootMinPoints>
     <canGiveRoyalFavor>false</canGiveRoyalFavor>
     <autoAccept>true</autoAccept>
     <questNameRules>
@@ -25,7 +26,7 @@
         <li Class="RealRuins.QuestNode_FindBlueprint">
           <storeAs>blueprintName</storeAs>
           <storeCostAs>blueprintCachedCost</storeCostAs>
-          <minimumWealth>500000</minimumWealth>
+          <minimumWealth>50000</minimumWealth>
           <minimumArea>6000</minimumArea>
           <minimumItemsCount>1000</minimumItemsCount>
         </li>

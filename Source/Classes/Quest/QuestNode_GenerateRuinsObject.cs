@@ -32,7 +32,7 @@ namespace RealRuins
                 // However, we do not want it to be initially larger than total wealth cap.
 
                 float costCap = RealRuins_ModSettings.ruinsCostCap;
-                float startingCap = Math.Min(costCap, cachedCost);
+                float startingCap = Math.Min(costCap, Math.Max(cachedCost, cachedCost2));
                 if (startingCap > int.MaxValue) {
                     startingCap = int.MaxValue - 1; //not sure why StartScavenging takes int as input, but don't want to change it now.
                 }
@@ -45,14 +45,21 @@ namespace RealRuins
         }
 
         protected override bool TestRunInt(Slate slate) {
+            Debug.Log("QuestNode_GenerateRuinsNode", "TestRun Launched");
+
+            var tileId = tile.GetValue(slate);
+
+            AbandonedBaseWorldObject worldObject = (AbandonedBaseWorldObject)WorldObjectMaker.MakeWorldObject(DefDatabase<WorldObjectDef>.GetNamed("AbandonedBase"));
+            worldObject.Tile = tileId;
+
+            slate.Set(storeAs.GetValue(slate), worldObject);
+
             return true;
-//            var filename = blueprintFilename.GetValue(slate);
-//            return filename != null;
 		}
 
 		protected override void RunInt() {
 			Slate slate = QuestGen.slate;
-            Debug.Log("QuestNode_GenerateRuinsNode", "slate: {0}", slate);
+            Debug.Log("QuestNode_GenerateRuinsNode", "Real run launched");
             var obj = TryGenerateWorldObject(slate);
             slate.Set(storeAs.GetValue(slate), obj);
 		}
