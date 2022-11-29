@@ -1,19 +1,39 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <Defs>
   <QuestScriptDef>
-    <defName>RealRuins_IntactRuins</defName>
+    <defName>RealRuins_AbandonedBase</defName>
     <rootSelectionWeight>0.3</rootSelectionWeight>
     <rootMinPoints>0</rootMinPoints>
     <canGiveRoyalFavor>false</canGiveRoyalFavor>
     <autoAccept>true</autoAccept>
     <questNameRules>
       <rulesStrings>
-        <li>questName->Intact Ruins</li>
+        <li>questName->[abandoned] [base]</li>
+        <li>questName->[intact] [ruins]</li>
+        <li>abandoned->Abandoned</li>
+        <li>abandoned->Destroyed</li>
+        <li>abandoned->Sealed</li>
+        <li>base->Base</li>
+        <li>base->Outpost</li>
+        <li>base->Complex</li>
+        <li>base->City</li>
+        <li>base->Factory</li>
+        <li>intact->Pristine</li>
+        <li>intact->Intact</li>
+        <li>intact->Untouched</li>
+        <li>ruins->Ruins</li>
       </rulesStrings>
     </questNameRules>
     <questDescriptionRules>
       <rulesStrings>
-        <li>questDescription->Intact ruins were found. Run there, stranger!</li>
+        <li>questDescription->[source] a group of ancient buildings. Looks like the complex is very old and empty, but doors are sealed and all inventory and machinery is still inside. Word spreads fast, and all nearby settlements are already preparing to fight for whatever lies inside this ruins. The treasure could be enormous, so be prepared for a real massacre, not like all usual carefully balanced encounters you had before. And not waste time: I see someone already [stealing]. Ruins won't last long.</li>
+        <li>source->Your scouts discovered</li>
+        <li>source->Trader told you, he found</li>
+        <li>source->After a powerful explosion nearby mountain uncovered</li>
+        <li>stealing->dismantling golden floor tiles across all rooms</li>
+        <li>stealing->hauling stack of advanced components from there</li>
+        <li>stealing->loading drop pod launcher with ten vanometric cells</li>
+        <li>stealing->trying to capture five stacks of antigrain warheads</li>
       </rulesStrings>
     </questDescriptionRules>
     <root Class="QuestNode_Sequence">

@@ -10,7 +10,6 @@
 
     <comps>
       <li Class="RealRuins.WorldObjectCompProperties_RuinedBase" />
-      <li Class="WorldObjectCompProperties_TimedForcedExit" />
       <li Class="RealRuins.WorldObjectCompProperties_FormCaravanFromRuins" />
     </comps>
   </WorldObjectDef>
@@ -54,7 +53,6 @@
 
     <comps>
       <li Class="WorldObjectCompProperties_FormCaravan" />
-      <li Class="WorldObjectCompProperties_TimedForcedExit" />
     </comps>
   </WorldObjectDef>
 

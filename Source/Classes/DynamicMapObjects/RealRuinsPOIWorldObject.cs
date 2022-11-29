@@ -180,12 +180,9 @@ namespace RealRuins {
 
             var comp = GetComponent<RealRuinsPOIComp>();
             if (comp != null) {
-                builder.AppendLine(("RealRuins.DescPOI" + comp.poiType).Translate());
-                if (Faction == null) {
-                    if ((POIType)comp.poiType != POIType.Ruins) {
-                        builder.AppendLine("RealRuins.POINowRuined".Translate());
-                    }
-                } else {
+                if (Faction != null) {
+                    builder.AppendLine(("RealRuins.DescPOI" + comp.poiType).Translate());
+
                     if ((POIType)comp.poiType != POIType.Ruins) {
 
                         int[] costThresholds = { 0, 10000, 100000, 1000000, 10000000 };
@@ -200,6 +197,10 @@ namespace RealRuins {
                             builder.Append("RealRuins.RuinsWealth".Translate());
                             builder.AppendLine(wealthDesc);
                         }
+                    }
+                } else {
+                    if ((POIType)comp.poiType != POIType.Ruins) {
+                        builder.AppendLine(String.Format("RealRuins.POINowRuined".Translate(), Label.ToLower()));
                     }
                 }
             }
