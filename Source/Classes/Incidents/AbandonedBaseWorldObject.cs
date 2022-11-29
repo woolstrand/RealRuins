@@ -53,14 +53,6 @@ namespace RealRuins {
             }
         }
 
-        public override void Tick() {
-            base.Tick();
-            if (HasMap && !hasStartedCountdown) {
-                GetComponent<TimedForcedExit>().StartForceExitAndRemoveMapCountdown(15 * 60000);
-                hasStartedCountdown = true;
-            }
-        }
-
         public override bool ShouldRemoveMapNow(out bool alsoRemoveWorldObject) {
             bool shouldRemove = !Map.mapPawns.AnyPawnBlockingMapRemoval;
             alsoRemoveWorldObject = shouldRemove;
