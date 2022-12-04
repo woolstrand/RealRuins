@@ -20,6 +20,7 @@ namespace RealRuins {
         public static int logLevel = 2; //0 = all, 1 = warnings, 2 = errors
 
         public static ScatterOptions defaultScatterOptions = ScatterOptions.Default;
+        public static PlanetaryRuinsOptions planetaryRuinsOptions = new PlanetaryRuinsOptions();
 
         public override void ExposeData() {
             base.ExposeData();
@@ -31,15 +32,32 @@ namespace RealRuins {
             Scribe_Values.Look(ref caravanReformType, "caravanReformType", 0, false);
             Scribe_Values.Look(ref preserveStandardRuins, "preserveStandardRuins", false, false);
             Scribe_Values.Look(ref forceMultiplier, "forceMultiplier", 1.0f, false);
-            Scribe_Values.Look(ref ruinsCostCap, "ruinsCostCap", 1.0e+10f, false);
+            Scribe_Values.Look(ref ruinsCostCap, "ruinsCostCap", 1.0e+9f, false);
             Scribe_Values.Look(ref startWithoutRuins, "startWithoutRuins", false, false);
             Scribe_Values.Look(ref logLevel, "logLevel", 2, false);
             Scribe_Deep.Look(ref defaultScatterOptions, "defaultScatterOptions");
+            Scribe_Deep.Look(ref planetaryRuinsOptions, "planetaryRuinsOptions");
 
             if (allowInstantCaravanReform == true) {
                 allowInstantCaravanReform = false; //migrate settings
                 caravanReformType = 1;
             }
+        }
+
+        public static void Reset() {
+            defaultScatterOptions = new ScatterOptions();
+            planetaryRuinsOptions = new PlanetaryRuinsOptions();
+
+            offlineMode = false;
+            allowDownloads = true;
+            allowUploads = true;
+            allowInstantCaravanReform = false;
+            caravanReformType = 0;
+            startWithoutRuins = false;
+            preserveStandardRuins = false;
+            forceMultiplier = 1.0f;
+            ruinsCostCap = 1.0e+9f;
+            logLevel = 2;
         }
     }
 }

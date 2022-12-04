@@ -16,11 +16,11 @@ namespace RealRuins {
 
         public override Texture2D ExpandingIcon {
             get {
-                if (GetComponent<RealRuinsPOIComp>().poiType == (int)POIType.Ruins) {
-                    return null;
-                } else {
+//                if (GetComponent<RealRuinsPOIComp>().poiType == (int)POIType.Ruins) {
+//                    return ContentFinder<Texture2D>.Get("empty");
+//                } else {
                     return ContentFinder<Texture2D>.Get("poi-" + GetComponent<RealRuinsPOIComp>().poiType);
-                }
+//                }
             }
         }
 
@@ -66,9 +66,6 @@ namespace RealRuins {
                 }
                 return cachedMat;
             }
-        }
-
-        public RealRuinsPOIWorldObject() {         
         }
 
         public override IEnumerable<FloatMenuOption> GetFloatMenuOptions(Caravan caravan) {
@@ -201,6 +198,8 @@ namespace RealRuins {
                 } else {
                     if ((POIType)comp.poiType != POIType.Ruins) {
                         builder.AppendLine(String.Format("RealRuins.POINowRuined".Translate(), Label.ToLower()));
+                    } else {
+                        builder.AppendLine(String.Format("RealRuins.POIUselessRuins".Translate(), "something"));
                     }
                 }
             }

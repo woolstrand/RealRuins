@@ -55,7 +55,7 @@ namespace RealRuins {
                 faction = map.ParentFaction;
             }
            
-            string filename = SnapshotStoreManager.Instance.SnapshotNameFor(poiComp.blueprintName, poiComp.gameName);
+            string filename = SnapshotStoreManager.SnapshotNameFor(poiComp.blueprintName, poiComp.gameName);
 
 
             Debug.Log("Spawning POI: Preselected file name is {0}", filename);
@@ -150,6 +150,8 @@ namespace RealRuins {
                 }
             }
 
+            // Cleanup init data to ensure it won't interefere in future
+            PlanetaryRuinsInitData.shared.Cleanup();
         }
 
         private void ManTurrets(int count, ResolveParams rp, Map map) {

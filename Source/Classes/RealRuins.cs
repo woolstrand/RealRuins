@@ -165,6 +165,10 @@ namespace RealRuins
         [HarmonyPatch(typeof(Page_SelectStartingSite), "PostOpen")]
         static class Page_SelectStartingSite_PostOpen_Patch {
             static void Postfix() {
+                if (RealRuins_ModSettings.planetaryRuinsOptions.allowOnStart == false) {
+                    return;
+                }
+
                 Find.WindowStack.Add(new Page_PlanetaryRuinsLoader());
                 PlanetaryRuinsInitData.shared.state = PlanetaryRuinsState.configuring;
                 PlanetaryRuinsInitData.shared.selectedMapSize = Find.GameInitData.mapSize;
@@ -181,6 +185,8 @@ namespace RealRuins
                         //add dialog yes/no
 
                         Find.WindowStack.Add(new Page_PlanetaryRuinsLoader(forceCleanup: true));
+                        PlanetaryRuinsInitData.shared.state = PlanetaryRuinsState.configuring;
+                        PlanetaryRuinsInitData.shared.selectedMapSize = Find.GameInitData.mapSize;
                     }
                 }
             }
@@ -304,6 +310,29 @@ namespace RealRuins
             }
         }
 
+        // This patch checks if there are missing blueprints for existing planetary ruins and loads missing files automatically
+        [HarmonyPatch(typeof(Verse.Game), "LoadGame")]
+        class LoadGame_Patch {
+            static void Postfix() {
+                List<string> missingBlueprintNames = new List<string>();
+                foreach (WorldObject obj in Find.WorldObjects.AllWorldObjects) {
+                    if (obj is RealRuinsPOIWorldObject) {
+                        RealRuinsPOIComp comp = obj.GetComponent<RealRuinsPOIComp>();
+                        if (comp != null) {
+                            string filename = comp.blueprintName;
+                            if (!SnapshotStoreManager.HasPlanetaryBlueprintForCurrentGame(filename)) {
+                                missingBlueprintNames.Add(filename);
+                            }
+                        }
+                    }
+                }
+
+                if (missingBlueprintNames.Count() > 0) {
+                    SnapshotManager.Instance.AggressiveLoadSnaphotsFromList(missingBlueprintNames, SnapshotStoreManager.CurrentGamePath());
+                }
+            }
+        }
+
         // This patch saves the last save when game is over
         [HarmonyPatch(typeof(GenGameEnd), "EndGameDialogMessage", typeof(string), typeof(bool), typeof(Color))]
         class GameOver_Patch {
@@ -338,15 +367,15 @@ namespace RealRuins
                 int tile = parent.Tile;
                 Debug.Log("StartGame", "Starting tile: {0}", tile);
 
-                // check if there is a starting poi to start at
+                // check if there is a starting poi in global context to start at
                 RealRuinsPOIWorldObject poi = PlanetaryRuinsInitData.shared.startingPOI;
 
                 if (poi != null) {
+                    Debug.Log("[MapGen]", "Found RR POI in game start context. Generator def name was {0}, changing to {1}", mapGenerator.defName, poi.MapGeneratorDef.defName);
                     mapGenerator = poi.MapGeneratorDef;
                     extraGenStepDefs.Concat(poi.ExtraGenStepDefs);
-                    Debug.Log("StartGame", "Found RR POI at tile. Generator def name is {0}", mapGenerator.defName);
                 } else {
-                    Debug.Log("StartGame", "Could not find RR POI at tile, starting as usual");
+                    Debug.Log("[MapGen]", "Game start context is empty, generating map as usual");
                 }
             }
         }

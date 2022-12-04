@@ -1,14 +1,14 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <LanguageData>
-	<RealRuins_ModOptions_Category>Real Ruins</RealRuins_ModOptions_Category>
-	<RealRuins_ModOptions_AllowDownloads>Allow downloading ruins from database</RealRuins_ModOptions_AllowDownloads>
-	<RealRuins_ModOptions_AllowUploads>Allow uploading your bases to ruins database</RealRuins_ModOptions_AllowUploads>
-	<RealRuins_ModOptions_CacheSize>Limit local cache size to </RealRuins_ModOptions_CacheSize>
-	<RealRuins_ModOptions_OfflineMode>Local mode only</RealRuins_ModOptions_OfflineMode>
+  <RealRuins_ModOptions_Category>Real Ruins</RealRuins_ModOptions_Category>
+  <RealRuins_ModOptions_AllowDownloads>Allow downloading ruins from database</RealRuins_ModOptions_AllowDownloads>
+  <RealRuins_ModOptions_AllowUploads>Allow uploading your bases to ruins database</RealRuins_ModOptions_AllowUploads>
+  <RealRuins_ModOptions_CacheSize>Limit local cache size to </RealRuins_ModOptions_CacheSize>
+  <RealRuins_ModOptions_OfflineMode>Local mode only</RealRuins_ModOptions_OfflineMode>
 
-	<RealRuins_ModOptions_AllowDownloadsTooltip>If you switch this off, it won't remove anything you have already downloaded.</RealRuins_ModOptions_AllowDownloadsTooltip>
-	<RealRuins_ModOptions_AllowUploadsTooltip>It's recommended to keep this on to help populate database with various interesting base designs. This should not consume more than several megabytes per game session.</RealRuins_ModOptions_AllowUploadsTooltip>
-	<RealRuins_ModOptions_CacheSizeTooltip>Even if you reach this limit, the mod will continue downloading new blueprints, removing the older ones.</RealRuins_ModOptions_CacheSizeTooltip>
+  <RealRuins_ModOptions_AllowDownloadsTooltip>If you switch this off, it won't remove anything you have already downloaded.</RealRuins_ModOptions_AllowDownloadsTooltip>
+  <RealRuins_ModOptions_AllowUploadsTooltip>It's recommended to keep this on to help populate database with various interesting base designs. This should not consume more than several megabytes per game session.</RealRuins_ModOptions_AllowUploadsTooltip>
+  <RealRuins_ModOptions_CacheSizeTooltip>Even if you reach this limit, the mod will continue downloading new blueprints, removing the older ones.</RealRuins_ModOptions_CacheSizeTooltip>
   <RealRuins_ModOptions_OfflineModeTooltip>This mode will delete all cached data that was downloaded from the server and prevent any further uploads and downloads. However, your own bases will still be stored locally and used for creating ruins in your game.</RealRuins_ModOptions_OfflineModeTooltip>
   <RealRuins_ModOptions_OfflineModeConfirmation>Are you sure to proceed?</RealRuins_ModOptions_OfflineModeConfirmation>
 
@@ -18,7 +18,6 @@
   <RealRuins_ModOptions_DownloadMore>Download more blueprints</RealRuins_ModOptions_DownloadMore>
   <RealRuins_ModOptions_CurrentCacheCount>Blueprints in cache: </RealRuins_ModOptions_CurrentCacheCount>
 
- 
   <RealRuins_MapOptions_Density>Ruins density</RealRuins_MapOptions_Density>
   <RealRuins_MapOptions_Size>Minimum fragment size</RealRuins_MapOptions_Size>
   <RealRuins_MapOptions_Size_Max>Maximum fragment size</RealRuins_MapOptions_Size_Max>
@@ -46,9 +45,20 @@
 
   <RealRuins_MapOptions_EnableProximity>Consider settlement proximity</RealRuins_MapOptions_EnableProximity>
   <RealRuins_MapOptions_EnableProximityTT>Settlement proximity influences generation parameters: ruins are more dense near cities, but also more empty.</RealRuins_MapOptions_EnableProximityTT>
-
   <RealRuins_MapOptions_StartWithoutRuins>No ruins on starting map</RealRuins_MapOptions_StartWithoutRuins>
   <RealRuins_MapOptions_StartWithoutRuinsTT>No ruins will be generated on starting map. Later ruins will be generated normally accoring to settings.</RealRuins_MapOptions_StartWithoutRuinsTT>
+
+  <!-- Captions -->
+  <RealRuins.PlanetaryRuinsSettings.Caption>Planetary ruins and locations</RealRuins.PlanetaryRuinsSettings.Caption>
+  <RealRuins.CacheSettings.Caption>Cache settings</RealRuins.CacheSettings.Caption>
+  <RealRuins.SpawnSettings.Caption>Spawn settings</RealRuins.SpawnSettings.Caption>
+
+  <!-- Planetary ruins section -->
+  <RealRuins.PlanetarySettings.Enable>Enable spawning ruin at game start</RealRuins.PlanetarySettings.Enable>
+  <RealRuins.PlanetarySettings.DownloadLimit>Maximum number of blueprints to download</RealRuins.PlanetarySettings.DownloadLimit>
+  <RealRuins.PlanetarySettings.TransferLimit>Maximum number of locations to spawn</RealRuins.PlanetarySettings.TransferLimit>
+  <RealRuins.PlanetarySettings.ExcludePlain>Discard uncategorized locations (plain ruins)</RealRuins.PlanetarySettings.ExcludePlain>
+  <RealRuins.PlanetarySettings.AbandonedPercentage>Amount of abandoned locations</RealRuins.PlanetarySettings.AbandonedPercentage>
 
   <!-- Caravan entered map -->
   <LetterLabelCaravanEnteredRuins>Caravan arrived at ruins</LetterLabelCaravanEnteredRuins>
@@ -58,13 +68,12 @@
   <RealRuins.CaravanFoundRuins.Investigate>Investigate</RealRuins.CaravanFoundRuins.Investigate>
   <RealRuins.CaravanFoundRuinsTitle>Small ruins spotted nearby</RealRuins.CaravanFoundRuinsTitle>
 
-  <!-- Art -->
-  <DeterioratedArtDescription>This item is too worn and damaged. You can tell for sure it was a beautiful art object once, but now you can hardly guess what it was about.</DeterioratedArtDescription>
-
-
   <RealRuins_ModOptions_Reset>Reset settings to defaults</RealRuins_ModOptions_Reset>
   <RealRuins_MapOptions_CaravanReforming>Enable instant caravan reforming between raids</RealRuins_MapOptions_CaravanReforming>
   <RealRuins_MapOptions_CaravanReformingTT>Normally during ruins scavenging events you should not be able to reform caravan instantly right after the initial hostile party is defeated. By design you had to manually search for loot, pick up and leave using map edge even if there are no hostile units right now. However, if you prefer the old way with overpowered instant reform feature, you can enable this feature</RealRuins_MapOptions_CaravanReformingTT>
+
+  <!-- Art -->
+  <DeterioratedArtDescription>This item is too worn and damaged. You can tell for sure it was a beautiful art object once, but now you can hardly guess what it was about.</DeterioratedArtDescription>
 
   <!-- Ruins info -->
   <RealRuins.RuinsWealth>Wealth: </RealRuins.RuinsWealth>
@@ -113,7 +122,8 @@
   <RealRuins.DescPOI10>Remainings of some buildings, bits of furniture, broken workbenches, pipes and metal bars. You can't tell what it was long ago, everything left is just empty ruins.</RealRuins.DescPOI10>
   <RealRuins.DescPOI11>Heavily guarded stronghold. Extremely well defended with tons of stationary weapons, troops and reinforcements.</RealRuins.DescPOI11>
 
-  <RealRuins.POINowRuined>Once this place was full of life, but now it's abandoned, no one knows why. So better beware of all kinds of danger.</RealRuins.POINowRuined>
+  <RealRuins.POINowRuined>Once this place was a {0}, full of life, but now it's abandoned, no one knows why. So better beware of all kinds of danger.</RealRuins.POINowRuined>
+  <RealRuins.POIUselessRuins>You wonder what it could be long ago. Now it's mostly rock and rubble.</RealRuins.POIUselessRuins>
 
   <RealRuins.EnterPOI>Enter {0}</RealRuins.EnterPOI>
   <RealRuins.AttackPOI>Attack {0}</RealRuins.AttackPOI>
@@ -135,7 +145,8 @@
 
   <RealRuins.LoadBlueprintsDescription>This feature will load maps of other players who had their colonies on the same planet. Their colonies will be spawned as other factions' settlements and outposts, or as abandoned ruins. Unlike random ruins, those will be placed at their original locations.</RealRuins.LoadBlueprintsDescription>
   <RealRuins.OptionsDescription>In this mode you can control every step. At first you load just count of blueprints for the planet and can adjust how many of them do you want to download as blueprints. Then, after loading, you can adjust how many do you want to be transferred and how filtration should be done. You can stop during each step, remove everything and start over.</RealRuins.OptionsDescription>
-  <RealRuins.MapSizeChangeWarning>WARNING: If you're going to change map size, press Done now and download blueprints after changing map size.</RealRuins.MapSizeChangeWarning>
+  <RealRuins.PlanetaryRuinsNote>NOTE: This is a separate feature which works independently of random ruins on all maps or special ruins events.</RealRuins.PlanetaryRuinsNote>
+  <RealRuins.MapSizeChangeWarning>WARNING: If you're going to change map size, press Close now and download blueprints after changing map size.</RealRuins.MapSizeChangeWarning>
   <RealRuins.LowCountWarning>You have too few blueprints. If it bothers you, try to select another seed or map settings. You can check the most populated worlds by visiting https://woolstrand.art/view/maps/topseeds</RealRuins.LowCountWarning>
   <RealRuins.NoBlueprintsWarning.Caption>Sorry</RealRuins.NoBlueprintsWarning.Caption>
   <RealRuins.NoBlueprintsWarning.Text>This world does not contain any maps. It means, nobody have yet played with the same seed, coverage and map size. If you want to have some locations on the world map, try selecting more common seed. You can check the most populated worlds by visiting https://woolstrand.art/view/maps/topseeds</RealRuins.NoBlueprintsWarning.Text>
@@ -189,7 +200,7 @@
   <RealRuins.UsedMaps>Maps used: </RealRuins.UsedMaps>
   <RealRuins.DroppedMaps>Maps discarded: </RealRuins.DroppedMaps>
 
-  <RealRuins.MapsModuleButton>Import blueprints for this planet (BETA)</RealRuins.MapsModuleButton>
+  <RealRuins.MapsModuleButton>Download and spawn now</RealRuins.MapsModuleButton>
   <RealRuins.PlanetarySettignsCaption>Real Ruins - Planetary Ruins Settings</RealRuins.PlanetarySettignsCaption>
   <RealRuins.NeedsGameInProgress>You have to be in an ongoing game to use this menu</RealRuins.NeedsGameInProgress>
 
