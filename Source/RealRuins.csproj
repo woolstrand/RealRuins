@@ -209,7 +209,6 @@
     <Compile Include="Classes\Quest\QuestNode_GenerateRuinsObject.cs" />
     <Compile Include="Classes\Utility\SmallQuestionDialog.cs" />
     <Compile Include="Classes\Utility\PlanetaryRuinsOptions.cs" />
-    <Compile Include="Classes\Utility\POIExpandingOverridesStore.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="MapGenerators_RealRuins.xml" />
