@@ -61,11 +61,8 @@
           <worldObjects>$ruins</worldObjects>
         </li>
 
-        <li Class="QuestNode_WorldObjectTimeout">
-          <worldObject>$ruins</worldObject>
-          <isQuestTimeout>true</isQuestTimeout>
-          <delayTicks>$(randInt(12,28)*60000)</delayTicks>
-          <inSignalDisable>site.MapGenerated</inSignalDisable>
+        <li Class="QuestNode_Signal">
+          <inSignal>ruins.Scavenged</inSignal>
           <node Class="QuestNode_Sequence">
             <nodes>
               <li Class="QuestNode_Letter">
@@ -79,24 +76,8 @@
           </node>
         </li>
 
-        <!-- Each outcome is success, if at least someone lives. -->
-        <li Class="QuestNode_Signal">
-          <inSignal>site.Destroyed</inSignal>
-          <node Class="QuestNode_Sequence">
-            <nodes>
-              <li Class="QuestNode_Letter">
-                <label TKey="LetterLabelQuestFailed">Quest failed: [resolvedQuestName]</label>
-                <text TKey="LetterTextQuestFailed">After being discovered, the bandit camp has dispersed. The quest [resolvedQuestName] has ended.</text>
-              </li>
-              <li Class="QuestNode_End">
-                <outcome>Success</outcome>
-              </li>
-            </nodes>
-          </node>
-        </li>
-
         <li Class="QuestNode_End">
-          <inSignal>site.AllEnemiesDefeated</inSignal>
+          <inSignal>site.LeftAlive</inSignal>
           <outcome>Success</outcome>
         </li>
       </nodes>

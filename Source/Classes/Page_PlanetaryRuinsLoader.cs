@@ -38,11 +38,11 @@ namespace RealRuins {
         private int blueprintsProcessedCount = 0;
         private int blueprintsUsed = 0;
 
-        private int abandonedPercentage = 25;
+        private int abandonedPercentage = (int)RealRuins_ModSettings.planetaryRuinsOptions.abandonedLocations;
         private bool biomeStrict = true;
         private bool costStrict = false;
         private bool areaStrict = false;
-        private bool aggressiveDiscard = false;
+        private bool aggressiveDiscard = RealRuins_ModSettings.planetaryRuinsOptions.excludePlainRuins;
 
         private bool forceStopLoading = false;
         private bool forceStopTransfer = false;
@@ -52,12 +52,12 @@ namespace RealRuins {
         private RuinsPageMode mode = RuinsPageMode.Default;
 
         // How many maps will be downloaded in case available number is really large.
-        private int downloadLimit = 0;
-        private string downloadLimitString = "0";
+        private int downloadLimit = RealRuins_ModSettings.planetaryRuinsOptions.downloadLimit;
+        private string downloadLimitString = RealRuins_ModSettings.planetaryRuinsOptions.downloadLimit.ToString();
 
         // How many maps will be transferred
-        private int transferLimit = 0;
-        private string transferLimitString = "0";
+        private int transferLimit = RealRuins_ModSettings.planetaryRuinsOptions.transferLimit;
+        private string transferLimitString = RealRuins_ModSettings.planetaryRuinsOptions.transferLimit.ToString();
 
         private List<string> blueprintIds = null;
         private List<PlanetTileInfo> mapTiles;
@@ -67,6 +67,7 @@ namespace RealRuins {
         public Page_PlanetaryRuinsLoader(bool forceCleanup = false) {
             doCloseX = true;
             if (forceCleanup) {
+                PlanetaryRuinsInitData.shared.Cleanup();
                 RemoveSites();
             }
         }

@@ -14,14 +14,14 @@
     </comps>
   </WorldObjectDef>
 
-  <WorldObjectDef>
+  <WorldObjectDef Name="RealRuinsPOI">
     <defName>RealRuinsPOI</defName>
     <label>A group of buildings</label>
     <description>A group of buildings. Deserves an investigation.</description>
     <worldObjectClass>RealRuins.RealRuinsPOIWorldObject</worldObjectClass>
     <mapGenerator>RealRuinsPOI</mapGenerator>
     <expandingIcon>true</expandingIcon>
-    <expandingIconPriority>15</expandingIconPriority>
+    <expandingIconPriority>22</expandingIconPriority>
     <canBePlayerHome>true</canBePlayerHome>
 
     <IncidentTargetTags>
@@ -33,6 +33,11 @@
       <li Class="WorldObjectCompProperties_EnterCooldown" />
       <li Class="WorldObjectCompProperties_FormCaravan" />
     </comps>
+  </WorldObjectDef>
+  
+  <WorldObjectDef ParentName="RealRuinsPOI">
+        <defName>RealRuinsPOI_Unlisted</defName>
+        <expandingIcon>false</expandingIcon>
   </WorldObjectDef>
 
   <WorldObjectDef>

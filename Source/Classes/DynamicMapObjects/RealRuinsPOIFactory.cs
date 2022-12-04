@@ -27,7 +27,7 @@ namespace RealRuins {
                 return false;
             }
 
-            string filename = SnapshotStoreManager.Instance.SnapshotNameFor(tileInfo.mapId, gameName);
+            string filename = SnapshotStoreManager.SnapshotNameFor(tileInfo.mapId, gameName);
             Blueprint bp = BlueprintLoader.LoadWholeBlueprintAtPath(filename);
             if (bp == null) {
                 Debug.Log(Debug.POI, "[3] Skipped: Blueprint loader failed.");
@@ -67,11 +67,13 @@ namespace RealRuins {
                 // otherwise use both POI type based and parametric input.
                 baseChance = baseChance & Rand.Chance((float)(100 - abandonedChance) / 100);
             }
+
+                            
             if (baseChance) {
                 Find.FactionManager.TryGetRandomNonColonyHumanlikeFaction(out faction, false, false, minTechLevel: MinTechLevelForPOIType(poiType));
             }
 
-            RealRuinsPOIWorldObject site = TryCreateWorldObject(tileInfo.tile, faction);
+            RealRuinsPOIWorldObject site = TryCreateWorldObject(tileInfo.tile, faction, poiType == POIType.Ruins);
             if (site == null) {
                 Debug.Log(Debug.POI, "[3] Skipped: Could not create world object.");
                 return false;
@@ -96,14 +98,19 @@ namespace RealRuins {
             return true;
         }
 
-        static RealRuinsPOIWorldObject TryCreateWorldObject(int tile, Faction siteFaction) {
+        static RealRuinsPOIWorldObject TryCreateWorldObject(int tile, Faction siteFaction, bool unlisted) {
 
             Debug.Log("Creating site at tile: {0}", tile);
             if (Find.WorldObjects.AnyWorldObjectAt(tile)) {
                 return null;
             }
 
-            RealRuinsPOIWorldObject site = (RealRuinsPOIWorldObject)WorldObjectMaker.MakeWorldObject(DefDatabase<WorldObjectDef>.GetNamed("RealRuinsPOI"));
+            RealRuinsPOIWorldObject site = null;
+            if (unlisted) {
+                site = (RealRuinsPOIWorldObject)WorldObjectMaker.MakeWorldObject(DefDatabase<WorldObjectDef>.GetNamed("RealRuinsPOI_Unlisted"));
+            } else {
+                site = (RealRuinsPOIWorldObject)WorldObjectMaker.MakeWorldObject(DefDatabase<WorldObjectDef>.GetNamed("RealRuinsPOI"));
+            }
             site.Tile = tile;
             site.SetFaction(siteFaction);
 

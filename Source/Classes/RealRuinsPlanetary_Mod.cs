@@ -43,6 +43,7 @@ namespace RealRuins {
         }
     }
 
+    /*
     public class RealRuinsPlanetary_Mod : Mod {
 
         Page_PlanetaryRuinsLoader embeddedPage;
@@ -62,5 +63,5 @@ namespace RealRuins {
 
             embeddedPage.DoWindowContents(rect, standalone: false);
         }
-    }
+    }*/
 }
