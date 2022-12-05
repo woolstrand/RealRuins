@@ -190,6 +190,10 @@ namespace RealRuins {
         }
 
         public void UploadCurrentMapSnapshot() {
+            if (Find.CurrentMap == null) {
+                return;
+            }
+
             string worldId = (Math.Abs(Find.World.info.persistentRandomValue)).ToString();
             string mapId = Find.CurrentMap.uniqueID.ToString();
             string snapshotId = worldId + mapId;

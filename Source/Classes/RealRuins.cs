@@ -143,9 +143,15 @@ namespace RealRuins
 
             public static void SaveSnapshot() {
                 if (!RealRuins_ModSettings.allowUploads && !RealRuins_ModSettings.offlineMode) return;
-                if (Find.CurrentMap != null && !Find.CurrentMap.IsPlayerHome) return;
-               
-                SnapshotManager.Instance.UploadCurrentMapSnapshot();
+                if (Find.CurrentMap == null) {
+                    return;
+                } else {
+                    if (!Find.CurrentMap.IsPlayerHome) {
+                        return;
+                    } else {
+                        SnapshotManager.Instance.UploadCurrentMapSnapshot();
+                    }
+                }
             }
         }
 
