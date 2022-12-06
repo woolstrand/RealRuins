@@ -16,11 +16,7 @@ namespace RealRuins {
 
         public override Texture2D ExpandingIcon {
             get {
-//                if (GetComponent<RealRuinsPOIComp>().poiType == (int)POIType.Ruins) {
-//                    return ContentFinder<Texture2D>.Get("empty");
-//                } else {
-                    return ContentFinder<Texture2D>.Get("poi-" + GetComponent<RealRuinsPOIComp>().poiType);
-//                }
+                return ContentFinder<Texture2D>.Get("poi-" + GetComponent<RealRuinsPOIComp>().poiType);
             }
         }
 
@@ -125,12 +121,9 @@ namespace RealRuins {
         public override bool ShouldRemoveMapNow(out bool alsoRemoveWorldObject) {
             bool shouldRemove = !Map.mapPawns.AnyPawnBlockingMapRemoval;
             if (shouldRemove) {
+                alsoRemoveWorldObject = false;
                 EnterCooldownComp cooldownComp = GetComponent<EnterCooldownComp>();
                 RealRuinsPOIComp poiComp = GetComponent<RealRuinsPOIComp>();
-                SetFaction(originalFaction);
-                Debug.Log("Setting original faction ({0}), cached mat set to nil", originalFaction);
-                cachedMat = null; //reset cached icon to recolor it
-                Draw();
 
                 float blueprintCost = 1;
                 if (poiComp != null) {
@@ -144,14 +137,38 @@ namespace RealRuins {
 
                 float mapWealth = CurrentMapWealth();
                 float difference = wealthOnEnter - mapWealth;
+
+                //Ratio is what part of original cost was destroyed or stolen.
                 float ratio = difference / blueprintCost;
+                float cooldownDuration = Math.Max(4, difference / 2000);
                 if (cooldownComp != null) {
-                    cooldownComp.Props.durationDays = Math.Max(4, difference / 2000);
+                    cooldownComp.Props.durationDays = cooldownDuration;
                 }
 
-                Debug.Log(Debug.POI, "on enter {0}, now {1}, snapshot: {4}, diff {2}, ratio {3},", wealthOnEnter, mapWealth, difference, ratio, blueprintCost);
+                Debug.Log(Debug.POI, "Leaving POI map. Initial cost: {0}, now: {1}. Difference = {2}, ratio: {3}", blueprintCost, mapWealth, difference, ratio);
 
-                alsoRemoveWorldObject = ratio > 0.5; //at least half worth of initial wealth is destroyed or stolen.
+                if (ratio < 0.1) {
+                    //less than 10% stolen: site reclaimed
+                    SetFaction(originalFaction);
+                    Debug.Log(Debug.POI, "Low damage. Restoring owner, activating cooldown for {0} days", cooldownDuration);
+                } else if (ratio < 0.3) {
+                    //if 10-30% was destroyed, then there is a chance that ruins won't be reclaimed by their previous owners
+                    if (Rand.Chance(0.3f)) {
+                        // 30% of abandoning POI
+                        Debug.Log(Debug.POI, "Moderate damage. Abandoning, activating cooldown for {0} days", cooldownDuration);
+                    } else {
+                        //
+                        SetFaction(originalFaction);
+                        Debug.Log(Debug.POI, "Moderate damage. Restoring owner, activating cooldown for {0} days", cooldownDuration);
+                    }
+                } else {
+                    Debug.Log(Debug.POI, "Significant damage, destroying");
+                    alsoRemoveWorldObject = true;
+                }
+
+                cachedMat = null; //reset cached icon to recolor it
+                Draw();
+
                 return true;
             } else {
                 alsoRemoveWorldObject = false;
