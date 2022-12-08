@@ -7,6 +7,7 @@ using Verse;
 using RimWorld;
 using RimWorld.Planet;
 using UnityEngine;
+using RimWorld.QuestGen;
 
 namespace RealRuins {
     [StaticConstructorOnStartup]
@@ -56,6 +57,15 @@ namespace RealRuins {
         public override bool ShouldRemoveMapNow(out bool alsoRemoveWorldObject) {
             bool shouldRemove = !Map.mapPawns.AnyPawnBlockingMapRemoval;
             alsoRemoveWorldObject = shouldRemove;
+            if (shouldRemove) {
+                List<Quest> quests = Find.QuestManager.QuestsListForReading;
+                for (int j = 0; j < quests.Count; j++) {
+                    Quest quest = quests[j];
+                    if (!quest.hidden && !quest.Historical && !quest.dismissed && quest.QuestLookTargets.Contains(this)) {
+                        quest.End(QuestEndOutcome.Success);
+                    }
+                }
+            }
             return shouldRemove;
         }
 

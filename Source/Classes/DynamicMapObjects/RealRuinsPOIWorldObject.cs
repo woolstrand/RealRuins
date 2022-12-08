@@ -127,7 +127,7 @@ namespace RealRuins {
 
                 float blueprintCost = 1;
                 if (poiComp != null) {
-                    if (poiComp.poiType == (int)POIType.Ruins) {
+                    if (poiComp.poiType == (int)POIType.Ruins || originalFaction == null) {
                         alsoRemoveWorldObject = true;
                         return true;
                     } else {
@@ -145,7 +145,7 @@ namespace RealRuins {
                     cooldownComp.Props.durationDays = cooldownDuration;
                 }
 
-                Debug.Log(Debug.POI, "Leaving POI map. Initial cost: {0}, now: {1}. Difference = {2}, ratio: {3}", blueprintCost, mapWealth, difference, ratio);
+                Debug.Log(Debug.POI, "Leaving POI map. Initial cost: {0} (bp cost: {4}), now: {1}. Difference = {2}, ratio: {3}", wealthOnEnter, mapWealth, difference, ratio, blueprintCost);
 
                 if (ratio < 0.1) {
                     //less than 10% stolen: site reclaimed

@@ -106,6 +106,14 @@ namespace RealRuins {
         public override void CompTick() {
             base.CompTick();
             if (ShouldRemoveWorldObjectNow) {
+                List<Quest> quests = Find.QuestManager.QuestsListForReading;
+                for (int j = 0; j < quests.Count; j++) {
+                    Quest quest = quests[j];
+                    if (!quest.hidden && !quest.Historical && !quest.dismissed && quest.QuestLookTargets.Contains(this.parent)) {
+                        quest.End(QuestEndOutcome.Fail);
+                    }
+                }
+
                 Find.WorldObjects.Remove(parent);
             }
 
