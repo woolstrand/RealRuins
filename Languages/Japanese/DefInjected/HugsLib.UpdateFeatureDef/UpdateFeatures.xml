@@ -61,4 +61,17 @@
   <RealRuins_2_0_2.modNameReadable>Real Ruins</RealRuins_2_0_2.modNameReadable>
   <RealRuins_2_0_2.content>\n|&lt;b&gt;キャラバン編成の問題を解決&lt;/b&gt;\n\n1.遺跡の重要な場所やイベント地点に到着すると、ポーンがアイテムを荷下ろしを開始する問題を修正しました。\n2.自動と手動の両方の編成オプションで手動指定してアイテム回収することが可能になり、ホームコロニーマップでスタートする際のキャラバン編成と同じ事をできるようになりました（敵がまだ残っている場合でも可能ですが、アイテムのある場所までポーンが移動して荷物の積み込みを実行するので注意してください！簡易キャラバン編成オプションはまだ利用可能で、それは以前と同じように、近くに敵がいない場合は、即座にキャラバン編成する事が可能です。\n</RealRuins_2_0_2.content>
 
+  <RealRuins_2_1_0.modNameReadable>Real Ruins</RealRuins_2_1_0.modNameReadable>
+  <RealRuins_2_1_0.content>\n|&lt;b&gt;Version1.1と互換性&lt;/b&gt;\n\nModは1.1ゲームバージョンで再び動作するようです。\n</RealRuins_2_1_0.content>
+
+  <RealRuins_2_2_0.modNameReadable>Real Ruins</RealRuins_2_2_0.modNameReadable>
+  <RealRuins_2_2_0.content>\n|&lt;b&gt;Version1.3と互換性&lt;/b&gt;\n\nModは1.3ゲームバージョンで再び動作するようです。\n</RealRuins_2_2_0.content>
+
+  <RealRuins_2_3_0.modNameReadable>Real Ruins</RealRuins_2_3_0.modNameReadable>
+  <RealRuins_2_3_0.content>\n|&lt;b&gt;SRTS-Expandedと互換性追加&lt;/b&gt;\n\n自分の船で廃墟イベントやワールドマップのクエスト地点に直接飛べるようになりました。同じように「端にドロップ」および「中央にドロップ」オプションにアクセスできます。楽しんで！\n
+Juijote提供による簡体字中国語翻訳を追加しました。\n</RealRuins_2_3_0.content>
+
+  <RealRuins_2_4_0.modNameReadable>Real Ruins</RealRuins_2_4_0.modNameReadable>
+  <RealRuins_2_4_0.content>\n|&lt;b&gt;Version1.4と互換性&lt;/b&gt;\n\n1.4ゲームバージョンで動作するようにmodを更新しました。\n</RealRuins_2_4_0.content>
+
 </LanguageData>

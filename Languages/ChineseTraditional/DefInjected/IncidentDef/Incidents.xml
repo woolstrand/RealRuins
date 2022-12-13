@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<LanguageData>
+
+	<!-- EN: nearby ruins found -->
+	<Quest_PristineRuins.label>發現新遺跡</Quest_PristineRuins.label>
+
+	<!-- EN: Pristine ruins found nearby -->
+	<Quest_PristineRuins.letterLabel>在附近發現未被破壞，保存良好的遺跡。</Quest_PristineRuins.letterLabel>
+
+	<!-- EN: {0}, {1} of {2}, has sent us a message.\n\nTheir scouts have discovered an old complex in almost untouched condition. Nobody knows where and why former dwellers have gone, so you should be prepared to anything. Rumors fly fast, so you most likely be not the only one who would want to claim the treasure. And since the treasure can be enormous, the same can be hostile forces. And please hurry, in {3} days you won't find anything besides bare walls. -->
+	<Quest_PristineRuins.letterText>{0}，來自{2}的{1}向我們發送了一則訊息。\n\n他們的偵查員在附近發現了一座沒有被探索過古老的遺跡。不清楚為何如今空無一人，所以你可能要為未知的威脅做好準備。\r\n現在謠言傳的滿城風雨，可能許多人都會前去尋寶。且由於遺跡內的寶藏可能極具價值，敵方勢力也是蠢蠢欲動。\r\n請即刻動身: 預計在 {3} 天之內遺跡將被搜刮一空，留下空蕩蕩的斷垣殘壁。</Quest_PristineRuins.letterText>
+
+	<!-- EN: nearby ruins found -->
+	<SmallRuinsFound.label>發現小型遺跡</SmallRuinsFound.label>
+
+</LanguageData>
