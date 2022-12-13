@@ -70,15 +70,15 @@
                 <text TKey="LetterTextQuestExpired">The discovered ruins location was looted and scavenged. The quest [resolvedQuestName] has expired.</text>
               </li>
               <li Class="QuestNode_End">
-                <outcome>Fail</outcome>
+                <outcome>Unknown</outcome>
               </li>
             </nodes>
           </node>
         </li>
 
         <li Class="QuestNode_End">
-          <inSignal>site.LeftAlive</inSignal>
-          <outcome>Success</outcome>
+          <inSignal>ruins.LeftAlive</inSignal>
+          <outcome>Unknown</outcome>
         </li>
       </nodes>
     </root>

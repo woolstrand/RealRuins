@@ -58,12 +58,10 @@ namespace RealRuins {
             bool shouldRemove = !Map.mapPawns.AnyPawnBlockingMapRemoval;
             alsoRemoveWorldObject = shouldRemove;
             if (shouldRemove) {
-                List<Quest> quests = Find.QuestManager.QuestsListForReading;
-                for (int j = 0; j < quests.Count; j++) {
-                    Quest quest = quests[j];
-                    if (!quest.hidden && !quest.Historical && !quest.dismissed && quest.QuestLookTargets.Contains(this)) {
-                        quest.End(QuestEndOutcome.Success);
-                    }
+                var comp = this.GetComponent<RuinedBaseComp>();
+                if (comp != null) {
+                    var signalTag = comp.successSignal;
+                    Find.SignalManager.SendSignal(new Signal(signalTag));
                 }
             }
             return shouldRemove;

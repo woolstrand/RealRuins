@@ -39,6 +39,9 @@ namespace RealRuins
 
                 Debug.Log(Debug.Event, "Initial cost set to {0} (blueprint cost {1} OR {3}, settings cap {2}", startingCap, cachedCost, costCap, cachedCost2);
                 comp.StartScavenging((int)startingCap); //passing initial cost to calculate coefficients without need to load bp one more time
+
+                comp.successSignal = QuestGenUtility.HardcodedSignalWithQuestID("ruins.LeftAlive");
+                comp.expireSignal = QuestGenUtility.HardcodedSignalWithQuestID("ruins.Scavenged");
             }
 
             return worldObject;
