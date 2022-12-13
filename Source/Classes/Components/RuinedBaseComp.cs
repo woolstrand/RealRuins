@@ -29,6 +29,8 @@ namespace RealRuins {
         public float raidersActivity = -1; //battle points amount of starting raiders group
         private bool ShouldRemoveWorldObjectNow => state == RuinedBaseState.ScavengedCompletely && !base.ParentHasMap;
         public bool isActive => state != RuinedBaseState.Inactive;
+        public string expireSignal = null;
+        public string successSignal = null;
 
         public bool mapExitLocked {
             get {
@@ -100,20 +102,16 @@ namespace RealRuins {
             Scribe_Values.Look(ref raidersActivity, "raidersActivity", -1);
             Scribe_Values.Look(ref unlockTargetTime, "unlockTargetTime", 0);
             Scribe_Values.Look(ref state, "state", RuinedBaseState.Inactive);
-            
+            Scribe_Values.Look(ref expireSignal, "expireSignal", "");
+            Scribe_Values.Look(ref successSignal, "successSignal", "");
+
         }
 
         public override void CompTick() {
             base.CompTick();
             if (ShouldRemoveWorldObjectNow) {
-                List<Quest> quests = Find.QuestManager.QuestsListForReading;
-                for (int j = 0; j < quests.Count; j++) {
-                    Quest quest = quests[j];
-                    if (!quest.hidden && !quest.Historical && !quest.dismissed && quest.QuestLookTargets.Contains(this.parent)) {
-                        quest.End(QuestEndOutcome.Fail);
-                    }
-                }
-
+                var signalTag = expireSignal;
+                Find.SignalManager.SendSignal(new Signal(signalTag));
                 Find.WorldObjects.Remove(parent);
             }
 
@@ -141,7 +139,7 @@ namespace RealRuins {
             if (ParentHasMap && parent.Faction != Faction.OfPlayer && RealRuins_ModSettings.caravanReformType == 1) {
                 if (!GenHostility.AnyHostileActiveThreatToPlayer((parent as MapParent).Map)) {
                     //show letter about enemies defeated
-                    Debug.Log(Debug.Generic, "pristine ruins was cleared, changing faction");
+                    Debug.Log(Debug.Generic, "pristine ruins was cleared, changing faction.");
                     parent.SetFaction(Faction.OfPlayer);
                    // parent as MapParent
                 }
