@@ -60,6 +60,7 @@ namespace RealRuins {
         private string transferLimitString = RealRuins_ModSettings.planetaryRuinsOptions.transferLimit.ToString();
 
         private List<string> blueprintIds = null;
+        private List<string> filteredList = null;
         private List<PlanetTileInfo> mapTiles;
 
         private APIService service = new APIService();
@@ -242,12 +243,9 @@ namespace RealRuins {
 
                     break;
                 case RuinsPageState.ProcessingBlueprints:
-                    blueprintStats = "RealRuins.Processing".Translate() + blueprintsProcessedCount + " / " + blueprintsTotalCount;
+                    blueprintStats = "RealRuins.Processing".Translate() + blueprintsProcessedCount + " / " + filteredList.Count;
                     skipped = "RealRuins.DroppedMaps".Translate() + (blueprintsProcessedCount - blueprintsUsed);
                     used = "RealRuins.UsedMaps".Translate() + blueprintsUsed;
-                    if (transferLimit > 0) {
-                        used = used + " / " + transferLimit;
-                    }
                     list.Label(blueprintStats);
                     list.Label(skipped);
                     list.Label(used);
@@ -288,7 +286,18 @@ namespace RealRuins {
         private void StartLoadingList() {
             pageState = RuinsPageState.LoadingHeader;
             Debug.Log("Loading list for seed: {0}", Find.World.info.seedString);
-            service.LoadAllMapsForSeed(Find.World.info.seedString, Find.GameInitData.mapSize, (int)(Find.World.PlanetCoverage * 100), delegate (bool success, List<PlanetTileInfo> mapTiles) {
+
+            var seed = Find.World.info.seedString;
+            var coverage = (int)(Find.World.PlanetCoverage * 100);
+
+            var size = 0;
+            if (Find.GameInitData != null) {
+                size = Find.GameInitData.mapSize;
+            } else {
+                size = Find.World.info.initialMapSize.x;
+            }
+
+            service.LoadAllMapsForSeed(seed, size, coverage, delegate (bool success, List<PlanetTileInfo> mapTiles) {
                 if (success) {
                     if (mapTiles.Count == 0) {
                         this.Close();
@@ -357,12 +366,14 @@ namespace RealRuins {
         }
 
         private void LoadItems() {
-            List<string> listToLoad; blueprintIds.ListFullCopy();
+            filteredList = null;
+          
             if (downloadLimit == 0 || blueprintIds.Count() < downloadLimit) {
-                listToLoad = blueprintIds;
+                filteredList = blueprintIds.ListFullCopy();
             } else {
-                listToLoad = blueprintIds.InRandomOrder().ToList().GetRange(0, downloadLimit);
+                filteredList = blueprintIds.ListFullCopy().InRandomOrder().ToList().GetRange(0, downloadLimit);
             }
+            Debug.Log(Debug.POI, "limit: {0}, in list: {1}, loading: {2}", downloadLimit, blueprintIds.Count, filteredList.Count);
 
             if (pageState == RuinsPageState.LoadedHeader) {
                 pageState = RuinsPageState.LoadingBlueprints;
@@ -384,7 +395,7 @@ namespace RealRuins {
 
                 Debug.Log(Debug.POI, "Loading blueprints one by one...");
                 
-                manager.AggressiveLoadSnaphotsFromList(listToLoad, gamePath: SnapshotStoreManager.CurrentGamePath(), loadIfExists: false);
+                manager.AggressiveLoadSnaphotsFromList(filteredList, gamePath: SnapshotStoreManager.CurrentGamePath(), loadIfExists: false);
             }
         }
 
@@ -428,6 +439,10 @@ namespace RealRuins {
 
         private bool CreateSitesInt() {
             foreach (PlanetTileInfo t in mapTiles) {
+                if (!filteredList.Contains(t.mapId)) {
+                    continue;
+                }
+
                 if (forceStopTransfer) {
                     return false;
                 }
