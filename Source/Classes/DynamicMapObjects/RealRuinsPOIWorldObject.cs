@@ -14,26 +14,54 @@ namespace RealRuins {
     [StaticConstructorOnStartup]
     class RealRuinsPOIWorldObject : MapParent {
 
-        public override Texture2D ExpandingIcon => ContentFinder<Texture2D>.Get("poi-" + GetComponent<RealRuinsPOIComp>().poiType);
-        public override Color ExpandingIconColor => Faction?.Color ?? Color.white;
+        public override Texture2D ExpandingIcon {
+            get {
+                return ContentFinder<Texture2D>.Get("poi-" + GetComponent<RealRuinsPOIComp>().poiType);
+            }
+        }
+
+        public override Color ExpandingIconColor => this.Faction == null ? Color.white : this.Faction.Color;
         private Material cachedMat;
         private float wealthOnEnter = 1;
         private Faction originalFaction;
 
         public override string Label => ("RealRuins.CaptionPOI" + GetComponent<RealRuinsPOIComp>().poiType).Translate();
-        
 
-    public override Material Material {
+        private string expandedIconTexturePath {
             get {
-                if (cachedMat == null) {
-                    var color = Color.white;
-                    cachedMat = MaterialPool.MatFrom(color: color, texPath: "World/WorldObjects/Sites/GenericSite", shader: ShaderDatabase.WorldOverlayTransparentLit, renderQueue: WorldMaterials.DynamicObjectRenderQueue);
+                switch ((POIType)(GetComponent<RealRuinsPOIComp>().poiType)) {
+                    case POIType.Ruins:
+                        return "World/WorldObjects/TribalSettlement";
+                    case POIType.City:
+                    case POIType.Stronghold:
+                    case POIType.MilitaryBaseLarge:
+                        return "World/WorldObjects/DefaultSettlement";
+                    case POIType.Research:
+                    case POIType.Storage:
+                    case POIType.Factory:
+                    case POIType.PowerPlant:
+                        return "World/WorldObjects/TribalSettlement";
+                    case POIType.Camp:
+                    case POIType.Communication:
+                        return "World/WorldObjects/Sites/GenericSite";
+                    case POIType.MilitaryBaseSmall:
+                    case POIType.Outpost:
+                        return "World/WorldObjects/Sites/Outpost";
+                    default:
+                        return "World/WorldObjects/TribalSettlement";
                 }
-                return cachedMat;
             }
         }
 
-        public RealRuinsPOIWorldObject() {
+        public override Material Material {
+            get {
+                if (cachedMat == null) {
+                    var color = this.ExpandingIconColor;
+                    if (color == null) { color = Color.white; }
+                    cachedMat = MaterialPool.MatFrom(texPath: this.expandedIconTexturePath, shader: ShaderDatabase.WorldOverlayTransparentLit, color: color, renderQueue: WorldMaterials.DynamicObjectRenderQueue); ;
+                }
+                return cachedMat;
+            }
         }
 
         public override IEnumerable<FloatMenuOption> GetFloatMenuOptions(Caravan caravan) {
@@ -93,16 +121,13 @@ namespace RealRuins {
         public override bool ShouldRemoveMapNow(out bool alsoRemoveWorldObject) {
             bool shouldRemove = !Map.mapPawns.AnyPawnBlockingMapRemoval;
             if (shouldRemove) {
+                alsoRemoveWorldObject = false;
                 EnterCooldownComp cooldownComp = GetComponent<EnterCooldownComp>();
                 RealRuinsPOIComp poiComp = GetComponent<RealRuinsPOIComp>();
-                SetFaction(originalFaction);
-                Debug.Log("Setting original faction ({0}), cached mat set to nil", originalFaction);
-                cachedMat = null; //reset cached icon to recolor it
-                Draw();
 
                 float blueprintCost = 1;
                 if (poiComp != null) {
-                    if (poiComp.poiType == (int)POIType.Ruins) {
+                    if (poiComp.poiType == (int)POIType.Ruins || originalFaction == null) {
                         alsoRemoveWorldObject = true;
                         return true;
                     } else {
@@ -112,14 +137,38 @@ namespace RealRuins {
 
                 float mapWealth = CurrentMapWealth();
                 float difference = wealthOnEnter - mapWealth;
+
+                //Ratio is what part of original cost was destroyed or stolen.
                 float ratio = difference / blueprintCost;
+                float cooldownDuration = Math.Max(4, difference / 2000);
                 if (cooldownComp != null) {
-                    cooldownComp.Props.durationDays = Math.Max(4, difference / 2000);
+                    cooldownComp.Props.durationDays = cooldownDuration;
                 }
 
-                Debug.Log(Debug.POI, "on enter {0}, now {1}, snapshot: {4}, diff {2}, ratio {3},", wealthOnEnter, mapWealth, difference, ratio, blueprintCost);
+                Debug.Log(Debug.POI, "Leaving POI map. Initial cost: {0} (bp cost: {4}), now: {1}. Difference = {2}, ratio: {3}", wealthOnEnter, mapWealth, difference, ratio, blueprintCost);
 
-                alsoRemoveWorldObject = ratio > 0.5; //at least half worth of initial wealth is destroyed or stolen.
+                if (ratio < 0.1) {
+                    //less than 10% stolen: site reclaimed
+                    SetFaction(originalFaction);
+                    Debug.Log(Debug.POI, "Low damage. Restoring owner, activating cooldown for {0} days", cooldownDuration);
+                } else if (ratio < 0.3) {
+                    //if 10-30% was destroyed, then there is a chance that ruins won't be reclaimed by their previous owners
+                    if (Rand.Chance(0.3f)) {
+                        // 30% of abandoning POI
+                        Debug.Log(Debug.POI, "Moderate damage. Abandoning, activating cooldown for {0} days", cooldownDuration);
+                    } else {
+                        //
+                        SetFaction(originalFaction);
+                        Debug.Log(Debug.POI, "Moderate damage. Restoring owner, activating cooldown for {0} days", cooldownDuration);
+                    }
+                } else {
+                    Debug.Log(Debug.POI, "Significant damage, destroying");
+                    alsoRemoveWorldObject = true;
+                }
+
+                cachedMat = null; //reset cached icon to recolor it
+                Draw();
+
                 return true;
             } else {
                 alsoRemoveWorldObject = false;
@@ -145,12 +194,9 @@ namespace RealRuins {
 
             var comp = GetComponent<RealRuinsPOIComp>();
             if (comp != null) {
-                builder.AppendLine(("RealRuins.DescPOI" + comp.poiType).Translate());
-                if (Faction == null) {
-                    if ((POIType)comp.poiType != POIType.Ruins) {
-                        builder.AppendLine("RealRuins.POINowRuined".Translate());
-                    }
-                } else {
+                if (Faction != null) {
+                    builder.AppendLine(("RealRuins.DescPOI" + comp.poiType).Translate());
+
                     if ((POIType)comp.poiType != POIType.Ruins) {
 
                         int[] costThresholds = { 0, 10000, 100000, 1000000, 10000000 };
@@ -165,6 +211,12 @@ namespace RealRuins {
                             builder.Append("RealRuins.RuinsWealth".Translate());
                             builder.AppendLine(wealthDesc);
                         }
+                    }
+                } else {
+                    if ((POIType)comp.poiType != POIType.Ruins) {
+                        builder.AppendLine(String.Format("RealRuins.POINowRuined".Translate(), Label.ToLower()));
+                    } else {
+                        builder.AppendLine(String.Format("RealRuins.POIUselessRuins".Translate(), "something"));
                     }
                 }
             }

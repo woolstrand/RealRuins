@@ -25,12 +25,43 @@ namespace RealRuins {
             Find.TickManager.Pause();
             //Debug.Message("Overridden LARGE generate");
 
-            RealRuinsPOIComp poiComp = map.Parent.GetComponent<RealRuinsPOIComp>();
-            string filename = SnapshotStoreManager.Instance.SnapshotNameFor(poiComp.blueprintName, poiComp.gameName);
+            RealRuinsPOIComp poiComp;
+            bool skipForcesGeneration = false;
+            bool overrideSpawnAsRuins = false;
+            Faction faction = null;
+            if (PlanetaryRuinsInitData.shared.startingPOI != null) {
+                Debug.Log("[MapGen]", "Found starting poi in game init context.");
+                RealRuinsPOIWorldObject poi = PlanetaryRuinsInitData.shared.startingPOI;
+                poiComp = poi.GetComponent<RealRuinsPOIComp>();
+                switch (PlanetaryRuinsInitData.shared.settleMode) {
+                    case SettleMode.normal:
+                        faction = null;
+                        skipForcesGeneration = true;
+                        overrideSpawnAsRuins = true;
+                        break;
+                    case SettleMode.takeover:
+                        faction = Faction.OfPlayer;
+                        skipForcesGeneration = true;
+                        overrideSpawnAsRuins = false;
+                        break;
+                    case SettleMode.attack:
+                        faction = poi.Faction;
+                        skipForcesGeneration = false;
+                        overrideSpawnAsRuins = false;
+                        break;
+                }
+            } else {
+                poiComp = map.Parent.GetComponent<RealRuinsPOIComp>();
+                faction = map.ParentFaction;
+            }
+           
+            string filename = SnapshotStoreManager.SnapshotNameFor(poiComp.blueprintName, poiComp.gameName);
 
 
             Debug.Log("Spawning POI: Preselected file name is {0}", filename);
-            Debug.Log("Location (PRESUMABLY WRONG) is {0} {1}", poiComp.originX, poiComp.originZ);
+            Debug.Log("Location is {0} {1}", poiComp.originX, poiComp.originZ);
+
+            var bp = BlueprintLoader.LoadWholeBlueprintAtPath(filename);
 
             currentOptions = RealRuins_ModSettings.defaultScatterOptions.Copy(); //store as instance variable to keep accessible on subsequent ScatterAt calls
 
@@ -54,27 +85,19 @@ namespace RealRuins {
             currentOptions.claimableBlocks = false;
 
 
-            if (poiComp.poiType == (int)POIType.Ruins || map.ParentFaction == null) {
-                /*if (Rand.Chance(0.1f)) {
-                    currentOptions.wallsDoorsOnly = true;
-                } else {
-                    currentOptions.deteriorationMultiplier = Math.Abs(Rand.Gaussian(0, 0.15f));
-                }*/
+            if (poiComp.poiType == (int)POIType.Ruins || faction == null || overrideSpawnAsRuins) {
                 currentOptions.shouldAddFilth = true;
                 currentOptions.forceFullHitPoints = false;
                 currentOptions.enableDeterioration = true;
                 currentOptions.overwritesEverything = false;
-                currentOptions.costCap = (int)Math.Abs(Rand.Gaussian(0, 10000));
-                currentOptions.itemCostLimit = Rand.Range(50, 300);
+                currentOptions.costCap = (int)Math.Abs(Rand.Gaussian(0, Math.Max(5000, bp.width * bp.height)));
+                currentOptions.itemCostLimit = Rand.Range(50, 500);
             } else {
                 currentOptions.shouldAddFilth = false;
                 currentOptions.forceFullHitPoints = true;
                 currentOptions.enableDeterioration = false;
                 currentOptions.overwritesEverything = true;
             }
-
-
-            var bp = BlueprintLoader.LoadWholeBlueprintAtPath(filename);
 
             currentOptions.overridePosition = new IntVec3(bp.originX, 0, bp.originZ);
             currentOptions.centerIfExceedsBounds = true;
@@ -89,11 +112,14 @@ namespace RealRuins {
                 bp.originX + bp.width, bp.originZ + bp.height,
                 bp.width, bp.height);
 
-            var generators = GeneratorsForBlueprint(bp, poiComp, map.Parent.Faction);
+            List<AbstractDefenderForcesGenerator> generators = null;
+            if (!skipForcesGeneration) {
+                generators = GeneratorsForBlueprint(bp, poiComp, faction);
+            }
 
             ResolveParams resolveParams = default(ResolveParams);
             BaseGen.globalSettings.map = map;
-            resolveParams.faction = map.ParentFaction;
+            resolveParams.faction = faction;
             resolveParams.rect = new CellRect(currentOptions.overridePosition.x, currentOptions.overridePosition.z, map.Size.x - currentOptions.overridePosition.x, map.Size.z - currentOptions.overridePosition.z);
 
 
@@ -101,8 +127,7 @@ namespace RealRuins {
 
             float uncoveredCost = currentOptions.uncoveredCost;
 
-            if (resolveParams.faction != null) {
-                //Debug.Log("Mannable count: {0}", poiComp.mannableCount);
+            if (resolveParams.faction != null && resolveParams.faction != Faction.OfPlayer) {
                 ManTurrets((int)(poiComp.mannableCount * 1.25f + 1), resolveParams, map);
             }
 
@@ -119,11 +144,14 @@ namespace RealRuins {
             BaseGen.Generate();
 
             if (generators != null) {
+                Debug.Log(Debug.BlueprintTransfer, "Found forces generators, generating {0} starting parties", generators.Count());
                 foreach (AbstractDefenderForcesGenerator generator in generators) {
                     generator.GenerateStartingParty(map, resolveParams, currentOptions);
                 }
             }
 
+            // Cleanup init data to ensure it won't interefere in future
+            PlanetaryRuinsInitData.shared.Cleanup();
         }
 
         private void ManTurrets(int count, ResolveParams rp, Map map) {
@@ -146,12 +174,12 @@ namespace RealRuins {
             Debug.Log(Debug.Scatter, "Selecting force generators");
             //override forces for any kind of POI if no faction selected
             if (faction == null || (POIType)poiComp.poiType == POIType.Ruins) {
-                if (Rand.Chance(0.25f)) {
+                if (Rand.Chance(0.2f)) {
                     result.Add(new AnimalInhabitantsForcesGenerator());
-                } else if (Rand.Chance(0.333f)) {
+                } else if (Rand.Chance(0.2f)) {
                     result.Add(new MechanoidsForcesGenerator(0));
-                } else if (Rand.Chance(0.5f)) {
-                    result.Add(new CitizenForcesGeneration(1000, Find.FactionManager.RandomEnemyFaction(true, true, false)));
+                } else if (Rand.Chance(0.2f)) {
+                    result.Add(new CitizenForcesGeneration(Rand.RangeInclusive(300, 1000), Find.FactionManager.RandomEnemyFaction(true, true, false)));
                 }
                 Debug.Log(Debug.Scatter, "Selected {0} for abandoned or ruins", result.Count);
                 return result;

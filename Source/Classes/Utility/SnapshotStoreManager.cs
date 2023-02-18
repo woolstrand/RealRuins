@@ -30,10 +30,20 @@ namespace RealRuins
             }
         }
 
-        private string oldRootFolder = "../Snapshots";
+        private static string oldRootFolder = "../Snapshots";
         private long totalFilesSize = 0;
         private int totalFileCount = 0;
-       
+
+
+        public static bool HasPlanetaryBlueprintForCurrentGame(string blueprintName) {
+            string gameName = CurrentGamePath();
+            bool result = SnapshotExists(blueprintName, gameName);
+            if (!result) {
+                Debug.Log("[PRELOAD CHECKER]", "{0} does not exist at {1}, scheduling load.", blueprintName, gameName);
+            }
+            return result;
+            
+        }
 
         public static string GamePath(string seed, int mapSize, float coverage) {
             return string.Format("{0}-{1}-{2}", seed.SanitizeForFileSystem(), mapSize, (int)(coverage * 100));
@@ -86,9 +96,9 @@ namespace RealRuins
             }
         }
         
-        private string snapshotsFolderPath = null;
+        private static string snapshotsFolderPath = null;
 
-        private string GetSnapshotsFolderPath() {
+        private static string GetSnapshotsFolderPath() {
             if (snapshotsFolderPath == null) {
                 snapshotsFolderPath = Path.Combine(GenFilePaths.SaveDataFolderPath, "RealRuins");
                 DirectoryInfo directoryInfo = new DirectoryInfo(snapshotsFolderPath);
@@ -182,7 +192,7 @@ namespace RealRuins
             return filename;
         }
 
-        public string SnapshotNameFor(string snapshotId, string gameName) {
+        public static string SnapshotNameFor(string snapshotId, string gameName) {
             if (gameName == null) {
                 return GetSnapshotsFolderPath() + "/" + snapshotId + ".bp";
             } else {
@@ -190,7 +200,7 @@ namespace RealRuins
             }
         }
 
-        public bool SnapshotExists(string snapshotId, string gameName) {
+        public static bool SnapshotExists(string snapshotId, string gameName) {
             return File.Exists(SnapshotNameFor(snapshotId, gameName));
         }
 

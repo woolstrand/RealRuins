@@ -93,12 +93,12 @@ namespace RealRuins {
                 foreach (AbstractDefenderForcesGenerator generator in generators) {
                     try {
                         generator.GenerateForces(map, rp, options);
+                        Debug.Log(Debug.Scatter, "[{0} s] Generated forces for a generator.", DateTime.UtcNow.Subtract(start).TotalSeconds);
                     } catch (Exception e) {
                         Debug.Error(Debug.BlueprintTransfer, "Failed to generate forces: {0}", e);
                     }
                 }
             }
-            Debug.Log(Debug.Scatter, "[{0} s] Generated forces.", DateTime.UtcNow.Subtract(start).TotalSeconds);
 
             if (options.shouldAddFilth) {
                 try {
