@@ -8,8 +8,10 @@ using System.Linq;
 using System;
 using UnityEngine;
 
+
 namespace RealRuins {
-    public class IncidentWorker_RuinsFound : IncidentWorker {
+    // is not used anymore. will be kept for some time and removed later
+    public class IncidentWorker_RuinsFound_OBSOLETE : IncidentWorker {
 
         protected override bool CanFireNowSub(IncidentParms parms) {
             if (!base.CanFireNowSub(parms)) {

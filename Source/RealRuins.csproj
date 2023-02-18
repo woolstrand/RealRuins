@@ -62,25 +62,17 @@
     <None Include="..\Languages\English\Keyed\RealRuins_Options.xml">
       <SubType>Designer</SubType>
     </None>
-    <None Include="..\Languages\French\DefInjected\Sites\Cores\RuinedBase.xml" />
-    <None Include="..\Languages\French\DefInjected\StoryTeller\Incidents_World_Quests.xml" />
-    <None Include="..\Languages\French\DefInjected\StoryTeller\WorldObjects.xml" />
     <None Include="..\Languages\French\Keyed\RealRuins_Options.xml" />
     <None Include="..\Languages\German\DefInjected\IncidentDef\Incidents.xml" />
     <None Include="..\Languages\German\DefInjected\SiteCoreDef\RuinedBase.xml" />
     <None Include="..\Languages\German\DefInjected\WorldObjectDef\WorldObjects.xml" />
     <None Include="..\Languages\German\Keyed\RealRuins_Options.xml" />
     <None Include="..\Languages\Japanese\DefInjected\IncidentDef\Incidents.xml" />
-    <None Include="..\Languages\Japanese\DefInjected\SiteCoreDef\RuinedBase.xml" />
     <None Include="..\Languages\Japanese\DefInjected\ThingDef\Triggers.xml" />
     <None Include="..\Languages\Japanese\DefInjected\ThoughtDef\Thoughts_Scavenging.xml" />
     <None Include="..\Languages\Japanese\DefInjected\WorldObjectDef\WorldObjects.xml" />
     <None Include="..\Languages\Japanese\Keyed\RealRuins_Options.xml" />
     <None Include="..\Languages\Japanese\LanguageInfo.xml" />
-    <None Include="..\Languages\Russian\DefInjected\Sites\Cores\RuinedBase.xml" />
-    <None Include="..\Languages\Russian\DefInjected\Storyteller\Incidents_World_Quests.xml" />
-    <None Include="..\Languages\Russian\DefInjected\Storyteller\WorldObjects.xml" />
-    <None Include="..\Languages\Russian\DefInjected\Thoughts\Thoughts_Scavenging.xml" />
     <None Include="..\Languages\Russian\Keyed\RealRuins_Options.xml" />
     <None Include="..\Patches\**" />
     <Reference Include="Assembly-CSharp-firstpass">
@@ -146,6 +138,7 @@
     <Reference Include="UnityEngine.TextRenderingModule">
       <HintPath>..\DLL_Cache\UnityEngine.TextRenderingModule.dll</HintPath>
     </Reference>
+    <None Include="..\Languages\Russian\DefInjected\QuestScriptDef\Script_IntactRuins.xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Classes\Components\FormCaravanFromRuinsComp.cs" />
@@ -170,7 +163,7 @@
     <Compile Include="Classes\Incidents\SmallRuinsWorldObject.cs" />
     <Compile Include="Classes\Incidents\TransportPodsArrivalAction_VisitRuins.cs" />
     <Compile Include="Classes\Components\WorldObjectCompProperties_RuinedBase.cs" />
-    <Compile Include="Classes\Page_RealRuins.cs" />
+    <Compile Include="Classes\Page_PlanetaryRuinsLoader.cs" />
     <Compile Include="Classes\DynamicMapObjects\RealRuinsPOIWorldObject.cs" />
     <Compile Include="Classes\RealRuinsPlanetary_Mod.cs" />
     <Compile Include="Classes\RealRuins_Mod.cs" />
@@ -212,12 +205,19 @@
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
     <Compile Include="Classes\Utility\BlueprintRecoveryService.cs" />
+    <Compile Include="Classes\Quest\QuestNode_FindBlueprint.cs" />
+    <Compile Include="Classes\Quest\QuestNode_GenerateRuinsObject.cs" />
+    <Compile Include="Classes\Utility\SmallQuestionDialog.cs" />
+    <Compile Include="Classes\Utility\PlanetaryRuinsOptions.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="MapGenerators_RealRuins.xml" />
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Connected Services\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Classes\Quest\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

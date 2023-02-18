@@ -7,6 +7,7 @@ using Verse;
 using RimWorld;
 using RimWorld.Planet;
 using UnityEngine;
+using RimWorld.QuestGen;
 
 namespace RealRuins {
     [StaticConstructorOnStartup]
@@ -45,7 +46,6 @@ namespace RealRuins {
             foreach (FloatMenuOption floatMenuOption in TransportPodsArrivalAction_VisitRuins.GetFloatMenuOptions(representative, pods, this)) {
                 yield return floatMenuOption;
             }
-            //foreach ()
         }
 
         public override IEnumerable<Gizmo> GetGizmos() {
@@ -54,17 +54,16 @@ namespace RealRuins {
             }
         }
 
-        public override void Tick() {
-            base.Tick();
-            if (HasMap && !hasStartedCountdown) {
-                GetComponent<TimedForcedExit>().StartForceExitAndRemoveMapCountdown(15 * 60000);
-                hasStartedCountdown = true;
-            }
-        }
-
         public override bool ShouldRemoveMapNow(out bool alsoRemoveWorldObject) {
             bool shouldRemove = !Map.mapPawns.AnyPawnBlockingMapRemoval;
             alsoRemoveWorldObject = shouldRemove;
+            if (shouldRemove) {
+                var comp = this.GetComponent<RuinedBaseComp>();
+                if (comp != null) {
+                    var signalTag = comp.successSignal;
+                    Find.SignalManager.SendSignal(new Signal(signalTag));
+                }
+            }
             return shouldRemove;
         }
 

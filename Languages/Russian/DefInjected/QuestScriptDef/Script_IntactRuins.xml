@@ -1,0 +1,68 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<LanguageData>
+    <RealRuins_AbandonedBase.questNameRules.rulesStrings>
+    <!-- EN:
+        <li>questName->[abandoned] [base]</li>
+        <li>questName->[intact] [ruins]</li>
+        <li>abandoned->Abandoned</li>
+        <li>abandoned->Destroyed</li>
+        <li>abandoned->Sealed</li>
+        <li>base->Base</li>
+        <li>base->Outpost</li>
+        <li>base->Complex</li>
+        <li>base->City</li>
+        <li>base->Factory</li>
+        <li>intact->Pristine</li>
+        <li>intact->Intact</li>
+        <li>intact->Untouched</li>
+        <li>ruins->Ruins</li>
+        -->
+
+        <li>questName->[abandoned_masc] [base_masc]</li>
+        <li>questName->[abandoned_fem] [base_fem]</li>
+        <li>questName->[intact_masc] [intact_masc]</li>
+        <li>questName->[intact_fem] [intact_fem]</li>
+        <li>abandoned_masc->Покинутый</li>
+        <li>abandoned_masc->Разрушенный</li>
+        <li>abandoned_masc->Запечатанный</li>
+        <li>abandoned_fem->Покинутая</li>
+        <li>abandoned_fem->Разрушенная</li>
+        <li>abandoned_fem->Запечатаная</li>
+        <li>base_masc->Аванпост</li>
+        <li>base_masc->Комплекс</li>
+        <li>base_masc->Город</li>
+        <li>base_fem->База</li>
+        <li>base_fem->Фабрика</li>
+        <li>intact->Нетронутые</li>
+        <li>intact->Сохранившиеся</li>
+        <li>ruins->Руины</li>
+        <li>ruins->Развалины</li>
+    </RealRuins_AbandonedBase.questNameRules.rulesStrings>
+
+    <RealRuins_AbandonedBase.questDescriptionRules.rulesStrings>
+        <!-- EN:
+        <li>questDescription->[source] a group of ancient buildings. Looks like the complex is very old and empty, but doors are sealed and all inventory and machinery is still inside. Word spreads fast, and all nearby settlements are already preparing to fight for whatever lies inside this ruins. The treasure could be enormous, so be prepared for a real massacre, not like all usual carefully balanced encounters you had before. And not waste time: I see someone already [stealing]. Ruins won't last long.</li>
+        <li>source->Your scouts discovered</li>
+        <li>source->Trader told you, he found</li>
+        <li>source->After a powerful explosion nearby mountain uncovered</li>
+        <li>stealing->dismantling golden floor tiles across all rooms</li>
+        <li>stealing->hauling stack of advanced components from there</li>
+        <li>stealing->loading drop pod launcher with ten vanometric cells</li>
+        <li>stealing->trying to capture five stacks of antigrain warheads</li>
+        -->
+
+        <li>questDescription->[source] группу заброшенных строений. Комплекс выглядит очень древним, но стены преимущественно целы, двери запечатаны, а большинство механизмов и предметов до сих пор находятся внутри. Слухи разлетаются быстро, и из всех окрестных поселений к развалинам уже выдвинулись отряды, готовые сражаться за то, что окажется внутри этого комплекса. Сокровища внутри могут быть просто невероятными, поэтому в руинах ожидается настоящая бойня, а не вот эти вот тщательно сбалансированные рейды для снежинок. И не теряйте времени: [stealing]. Скоро там останутся одни голые стены.</li>
+        <li>source->Отряд ваших скаутов наткнулся на</li>
+        <li>source->Бродячий торговец рассказал, что недалеко видел</li>
+        <li>source->Мэр соседнего городка расказал по секрету, что фермеры обнаружили неподалеку</li>
+        <li>source->После недавнего взрыва в ближайших холмах разведчики обнаружили за завалом новую долину, а в ней -</li>
+        <li>stealing->отряд рейдеров уже снимает золотой пол по всему комплексу и набивает дорожные сумки своего каравана</li>
+        <li>stealing->пара бездомных уже тащат по стеку продвинутых компонентов в неизвестном направлении</li>
+        <li>stealing->инженеры из соседнего городка уже загрузили в транспортную капсулу десяток ванометрических генераторов</li>
+        <li>stealing->какой-то оборванец уже набил полный рюкзак архопротезов и сывороток воскрешения, и ковыляет к выходу</li>
+    </RealRuins_AbandonedBase.questDescriptionRules.rulesStrings>
+
+    <RealRuins_AbandonedBase.LetterLabelQuestExpired.slateRef>Квест истек: [resolvedQuestName]</RealRuins_AbandonedBase.LetterLabelQuestExpired.slateRef>
+    <RealRuins_AbandonedBase.LetterTextQuestExpired.slateRef>Обнаруженные руины выскребли до земли, теперь там только голые стены и кучи щебня.</RealRuins_AbandonedBase.LetterTextQuestExpired.slateRef>
+
+</LanguageData>

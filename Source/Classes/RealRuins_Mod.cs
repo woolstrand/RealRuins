@@ -7,6 +7,8 @@ using System.Reflection;
 using Verse;
 using RimWorld;
 using UnityEngine;
+using Verse.Noise;
+using System.Reflection.Emit;
 
 namespace RealRuins {
     public class RealRuins_Mod : Mod {
@@ -68,6 +70,8 @@ namespace RealRuins {
         public static string[] LogLevelOptions = { "RealRuins.LogLevel.All", "RealRuins.LogLevel.Warnings", "RealRuins.LogLevel.Errors" };
 
         private Vector2 scrollPosition = new Vector2(0, 0);
+        private string buf1 = "";
+        private string buf2 = "";
 
         // fast regex from xml:
         //<RealRuins_M..Options_([^>]*)>[^<]*<\/([^>]*)>     ===>     public static string Text_Option_$1 = "$2";
@@ -97,34 +101,33 @@ namespace RealRuins {
         }
 
         private void ResetSettings() {
-            ScatterOptions defaultOptions = ScatterOptions.Default;
-            RealRuins_ModSettings.defaultScatterOptions.claimableBlocks = defaultOptions.claimableBlocks;
-            RealRuins_ModSettings.defaultScatterOptions.decorationChance = defaultOptions.decorationChance;
-            RealRuins_ModSettings.defaultScatterOptions.deteriorationMultiplier = defaultOptions.deteriorationMultiplier;
-            RealRuins_ModSettings.defaultScatterOptions.densityMultiplier = defaultOptions.densityMultiplier;
-            RealRuins_ModSettings.defaultScatterOptions.maxRadius = defaultOptions.maxRadius;
-            RealRuins_ModSettings.defaultScatterOptions.minRadius = defaultOptions.minRadius;
-            RealRuins_ModSettings.defaultScatterOptions.disableSpawnItems = defaultOptions.disableSpawnItems;
-            RealRuins_ModSettings.defaultScatterOptions.enableInstantCaravanReform = defaultOptions.enableInstantCaravanReform;
-            RealRuins_ModSettings.defaultScatterOptions.enableProximity = defaultOptions.enableProximity;
-            RealRuins_ModSettings.defaultScatterOptions.hostileChance = defaultOptions.hostileChance;
-            RealRuins_ModSettings.defaultScatterOptions.itemCostLimit = defaultOptions.itemCostLimit;
-            RealRuins_ModSettings.defaultScatterOptions.scavengingMultiplier = defaultOptions.scavengingMultiplier;
-            RealRuins_ModSettings.defaultScatterOptions.trapChance = defaultOptions.trapChance;
-            RealRuins_ModSettings.defaultScatterOptions.wallsDoorsOnly = defaultOptions.wallsDoorsOnly;
+            RealRuins_ModSettings.Reset();
+        }
+
+        private void ReadableLabeledTextInput(Rect rect, String title, ref int value, ref string buffer) {
+            Rect rect2 = rect.LeftHalf().Rounded();
+            Rect rect3 = rect.RightPartPixels(100);
+            TextAnchor anchor = Text.Anchor;
+            Text.Anchor = TextAnchor.MiddleLeft;
+            Widgets.Label(rect2, title);
+            Text.Anchor = anchor;
+            Widgets.TextFieldNumeric(rect3, ref value, ref buffer);
         }
 
         public override void DoSettingsWindowContents(Rect rect) {
-            Rect innerRect = new Rect(0, 0, rect.width - 20, 800);
+            Rect innerRect = new Rect(0, 0, rect.width - 20, 1000);
 
             Widgets.BeginScrollView(rect, ref scrollPosition, innerRect);
-            Rect rect2 = innerRect.LeftPart(0.45f).Rounded();
-            Rect rect3 = innerRect.RightPart(0.45f).Rounded();
+            Rect rect2 = innerRect.TopPartPixels(800).LeftPart(0.45f).Rounded();
+            Rect rect3 = innerRect.TopPartPixels(800).RightPart(0.45f).Rounded();
+            Rect rect4 = innerRect.BottomPartPixels(innerRect.height - rect2.height);
             Listing_Standard left = new Listing_Standard();
             Listing_Standard right = new Listing_Standard();
 
             left.Begin(rect2);
             //networking settings
+            left.Label("RealRuins.CacheSettings.Caption".Translate());
+            left.GapLine();
             left.CheckboxLabeled(Text_Option_OfflineMode.Translate(), ref RealRuins_ModSettings.offlineMode, Text_Option_OfflineModeTooltip.Translate());
             left.Label(Text_Option_CurrentCacheSize.Translate() + " " + SnapshotStoreManager.Instance.TotalSize() / (1024 * 1024) + " MB");
             left.Label(Text_Option_CurrentCacheCount.Translate() + " " + SnapshotStoreManager.Instance.StoredSnapshotsCount());
@@ -140,10 +143,15 @@ namespace RealRuins {
             left.Gap(25f);
 
             //generation settings
+            left.Label("RealRuins.SpawnSettings.Caption".Translate());
+            left.GapLine();
             int sizeMin = RealRuins_ModSettings.defaultScatterOptions.minRadius;
             int sizeMax = RealRuins_ModSettings.defaultScatterOptions.maxRadius;
             string costStr = "∞"; if (RealRuins_ModSettings.defaultScatterOptions.itemCostLimit < 1000) {
                 costStr = RealRuins_ModSettings.defaultScatterOptions.itemCostLimit.ToString();
+            }
+            string wealthCapStr = "∞"; if (RealRuins_ModSettings.ruinsCostCap < 9.9999e8) {
+                wealthCapStr = RealRuins_ModSettings.ruinsCostCap.ToString();
             }
 
             left.Label(Text_Option_Density.Translate() + ": x" + RealRuins_ModSettings.defaultScatterOptions.densityMultiplier.ToString("F"), -1, Text_Option_DensityTT.Translate());
@@ -159,7 +167,7 @@ namespace RealRuins {
             left.Label(Text_Option_DisableHostiles.Translate(), -1, Text_Option_DisableHostilesTT.Translate());
             left.Gap(15);
             left.Label("RealRuins.ForceMultiplier".Translate() + ": x" + RealRuins_ModSettings.forceMultiplier.ToString("F"), -1, "RealRuins.ForceMultiplierTT".Translate());
-            left.Label("RealRuins.AbsoluteWealthCap".Translate() + ": " + ((int)RealRuins_ModSettings.ruinsCostCap).ToString("C"), -1, "RealRuins.AbsoluteWealthCapTT".Translate());
+            left.Label("RealRuins.AbsoluteWealthCap".Translate() + ": " + wealthCapStr, -1, "RealRuins.AbsoluteWealthCapTT".Translate());
             
             left.Gap(15);
 
@@ -170,7 +178,7 @@ namespace RealRuins {
             left.CheckboxLabeled("RealRuins.LeaveVanillaRuins".Translate(), ref RealRuins_ModSettings.preserveStandardRuins, "RealRuins.LeaveVanillaRuinsTT".Translate());
 
             Rect ttrect = left.GetRect(30f);
-            Widgets.Label(ttrect.LeftHalf(), "RealRuins.CaravanReformType".Translate());
+            Widgets.Label(ttrect.LeftHalf().ContractedBy(0, 5), "RealRuins.CaravanReformType".Translate());
             bool result = Widgets.ButtonText(ttrect.RightHalf(), CaravanReformOptions[Math.Min(2, RealRuins_ModSettings.caravanReformType)].Translate());
             left.Gap(30f);
 
@@ -189,7 +197,7 @@ namespace RealRuins {
                 Find.WindowStack.Add(new FloatMenu(list));
             }
             TooltipHandler.TipRegion(ttrect, "RealRuins.CaravanReformTooltip".Translate());
-            left.Gap(15);
+            left.Gap(4);
 
             if (left.ButtonText(Text_Option_ResetToDefaults.Translate(), null)) {
                 ResetSettings();
@@ -197,6 +205,7 @@ namespace RealRuins {
             left.End();
 
             right.Begin(rect3);
+            right.Gap(gapHeight: 32);
             right.CheckboxLabeled(Text_Option_AllowDownloads.Translate(), ref RealRuins_ModSettings.allowDownloads, Text_Option_AllowDownloadsTooltip.Translate());
             right.CheckboxLabeled(Text_Option_AllowUploads.Translate(), ref RealRuins_ModSettings.allowUploads, Text_Option_AllowUploadsTooltip.Translate());
             right.Gap(25f);
@@ -204,35 +213,32 @@ namespace RealRuins {
             if (right.ButtonText(Text_Option_RemoveAll.Translate(), null)) {
                 SnapshotStoreManager.Instance.ClearCache();
             }
-            right.Gap(64);
+            right.Gap(58);
 
             if (RealRuins_ModSettings.defaultScatterOptions.minRadius > RealRuins_ModSettings.defaultScatterOptions.maxRadius) {
                 RealRuins_ModSettings.defaultScatterOptions.minRadius = RealRuins_ModSettings.defaultScatterOptions.maxRadius;
             }
 
             //generation settings
+            right.Gap(gapHeight: 32);
             RealRuins_ModSettings.defaultScatterOptions.densityMultiplier = right.Slider(RealRuins_ModSettings.defaultScatterOptions.densityMultiplier, 0.0f, 20.0f);
             RealRuins_ModSettings.defaultScatterOptions.minRadius = (int)right.Slider(RealRuins_ModSettings.defaultScatterOptions.minRadius, 4.0f, 64.0f);
             RealRuins_ModSettings.defaultScatterOptions.maxRadius = (int)right.Slider(RealRuins_ModSettings.defaultScatterOptions.maxRadius, 4.0f, 64.0f);
-            right.Gap(15);
+            right.Gap(12);
             RealRuins_ModSettings.defaultScatterOptions.deteriorationMultiplier = right.Slider(RealRuins_ModSettings.defaultScatterOptions.deteriorationMultiplier, 0.0f, 1.0f);
             RealRuins_ModSettings.defaultScatterOptions.scavengingMultiplier = right.Slider(RealRuins_ModSettings.defaultScatterOptions.scavengingMultiplier, 0.0f, 5.0f);
             RealRuins_ModSettings.defaultScatterOptions.itemCostLimit = (int)right.Slider(RealRuins_ModSettings.defaultScatterOptions.itemCostLimit, 0.0f, 1000.0f);
-            right.Gap(15);
+            right.Gap(12);
             RealRuins_ModSettings.defaultScatterOptions.decorationChance = right.Slider(RealRuins_ModSettings.defaultScatterOptions.decorationChance, 0.0f, 0.01f);
             RealRuins_ModSettings.defaultScatterOptions.trapChance = right.Slider(RealRuins_ModSettings.defaultScatterOptions.trapChance, 0.0f, 0.01f);
             RealRuins_ModSettings.defaultScatterOptions.hostileChance = right.Slider(RealRuins_ModSettings.defaultScatterOptions.hostileChance, 0.0f, 1.0f);
 
-            right.Gap(15);
+            right.Gap(12);
             RealRuins_ModSettings.forceMultiplier = right.Slider(RealRuins_ModSettings.forceMultiplier, 0.0f, 2.0f);
-            RealRuins_ModSettings.ruinsCostCap = (float)Math.Exp(right.Slider((float)Math.Log(RealRuins_ModSettings.ruinsCostCap), 6.908f, 20.0f));
-
-            if (right.ButtonText(Text_Option_ResetToDefaults.Translate(), null)) {
-                ResetSettings();
-            }
+            RealRuins_ModSettings.ruinsCostCap = (float)Math.Exp(right.Slider((float)Math.Log(RealRuins_ModSettings.ruinsCostCap), 6.908f, (float)Math.Log(1.0e9)));
 
             Rect ggrect = right.GetRect(30f);
-            Widgets.Label(ggrect.LeftHalf(), "RealRuins.LogLevel".Translate());
+            Widgets.Label(ggrect.LeftHalf().ContractedBy(0, 5), "RealRuins.LogLevel".Translate());
             bool eresult = Widgets.ButtonText(ggrect.RightHalf(), LogLevelOptions[Math.Min(2, RealRuins_ModSettings.logLevel)].Translate());
             right.Gap(30f);
             if (eresult) {
@@ -248,19 +254,34 @@ namespace RealRuins {
                 }
                 Find.WindowStack.Add(new FloatMenu(list));
             }
-            right.Gap(15);
+            right.End();
 
+            Listing_Standard bottom = new Listing_Standard();
+            bottom.Begin(rect4);
+            bottom.Label("RealRuins.PlanetaryRuinsSettings.Caption".Translate());
+            bottom.GapLine();
 
+            bottom.CheckboxLabeled("RealRuins.PlanetarySettings.Enable".Translate(), ref RealRuins_ModSettings.planetaryRuinsOptions.allowOnStart);
 
-            if (right.ButtonText("RealRuins.MapsModuleButton".Translate(), null)) {
-                Page_RealRuins page = new Page_RealRuins();
-                //Find.WindowStack.TryRemove(typeof(Dialog_VanillaModSettings));
+            Rect r = bottom.GetRect(20);
+            ReadableLabeledTextInput(r, "RealRuins.PlanetarySettings.DownloadLimit".Translate() + " ", ref RealRuins_ModSettings.planetaryRuinsOptions.downloadLimit, ref buf1);
+
+            r = bottom.GetRect(20);
+            ReadableLabeledTextInput(r, "RealRuins.PlanetarySettings.TransferLimit".Translate() + "  ", ref RealRuins_ModSettings.planetaryRuinsOptions.transferLimit, ref buf2);
+
+            bottom.CheckboxLabeled("RealRuins.PlanetarySettings.ExcludePlain".Translate(), ref RealRuins_ModSettings.planetaryRuinsOptions.excludePlainRuins);
+            string sliderLabel = "RealRuins.PlanetarySettings.AbandonedPercentage".Translate() + ": " + ((int)RealRuins_ModSettings.planetaryRuinsOptions.abandonedLocations).ToString() + "%";
+            RealRuins_ModSettings.planetaryRuinsOptions.abandonedLocations = bottom.SliderLabeled(sliderLabel, RealRuins_ModSettings.planetaryRuinsOptions.abandonedLocations, 0.0f, 100.0f);
+
+            if (bottom.ButtonText("RealRuins.MapsModuleButton".Translate(), null)) {
+                Page_PlanetaryRuinsLoader page = new Page_PlanetaryRuinsLoader();
                 Find.WindowStack.TryRemove(typeof(HugsLib.Settings.Dialog_ModSettings));
 
                 Find.WindowStack.Add(page);
             }
 
-            right.End();
+            bottom.End();
+
             Widgets.EndScrollView();
         }
     }

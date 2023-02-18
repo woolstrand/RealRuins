@@ -57,12 +57,18 @@ namespace RealRuins {
         private Action<int, int> progress;
         private Action<bool> completion;
 
+        private bool forceStop = false;
+
 
         public void Reset() {
             snapshotsToLoadCount = 0;
             loadedSnapshotsCount = 0;
             failedSnapshotsCount = 0;
             snapshotsToLoad = new List<string>();
+        }
+
+        public void Stop() {
+            forceStop = true;
         }
 
         //try to load snapshots until your guts are out
@@ -151,6 +157,10 @@ namespace RealRuins {
         }
 
         private void LoadNextSnapshot(string gamePath = null) {
+            if (forceStop) {
+                return;
+            }
+
             string next = snapshotsToLoad.Pop();
 
             Debug.Log(Debug.Store, "Loading snapshot {0}", next);
@@ -180,6 +190,10 @@ namespace RealRuins {
         }
 
         public void UploadCurrentMapSnapshot() {
+            if (Find.CurrentMap == null) {
+                return;
+            }
+
             string worldId = (Math.Abs(Find.World.info.persistentRandomValue)).ToString();
             string mapId = Find.CurrentMap.uniqueID.ToString();
             string snapshotId = worldId + mapId;
