@@ -1,68 +1,231 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <LanguageData>
+  <RealRuins_ModOptions_Category>Real Ruins</RealRuins_ModOptions_Category>
+  <RealRuins_ModOptions_AllowDownloads>データベースからの遺跡のダウンロードを許可</RealRuins_ModOptions_AllowDownloads>
+  <RealRuins_ModOptions_AllowUploads>自分の拠点を遺跡データベースにアップロードを許可</RealRuins_ModOptions_AllowUploads>
+  <RealRuins_ModOptions_CacheSize>ローカルキャッシュサイズを限定する</RealRuins_ModOptions_CacheSize>
+  <RealRuins_ModOptions_OfflineMode>ローカルモード専用</RealRuins_ModOptions_OfflineMode>
 
-  <QRY_Quarry>Quarry</QRY_Quarry>
-  <QRY_SettingsDepletionPercent>採掘作業数</QRY_SettingsDepletionPercent>
-  <QRY_SettingsJunkChance>廃品率(鉄屑含): &lt;b&gt;&lt;color=orange&gt;{0}%&lt;/color&gt;&lt;/b&gt;</QRY_SettingsJunkChance>
-  <QRY_SettingsResourceModifier>資源採掘修正値: &lt;b&gt;&lt;color=orange&gt;{0}%&lt;/color&gt;&lt;/b&gt;</QRY_SettingsResourceModifier>
-  <QRY_SettingsChunkChance>岩塊率: &lt;b&gt;&lt;color=orange&gt;{0}%&lt;/color&gt;&lt;/b&gt;</QRY_SettingsChunkChance>
-  <QRY_DepletionLabel>採石場は次の回数を超えると採掘できなくなります：&lt;b&gt;&lt;color=orange&gt;{0}&lt;/color&gt;&lt;/b&gt;回</QRY_DepletionLabel>
-  <QRY_DictionaryLabel>採掘可能アイテムと確率</QRY_DictionaryLabel>
+  <RealRuins_ModOptions_AllowDownloadsTooltip>これをオフにすると,既にダウンロードしたものは削除されません.</RealRuins_ModOptions_AllowDownloadsTooltip>
+  <RealRuins_ModOptions_AllowUploadsTooltip>色々と面白い拠点デザインを使用したデータベースを作成するために,これをオンにすることをお勧めします.これは,1ゲームあたり数Mb(メガバイト)以上を割り当てるべきではありません.</RealRuins_ModOptions_AllowUploadsTooltip>
+  <RealRuins_ModOptions_CacheSizeTooltip>この上限に達しても,MODは新しい拠点設計画像をダウンロードし続け,古い設計画像を削除します.</RealRuins_ModOptions_CacheSizeTooltip>
+  <RealRuins_ModOptions_OfflineModeTooltip>このモードでは,サーバーからダウンロードされてローカルキャッシュされたすべてのデータが削除され,それ以上アップロードやダウンロードができなくなります.しかし,自分の拠点はローカルに保存され続けて,ゲームで遺跡を作るために使用されます.</RealRuins_ModOptions_OfflineModeTooltip>
+  <RealRuins_ModOptions_OfflineModeConfirmation>続行しますか？</RealRuins_ModOptions_OfflineModeConfirmation>
 
-  <QRY_TooltipLetter>土壌の開拓についてメッセージが既に送られているか選択します。無効の場合、最初に採石場が解体された時にメッセージが送られます</QRY_TooltipLetter>
-  <QRY_TooltipJunkChance>鉄屑を入手する確率。もし鉄屑が採掘されてない場合はランダムな資源が採掘されます。</QRY_TooltipJunkChance>
-  <QRY_TooltipResourceModifier>採掘された資源に適用される修正値</QRY_TooltipResourceModifier>
-  <QRY_TooltipChunkChance>岩塊を採掘する確率。鉄屑が採掘されていた場合、これは瓦礫の代わりに岩塊を得るチャンスです。\n\n採掘ブロックは岩塊を使って石材ブロックを作るのに十分な量の石塊が採掘されたかどうかを判断します</QRY_TooltipChunkChance>
+  <RealRuins_ModOptions_CurrentCacheSize>現在のローカルキャッシュ容量：</RealRuins_ModOptions_CurrentCacheSize>
+  <RealRuins_ModOptions_RemoveAll>キャッシュを削除</RealRuins_ModOptions_RemoveAll>
 
-  <QRY_SettingsMineTimeBase>基本採掘Ticks</QRY_SettingsMineTimeBase>
-  <QRY_SettingsMineTimeVar>変動最大Ticks</QRY_SettingsMineTimeVar>
-  <QRY_ToolTipTicksAverage>採掘操作毎の基本時間(ticksで)</QRY_ToolTipTicksAverage>
-  <QRY_ToolTipTicksVariance>この数値が大きいほど、ポーンの採掘スキルが採掘時間に与える影響が大きくなります。</QRY_ToolTipTicksVariance>
+  <RealRuins_ModOptions_DownloadMore>設計図をダウンロードする</RealRuins_ModOptions_DownloadMore>
+  <RealRuins_ModOptions_CurrentCacheCount>キャッシュ内の設計図：</RealRuins_ModOptions_CurrentCacheCount>
 
-  <QRY_LabelHaulMode>運搬モード</QRY_LabelHaulMode>
-  <QRY_Haul>掘リ出したアイテムを運搬します。</QRY_Haul>
-  <QRY_NotHaul>掘り出したアイテムを無視します。</QRY_NotHaul>
-  <QRY_RockTypesAvailable>採石可能な石の種類</QRY_RockTypesAvailable>
+  <RealRuins_MapOptions_Density>遺跡の密度</RealRuins_MapOptions_Density>
+  <RealRuins_MapOptions_Size>最小遺跡断片サイズ</RealRuins_MapOptions_Size>
+  <RealRuins_MapOptions_Size_Max>最大遺跡断片サイズ</RealRuins_MapOptions_Size_Max>
+  <RealRuins_MapOptions_Deterioration>遺跡の劣化率</RealRuins_MapOptions_Deterioration>
+  <RealRuins_MapOptions_Scavengers>回収業者の活動係数</RealRuins_MapOptions_Scavengers>
+  <RealRuins_MapOptions_CostLimit>アイテム価値の上限を制限</RealRuins_MapOptions_CostLimit>
+  <RealRuins_MapOptions_DisableHaulables>再設置可能なアイテムを無効</RealRuins_MapOptions_DisableHaulables>
+  <RealRuins_MapOptions_WallsAndDoorsOnly>壁と扉だけ配置</RealRuins_MapOptions_WallsAndDoorsOnly>
+  <RealRuins_MapOptions_DisableDecoration>特殊アイテム(骨)を無効</RealRuins_MapOptions_DisableDecoration>
+  <RealRuins_MapOptions_DisableTraps>特殊アイテム(罠)を無効</RealRuins_MapOptions_DisableTraps>
+  <RealRuins_MapOptions_DisableHostiles>敵対アイテム(タレット)を無効</RealRuins_MapOptions_DisableHostiles>
+  <RealRuins_MapOptions_Claimable>建築物を領土主張可能にする</RealRuins_MapOptions_Claimable>
 
-  <QRY_LabelMineResources>資源採掘する</QRY_LabelMineResources>
-  <QRY_DescriptionMineResources>資源採掘する採石場を指定します。クリックすると掘削する資源の種類が切り替わります。</QRY_DescriptionMineResources>
+  <RealRuins_MapOptions_DensityTT>100x100の範囲に存在する平均的な遺跡数</RealRuins_MapOptions_DensityTT>
+  <RealRuins_MapOptions_SizeTT>遺跡の範囲は,入力値の50％〜150％の範囲でランダムに選択されます</RealRuins_MapOptions_SizeTT>
+  <RealRuins_MapOptions_DeteriorationTT>この値は,床タイルが消えている可能性を高めますが,構造物の残りHPには影響を与えません.0が初期設定ですが,最大値にすると遺跡は完全に消滅します.</RealRuins_MapOptions_DeteriorationTT>
+  <RealRuins_MapOptions_ScavengersTT>0にすると略奪されていないままの設計図になります.</RealRuins_MapOptions_ScavengersTT>
+  <RealRuins_MapOptions_CostLimitTT>選択した値よりも価値が高いアイテムはすべて盗まれて存在しません</RealRuins_MapOptions_CostLimitTT>
+  <RealRuins_MapOptions_DisableHaulablesTT>移動可能なアイテムは全く出現しませんが,家具は引き続き配置されます</RealRuins_MapOptions_DisableHaulablesTT>
+  <RealRuins_MapOptions_WallsAndDoorsOnlyTT>この設定はかなり強制的で,バニラの壁や扉に基づいていないものはすべて削除されます.</RealRuins_MapOptions_WallsAndDoorsOnlyTT>
+  <RealRuins_MapOptions_DisableDecorationTT>今は動物や人の骨だけです</RealRuins_MapOptions_DisableDecorationTT>
+  <RealRuins_MapOptions_DisableTrapsTT>スパイクトラップやIEDトラップなどです</RealRuins_MapOptions_DisableTrapsTT>
+  <RealRuins_MapOptions_DisableHostilesTT>入植者と敵対的なアイテム(タレット)が存在します</RealRuins_MapOptions_DisableHostilesTT>
+  <RealRuins_MapOptions_ClaimableTT>領土を主張していない構造物は修理や分解することができません</RealRuins_MapOptions_ClaimableTT>
 
-  <QRY_LabelMineBlocks>石材ブロック を切り出す</QRY_LabelMineBlocks>
-  <QRY_DescriptionMineBlocks>石材ブロック用に採掘する採石場を指定します。クリックするとリソースモードに切り替わります。</QRY_DescriptionMineBlocks>
+  <RealRuins_MapOptions_EnableProximity>入植地からの距離による影響</RealRuins_MapOptions_EnableProximity>
+  <RealRuins_MapOptions_EnableProximityTT>コロニーや派閥拠点からの距離は,遺跡の作成条件に影響を及ぼします.遺跡は都市の近くではより密集していますが,荒らされていて何も残っていない率が高くなります.</RealRuins_MapOptions_EnableProximityTT>
+  <RealRuins_MapOptions_StartWithoutRuins>スタート時のマップには廃墟なし</RealRuins_MapOptions_StartWithoutRuins>
+  <RealRuins_MapOptions_StartWithoutRuinsTT>ゲームスタートした時のマップに廃墟は生成されません.ゲーム開始後に生成されるマップでは,設定に応じて遺跡や廃墟が通常に生成されます.</RealRuins_MapOptions_StartWithoutRuinsTT>
 
-  <QRY_LabelMineChunks>岩の塊 を切り出す</QRY_LabelMineChunks>
-  <QRY_DescriptionMineChunks>岩の塊を採掘する採石場を指定します。クリックするとモードが切り替わります。</QRY_DescriptionMineChunks>
+  <!-- Captions -->
+  <RealRuins.PlanetaryRuinsSettings.Caption>惑星の廃墟と位置</RealRuins.PlanetaryRuinsSettings.Caption>
+  <RealRuins.CacheSettings.Caption>キャッシュ設定</RealRuins.CacheSettings.Caption>
+  <RealRuins.SpawnSettings.Caption>生成設定</RealRuins.SpawnSettings.Caption>
 
-  <QRY_ReportNotEnoughStone>採石場は各種の荒い岩が多く露出している場所に建設する必要があります。</QRY_ReportNotEnoughStone>
-  <QRY_InspectQuarryPercent>採石率</QRY_InspectQuarryPercent>
-  <QRY_CommandBedSetOwnerLabel>所有</QRY_CommandBedSetOwnerLabel>
-  <QRY_CommandSetOwnerDesc>指定された入植者だけ採掘できるように採石場を割り当てます。</QRY_CommandSetOwnerDesc>
-  <QRY_ReportGizmoLackingResearch>ストーンカッターの研究が必要です。</QRY_ReportGizmoLackingResearch>
+  <!-- Planetary ruins section -->
+  <RealRuins.PlanetarySettings.Enable>ゲーム開始時に廃墟生成を有効</RealRuins.PlanetarySettings.Enable>
+  <RealRuins.PlanetarySettings.DownloadLimit>ダウンロードする設計の最大数</RealRuins.PlanetarySettings.DownloadLimit>
+  <RealRuins.PlanetarySettings.TransferLimit>遺跡生成する場所の最大数</RealRuins.PlanetarySettings.TransferLimit>
+  <RealRuins.PlanetarySettings.ExcludePlain>未分類の場所(通常の遺跡)を廃棄</RealRuins.PlanetarySettings.ExcludePlain>
+  <RealRuins.PlanetarySettings.AbandonedPercentage>放棄された場所の数量</RealRuins.PlanetarySettings.AbandonedPercentage>
 
-  <QRY_TextMote_LargeVein>大きな鉱脈を見つけた!</QRY_TextMote_LargeVein>
-  <QRY_TextMote_MiningFailed>失敗だった...</QRY_TextMote_MiningFailed>
+  <!-- Caravan entered map -->
+  <LetterLabelCaravanEnteredRuins>キャラバンは遺跡に到着した</LetterLabelCaravanEnteredRuins>
+  <LetterCaravanEnteredRuins>{0}は放棄された遺跡に到着して,何か残っていないか探索を始める準備ができました.</LetterCaravanEnteredRuins>
 
-  <QRY_LetterSentQuery>土壌埋立処分命令書が送られたらメッセージを出す</QRY_LetterSentQuery>
-  <QRY_LetterLabel>採石場跡を埋め戻す</QRY_LetterLabel>
-  <QRY_LetterText>採石場が解体されたら、アーキテクトメニューからフロアの「土壌を再生する」コマンドを使用して再生する領域を指定できます。入植者に古い採石場跡地を土壌で埋め戻させることで、一度採石場があった場所を利用可能な地形に戻す事ができます。</QRY_LetterText>
-  <QRY_LabelReclaimSoil>土壌を再生する</QRY_LabelReclaimSoil>
-  <QRY_DescriptionReclaimSoil>採石場だったガタガタな石の地形を使用可能な土壌に変換します。</QRY_DescriptionReclaimSoil>
-  <QRY_MessageMustDesignateQuarriedGround>採石場を指定してください。</QRY_MessageMustDesignateQuarriedGround>
+  <RealRuins.CaravanFoundRuins>{0}の旅行中,すぐ近くに破壊された建物を沢山見つけました.これは普通の廃墟よりも状態が良いようです.おそらくまだ貴重品がいくらか残っているでしょう.しかし,狂暴化した野生動物の巣やメカノイドのハイブ,または襲撃者の前哨基地が存在する可能性もあります.これらの建物の保存状態が良い理由が何かあるはずです.</RealRuins.CaravanFoundRuins>
+  <RealRuins.CaravanFoundRuins.Investigate>調査する</RealRuins.CaravanFoundRuins.Investigate>
+  <RealRuins.CaravanFoundRuinsTitle>小さな遺跡が近くで見つかった</RealRuins.CaravanFoundRuinsTitle>
 
-  <QRY_AllowRottable>回転アイテムを許可</QRY_AllowRottable>
-  <QRY_TooltipAllowRottable>回転可能なアイテムを採石場のリストに追加できるようにします</QRY_TooltipAllowRottable>
+  <RealRuins_ModOptions_Reset>Mod設定を初期化</RealRuins_ModOptions_Reset>
+  <RealRuins_MapOptions_CaravanReforming>襲撃中でもキャラバン隊の編成可能</RealRuins_MapOptions_CaravanReforming>
+  <RealRuins_MapOptions_CaravanReformingTT>通常,未調査の遺跡を発見イベント中は,最初の敵対勢力が敗北した直後にはキャラバン隊を即座に編成することはできません.これは意図的に戦利品を手動で検索して,敵対的なポーンを殲滅しても,アイテムを拾ってマップの隅に移動してマップから出なければなりません.ただし,強力な即時編成機能を使用した古い方法を好む場合は,この設定を有効にできます.</RealRuins_MapOptions_CaravanReformingTT>
 
-  <QRY_SettingsReclaimedSoilFertility>埋め戻した土壌の肥沃度</QRY_SettingsReclaimedSoilFertility>
-  <QRY_TooltipReclaimedSoilFertility>埋め戻して再び利用できるようになった土壌の肥沃度を設定します。</QRY_TooltipReclaimedSoilFertility>
+  <!-- Art -->
+  <DeterioratedArtDescription>このアイテムはあまりにもすり減っており,所どころ壊れています.あなたはそれが美しい芸術品であったと確かに確信できますが,しかし現在,あなたはそれに何があったのか全く推測することもできません.</DeterioratedArtDescription>
 
-  <QRY_PlaceAnywhere>どこでも配置可能</QRY_PlaceAnywhere>
-  <QRY_TooltipPlaceAnywhere>採石場を採石可能な資源のある場所に限定せずに、自由に配置できるようにします。</QRY_TooltipPlaceAnywhere>
+  <!-- Ruins info -->
+  <RealRuins.RuinsWealth>財宝：</RealRuins.RuinsWealth>
+  <RealRuins.RuinsActivity>襲撃者の規模：</RealRuins.RuinsActivity>
 
-  <QRY_LabelAddThing>リストに追加</QRY_LabelAddThing>
-  <QRY_LabelRemoveThing>リストから削除</QRY_LabelRemoveThing>
-  <QRY_LabelResetList>リストを初期化</QRY_LabelResetList>
-  <QRY_RestrictedTo>制限:</QRY_RestrictedTo>
+  <RealRuins.RuinsWealth.0>ほぼ無し（1万以下)</RealRuins.RuinsWealth.0>
+  <RealRuins.RuinsWealth.1>低い</RealRuins.RuinsWealth.1>
+  <RealRuins.RuinsWealth.2>普通</RealRuins.RuinsWealth.2>
+  <RealRuins.RuinsWealth.3>多い（100万以下)</RealRuins.RuinsWealth.3>
+  <RealRuins.RuinsWealth.4>非常に多い（1000万以下)</RealRuins.RuinsWealth.4>
 
-  <QRY_MessageSinkhole>採石場の岩塊を運ぶ際に {0} が怪我をしました。</QRY_MessageSinkhole>
+  <RealRuins.RuinsActivity.0>ほぼ無し</RealRuins.RuinsActivity.0>
+  <RealRuins.RuinsActivity.1>少ない</RealRuins.RuinsActivity.1>
+  <RealRuins.RuinsActivity.2>普通</RealRuins.RuinsActivity.2>
+  <RealRuins.RuinsActivity.3>多い</RealRuins.RuinsActivity.3>
+  <RealRuins.RuinsActivity.4>危険</RealRuins.RuinsActivity.4>
 
+  <!-- Ruins messages -->
+  <RealRuins.NoMoreEnemies>もう誰も来ないようです.\nあなたは安全に荷物をまとめてマップを離れることが可能です.（即時キャラバン隊を編成可能）</RealRuins.NoMoreEnemies>
+
+  <!-- POI captions and descriptions -->
+  <RealRuins.CaptionPOI0>小さな軍事基地</RealRuins.CaptionPOI0>
+  <RealRuins.CaptionPOI1>前哨基地</RealRuins.CaptionPOI1>
+  <RealRuins.CaptionPOI2>仮設キャンプ</RealRuins.CaptionPOI2>
+  <RealRuins.CaptionPOI3>都市</RealRuins.CaptionPOI3>
+  <RealRuins.CaptionPOI4>工場</RealRuins.CaptionPOI4>
+  <RealRuins.CaptionPOI5>研究所</RealRuins.CaptionPOI5>
+  <RealRuins.CaptionPOI6>発電所</RealRuins.CaptionPOI6>
+  <RealRuins.CaptionPOI7>大きな軍事基地</RealRuins.CaptionPOI7>
+  <RealRuins.CaptionPOI8>倉庫</RealRuins.CaptionPOI8>
+  <RealRuins.CaptionPOI9>通信センター</RealRuins.CaptionPOI9>
+  <RealRuins.CaptionPOI10>廃墟</RealRuins.CaptionPOI10>
+  <RealRuins.CaptionPOI11>要塞</RealRuins.CaptionPOI11>
+
+
+  <RealRuins.DescPOI0>おそらく軍事的な建築物が集まった施設です.補給倉庫か小さな中継基地でしょう.タレットがいくつかと,2人から12人程度の兵士が駐留しています.</RealRuins.DescPOI0>
+  <RealRuins.DescPOI1>非常に小さな軍事基地で,部屋が2つとタレットが2ヵ所あり兵士が2人居ます.</RealRuins.DescPOI1>
+  <RealRuins.DescPOI2>資源を採掘したり,狩りをしたり,荷物の積み替えの場所として設置された仮設キャンプです.</RealRuins.DescPOI2>
+  <RealRuins.DescPOI3>繁栄した大都市です.通常は巨大な壁や大量のタレットはありませんが,攻撃を受けると強力な増援部隊を要請します.</RealRuins.DescPOI3>
+  <RealRuins.DescPOI4>そこにある建物には多くの作業台と生産された物品があります.工場は警備が厳重なはずです.</RealRuins.DescPOI4>
+  <RealRuins.DescPOI5>研究所と技術開発施設は生産に特化されていますが,生産された商品は普通の工場よりも洗練された高価なものばかりです.警備は厳重で,攻撃を受けると即座に警備員が援軍を要請します.</RealRuins.DescPOI5>
+  <RealRuins.DescPOI6>発電所を中心とした施設です.</RealRuins.DescPOI6>
+  <RealRuins.DescPOI7>多数のタレットや迫撃砲,数十人の兵士と増援部隊が配備された大規模な軍事基地です.</RealRuins.DescPOI7>
+  <RealRuins.DescPOI8>遠くから観察すると品物が大量に積まれた大きな倉庫のように見えます.そして,警備員が多数居ます.</RealRuins.DescPOI8>
+  <RealRuins.DescPOI9>通信センターのような小さな建物です.おそらく数人の警備兵がいる仮設軍事キャンプでしょう.</RealRuins.DescPOI9>
+  <RealRuins.DescPOI10>ところどころ崩壊した建物の残骸や家具の破片や壊れた作業台や配管,散乱する金属の塊.昔そこで何があったかは不明ですが,残っているのは空っぽの廃墟だけです.</RealRuins.DescPOI10>
+  <RealRuins.DescPOI11>厳重に警備された要塞です.大量のタレットや迫撃砲,大部隊の兵士と増援部隊で非常に厳重に守られています.</RealRuins.DescPOI11>
+
+  <RealRuins.POINowRuined>かつてこの場所が{0}だった頃は活気に満ちていましたが,今では誰も崩壊した理由を知りません.あらゆる危険に注意したほうが良いでしょう.</RealRuins.POINowRuined>
+  <RealRuins.POIUselessRuins>昔はどうだったんだろうと思いますよね.現在はその大半が岩と瓦礫です.</RealRuins.POIUselessRuins>
+
+  <RealRuins.EnterPOI>{0} に入る</RealRuins.EnterPOI>
+  <RealRuins.AttackPOI>{0} を攻撃</RealRuins.AttackPOI>
+
+  <RealRuins.CaravanEnteringPOI>{0} に侵入中</RealRuins.CaravanEnteringPOI>
+
+  <LetterLabelCaravanEnteredUnownedPOI>キャラバンが到着</LetterLabelCaravanEnteredUnownedPOI>
+  <LetterCaravanEnteredUnownedPOI>{0}が目的地に到着しました.慎重に行動してください.</LetterCaravanEnteredUnownedPOI>
+  <LetterLabelCaravanAttackedPOI>キャラバンは攻撃中</LetterLabelCaravanAttackedPOI>
+  <LetterCaravanAttackedPOI>{0}は他の派閥の領地を攻撃しています.</LetterCaravanAttackedPOI>
+  <LetterTransportPodsArrivedInUnownedPOI>輸送ポッドが目的地に到着しました.</LetterTransportPodsArrivedInUnownedPOI>
+  <LetterLabelTransportPodsAttackedPOI>輸送ポッドが到着</LetterLabelTransportPodsAttackedPOI>
+  <LetterTransportPodsAttackedPOI>輸送ポッドが目的地に到着して攻撃が開始されました.</LetterTransportPodsAttackedPOI>
+  <LetterLabelTransportPodsArrivedAtRuins>輸送ポッドが遺跡に到着</LetterLabelTransportPodsArrivedAtRuins>
+  <LetterTransportPodsArrivedAtRuins>輸送ポッドが遺跡に到着しました.</LetterTransportPodsArrivedAtRuins>
+
+  <!-- POI load dialog -->
+  <RealRuins.LoadBlueprintsCaption>この惑星に遺跡を読込む</RealRuins.LoadBlueprintsCaption>
+
+  <RealRuins.LoadBlueprintsDescription>この機能は,同じ惑星に入植地を持っていた他のプレイヤーのマップをロードします.彼らのコロニーは,他の派閥の入植地や前哨基地,または放棄された廃墟として生成されます.ランダムな遺跡とは異なり,それらは元の場所に配置されます.</RealRuins.LoadBlueprintsDescription>
+  <RealRuins.OptionsDescription>このモードでは,すべてのステップを制御できます.まず最初に惑星の設計の数だけをロードして,設計としてダウンロードする数を調整可能です.次にロードした後,転送する数とフィルタリングの方法を調整できます.各ステップで停止して,すべてを削除して最初からやり直すことも可能です.</RealRuins.OptionsDescription>
+  <RealRuins.PlanetaryRuinsNote>注意：これは,すべてのマップのランダムな遺跡か特別な遺跡イベントとは独立する機能です.</RealRuins.PlanetaryRuinsNote>
+  <RealRuins.MapSizeChangeWarning>警告：マップの大きさを変更する場合は,今すぐ[閉じる]ボタンを押して,マップの大きさを変更した後で設計をダウンロードしてください.</RealRuins.MapSizeChangeWarning>
+  <RealRuins.LowCountWarning>設計が少なすぎます.気になる場合は,別のシードかマップ設定を選択してみてください.以下のサイトにアクセスすると,最も人口の多いワールドマップを確認できます.\nhttps://woolstrand.art/view/maps/topseeds</RealRuins.LowCountWarning>
+  <RealRuins.NoBlueprintsWarning.Caption>Sorry</RealRuins.NoBlueprintsWarning.Caption>
+  <RealRuins.NoBlueprintsWarning.Text>このワールドにはマップが存在しません.つまり誰も同じシードや範囲やマップの大きさでプレイしたことがないということです.ワールドマップ上にいくつかの場所が必要な場合は,より一般的なシードを選択してみてください.以下のサイトにアクセスすると,最も人口の多いワールドマップを確認できます.\nhttps://woolstrand.art/view/maps/topseeds</RealRuins.NoBlueprintsWarning.Text>
+  <RealRuins.StartAuto>自動ロード</RealRuins.StartAuto>
+  <RealRuins.GetCount>リストをロード</RealRuins.GetCount>
+  <RealRuins.MoreOptions>その他のオプション...</RealRuins.MoreOptions>
+  <RealRuins.SkipButtonTitle>スキップ</RealRuins.SkipButtonTitle>
+  <RealRuins.StopButtonTitle1>停止</RealRuins.StopButtonTitle1>
+  <RealRuins.StopButtonTitle2>十分!</RealRuins.StopButtonTitle2>
+  <RealRuins.StopButtonTitle3>小型ポット停止,止まれ!!!</RealRuins.StopButtonTitle3>
+  <RealRuins.ClearPOIs>マップオブジェクト削除</RealRuins.ClearPOIs>
+  <RealRuins.DownloadLimit>ダウンロード制限(無制限なら0):</RealRuins.DownloadLimit>
+  <RealRuins.TransferLimit>転送制限(無制限なら0):</RealRuins.TransferLimit>
+  <RealRuins.AbandonedPercentage>放棄された場所の割合</RealRuins.AbandonedPercentage>
+
+  <RealRuins.TransferringOptions>転送</RealRuins.TransferringOptions>
+  <RealRuins.LoadingOptions>ロード</RealRuins.LoadingOptions>
+  <RealRuins.LoadBlueprintsFirst>最初に設計のロードが必要です.</RealRuins.LoadBlueprintsFirst>
+  <RealRuins.LoadBlueprints>遺跡を読込む</RealRuins.LoadBlueprints>
+  <RealRuins.LoadAndSpawnBlueprints>ロードと生成</RealRuins.LoadAndSpawnBlueprints>
+  <RealRuins.TransferBlueprints>前哨基地を作成</RealRuins.TransferBlueprints>
+  <RealRuins.RemoveSites>生成場所をすべて削除する</RealRuins.RemoveSites>
+  <RealRuins.Close>閉じる</RealRuins.Close>
+  <RealRuins.Idle>待機中</RealRuins.Idle>
+  <RealRuins.Searching>遺跡を検索中...</RealRuins.Searching>
+  <RealRuins.Loading>読込み中の遺跡：</RealRuins.Loading>
+  <RealRuins.Transferring>転送中の設計：</RealRuins.Transferring>
+  <RealRuins.Processing>処理中の遺跡:</RealRuins.Processing>
+  <RealRuins.Completed>完了！</RealRuins.Completed>
+  <RealRuins.LoadedAmount>サーバーには,この惑星の設計が{0}個あります.</RealRuins.LoadedAmount>
+
+  <RealRuins.TooManyBlueprints.Load.Title>設計が多すぎる！</RealRuins.TooManyBlueprints.Load.Title>
+  <RealRuins.TooManyBlueprints.Load.Text>サーバーによると,この世界には{0}の設計があります.ダウンロードと処理に時間がかかり,ワールドマップが乱雑になる可能性があります.このゲームモードを初めて使用する場合は,設計の数を制限することをお勧めします.</RealRuins.TooManyBlueprints.Load.Text>
+
+  <RealRuins.TooManyBlueprints.Transfer.Title>処理する設計が多すぎる！</RealRuins.TooManyBlueprints.Transfer.Title>
+  <RealRuins.TooManyBlueprints.Transfer.Text>{0}個の設計がロードされています.それらを個別に処理して転送するには長時間かかる場合があり,過密になる可能性があります.</RealRuins.TooManyBlueprints.Transfer.Text>
+  <RealRuins.TooManyBlueprints.GetAll>とにかくすべての設計を入手</RealRuins.TooManyBlueprints.GetAll>
+  <RealRuins.TooManyBlueprints.ShowOptions>詳細設定を表示して判断する</RealRuins.TooManyBlueprints.ShowOptions>
+  <RealRuins.TooManyBlueprints.Get500>500枚の設計だけ入手</RealRuins.TooManyBlueprints.Get500>
+
+  <!--<RealRuins.TransferringOptions>転送オプション</RealRuins.TransferringOptions>-->
+  <RealRuins.BiomeFiltering>気候を確認する</RealRuins.BiomeFiltering>
+  <RealRuins.BiomeFilteringTT>気候が存在しないか一致しないマップを排除します</RealRuins.BiomeFilteringTT>
+  <RealRuins.CostFiltering>価値を確認する</RealRuins.CostFiltering>
+  <RealRuins.CostFilteringTT>価値が低いマップを排除します（平均的な「何もない」マップよりも価値が低い）</RealRuins.CostFilteringTT>
+  <RealRuins.AreaFiltering>面積とアイテムを確認する</RealRuins.AreaFiltering>
+  <RealRuins.AreaFilteringTT>面積が小さく,アイテム数が少ないマップを排除します</RealRuins.AreaFilteringTT>
+  <RealRuins.DiscardAbandoned>積極的な破棄</RealRuins.DiscardAbandoned>
+  <RealRuins.DiscardAbandonedTT>特定の種類のPOIとして適格でないマップをすべて破棄する(これは通常,全マップの約半分を破棄).</RealRuins.DiscardAbandonedTT>
+
+  <RealRuins.UsedMaps>使用中のマップ：</RealRuins.UsedMaps>
+  <RealRuins.DroppedMaps>排除されたマップ：</RealRuins.DroppedMaps>
+
+  <RealRuins.MapsModuleButton>この惑星に遺跡をインポートする（ベータ版）</RealRuins.MapsModuleButton>
+  <RealRuins.PlanetarySettignsCaption>Real-Ruins：惑星上の遺跡設定</RealRuins.PlanetarySettignsCaption>
+  <RealRuins.NeedsGameInProgress>このメニューを使用するにはゲーム中である必要があります</RealRuins.NeedsGameInProgress>
+
+  <RealRuins.CaravanReformType>キャラバン編成方法</RealRuins.CaravanReformType>
+  <RealRuins.Reform.Automatic>自動</RealRuins.Reform.Automatic>
+  <RealRuins.Reform.Instant>簡易</RealRuins.Reform.Instant>
+  <RealRuins.Reform.Manual>手動</RealRuins.Reform.Manual>
+  <RealRuins.CaravanReformTooltip>「遺跡を発見」イベントの後でキャラバン編成方法.「自動」は,コロニーマップと同じ編成方法です.「簡易」はワールドマップ上で簡単に編成可能です.「手動」はマップ外縁部から脱出し,アイテムは実際に移動して回収します.</RealRuins.CaravanReformTooltip>
+
+  <RealRuins.ForceMultiplier>イベント:脅威の規模</RealRuins.ForceMultiplier>
+  <RealRuins.AbsoluteWealthCap>イベント:資産の絶対値上限</RealRuins.AbsoluteWealthCap>
+  <RealRuins.LeaveVanillaRuins>バニラの遺跡を残す</RealRuins.LeaveVanillaRuins>
+  <RealRuins.ForceMultiplierTT>これを調整すると廃墟イベントの難易度を多くしたり少くしたりできる</RealRuins.ForceMultiplierTT>
+  <RealRuins.AbsoluteWealthCapTT>廃墟イベントで資産価値の絶対値上限を指定します.木製の壁と木製ドアは総資産に含みません.</RealRuins.AbsoluteWealthCapTT>
+  <RealRuins.LeaveVanillaRuinsTT>チェックすると,Modの遺跡とバニラの遺跡の両方が生成されます</RealRuins.LeaveVanillaRuinsTT>
+
+  <RealRuins.FactionOwnedStartTile>タイルを占有した</RealRuins.FactionOwnedStartTile>
+  <RealRuins.FactionOwnedStartTileDesc>あなたは拠点のある床タイルに入ろうとしていますが,この拠点は別の派閥に所属しています.放棄して廃墟してしまうか,自分の入植地にするか,パーティーを開始して攻撃することが可能です.</RealRuins.FactionOwnedStartTileDesc>
+  <RealRuins.FactionOwnedStartTile.MakeAbandoned>放棄して入植する</RealRuins.FactionOwnedStartTile.MakeAbandoned>
+  <RealRuins.FactionOwnedStartTile.CaptureUntouched>このタイルを領有して入植する</RealRuins.FactionOwnedStartTile.CaptureUntouched>
+  <RealRuins.FactionOwnedStartTile.Attack>パーティを開始して攻撃する</RealRuins.FactionOwnedStartTile.Attack>
+  <RealRuins.FactionOwnedStartTile.Cancel>中止</RealRuins.FactionOwnedStartTile.Cancel>
+
+  <RealRuins.LogLevel>ログレベル</RealRuins.LogLevel>
+  <RealRuins.LogLevel.All>全て記録する</RealRuins.LogLevel.All>
+  <RealRuins.LogLevel.Warnings>警告とエラーを記録</RealRuins.LogLevel.Warnings>
+  <RealRuins.LogLevel.Errors>エラーのみ記録</RealRuins.LogLevel.Errors>
 </LanguageData>
