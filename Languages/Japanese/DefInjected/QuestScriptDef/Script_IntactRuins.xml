@@ -1,0 +1,38 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<LanguageData>
+
+  <RealRuins_AbandonedBase.questNameRules.rulesStrings>
+    <li>questName->[abandoned][base]</li>
+    <li>questName->[intact][ruins]</li>
+    <li>abandoned->廃棄された</li>
+    <li>abandoned->破壊された</li>
+    <li>base->基地</li>
+    <li>base->前線基地</li>
+    <li>base->複合施設</li>
+    <li>base->都市</li>
+    <li>base->工場</li>
+    <li>intact->未盗掘の</li>
+    <li>intact->無傷の</li>
+    <li>intact->手付かずの</li>
+    <li>ruins->廃墟</li>
+  </RealRuins_AbandonedBase.questNameRules.rulesStrings>
+
+  <RealRuins_AbandonedBase.questDescriptionRules.rulesStrings>
+    <li>questDescription->[source]古代建築物が林立しています.この施設は古くて何もないに見えますが,ドアは封印されており,すべての在庫品と機械はまだ内部にあります.噂は瞬く間広がり,近くの拠点は,この遺跡の内部にあるものを求めて戦う準備をすでに完了しています.莫大な財宝になる可能性があり,これまでのように慎重な外交関係を配慮した遭遇にはならず,本物の大虐殺になる覚悟をするべきでしょう.時間を無駄にする余裕はありません.すでに誰が[stealing]しているのが見えます.廃墟がこのままである猶予は長くはない.</li>
+    <li>source->斥候が発見した</li>
+    <li>source->トレーダーが語った話によると,発見した場所には</li>
+    <li>source->付近で巨大な爆発が起きた後,山の向こうで</li>
+    <li>stealing->すべての部屋に敷かれたゴールド製の床タイルを解体</li>
+    <li>stealing->そこから多数の先進コンポーネントを運搬</li>
+    <li>stealing->ワノメトリック発電器10個を輸送ポッドに荷積み</li>
+    <li>stealing->反物質弾を5発を盗み出そうと</li>
+  </RealRuins_AbandonedBase.questDescriptionRules.rulesStrings>
+
+  <RealRuins_AbandonedBase.root.nodes.FindBlueprint.storeAs.slateRef>設計名</RealRuins_AbandonedBase.root.nodes.FindBlueprint.storeAs.slateRef>
+  <RealRuins_AbandonedBase.root.nodes.FindBlueprint.storeCostAs.slateRef>設計キャッシュコスト</RealRuins_AbandonedBase.root.nodes.FindBlueprint.storeCostAs.slateRef>
+  <RealRuins_AbandonedBase.root.nodes.GenerateRuinsObject.storeAs.slateRef>廃墟</RealRuins_AbandonedBase.root.nodes.GenerateRuinsObject.storeAs.slateRef>
+
+  <RealRuins_AbandonedBase.root.nodes.ruinsScavenged.node.nodes.Letter.label.slateRef>クエストの期限切れ：[resolvedQuestName]</RealRuins_AbandonedBase.root.nodes.ruinsScavenged.node.nodes.Letter.label.slateRef>
+  <RealRuins_AbandonedBase.root.nodes.ruinsScavenged.node.nodes.Letter.text.slateRef>発見された遺跡の場所は略奪されて,きれいさっぱり何も残っていません.クエスト:[resolvedQuestName]は期限切れを迎えました.</RealRuins_AbandonedBase.root.nodes.ruinsScavenged.node.nodes.Letter.text.slateRef>
+
+</LanguageData>
