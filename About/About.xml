@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ModMetaData>
-	<name>Real Ruins11</name>
+	<name>Real Ruins</name>
 	<author>mr.teterew</author>
 	<supportedVersions>
 		<li>1.0</li>
@@ -16,7 +16,7 @@
 		<li>UnlimitedHugs.HugsLib</li>
 	</loadAfter>
 
-	<packageId>Woolstrand.RealRuins11</packageId>
+	<packageId>Woolstrand.RealRuins</packageId>
 	<description>
 &lt;i&gt;"Everyone is dead or gone. This story is over.
 Perhaps someone else will find a use for the ruins of this place."&lt;/i&gt;
