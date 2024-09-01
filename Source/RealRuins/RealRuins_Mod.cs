@@ -109,6 +109,7 @@ public class RealRuins_Mod : Mod
 		: base(mcp)
 	{
 		LongEventHandler.ExecuteWhenFinished(GetSettings);
+		PostLoad();
 	}
 
 	public void GetSettings()
@@ -120,6 +121,11 @@ public class RealRuins_Mod : Mod
 			RealRuins_ModSettings.defaultScatterOptions = ScatterOptions.Default;
 		}
 	}
+
+	public void PostLoad()
+	{
+		StartApi.CreateSceneObject();
+    }
 
 	public override void WriteSettings()
 	{
