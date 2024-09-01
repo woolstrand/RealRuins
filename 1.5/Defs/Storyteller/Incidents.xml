@@ -1,0 +1,31 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+
+  <IncidentDef>
+    <defName>SmallRuinsFound</defName>
+    <label>small ruins found</label>
+    <category>Misc</category>
+    <targetTags>
+      <li>Caravan</li>
+      <li>Map_TempIncident</li>
+    </targetTags>
+    <workerClass>RealRuins.IncidentWorker_CaravanFoundRuins</workerClass>
+    <minRefireDays>0.17</minRefireDays>
+    <mtbDaysByBiome>
+      <TemperateForest>10</TemperateForest>
+      <BorealForest>10</BorealForest>
+      <AridShrubland>10</AridShrubland>
+      <TropicalRainforest>10</TropicalRainforest>
+      <Desert>15</Desert>
+      <Tundra>15</Tundra>
+      <TropicalSwamp>15</TropicalSwamp>
+      <TemperateSwamp>15</TemperateSwamp>
+      <ColdBog>25</ColdBog>
+      <ExtremeDesert>25</ExtremeDesert>
+      <IceSheet>35</IceSheet>
+      <SeaIce>60</SeaIce>
+    </mtbDaysByBiome>
+  </IncidentDef>
+
+</Defs>
+

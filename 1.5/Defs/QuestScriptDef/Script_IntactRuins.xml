@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+  <QuestScriptDef>
+    <defName>RealRuins_AbandonedBase</defName>
+    <rootSelectionWeight>0.3</rootSelectionWeight>
+    <rootMinPoints>0</rootMinPoints>
+    <canGiveRoyalFavor>false</canGiveRoyalFavor>
+    <autoAccept>true</autoAccept>
+    <questNameRules>
+      <rulesStrings>
+        <li>questName->[abandoned] [base]</li>
+        <li>questName->[intact] [ruins]</li>
+        <li>abandoned->Abandoned</li>
+        <li>abandoned->Destroyed</li>
+        <li>abandoned->Sealed</li>
+        <li>base->Base</li>
+        <li>base->Outpost</li>
+        <li>base->Complex</li>
+        <li>base->City</li>
+        <li>base->Factory</li>
+        <li>intact->Pristine</li>
+        <li>intact->Intact</li>
+        <li>intact->Untouched</li>
+        <li>ruins->Ruins</li>
+      </rulesStrings>
+    </questNameRules>
+    <questDescriptionRules>
+      <rulesStrings>
+        <li>questDescription->[source] a group of ancient buildings. Looks like the complex is very old and empty, but doors are sealed and all inventory and machinery is still inside. Word spreads fast, and all nearby settlements are already preparing to fight for whatever lies inside this ruins. The treasure could be enormous, so be prepared for a real massacre, not like all usual carefully balanced encounters you had before. And not waste time: I see someone already [stealing]. Ruins won't last long.</li>
+        <li>source->Your scouts discovered</li>
+        <li>source->Trader told you, he found</li>
+        <li>source->After a powerful explosion nearby mountain uncovered</li>
+        <li>stealing->dismantling golden floor tiles across all rooms</li>
+        <li>stealing->hauling stack of advanced components from there</li>
+        <li>stealing->loading drop pod launcher with ten vanometric cells</li>
+        <li>stealing->trying to capture five stacks of antigrain warheads</li>
+      </rulesStrings>
+    </questDescriptionRules>
+    <root Class="QuestNode_Sequence">
+      <nodes>
+        <li Class="QuestNode_GetSiteTile">
+          <storeAs>worldTile</storeAs>
+          <preferCloserTiles>false</preferCloserTiles>
+        </li>
+
+        <li Class="RealRuins.QuestNode_FindBlueprint">
+          <storeAs>blueprintName</storeAs>
+          <storeCostAs>blueprintCachedCost</storeCostAs>
+          <minimumWealth>50000</minimumWealth>
+          <minimumArea>6000</minimumArea>
+          <minimumItemsCount>1000</minimumItemsCount>
+        </li>
+      
+        <li Class="RealRuins.QuestNode_GenerateRuinsObject">
+          <blueprintFilename>$blueprintName</blueprintFilename>
+          <tile>$worldTile</tile>
+          <storeAs>ruins</storeAs>
+        </li>
+        
+        <li Class="QuestNode_SpawnWorldObjects">
+          <worldObjects>$ruins</worldObjects>
+        </li>
+
+        <li Class="QuestNode_Signal">
+          <inSignal>ruins.Scavenged</inSignal>
+          <node Class="QuestNode_Sequence">
+            <nodes>
+              <li Class="QuestNode_Letter">
+                <label TKey="LetterLabelQuestExpired">Quest expired: [resolvedQuestName]</label>
+                <text TKey="LetterTextQuestExpired">The discovered ruins location was looted and scavenged. The quest [resolvedQuestName] has expired.</text>
+              </li>
+              <li Class="QuestNode_End">
+                <outcome>Unknown</outcome>
+              </li>
+            </nodes>
+          </node>
+        </li>
+
+        <li Class="QuestNode_End">
+          <inSignal>ruins.LeftAlive</inSignal>
+          <outcome>Unknown</outcome>
+        </li>
+      </nodes>
+    </root>
+  </QuestScriptDef>
+</Defs>
