@@ -6,7 +6,7 @@ DLL_CACHE/
 *.dll
 
 # include mod itself
-!*/RealRuins.dll
+!*/*/RealRuins.dll
 !1.1/Assemblies/0Harmony.dll
 !Assemblies/0Harmony.dll
 
