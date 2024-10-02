@@ -11,7 +11,8 @@ using UnityEngine;
 
 namespace RealRuins {
     // is not used anymore. will be kept for some time and removed later
-    public class IncidentWorker_RuinsFound_OBSOLETE : IncidentWorker {
+    // RESTORED for some time
+    public class IncidentWorker_RuinsFound : IncidentWorker {
 
         protected override bool CanFireNowSub(IncidentParms parms) {
             if (!base.CanFireNowSub(parms)) {
