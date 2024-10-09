@@ -1,74 +1,83 @@
-﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-using Verse;
 using RimWorld;
 using RimWorld.Planet;
 using UnityEngine;
-using RimWorld.QuestGen;
+using Verse;
 
-namespace RealRuins {
-    [StaticConstructorOnStartup]
-    class AbandonedBaseWorldObject: MapParent {
-        public override Texture2D ExpandingIcon => ContentFinder<Texture2D>.Get("ruinedbase");
-        public override Color ExpandingIconColor => Color.white;
-        private Material cachedMat;
+namespace RealRuins;
 
-        private bool hasStartedCountdown = false;
+[StaticConstructorOnStartup]
+internal class AbandonedBaseWorldObject : MapParent
+{
+	private Material cachedMat;
 
-        public override Material Material {
-            get {
-                if (cachedMat == null) {
-                    cachedMat = MaterialPool.MatFrom(color: Faction?.Color ?? Color.white, texPath: "World/WorldObjects/Sites/GenericSite", shader: ShaderDatabase.WorldOverlayTransparentLit, renderQueue: WorldMaterials.WorldObjectRenderQueue);
-                }
-                return cachedMat;
-            }
-        }
+	private bool hasStartedCountdown = false;
 
-        public AbandonedBaseWorldObject() {
-        }
+	public override Texture2D ExpandingIcon => ContentFinder<Texture2D>.Get("ruinedbase");
 
-        public override IEnumerable<FloatMenuOption> GetFloatMenuOptions(Caravan caravan) {
-            foreach (FloatMenuOption floatMenuOption in base.GetFloatMenuOptions(caravan)) {
-                yield return floatMenuOption;
-            }
-            foreach (FloatMenuOption floatMenuOption in CaravanArrivalAction_VisitAbandonedBase.GetFloatMenuOptions(caravan, this)) {
-                yield return floatMenuOption;
-            }
-        }
+	public override Color ExpandingIconColor => Color.white;
 
-        public override IEnumerable<FloatMenuOption> GetTransportPodsFloatMenuOptions(IEnumerable<IThingHolder> pods, CompLaunchable representative) {
-            foreach (FloatMenuOption transportPodsFloatMenuOption in base.GetTransportPodsFloatMenuOptions(pods, representative)) {
-                yield return transportPodsFloatMenuOption;
-            }
-            foreach (FloatMenuOption floatMenuOption in TransportPodsArrivalAction_VisitRuins.GetFloatMenuOptions(representative, pods, this)) {
-                yield return floatMenuOption;
-            }
-        }
+	public override Material Material
+	{
+		get
+		{
+			if (cachedMat == null)
+			{
+				cachedMat = MaterialPool.MatFrom("World/WorldObjects/Sites/GenericSite", color: base.Faction?.Color ?? Color.white, shader: ShaderDatabase.WorldOverlayTransparentLit, renderQueue: WorldMaterials.WorldObjectRenderQueue);
+			}
+			return cachedMat;
+		}
+	}
 
-        public override IEnumerable<Gizmo> GetGizmos() {
-            foreach (Gizmo gizmo in base.GetGizmos()) {
-                yield return gizmo;
-            }
-        }
+	public override IEnumerable<FloatMenuOption> GetFloatMenuOptions(Caravan caravan)
+	{
+		foreach (FloatMenuOption floatMenuOption in base.GetFloatMenuOptions(caravan))
+		{
+			yield return floatMenuOption;
+		}
+		foreach (FloatMenuOption floatMenuOption2 in CaravanArrivalAction_VisitAbandonedBase.GetFloatMenuOptions(caravan, this))
+		{
+			yield return floatMenuOption2;
+		}
+	}
 
-        public override bool ShouldRemoveMapNow(out bool alsoRemoveWorldObject) {
-            bool shouldRemove = !Map.mapPawns.AnyPawnBlockingMapRemoval;
-            alsoRemoveWorldObject = shouldRemove;
-            if (shouldRemove) {
-                var comp = this.GetComponent<RuinedBaseComp>();
-                if (comp != null) {
-                    var signalTag = comp.successSignal;
-                    Find.SignalManager.SendSignal(new Signal(signalTag));
-                }
-            }
-            return shouldRemove;
-        }
+	public override IEnumerable<FloatMenuOption> GetTransportPodsFloatMenuOptions(IEnumerable<IThingHolder> pods, CompLaunchable representative)
+	{
+		foreach (FloatMenuOption transportPodsFloatMenuOption in base.GetTransportPodsFloatMenuOptions(pods, representative))
+		{
+			yield return transportPodsFloatMenuOption;
+		}
+		foreach (FloatMenuOption floatMenuOption in TransportPodsArrivalAction_VisitRuins.GetFloatMenuOptions(representative, pods, this))
+		{
+			yield return floatMenuOption;
+		}
+	}
 
-        public override string GetInspectString() {
-            return base.GetInspectString();
-        }
-    }
+	public override IEnumerable<Gizmo> GetGizmos()
+	{
+		foreach (Gizmo gizmo in base.GetGizmos())
+		{
+			yield return gizmo;
+		}
+	}
+
+	public override bool ShouldRemoveMapNow(out bool alsoRemoveWorldObject)
+	{
+		bool flag = (alsoRemoveWorldObject = !base.Map.mapPawns.AnyPawnBlockingMapRemoval);
+		if (flag)
+		{
+			RuinedBaseComp component = GetComponent<RuinedBaseComp>();
+			if (component != null)
+			{
+				string successSignal = component.successSignal;
+				Find.SignalManager.SendSignal(new Signal(successSignal));
+			}
+		}
+		return flag;
+	}
+
+	public override string GetInspectString()
+	{
+		return base.GetInspectString();
+	}
 }

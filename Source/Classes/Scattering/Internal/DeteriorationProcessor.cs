@@ -1,209 +1,228 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
 using Verse;
-using RimWorld;
 
-namespace RealRuins {
-    class DeteriorationProcessor {
-        float[,] terrainIntegrity; //integrity of floor tiles
-        float[,] itemsIntegrity; //base integrity of walls, roofs and items
+namespace RealRuins;
 
-        Blueprint blueprint;
-        ScatterOptions options;
+internal class DeteriorationProcessor
+{
+	private float[,] terrainIntegrity;
 
+	private float[,] itemsIntegrity;
 
-        //Constructs default circular integrity map if something goes wrong with the room based one creation.
-        private void ConstructFallbackIntegrityMaps() {
+	private Blueprint blueprint;
 
-            IntVec3 center = new IntVec3(blueprint.width / 2, 0, blueprint.height / 2);
-            int radius = Math.Min(blueprint.width / 2, blueprint.height / 2);
-            if (radius > 8) radius -= 4; //margins for smooth deterioration increase
+	private ScatterOptions options;
 
-            for (int x = 0; x < blueprint.width; x++) {
-                for (int z = 0; z < blueprint.height; z++) {
-                    int sqrDistance = (x - center.x) * (x - center.x) + (z - center.z) * (z - center.z);
-                    if (sqrDistance < (radius / 2) * (radius / 2)) {
-                        terrainIntegrity[x, z] = Rand.Value * 0.4f + 0.8f;
-                        itemsIntegrity[x, z] = Rand.Value * 0.4f + 0.8f;
-                    } else if (sqrDistance < (radius * radius)) { //edge
-                        terrainIntegrity[x, z] = Rand.Value * 0.2f + 0.8f;
-                        itemsIntegrity[x, z] = Rand.Value * 0.2f + 0.7f;
-                    }
-                }
-            }
+	private void ConstructFallbackIntegrityMaps()
+	{
+		IntVec3 intVec = new IntVec3(blueprint.width / 2, 0, blueprint.height / 2);
+		int num = Math.Min(blueprint.width / 2, blueprint.height / 2);
+		if (num > 8)
+		{
+			num -= 4;
+		}
+		for (int i = 0; i < blueprint.width; i++)
+		{
+			for (int j = 0; j < blueprint.height; j++)
+			{
+				int num2 = (i - intVec.x) * (i - intVec.x) + (j - intVec.z) * (j - intVec.z);
+				if (num2 < num / 2 * (num / 2))
+				{
+					terrainIntegrity[i, j] = Rand.Value * 0.4f + 0.8f;
+					itemsIntegrity[i, j] = Rand.Value * 0.4f + 0.8f;
+				}
+				else if (num2 < num * num)
+				{
+					terrainIntegrity[i, j] = Rand.Value * 0.2f + 0.8f;
+					itemsIntegrity[i, j] = Rand.Value * 0.2f + 0.7f;
+				}
+			}
+		}
+		terrainIntegrity.Blur(10);
+		itemsIntegrity.Blur(7);
+	}
 
-            terrainIntegrity.Blur(10);
-            itemsIntegrity.Blur(7);
-        }
+	private void ConstructRoomBasedIntegrityMap()
+	{
+		if (blueprint.roomsCount == 1)
+		{
+			ConstructFallbackIntegrityMaps();
+			return;
+		}
+		IntVec3 intVec = new IntVec3(blueprint.width / 2, 0, blueprint.height / 2);
+		int num = Math.Min(intVec.x, intVec.z);
+		List<int> list = new List<int>();
+		List<int> list2 = new List<int>();
+		for (int i = 0; i < blueprint.width; i++)
+		{
+			for (int j = 0; j < blueprint.height; j++)
+			{
+				int item = blueprint.wallMap[i, j];
+				int num2 = (i - intVec.x) * (i - intVec.x) + (j - intVec.z) * (j - intVec.z);
+				if (num2 < (num - 1) * (num - 1))
+				{
+					if (!list.Contains(item))
+					{
+						list.Add(item);
+					}
+				}
+				else if (num2 < num * num)
+				{
+					if (!list.Contains(item))
+					{
+						list.Add(item);
+					}
+					if (!list2.Contains(item))
+					{
+						list2.Add(item);
+					}
+					blueprint.MarkRoomAsOpenedAt(i, j);
+				}
+			}
+		}
+		if (list.Count == list2.Count)
+		{
+			ConstructFallbackIntegrityMaps();
+			return;
+		}
+		List<int> list3 = list.ListFullCopy();
+		foreach (int item3 in list2)
+		{
+			list3.Remove(item3);
+		}
+		for (int k = 0; k < blueprint.width; k++)
+		{
+			for (int l = 0; l < blueprint.height; l++)
+			{
+				int item2 = blueprint.wallMap[k, l];
+				if (list3.Contains(item2))
+				{
+					terrainIntegrity[k, l] = 20f;
+					itemsIntegrity[k, l] = 1f;
+				}
+			}
+		}
+		for (int m = 1; m < blueprint.width - 1; m++)
+		{
+			for (int n = 1; n < blueprint.height - 1; n++)
+			{
+				if (terrainIntegrity[m, n] == 0f)
+				{
+					float num3 = terrainIntegrity[m + 1, n + 1] + terrainIntegrity[m, n + 1] + terrainIntegrity[m - 1, n + 1] + terrainIntegrity[m - 1, n] + terrainIntegrity[m + 1, n] + terrainIntegrity[m + 1, n - 1] + terrainIntegrity[m, n - 1] + terrainIntegrity[m - 1, n - 1];
+					if (num3 >= 20f)
+					{
+						terrainIntegrity[m, n] = 1f;
+						itemsIntegrity[m, n] = 1f;
+					}
+				}
+			}
+		}
+		for (int num4 = 0; num4 < blueprint.width; num4++)
+		{
+			for (int num5 = 0; num5 < blueprint.height; num5++)
+			{
+				if (terrainIntegrity[num4, num5] > 1f)
+				{
+					terrainIntegrity[num4, num5] = 1f;
+				}
+			}
+		}
+		terrainIntegrity.Blur(7);
+		itemsIntegrity.Blur(4);
+	}
 
-        private void ConstructRoomBasedIntegrityMap() {
+	private void ConstructUntouchedIntegrityMap()
+	{
+		for (int i = 0; i < blueprint.width; i++)
+		{
+			for (int j = 0; j < blueprint.height; j++)
+			{
+				terrainIntegrity[i, j] = 1f;
+				itemsIntegrity[i, j] = 1f;
+			}
+		}
+	}
 
+	private void Deteriorate()
+	{
+		int num = 0;
+		int num2 = 0;
+		for (int i = 0; i < blueprint.width; i++)
+		{
+			for (int j = 0; j < blueprint.height; j++)
+			{
+				bool flag = false;
+				bool flag2 = false;
+				List<ItemTile> list = blueprint.itemsMap[i, j];
+				num += list.Count;
+				if (!Rand.Chance(terrainIntegrity[i, j]))
+				{
+					blueprint.terrainMap[i, j] = null;
+				}
+				if (blueprint.terrainMap[i, j] == null)
+				{
+					blueprint.roofMap[i, j] = false;
+				}
+				float num3 = itemsIntegrity[i, j] * (1f - options.deteriorationMultiplier);
+				List<ItemTile> list2 = new List<ItemTile>();
+				if (num3 > 0f && num3 < 1f)
+				{
+					blueprint.roofMap[i, j] = Rand.Chance(num3 * 0.3f);
+					foreach (ItemTile item in list)
+					{
+						if (options.shouldKeepDefencesAndPower && item.defName.ToLower().Contains("conduit"))
+						{
+							list2.Add(item);
+							continue;
+						}
+						if (item.isWall)
+						{
+							flag = true;
+						}
+						if (Rand.Chance(num3))
+						{
+							if (item.isWall)
+							{
+								flag2 = true;
+							}
+							list2.Add(item);
+						}
+						ThingDef namedSilentFail = DefDatabase<ThingDef>.GetNamedSilentFail(item.defName);
+						if (namedSilentFail != null)
+						{
+							item.stackCount = Rand.Range(1, Math.Min(namedSilentFail.stackLimit, item.stackCount));
+						}
+					}
+					num2 += list.Count - list2.Count;
+				}
+				if (num3 < 1f)
+				{
+					blueprint.itemsMap[i, j] = list2;
+					if (num3 <= 0f)
+					{
+						blueprint.RemoveWall(i, j);
+					}
+				}
+				if (flag && !flag2)
+				{
+					blueprint.RemoveWall(i, j);
+				}
+			}
+		}
+	}
 
-            if (blueprint.roomsCount == 1) { 
-                //no new rooms were added => blueprint does not have regular rooms or rooms were formed with use of some missing components or materials
-                //fallback plan: construct old-fashioned circular deterioration map
-                ConstructFallbackIntegrityMaps();
-                return;
-            } else {
-
-                IntVec3 center = new IntVec3(blueprint.width / 2, 0, blueprint.height / 2);
-                int radius = Math.Min(center.x, center.z);
-                List<int> allRooms = new List<int>();
-                List<int> openRooms = new List<int>();
-                for (int x = 0; x < blueprint.width; x++) {
-                    for (int z = 0; z < blueprint.height; z++) {
-                        int roomIndex = blueprint.wallMap[x, z];
-                        int sqrDistance = (x - center.x) * (x - center.x) + (z - center.z) * (z - center.z);
-                        if (sqrDistance < (radius - 1) * (radius - 1)) {
-                            if (!allRooms.Contains(roomIndex)) allRooms.Add(roomIndex);
-                        } else if (sqrDistance < (radius * radius)) { //intersecting edge => room is opened to the wild
-                            if (!allRooms.Contains(roomIndex)) allRooms.Add(roomIndex);
-                            if (!openRooms.Contains(roomIndex)) openRooms.Add(roomIndex);
-                            blueprint.MarkRoomAsOpenedAt(x, z);
-                        }
-                    }
-                }
-
-                //if all rooms are intersecting circle outline do fallback plan (circular deterioration chance map)
-                if (allRooms.Count == openRooms.Count) {
-                    ConstructFallbackIntegrityMaps();
-                    return;
-                } else {
-                    //otherwise create the following deterioration map: 
-                    List<int> closedRooms = allRooms.ListFullCopy();
-                    foreach (int room in openRooms) {
-                        closedRooms.Remove(room);
-                    }
-
-                    // - points in non-intersecting rooms: no destruction. 
-                    for (int x = 0; x < blueprint.width; x++) {
-                        for (int z = 0; z < blueprint.height; z++) {
-                            int roomIndex = blueprint.wallMap[x, z];
-                            if (closedRooms.Contains(roomIndex)) {
-                                terrainIntegrity[x, z] = 20.0f; //terrain integrity is used later to calculate boundary based on it.
-                                itemsIntegrity[x, z] = 1.0f; //items integrity is just usual map
-                            }
-                        }
-                    }
-
-                    //Debug.Message("Expanding core by one cell");
-
-                    // - then add one pixel width expansion to cover adjacent wall.
-                    for (int x = 1; x < blueprint.width - 1; x++) {
-                        for (int z = 1; z < blueprint.height - 1; z++) {
-                            if (terrainIntegrity[x, z] == 0) {
-                                float surroundings = terrainIntegrity[x + 1, z + 1] + terrainIntegrity[x, z + 1] + terrainIntegrity[x - 1, z + 1] +
-                                    terrainIntegrity[x - 1, z] + terrainIntegrity[x + 1, z] +
-                                    terrainIntegrity[x + 1, z - 1] + terrainIntegrity[x, z - 1] + terrainIntegrity[x - 1, z - 1];
-                                if (surroundings >= 20.0f) { //core intact terrain has value of 20. newly generated intact terrain has value of 1, so >= 20 always means "core intact nearby". 
-                                    terrainIntegrity[x, z] = 1.0f;
-                                    itemsIntegrity[x, z] = 1.0f; //core values are the same
-                                }
-                            }
-                        }
-                    }
-
-                    // Debug.Message("Normalizing");
-                    // normalize terrain core values which were used for border generation
-                    for (int x = 0; x < blueprint.width; x++) {
-                        for (int z = 0; z < blueprint.height; z++) {
-                            if (terrainIntegrity[x, z] > 1) {
-                                terrainIntegrity[x, z] = 1;
-                            }
-                        }
-                    }
-
-                    //Debug.Message("Blurring");
-                    terrainIntegrity.Blur(7);
-                    itemsIntegrity.Blur(4);
-                    //At this step we have integrity maps, so we can proceed further and simulate deterioration and scavenging
-                    //Debug.Message("Finished");
-                }
-            }
-        }
-
-        void ConstructUntouchedIntegrityMap() {
-            for (int x = 0; x < blueprint.width; x++) {
-                for (int z = 0; z < blueprint.height; z++) {
-                    terrainIntegrity[x, z] = 1;
-                    itemsIntegrity[x, z] = 1;
-                }
-            }
-        }
-
-        void Deteriorate() {
-            int itemsCount = 0;
-            int removedCount = 0;
-            for (int x = 0; x < blueprint.width; x++) {
-                for (int z = 0; z < blueprint.height; z++) {
-                    bool hadWall = false;
-                    bool retainedWall = false;
-                    List<ItemTile> items = blueprint.itemsMap[x, z];
-                    itemsCount += items.Count;
-
-                    if (!Rand.Chance(terrainIntegrity[x, z])) {
-                        blueprint.terrainMap[x, z] = null;
-                    }
-
-                    if (blueprint.terrainMap[x, z] == null) {
-                        blueprint.roofMap[x, z] = false; //no terrain - no roof. just is case. to be sure there won't be hanging roof islands floating in the air.
-                    }
-
-                    float itemsChance = itemsIntegrity[x, z] * (1.0f - options.deteriorationMultiplier);
-                    List<ItemTile> newItems = new List<ItemTile>();
-                    if (itemsChance > 0 && itemsChance < 1) {
-                        
-                        blueprint.roofMap[x, z] = Rand.Chance(itemsChance * 0.3f); //roof will most likely collapse everywhere
-
-                        foreach (ItemTile item in items) {
-                            if (options.shouldKeepDefencesAndPower && item.defName.ToLower().Contains("conduit")) { //do not deteriorate conduits if preparing
-                                newItems.Add(item);
-                                continue;
-                            }
-
-                            if (item.isWall) hadWall = true;
-                            if (Rand.Chance(itemsChance)) {
-                                if (item.isWall) retainedWall = true;
-                                newItems.Add(item);
-                            }
-
-                            var thingDef = DefDatabase<ThingDef>.GetNamedSilentFail(item.defName);
-                            if (thingDef != null) {
-                                item.stackCount = Rand.Range(1, Math.Min(thingDef.stackLimit, item.stackCount));
-                            }
-                        }
-                        removedCount += items.Count - newItems.Count;
-                    }
-                    if (itemsChance < 1) {
-                        blueprint.itemsMap[x, z] = newItems; //will be empty if chance is 0
-                        if (itemsChance <= 0) blueprint.RemoveWall(x, z);
-                    }
-
-                    if (hadWall && !retainedWall) blueprint.RemoveWall(x, z);
-                }
-            }
-            //Debug.Message("Deteriorated {0}/{1}", removedCount, itemsCount);
-        }
-
-
-        public static void Process(Blueprint source, ScatterOptions options) {
-            
-            if (options.enableDeterioration) {
-                DeteriorationProcessor dp = new DeteriorationProcessor();
-                dp.options = options;
-                dp.blueprint = source;
-                dp.itemsIntegrity = new float[source.width, source.height];
-                dp.terrainIntegrity = new float[source.width, source.height];
-                dp.ConstructRoomBasedIntegrityMap();
-
-                //Debug.PrintNormalizedFloatMap(dp.terrainIntegrity);
-                //Debug.PrintNormalizedFloatMap(dp.itemsIntegrity);
-
-                dp.Deteriorate();
-            }
-        }
-    }
+	public static void Process(Blueprint source, ScatterOptions options)
+	{
+		if (options.enableDeterioration)
+		{
+			DeteriorationProcessor deteriorationProcessor = new DeteriorationProcessor();
+			deteriorationProcessor.options = options;
+			deteriorationProcessor.blueprint = source;
+			deteriorationProcessor.itemsIntegrity = new float[source.width, source.height];
+			deteriorationProcessor.terrainIntegrity = new float[source.width, source.height];
+			deteriorationProcessor.ConstructRoomBasedIntegrityMap();
+			deteriorationProcessor.Deteriorate();
+		}
+	}
 }

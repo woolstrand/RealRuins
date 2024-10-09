@@ -1,15 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+namespace RealRuins;
 
-namespace RealRuins {
-    class PlanetTileInfo {
-        public string mapId;
-        public int tile;
-        public string biomeName;
+internal class PlanetTileInfo
+{
+	public string mapId;
 
-        public int originX;
-        public int originZ;
-    }
+	public int tile;
+
+	public string biomeName;
+
+	public int originX;
+
+	public int originZ;
 }

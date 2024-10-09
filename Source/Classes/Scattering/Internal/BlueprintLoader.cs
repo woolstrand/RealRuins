@@ -1,178 +1,190 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
 using System.IO;
+using System.Linq;
 using System.Xml;
-
-using Verse;
-using RimWorld;
 using RealRuins.Classes.Utility;
+using RimWorld;
+using Verse;
 
-/**
- * This class loads a particular blueprint as much as possible for current game setup.
- * I.e. it does not only creates tiles based on blueprint XML, but it also checks for presence of every item where applicable.
- * It can filter out missing items, but it does not yet filter missing hediffs for pawns.
- * */
+namespace RealRuins;
 
-namespace RealRuins {
+internal class BlueprintLoader
+{
+	private string snapshotName = null;
 
-    class BlueprintLoader {
-        public static bool CanLoadBlueprintAtPath(string path) {
-            if (File.Exists(path) || File.Exists(path + ".xml")) {
-                return true;
-            } else {
-                return false;
-            }
-        }
+	private Blueprint blueprint = null;
 
-        public static Blueprint LoadWholeBlueprintAtPath(string path) {
-            BlueprintLoader loader = new BlueprintLoader(path);
-            try {
-                loader.LoadBlueprint();
-                return loader.blueprint;
-            } catch (Exception) {
-                Debug.Log(Debug.Loader, "[2] Exception while loading or processing blueprint");
-                return null;
-            }
-        }
+	public static bool CanLoadBlueprintAtPath(string path)
+	{
+		if (File.Exists(path) || File.Exists(path + ".xml"))
+		{
+			return true;
+		}
+		return false;
+	}
 
-        public static Blueprint LoadRandomBlueprintPartAtPath(string path, IntVec3 size) {
-            BlueprintLoader loader = new BlueprintLoader(path);
-            try {
-                loader.LoadBlueprint();
-                loader.CutRandomRectOfSize(size);
-                return loader.blueprint;
-            } catch (Exception) {
-                return null;
-            }
-        }
+	public static Blueprint LoadWholeBlueprintAtPath(string path)
+	{
+		BlueprintLoader blueprintLoader = new BlueprintLoader(path);
+		try
+		{
+			blueprintLoader.LoadBlueprint();
+			return blueprintLoader.blueprint;
+		}
+		catch (Exception)
+		{
+			Debug.Log("Loader", "[2] Exception while loading or processing blueprint");
+			return null;
+		}
+	}
 
+	public static Blueprint LoadRandomBlueprintPartAtPath(string path, IntVec3 size)
+	{
+		BlueprintLoader blueprintLoader = new BlueprintLoader(path);
+		try
+		{
+			blueprintLoader.LoadBlueprint();
+			blueprintLoader.CutRandomRectOfSize(size);
+			return blueprintLoader.blueprint;
+		}
+		catch (Exception)
+		{
+			return null;
+		}
+	}
 
-        string snapshotName = null;
-        Blueprint blueprint = null;
+	public BlueprintLoader(string path)
+	{
+		snapshotName = path;
+	}
 
-        public BlueprintLoader(string path) {
-            snapshotName = path;
-        }
+	private void LoadBlueprint()
+	{
+		Debug.Log("BlueprintTransfer", "[0] Loading blueprint at path {0}", snapshotName);
+		string text = snapshotName;
+		if (Path.GetExtension(snapshotName).Equals(".bp"))
+		{
+			text = snapshotName + ".xml";
+			if (!File.Exists(text))
+			{
+				string contents = Compressor.UnzipFile(snapshotName);
+				File.WriteAllText(text, contents);
+			}
+		}
+		XmlDocument xmlDocument = new XmlDocument();
+		try
+		{
+			xmlDocument.Load(text);
+			Debug.Log("BlueprintTransfer", "[1] Loaded XML file, XML is valid, processing...");
+		}
+		catch
+		{
+			Debug.Log("BlueprintTransfer", "[2] Failed to load, recovering...");
+			BlueprintRecoveryService blueprintRecoveryService = new BlueprintRecoveryService(text);
+			if (!blueprintRecoveryService.TryRecoverInPlace())
+			{
+				Debug.Log("BlueprintTransfer", "[2.1] Failed to recover");
+				throw;
+			}
+			xmlDocument.Load(text);
+			Debug.Log("BlueprintTransfer", "[2.1] Recovered!");
+		}
+		XmlNodeList elementsByTagName = xmlDocument.GetElementsByTagName("cell");
+		int width = int.Parse(xmlDocument.FirstChild.Attributes["width"].Value);
+		int height = int.Parse(xmlDocument.FirstChild.Attributes["height"].Value);
+		int originX = int.Parse(xmlDocument.FirstChild.Attributes["x"].Value);
+		int originZ = int.Parse(xmlDocument.FirstChild.Attributes["z"].Value);
+		Version version = new Version(xmlDocument.FirstChild?.Attributes["version"]?.Value ?? "0.0.0.0");
+		blueprint = new Blueprint(originX, originZ, width, height, version);
+		blueprint.snapshotYear = int.Parse(xmlDocument.FirstChild.Attributes["inGameYear"]?.Value ?? "5600");
+		int num = 0;
+		int num2 = 0;
+		foreach (XmlNode item in elementsByTagName)
+		{
+			int num3 = int.Parse(item.Attributes["x"].Value);
+			int num4 = int.Parse(item.Attributes["z"].Value);
+			blueprint.itemsMap[num3, num4] = new List<ItemTile>();
+			foreach (XmlNode childNode in item.ChildNodes)
+			{
+				try
+				{
+					if (childNode.Name.Equals("terrain"))
+					{
+						num2++;
+						TerrainTile terrainTile = new TerrainTile(childNode);
+						terrainTile.location = new IntVec3(num3, 0, num4);
+						blueprint.terrainMap[num3, num4] = terrainTile;
+					}
+					else
+					{
+						if (childNode.Name.Equals("item"))
+						{
+							num++;
+							ItemTile itemTile = new ItemTile(childNode);
+							if (itemTile.defName == ThingDefOf.CollapsedRocks.defName)
+							{
+								itemTile = ItemTile.WallReplacementItemTile(itemTile.location);
+							}
+							if (itemTile.defName == ThingDefOf.MinifiedThing.defName && (itemTile.innerItems?.Count() ?? 0) == 0)
+							{
+								continue;
+							}
+							ThingDef named = DefDatabase<ThingDef>.GetNamed(itemTile.defName, errorOnFail: false);
+							if (named != null)
+							{
+								if (named.fillPercent == 1f || itemTile.isWall || itemTile.isDoor)
+								{
+									blueprint.wallMap[num3, num4] = -1;
+								}
+								itemTile.stackCount = Math.Min(named.stackLimit, itemTile.stackCount);
+								itemTile.location = new IntVec3(num3, 0, num4);
+								blueprint.itemsMap[num3, num4].Add(itemTile);
+							}
+							else if (itemTile.isDoor)
+							{
+								itemTile.defName = ThingDefOf.Door.defName;
+								itemTile.location = new IntVec3(num3, 0, num4);
+								blueprint.itemsMap[num3, num4].Add(itemTile);
+							}
+							else if (itemTile.isWall || itemTile.defName.ToLower().Contains("wall"))
+							{
+								itemTile.defName = ThingDefOf.Wall.defName;
+								itemTile.location = new IntVec3(num3, 0, num4);
+								blueprint.itemsMap[num3, num4].Add(itemTile);
+							}
+							else if (itemTile.defName == "Corpse")
+							{
+								itemTile.location = new IntVec3(num3, 0, num4);
+								blueprint.itemsMap[num3, num4].Add(itemTile);
+							}
+							continue;
+						}
+						if (childNode.Name.Equals("roof"))
+						{
+							blueprint.roofMap[num3, num4] = true;
+						}
+					}
+				}
+				catch (Exception)
+				{
+				}
+			}
+		}
+	}
 
-        private void LoadBlueprint() {
-            Debug.Log(Debug.BlueprintTransfer, "[0] Loading blueprint at path {0}", snapshotName);
-
-            string deflatedName = snapshotName;
-            if (Path.GetExtension(snapshotName).Equals(".bp")) {
-
-                deflatedName = snapshotName + ".xml";
-                if (!File.Exists(deflatedName)) {
-                    string data = Compressor.UnzipFile(snapshotName);
-                    File.WriteAllText(deflatedName, data);
-                }
-            }
-
-            XmlDocument snapshot = new XmlDocument();
-            try {
-                snapshot.Load(deflatedName);
-                Debug.Log(Debug.BlueprintTransfer, "[1] Loaded XML file, XML is valid, processing...");
-            } catch {
-                Debug.Log(Debug.BlueprintTransfer, "[2] Failed to load, recovering...");
-                BlueprintRecoveryService recovery = new BlueprintRecoveryService(deflatedName);
-                bool success = recovery.TryRecoverInPlace();
-                if (success)
-                {
-                    snapshot.Load(deflatedName);
-                    Debug.Log(Debug.BlueprintTransfer, "[2.1] Recovered!");
-                }
-                else {
-                    Debug.Log(Debug.BlueprintTransfer, "[2.1] Failed to recover");
-                    throw;
-                }
-            }
-
-            XmlNodeList elemList = snapshot.GetElementsByTagName("cell");
-            int blueprintWidth = int.Parse(snapshot.FirstChild.Attributes["width"].Value);
-            int blueprintHeight = int.Parse(snapshot.FirstChild.Attributes["height"].Value);
-            int originX = int.Parse(snapshot.FirstChild.Attributes["x"].Value);
-            int originZ = int.Parse(snapshot.FirstChild.Attributes["z"].Value);
-            Version blueprintVersion = new Version(snapshot.FirstChild?.Attributes["version"]?.Value ?? "0.0.0.0");
-            blueprint = new Blueprint(originX, originZ, blueprintWidth, blueprintHeight, blueprintVersion);
-
-            //Snapshot year is an in-game year when snapshot was taken. Thus, all corpse ages, death times, art events and so on are in between of 5500 and [snapshotYear]
-            blueprint.snapshotYear = int.Parse(snapshot.FirstChild.Attributes["inGameYear"]?.Value ?? "5600");
-            //To prevent artifacts from future we need to shift all dates by some number to the past by _at_least_ (snaphotYear - 5500) years
-
-
-            int itemNodes = 0;
-            int terrainNodes = 0;
-
-            foreach (XmlNode cellNode in elemList) {
-                int x = int.Parse(cellNode.Attributes["x"].Value);
-                int z = int.Parse(cellNode.Attributes["z"].Value);
-                blueprint.itemsMap[x, z] = new List<ItemTile>();
-
-                foreach (XmlNode cellElement in cellNode.ChildNodes) {
-                    try {
-                        if (cellElement.Name.Equals("terrain")) {
-                            terrainNodes++;
-                            TerrainTile terrain = new TerrainTile(cellElement);
-                            terrain.location = new IntVec3(x, 0, z);
-                            blueprint.terrainMap[x, z] = terrain;
-
-                        } else if (cellElement.Name.Equals("item")) {
-                            itemNodes++;
-                            ItemTile tile = new ItemTile(cellElement);
-
-                            //replace all collapsed rocks with walls
-                            if (tile.defName == ThingDefOf.CollapsedRocks.defName) {
-                                tile = ItemTile.WallReplacementItemTile(tile.location);
-                            }
-
-                            if (tile.defName == ThingDefOf.MinifiedThing.defName && (tile.innerItems?.Count() ?? 0) == 0) {
-                                continue; //skip minified things with no inner items
-                            }
-
-                            //Trying to load corresponding definition to check if the object is accessible
-                            ThingDef thingDef = DefDatabase<ThingDef>.GetNamed(tile.defName, false);
-                            if (thingDef != null) {
-                                if (thingDef.fillPercent == 1.0f || tile.isWall || tile.isDoor) {
-                                    blueprint.wallMap[x, z] = -1; //place wall
-                                }
-                                tile.stackCount = Math.Min(thingDef.stackLimit, tile.stackCount); //limit stack to max stack size to correctly calculate weight and cost later
-                                tile.location = new IntVec3(x, 0, z);
-                                blueprint.itemsMap[x, z].Add(tile); //save item if it's def is valid.
-                            } else {
-                                if (tile.isDoor) { //replacing unavailable door with abstract default door
-                                    tile.defName = ThingDefOf.Door.defName;
-                                    tile.location = new IntVec3(x, 0, z);
-                                    blueprint.itemsMap[x, z].Add(tile); //replacement door is ok
-                                } else if (tile.isWall || tile.defName.ToLower().Contains("wall")) { //replacing unavailable impassable 100% filling block (which was likely a wall) with a wall
-                                    tile.defName = ThingDefOf.Wall.defName;
-                                    tile.location = new IntVec3(x, 0, z);
-                                    blueprint.itemsMap[x, z].Add(tile); //now it's a wall
-                                } else if (tile.defName == "Corpse") {
-                                    tile.location = new IntVec3(x, 0, z);
-                                    blueprint.itemsMap[x, z].Add(tile); // corpse is ok
-                                }
-                            }
-
-                        } else if (cellElement.Name.Equals("roof")) {
-                            blueprint.roofMap[x, z] = true;
-                        }
-                    } catch (Exception) {
-                        //ignore invalid or unloadable cells
-                    }
-                }
-            }
-
-        }
-
-        private void CutRandomRectOfSize(IntVec3 size) {
-            int centerX = blueprint.width / 2;
-            int centerZ = blueprint.height / 2;
-            if (blueprint.width > size.x) centerX = Rand.Range(size.x / 2, blueprint.width - size.x / 2);
-            if (blueprint.height > size.z) centerZ = Rand.Range(size.z / 2, blueprint.height - size.z / 2);
-
-            blueprint = blueprint.Part(new IntVec3(centerX, 0, centerZ), size);
-        }
-    }
+	private void CutRandomRectOfSize(IntVec3 size)
+	{
+		int newX = blueprint.width / 2;
+		int newZ = blueprint.height / 2;
+		if (blueprint.width > size.x)
+		{
+			newX = Rand.Range(size.x / 2, blueprint.width - size.x / 2);
+		}
+		if (blueprint.height > size.z)
+		{
+			newZ = Rand.Range(size.z / 2, blueprint.height - size.z / 2);
+		}
+		blueprint = blueprint.Part(new IntVec3(newX, 0, newZ), size);
+	}
 }

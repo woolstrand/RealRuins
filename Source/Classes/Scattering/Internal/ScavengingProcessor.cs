@@ -1,195 +1,214 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-
 using Verse;
 
-namespace RealRuins {
-    class ScavengingProcessor {
+namespace RealRuins;
 
-        private List<Tile> tilesByCost = new List<Tile>();
-        private ScatterOptions options;
-        private Blueprint blueprint;
-        float totalCost = 0;
+internal class ScavengingProcessor
+{
+	private List<Tile> tilesByCost = new List<Tile>();
 
-        public void RaidAndScavenge(Blueprint blueprint, ScatterOptions options) {
-            //remove the most precious things. smash some other things.
-            //word is spread, so each next raid is more destructive than the previous ones
-            //to make calculations a bit easier we're going to calculate value per cell, not per item.
+	private ScatterOptions options;
 
-            this.options = options;
-            this.blueprint = blueprint;
+	private Blueprint blueprint;
 
-            Debug.active = false;
+	private float totalCost = 0f;
 
-            float scavengersActivity = Rand.Value * options.scavengingMultiplier + (options.scavengingMultiplier) / 3; //slight variation for scavengers activity for this particular blueprint
-            float elapsedTime = -blueprint.dateShift;
+	public void RaidAndScavenge(Blueprint blueprint, ScatterOptions options)
+	{
+		this.options = options;
+		this.blueprint = blueprint;
+		Debug.active = false;
+		float num = Rand.Value * options.scavengingMultiplier + options.scavengingMultiplier / 3f;
+		float num2 = -blueprint.dateShift;
+		int num3 = 0;
+		int num4 = 0;
+		int num5 = 0;
+		int num6 = 0;
+		int num7 = 0;
+		for (int i = 0; i < blueprint.width; i++)
+		{
+			for (int j = 0; j < blueprint.height; j++)
+			{
+				if (blueprint.terrainMap[i, j] != null)
+				{
+					tilesByCost.Add(blueprint.terrainMap[i, j]);
+					totalCost += blueprint.terrainMap[i, j].cost;
+					num7++;
+				}
+				foreach (ItemTile item in blueprint.itemsMap[i, j])
+				{
+					tilesByCost.Add(item);
+					totalCost += item.cost;
+					num6++;
+				}
+			}
+		}
+		tilesByCost.Sort((Tile t1, Tile t2) => (t1.cost / t1.weight).CompareTo(t2.cost / t2.weight));
+		int num8 = blueprint.width * blueprint.height;
+		int num9 = (int)(Math.Log(num2 / 10f + 1f) * (double)num);
+		if (num9 > 50)
+		{
+			num9 = 50;
+		}
+		if (options.scavengingMultiplier > 0.9f && num9 <= 0)
+		{
+			num9 = 1;
+		}
+		float num10 = (float)(num8 / 10) * num;
+		Debug.Log("BlueprintTransfer", "Performing {0} raids. Base capacity: {1}", num9, num10);
+		for (int k = 0; k < num9; k++)
+		{
+			float num11 = num10 * (float)Math.Pow(1.1, k);
+			bool flag = false;
+			Debug.Log("BlueprintTransfer", "Performing raid {0} of capacity {1}", k, num11);
+			while (tilesByCost.Count > 0 && num11 > 0f && !flag)
+			{
+				Tile tile = tilesByCost.Pop();
+				string text = $"Inspecting tile \"{tile.defName}\" of cost {tile.cost} and weight {tile.weight}. ";
+				if (tile.cost / tile.weight < 7f)
+				{
+					flag = true;
+					text += "Too cheap, stopping.";
+				}
+				else if (Rand.Chance(0.999f))
+				{
+					num11 -= tile.weight;
+					if (tile is TerrainTile)
+					{
+						blueprint.terrainMap[tile.location.x, tile.location.z] = null;
+						num4++;
+						totalCost -= tile.cost;
+						text += "Terrain removed.";
+					}
+					else if (tile is ItemTile)
+					{
+						ItemTile itemTile = tile as ItemTile;
+						totalCost -= itemTile.cost;
+						blueprint.itemsMap[tile.location.x, tile.location.z].Remove(itemTile);
+						if (itemTile.isDoor)
+						{
+							if (Rand.Chance(0.8f))
+							{
+								ItemTile itemTile2 = ItemTile.DefaultDoorItemTile(itemTile.location);
+								blueprint.itemsMap[tile.location.x, tile.location.z].Add(itemTile2);
+								text = text + "Added " + itemTile2.defName + ", original ";
+								num5++;
+							}
+							else
+							{
+								num3++;
+								blueprint.RemoveWall(itemTile.location.x, itemTile.location.z);
+							}
+						}
+						else if (itemTile.isWall)
+						{
+							ItemTile itemTile3 = ItemTile.WallReplacementItemTile(itemTile.location);
+							blueprint.itemsMap[tile.location.x, tile.location.z].Add(itemTile3);
+							text = text + "Added " + itemTile3.defName + ", original ";
+							num5++;
+						}
+						else
+						{
+							num3++;
+						}
+						text += "Tile removed.";
+					}
+				}
+				Debug.Log("BlueprintTransfer", text);
+				if (flag)
+				{
+					break;
+				}
+			}
+			if (flag)
+			{
+				break;
+			}
+		}
+		for (int l = 1; l < blueprint.height - 1; l++)
+		{
+			for (int m = 1; m < blueprint.width - 1; m++)
+			{
+				ItemTile itemTile4 = null;
+				foreach (ItemTile item2 in blueprint.itemsMap[m, l])
+				{
+					if (item2.isDoor && (!HasWallsIn(blueprint.itemsMap[m - 1, l]) || !HasWallsIn(blueprint.itemsMap[m + 1, l])) && (!HasWallsIn(blueprint.itemsMap[m, l - 1]) || !HasWallsIn(blueprint.itemsMap[m, l + 1])))
+					{
+						itemTile4 = item2;
+						break;
+					}
+				}
+				if (itemTile4 != null)
+				{
+					blueprint.itemsMap[m, l].Remove(itemTile4);
+					totalCost -= itemTile4.cost;
+					blueprint.RemoveWall(m, l);
+				}
+			}
+		}
+		Debug.active = true;
+		if (options.costCap > 0)
+		{
+			LimitCostToCap();
+		}
+		static bool HasWallsIn(List<ItemTile> list)
+		{
+			foreach (ItemTile item3 in list)
+			{
+				if (item3.isWall)
+				{
+					return true;
+				}
+			}
+			return false;
+		}
+	}
 
-            int totalRemovedTiles = 0;
-            int totalRemovedTerrains = 0;
-            int totalReplacedTiles = 0;
-            int processedTiles = 0;
-            int processedTerrains = 0;
-
-            for (int x = 0; x < blueprint.width; x++) {
-                for (int z = 0; z < blueprint.height; z++) {
-                    if (blueprint.terrainMap[x, z] != null) {
-                        tilesByCost.Add(blueprint.terrainMap[x, z]);
-                        totalCost += blueprint.terrainMap[x, z].cost;
-                        processedTerrains++;
-                    }
-
-                    foreach (ItemTile item in blueprint.itemsMap[x, z]) {
-                        tilesByCost.Add(item);
-                        totalCost += item.cost;
-                        processedTiles++;
-                    }
-                }
-            }
-
-            tilesByCost.Sort(delegate (Tile t1, Tile t2) {
-                return (t1.cost / t1.weight).CompareTo(t2.cost / t2.weight);
-            });
-
-            int ruinsArea = blueprint.width * blueprint.height;
-
-            //Debug.Message("Scavenging blueprint of area {0}, age {1}, scavengers activity multiplier {2}", ruinsArea, elapsedTime, scavengersActivity);
-            //Debug.Message("Enumerated {0} items", tilesByCost.Count());
-            //Debug.PrintArray(tilesByCost.ToArray());
-
-            int raidsCount = (int)(Math.Log(elapsedTime / 10 + 1) * scavengersActivity);
-            if (raidsCount > 50) raidsCount = 50;
-            if (options.scavengingMultiplier > 0.9f && raidsCount <= 0) {
-                raidsCount = 1; //at least one raid for each ruins in case of normal scavenging activity
-            }
-            float baseRaidCapacity = ruinsArea / 10 * scavengersActivity;
-
-            Debug.Log(Debug.BlueprintTransfer, "Performing {0} raids. Base capacity: {1}", raidsCount, baseRaidCapacity);
-
-            for (int i = 0; i < raidsCount; i++) {
-                float raidCapacity = baseRaidCapacity * (float)Math.Pow(1.1, i);
-                bool shouldStop = false;
-                Debug.Log(Debug.BlueprintTransfer, "Performing raid {0} of capacity {1}", i, raidCapacity);
-
-                while (tilesByCost.Count > 0 && raidCapacity > 0 && !shouldStop) {
-                    Tile topTile = tilesByCost.Pop();
-                    String msg = string.Format("Inspecting tile \"{0}\" of cost {1} and weight {2}. ", topTile.defName, topTile.cost, topTile.weight);
-
-                    if (topTile.cost / topTile.weight < 7) {
-                        shouldStop = true; //nothing to do here, everything valueable has already gone
-                        msg += "Too cheap, stopping.";
-                    } else {
-                        if (Rand.Chance(0.999f)) { //there is still chance that even the most expensive thing will be left after raid. ("Big momma said ya shouldn't touch that golden chair, it's cursed")
-                            raidCapacity -= topTile.weight; 
-                            if (topTile is TerrainTile) {
-                                blueprint.terrainMap[topTile.location.x, topTile.location.z] = null;
-                                totalRemovedTerrains++;
-                                totalCost -= topTile.cost;
-                                msg += "Terrain removed.";
-                            } else if (topTile is ItemTile) {
-                                ItemTile itemTile = topTile as ItemTile;
-                                totalCost -= itemTile.cost;
-                                blueprint.itemsMap[topTile.location.x, topTile.location.z].Remove(itemTile);
-                                if (itemTile.isDoor) { //if door is removed it should be replaced with another door, raiders are very polite and always replace expensive doors with cheaper ones.
-                                    if (Rand.Chance(0.8f)) { //ok, not always.
-                                        ItemTile replacementTile = ItemTile.DefaultDoorItemTile(itemTile.location);
-                                        blueprint.itemsMap[topTile.location.x, topTile.location.z].Add(replacementTile);
-                                        msg += "Added " + replacementTile.defName + ", original ";
-                                        totalReplacedTiles++;
-                                    } else {
-                                        totalRemovedTiles++;
-                                        blueprint.RemoveWall(itemTile.location.x, itemTile.location.z);
-                                    }
-                                } else if (itemTile.isWall) { //if something like a wall removed (vent or aircon) you usually want to cover the hole to keep wall integrity
-                                    ItemTile replacementTile = ItemTile.WallReplacementItemTile(itemTile.location);
-                                    blueprint.itemsMap[topTile.location.x, topTile.location.z].Add(replacementTile);
-                                    msg += "Added " + replacementTile.defName + ", original ";
-                                    totalReplacedTiles++;
-                                } else {
-                                    totalRemovedTiles++;
-                                }
-                                msg += "Tile removed.";
-                            }
-                        }
-                    }
-                    Debug.Log(Debug.BlueprintTransfer, msg);
-                    if (shouldStop) break;
-                }
-                if (shouldStop) break;
-            }
-
-            //Check that there are no "hanging doors" left
-            bool HasWallsIn(List<ItemTile> list) {
-                foreach (ItemTile tile in list) {
-                    if (tile.isWall) return true;
-                }
-                return false;
-            }
-
-            for (int z = 1; z < blueprint.height - 1; z++) {
-                for (int x = 1; x < blueprint.width - 1; x++) {
-                    ItemTile tileToRemove = null;
-                    foreach (ItemTile tile in blueprint.itemsMap[x, z]) {
-                        if (tile.isDoor) { //check if a particular door tile has both two vertically adjacent walls (or similar) or two horizintally adjacent walls
-                            if (!(HasWallsIn(blueprint.itemsMap[x - 1, z]) && HasWallsIn(blueprint.itemsMap[x + 1, z])) &&
-                                !(HasWallsIn(blueprint.itemsMap[x, z - 1]) && HasWallsIn(blueprint.itemsMap[x, z + 1]))) {
-                                tileToRemove = tile;
-                                break;
-                            }
-                        }
-                    }
-                    if (tileToRemove != null) {
-                        blueprint.itemsMap[x, z].Remove(tileToRemove);
-                        totalCost -= tileToRemove.cost;
-                        blueprint.RemoveWall(x, z);
-                    }
-                }
-            }
-            Debug.active = true;
-            //Debug.Message("Scavenging completed. Terrain removed: {0}/{1}, Tiles removed: {2}/{3}, tiles replaced: {4}.", totalRemovedTerrains, processedTerrains, totalRemovedTiles, processedTiles, totalReplacedTiles);
-
-            if (options.costCap > 0) { LimitCostToCap(); }
-        }
-
-        private void LimitCostToCap() {
-            Debug.Log(Debug.BlueprintTransfer, "Capping current cost of {0} to target cost of {1}", totalCost, options.costCap);
-
-            var initialCount = tilesByCost.Count;
-
-            var filteredItems = tilesByCost.Where(item => item.cost > 20).ToList();
-            var filteredCost = 0f;
-            filteredItems.ForEach(tile => filteredCost += tile.cost);
-
-            if (filteredItems.Count == 0 || totalCost - filteredCost > options.costCap) {
-                filteredItems = tilesByCost;
-            }
-
-            Debug.Log(Debug.BlueprintTransfer, "TilesByCost: {0} items, filteredTiles: {1} items of cost {2}", tilesByCost.Count, filteredItems.Count, filteredCost);
-
-            while (filteredItems.Count > 0 && totalCost > options.costCap) {
-                var tile = filteredItems.RandomElement();
-                totalCost -= tile.cost;
-                filteredItems.Remove(tile);
-                if (tile is ItemTile) {
-                    var itemTile = tile as ItemTile;
-                    if (itemTile.isWall && !itemTile.isDoor) {
-                        itemTile.defName = "Wall";
-                        itemTile.stuffDef = "Wood";
-                    } else if (itemTile.isDoor) {
-                        itemTile.defName = "Door";
-                        itemTile.stuffDef = "Wood";
-                    } else { 
-                        blueprint.itemsMap[tile.location.x, tile.location.z].Remove(tile as ItemTile);
-                    }
-                }
-                if (tile is TerrainTile) {
-                    blueprint.terrainMap[tile.location.x, tile.location.z] = null;
-                }
-            }
-
-            Debug.Log(Debug.BlueprintTransfer, "Done. Resulting cost is {0}. Items left: {1}/{2}", totalCost, tilesByCost.Count, initialCount);
-        }
-    }
-
+	private void LimitCostToCap()
+	{
+		Debug.Log("BlueprintTransfer", "Capping current cost of {0} to target cost of {1}", totalCost, options.costCap);
+		int count = tilesByCost.Count;
+		List<Tile> list = tilesByCost.Where((Tile item) => item.cost > 20f).ToList();
+		float filteredCost = 0f;
+		list.ForEach(delegate(Tile tile)
+		{
+			filteredCost += tile.cost;
+		});
+		if (list.Count == 0 || totalCost - filteredCost > (float)options.costCap)
+		{
+			list = tilesByCost;
+		}
+		Debug.Log("BlueprintTransfer", "TilesByCost: {0} items, filteredTiles: {1} items of cost {2}", tilesByCost.Count, list.Count, filteredCost);
+		while (list.Count > 0 && totalCost > (float)options.costCap)
+		{
+			Tile tile2 = list.RandomElement();
+			totalCost -= tile2.cost;
+			list.Remove(tile2);
+			if (tile2 is ItemTile)
+			{
+				ItemTile itemTile = tile2 as ItemTile;
+				if (itemTile.isWall && !itemTile.isDoor)
+				{
+					itemTile.defName = "Wall";
+					itemTile.stuffDef = "Wood";
+				}
+				else if (itemTile.isDoor)
+				{
+					itemTile.defName = "Door";
+					itemTile.stuffDef = "Wood";
+				}
+				else
+				{
+					blueprint.itemsMap[tile2.location.x, tile2.location.z].Remove(tile2 as ItemTile);
+				}
+			}
+			if (tile2 is TerrainTile)
+			{
+				blueprint.terrainMap[tile2.location.x, tile2.location.z] = null;
+			}
+		}
+		Debug.Log("BlueprintTransfer", "Done. Resulting cost is {0}. Items left: {1}/{2}", totalCost, tilesByCost.Count, count);
+	}
 }

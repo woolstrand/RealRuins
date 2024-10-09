@@ -1,212 +1,230 @@
+using System;
+using System.Collections.Generic;
+using RimWorld;
 using RimWorld.Planet;
 using Verse;
-using System;
-using System.Linq;
-using System.Collections.Generic;
 
-using RimWorld;
+namespace RealRuins;
 
-namespace RealRuins {
+public class RuinedBaseComp : WorldObjectComp
+{
+	public string blueprintFileName = "";
 
-    enum RuinedBaseState {
-        Inactive = 0,
-        WaitingForArrival,
-        FightingWaves,
-        WaitingForEnemiesToBeDefeated,
-        WaitingTimeoutAfterEnemiesDefeat,
-        WaitingToBeInformed,
-        InformedWaitingForLeaving,
-        ScavengedCompletely
-    }
+	private RuinedBaseState state = RuinedBaseState.Inactive;
 
-    public class RuinedBaseComp : WorldObjectComp {
+	public float unlockTargetTime = -1f;
 
-        public string blueprintFileName = "";
+	public int currentCapCost = -1;
 
-        private RuinedBaseState state = RuinedBaseState.Inactive;
-        public float unlockTargetTime = -1; //when all raids are done, the component sets random timeout after which you can exit the map
-        public int currentCapCost = -1;
-        public float raidersActivity = -1; //battle points amount of starting raiders group
-        private bool ShouldRemoveWorldObjectNow => state == RuinedBaseState.ScavengedCompletely && !base.ParentHasMap;
-        public bool isActive => state != RuinedBaseState.Inactive;
-        public string expireSignal = null;
-        public string successSignal = null;
+	public float raidersActivity = -1f;
 
-        public bool mapExitLocked {
-            get {
-                return state != RuinedBaseState.InformedWaitingForLeaving;
-            }
-        }
+	public string expireSignal = null;
 
-        private int unlockHysteresisTimeout = 1000; //there is a gap between firing the last raid trigger and hostile presence detection (i.e. while drop pods are opening). So we have to wait a bit after switching the component into the other mode.
+	public string successSignal = null;
 
-        //list of all triggers on the map. don't know if it does really influence performance, but it definitely does not make it worse.
-        List<RaidTrigger> triggersCache;
+	private int unlockHysteresisTimeout = 1000;
 
-        public override void Initialize(WorldObjectCompProperties props) {
-            base.Initialize(props);
-        }
+	private List<RaidTrigger> triggersCache;
 
-        private void BuildRaidTriggersCache() {
-            if (ParentHasMap) {
-                triggersCache = new List<RaidTrigger>();
-                foreach (Thing t in (parent as MapParent).Map.spawnedThings) {
-                    if (t is RaidTrigger) {
-                        triggersCache.Add(t as RaidTrigger);
-                    }
-                }
-            }
-        }
+	private bool ShouldRemoveWorldObjectNow => state == RuinedBaseState.ScavengedCompletely && !base.ParentHasMap;
 
-        private void CheckTriggers() {
-            if (triggersCache == null) {
-                BuildRaidTriggersCache();
-            }
+	public bool isActive => state != RuinedBaseState.Inactive;
 
-            foreach (RaidTrigger raidTrigger in triggersCache) {
-                if (raidTrigger.IsTriggered() == false || raidTrigger.TicksLeft() > 0) return;
-            }
+	public bool mapExitLocked => state != RuinedBaseState.InformedWaitingForLeaving;
 
-            //we got here only when all triggers have fired.
-            if (state == RuinedBaseState.FightingWaves) {
-                if (unlockHysteresisTimeout == 0) {
-                    state = RuinedBaseState.WaitingForEnemiesToBeDefeated;
-                    //Debug.Message("All triggers fired and expired, and we've wait safety margin => can wait before hostiled defeating and map unlocking");
-                } else {
-                    unlockHysteresisTimeout--;
-                }
-            }
+	public override void Initialize(WorldObjectCompProperties props)
+	{
+		base.Initialize(props);
+	}
 
-        }
+	private void BuildRaidTriggersCache()
+	{
+		if (!base.ParentHasMap)
+		{
+			return;
+		}
+		triggersCache = new List<RaidTrigger>();
+		foreach (Thing item in (IEnumerable<Thing>)(parent as MapParent).Map.spawnedThings)
+		{
+			if (item is RaidTrigger)
+			{
+				triggersCache.Add(item as RaidTrigger);
+			}
+		}
+	}
 
-        public override void PostMapGenerate() {
-            base.PostMapGenerate();
-            if (state == RuinedBaseState.WaitingForArrival) {
-                state = RuinedBaseState.FightingWaves;
-                BuildRaidTriggersCache();
-                //Debug.Message("Built cache, cache has size of {0}", triggersCache.Count);
-            }
-        }
+	private void CheckTriggers()
+	{
+		if (triggersCache == null)
+		{
+			BuildRaidTriggersCache();
+		}
+		foreach (RaidTrigger item in triggersCache)
+		{
+			if (!item.IsTriggered() || item.TicksLeft() > 0)
+			{
+				return;
+			}
+		}
+		if (state == RuinedBaseState.FightingWaves)
+		{
+			if (unlockHysteresisTimeout == 0)
+			{
+				state = RuinedBaseState.WaitingForEnemiesToBeDefeated;
+			}
+			else
+			{
+				unlockHysteresisTimeout--;
+			}
+		}
+	}
 
-        public void StartScavenging(int initialCost) {
-            currentCapCost = initialCost;
-            raidersActivity = 0;
-            state = RuinedBaseState.WaitingForArrival;
-        }
+	public override void PostMapGenerate()
+	{
+		base.PostMapGenerate();
+		if (state == RuinedBaseState.WaitingForArrival)
+		{
+			state = RuinedBaseState.FightingWaves;
+			BuildRaidTriggersCache();
+		}
+	}
 
-        public override void PostExposeData() {
-            
-            base.PostExposeData();
-            Scribe_Values.Look(ref blueprintFileName, "blueprintFileName", "");
-            Scribe_Values.Look(ref currentCapCost, "currentCapCost", -1);
-            Scribe_Values.Look(ref raidersActivity, "raidersActivity", -1);
-            Scribe_Values.Look(ref unlockTargetTime, "unlockTargetTime", 0);
-            Scribe_Values.Look(ref state, "state", RuinedBaseState.Inactive);
-            Scribe_Values.Look(ref expireSignal, "expireSignal", "");
-            Scribe_Values.Look(ref successSignal, "successSignal", "");
+	public void StartScavenging(int initialCost)
+	{
+		currentCapCost = initialCost;
+		raidersActivity = 0f;
+		state = RuinedBaseState.WaitingForArrival;
+	}
 
-        }
+	public override void PostExposeData()
+	{
+		base.PostExposeData();
+		Scribe_Values.Look(ref blueprintFileName, "blueprintFileName", "");
+		Scribe_Values.Look(ref currentCapCost, "currentCapCost", -1);
+		Scribe_Values.Look(ref raidersActivity, "raidersActivity", -1f);
+		Scribe_Values.Look(ref unlockTargetTime, "unlockTargetTime", 0f);
+		Scribe_Values.Look(ref state, "state", RuinedBaseState.Inactive);
+		Scribe_Values.Look(ref expireSignal, "expireSignal", "");
+		Scribe_Values.Look(ref successSignal, "successSignal", "");
+	}
 
-        public override void CompTick() {
-            base.CompTick();
-            if (ShouldRemoveWorldObjectNow) {
-                var signalTag = expireSignal;
-                Find.SignalManager.SendSignal(new Signal(signalTag));
-                Find.WorldObjects.Remove(parent);
-            }
+	public override void CompTick()
+	{
+		base.CompTick();
+		if (ShouldRemoveWorldObjectNow)
+		{
+			string tag = expireSignal;
+			Find.SignalManager.SendSignal(new Signal(tag));
+			Find.WorldObjects.Remove(parent);
+		}
+		if (state == RuinedBaseState.Inactive)
+		{
+			return;
+		}
+		if (!base.ParentHasMap)
+		{
+			if (Rand.Chance(1E-05f + raidersActivity / 50000000f) || raidersActivity * 4f > (float)(currentCapCost / 2))
+			{
+				int val = (int)(Rand.Range(0.05f, 0.2f) * (raidersActivity / 12000f) * (float)currentCapCost);
+				currentCapCost -= Math.Max(val, (int)(raidersActivity * 4f));
+				raidersActivity /= Rand.Range(2f, 5f);
+			}
+			raidersActivity += Rand.Range(-0.1f, 0.25f) * (float)currentCapCost / 100000f;
+			if (raidersActivity < 0f)
+			{
+				raidersActivity = 0f;
+			}
+			if ((currentCapCost < 20000 && Rand.Chance(1E-05f)) || currentCapCost <= 100)
+			{
+				state = RuinedBaseState.ScavengedCompletely;
+			}
+		}
+		if (base.ParentHasMap && parent.Faction != Faction.OfPlayer && RealRuins_ModSettings.caravanReformType == 1 && !GenHostility.AnyHostileActiveThreatToPlayer((parent as MapParent).Map))
+		{
+			Debug.Log("Generic", "pristine ruins was cleared, changing faction.");
+			parent.SetFaction(Faction.OfPlayer);
+		}
+		if (RealRuins_ModSettings.caravanReformType != 2 || !base.ParentHasMap)
+		{
+			return;
+		}
+		if (state == RuinedBaseState.FightingWaves)
+		{
+			CheckTriggers();
+		}
+		else if (state == RuinedBaseState.WaitingForEnemiesToBeDefeated)
+		{
+			if (!GenHostility.AnyHostileActiveThreatTo((parent as MapParent).Map, Faction.OfPlayer))
+			{
+				unlockTargetTime = Find.TickManager.TicksGame + Rand.Range(30000, 30000 + currentCapCost);
+				state = RuinedBaseState.WaitingTimeoutAfterEnemiesDefeat;
+			}
+		}
+		else if (state == RuinedBaseState.WaitingTimeoutAfterEnemiesDefeat && (float)Find.TickManager.TicksGame > unlockTargetTime)
+		{
+			state = RuinedBaseState.WaitingToBeInformed;
+			string text = "RealRuins.NoMoreEnemies".Translate();
+			Messages.Message(text, parent, MessageTypeDefOf.PositiveEvent);
+			state = RuinedBaseState.InformedWaitingForLeaving;
+		}
+	}
 
-            if (state == RuinedBaseState.Inactive) return;
-
-
-            if (!ParentHasMap) {
-                //base "do maradeur" act chance is once per 1.5 game days, but high activity can make it as often as once per game hour
-                if (Rand.Chance(0.00001f + (float)raidersActivity / 50000000.0f) || raidersActivity * 4 > currentCapCost / 2) {
-                    int stolenAmount = (int)(Rand.Range(0.05f, 0.2f) * (raidersActivity / 12000.0f) * currentCapCost);
-                    currentCapCost -= Math.Max(stolenAmount, (int)(raidersActivity * 4));
-                    raidersActivity = raidersActivity / Rand.Range(2.0f, 5.0f);
-                }
-
-                raidersActivity += Rand.Range(-.1f, 0.25f) * currentCapCost / 100000.0f;
-                if (raidersActivity < 0) raidersActivity = 0;
-
-                if ((currentCapCost < 20000 && Rand.Chance(0.00001f)) || currentCapCost <= 100) {
-                    state = RuinedBaseState.ScavengedCompletely;
-                }
-            }
-
-            //Do not remember if faction of pristine ruins does matter somehow. It actually shouldn't.
-            //This should be removed, but just in case it is needed for some reason, I'll leave it, but add check fro reformingType = 1 (instant reforing), because for other modes this yields caravan items unloading.
-            if (ParentHasMap && parent.Faction != Faction.OfPlayer && RealRuins_ModSettings.caravanReformType == 1) {
-                if (!GenHostility.AnyHostileActiveThreatToPlayer((parent as MapParent).Map)) {
-                    //show letter about enemies defeated
-                    Debug.Log(Debug.Generic, "pristine ruins was cleared, changing faction.");
-                    parent.SetFaction(Faction.OfPlayer);
-                   // parent as MapParent
-                }
-            }
-
-
-            if (RealRuins_ModSettings.caravanReformType == 2 && ParentHasMap) {
-                if (state == RuinedBaseState.FightingWaves) {
-                    CheckTriggers();
-                } else if (state == RuinedBaseState.WaitingForEnemiesToBeDefeated) {
-                    //AnyHostileActiveThreatToPlayer is a proxy call to AnyHostileActiveThreatTo, but it is postfixed with additional check by this mod.
-                    //Here I want to do original check, without my postfix, so I call directly the checking method. So-so solution, but cant think of anything better AND worthwhile
-                    if (!GenHostility.AnyHostileActiveThreatTo((parent as MapParent).Map, Faction.OfPlayer)) {
-                        unlockTargetTime = Find.TickManager.TicksGame + Rand.Range(30000, 30000 + currentCapCost);
-                        state = RuinedBaseState.WaitingTimeoutAfterEnemiesDefeat;
-                        //Debug.Message("no more hostiles. time: {0}, unlocktime: {1}", Find.TickManager.TicksGame, unlockTargetTime);
-                    }
-                } else if (state == RuinedBaseState.WaitingTimeoutAfterEnemiesDefeat) {
-                    if (Find.TickManager.TicksGame > unlockTargetTime) {
-                        state = RuinedBaseState.WaitingToBeInformed;
-                        string text = "RealRuins.NoMoreEnemies".Translate();
-                        Messages.Message(text, parent, MessageTypeDefOf.PositiveEvent);
-                        state = RuinedBaseState.InformedWaitingForLeaving;
-                    }
-                }
-            }
-
-
-        }
-
-        public override string CompInspectStringExtra() {
-            if (!ParentHasMap && state == RuinedBaseState.WaitingForArrival) {
-                string result = "";
-                if (currentCapCost > 0) {
-                    string wealthDesc = "";
-
-                    int[] costThresholds = {0, 10000, 100000, 1000000, 10000000 };
-                    if (currentCapCost > costThresholds[costThresholds.Length - 1]) wealthDesc = ("RealRuins.RuinsWealth." + (costThresholds.Length - 1)).Translate();
-                    for (int i = 0; i < costThresholds.Length - 1; i++) {
-                        if (currentCapCost > costThresholds[i] && currentCapCost <= costThresholds[i + 1]) {
-                            wealthDesc = ("RealRuins.RuinsWealth." + i.ToString()).Translate();
-                        }
-                    }
-                    
-
-                    result += "RealRuins.RuinsWealth".Translate() + wealthDesc;
-                    if (Prefs.DevMode) { result += " (" + currentCapCost + ")"; }
-                }
-
-                if (raidersActivity > 0) {
-                    if (result.Length > 0) result += "\r\n";
-
-                    string activityDesc = "";
-
-                    int[] activityThresholds = { 0, 800, 3000, 6000, 12000 };
-                    if (raidersActivity > activityThresholds[activityThresholds.Length - 1]) activityDesc = ("RealRuins.RuinsActivity." + (activityThresholds.Length - 1)).Translate();
-                    for (int i = 0; i < activityThresholds.Length - 1; i++) {
-                        if (raidersActivity > activityThresholds[i] && raidersActivity <= activityThresholds[i + 1]) {
-                            activityDesc = ("RealRuins.RuinsActivity." + i).Translate();
-                        }
-                    }
-                    result += "RealRuins.RuinsActivity".Translate() + activityDesc;
-                    if (Prefs.DevMode) { result += " (" + raidersActivity + ")"; }
-                }
-                if (result.Length > 0) return result;
-            }
-            return null;
-        }
-    }
+	public override string CompInspectStringExtra()
+	{
+		if (!base.ParentHasMap && state == RuinedBaseState.WaitingForArrival)
+		{
+			string text = "";
+			if (currentCapCost > 0)
+			{
+				string text2 = "";
+				int[] array = new int[5] { 0, 10000, 100000, 1000000, 10000000 };
+				if (currentCapCost > array[array.Length - 1])
+				{
+					text2 = ("RealRuins.RuinsWealth." + (array.Length - 1)).Translate();
+				}
+				for (int i = 0; i < array.Length - 1; i++)
+				{
+					if (currentCapCost > array[i] && currentCapCost <= array[i + 1])
+					{
+						text2 = ("RealRuins.RuinsWealth." + i).Translate();
+					}
+				}
+				text += "RealRuins.RuinsWealth".Translate() + text2;
+				if (Prefs.DevMode)
+				{
+					text = text + " (" + currentCapCost + ")";
+				}
+			}
+			if (raidersActivity > 0f)
+			{
+				if (text.Length > 0)
+				{
+					text += "\r\n";
+				}
+				string text3 = "";
+				int[] array2 = new int[5] { 0, 800, 3000, 6000, 12000 };
+				if (raidersActivity > (float)array2[array2.Length - 1])
+				{
+					text3 = ("RealRuins.RuinsActivity." + (array2.Length - 1)).Translate();
+				}
+				for (int j = 0; j < array2.Length - 1; j++)
+				{
+					if (raidersActivity > (float)array2[j] && raidersActivity <= (float)array2[j + 1])
+					{
+						text3 = ("RealRuins.RuinsActivity." + j).Translate();
+					}
+				}
+				text += "RealRuins.RuinsActivity".Translate() + text3;
+				if (Prefs.DevMode)
+				{
+					text = text + " (" + raidersActivity + ")";
+				}
+			}
+			if (text.Length > 0)
+			{
+				return text;
+			}
+		}
+		return null;
+	}
 }

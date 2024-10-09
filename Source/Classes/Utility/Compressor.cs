@@ -1,45 +1,40 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.IO;
 using System.IO.Compression;
+using System.Text;
 
-namespace RealRuins {
-    class Compressor {
-        //Dangerous zipping: if somethig goes wrong the information is lost, but we don't care too.
-        public static void ZipFile(string filename) {
-            var bytes = File.ReadAllBytes(filename);
-            File.Delete(filename);
+namespace RealRuins;
 
-            using (var msi = new MemoryStream(bytes))
-            using (var mso = File.Open(filename, FileMode.Create)) {
-                mso.Seek(0, SeekOrigin.Begin);
-                using (var gs = new GZipStream(mso, CompressionMode.Compress)) {
-                    CopyTo(msi, gs);
-                }
-            }
-        }
+internal class Compressor
+{
+	public static void ZipFile(string filename)
+	{
+		byte[] buffer = File.ReadAllBytes(filename);
+		File.Delete(filename);
+		using MemoryStream src = new MemoryStream(buffer);
+		using FileStream fileStream = File.Open(filename, FileMode.Create);
+		fileStream.Seek(0L, SeekOrigin.Begin);
+		using GZipStream dest = new GZipStream(fileStream, CompressionMode.Compress);
+		CopyTo(src, dest);
+	}
 
-        public static string UnzipFile(string filename) {
-            using (var msi = File.OpenRead(filename))
-            using (var mso = new MemoryStream()) {
-                using (var gs = new GZipStream(msi, CompressionMode.Decompress)) {
-                    CopyTo(gs, mso);
-                }
+	public static string UnzipFile(string filename)
+	{
+		using FileStream stream = File.OpenRead(filename);
+		using MemoryStream memoryStream = new MemoryStream();
+		using (GZipStream src = new GZipStream(stream, CompressionMode.Decompress))
+		{
+			CopyTo(src, memoryStream);
+		}
+		return Encoding.UTF8.GetString(memoryStream.ToArray());
+	}
 
-                return Encoding.UTF8.GetString(mso.ToArray());
-            }
-        }
-
-        public static void CopyTo(Stream src, Stream dest) {
-            byte[] bytes = new byte[4096];
-
-            int cnt;
-
-            while ((cnt = src.Read(bytes, 0, bytes.Length)) != 0) {
-                dest.Write(bytes, 0, cnt);
-            }
-        }
-    }
+	public static void CopyTo(Stream src, Stream dest)
+	{
+		byte[] array = new byte[4096];
+		int count;
+		while ((count = src.Read(array, 0, array.Length)) != 0)
+		{
+			dest.Write(array, 0, count);
+		}
+	}
 }

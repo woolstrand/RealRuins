@@ -1,45 +1,37 @@
-﻿using System;
-using System.Xml;
 using System.IO;
+using System.Xml;
 
-namespace RealRuins.Classes.Utility
+namespace RealRuins.Classes.Utility;
+
+public class BlueprintRecoveryService
 {
-    public class BlueprintRecoveryService
-    {
-        private string path;
+	private string path;
 
-        public BlueprintRecoveryService(string path)
-        {
-            this.path = path;
-        }
+	public BlueprintRecoveryService(string path)
+	{
+		this.path = path;
+	}
 
-        public bool TryRecoverInPlace()
-        {
-            string data = File.ReadAllText(this.path);
-
-            // cutting anything beyond last tag bracket
-            int cutLocation = data.LastIndexOf("</cell>");
-            if (cutLocation < data.Length - 7)
-            {
-                data = data.Substring(0, cutLocation);
-                data += "</cell>";
-            }
-
-            data += "</snapshot>";
-
-            File.WriteAllText(this.path, data);
-            XmlDocument doc = new XmlDocument();
-            try
-            {
-                doc.Load(this.path);
-            }
-            catch
-            {
-                return false;
-            }
-
-            return true;
-        }
-
-    }
+	public bool TryRecoverInPlace()
+	{
+		string text = File.ReadAllText(path);
+		int num = text.LastIndexOf("</cell>");
+		if (num < text.Length - 7)
+		{
+			text = text.Substring(0, num);
+			text += "</cell>";
+		}
+		text += "</snapshot>";
+		File.WriteAllText(path, text);
+		XmlDocument xmlDocument = new XmlDocument();
+		try
+		{
+			xmlDocument.Load(path);
+		}
+		catch
+		{
+			return false;
+		}
+		return true;
+	}
 }

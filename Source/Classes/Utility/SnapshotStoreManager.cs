@@ -1,304 +1,348 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
-
 using Verse;
 
-using System.IO;
-using System.Runtime.Remoting.Messaging;
-using System.Security.AccessControl;
-using System.Security.Principal;
+namespace RealRuins;
 
-
-//Snapshot manager operates with blueprint identifiers, which do not have .bp extensions. Only SnapshotStoreManager (this class) is aware of extensions
-//So you should not use .bp extension explicitly outside of this class.
-
-namespace RealRuins
+internal class SnapshotStoreManager
 {
-    class SnapshotStoreManager
-    {
+	private static SnapshotStoreManager instance = null;
 
-        private static SnapshotStoreManager instance = null;
-        public static SnapshotStoreManager Instance {
-            get {
-                if (instance == null) {
-                    instance = new SnapshotStoreManager();
-                }
-                return instance;
-            }
-        }
+	private static string oldRootFolder = "../Snapshots";
 
-        private static string oldRootFolder = "../Snapshots";
-        private long totalFilesSize = 0;
-        private int totalFileCount = 0;
+	private long totalFilesSize = 0L;
 
+	private int totalFileCount = 0;
 
-        public static bool HasPlanetaryBlueprintForCurrentGame(string blueprintName) {
-            string gameName = CurrentGamePath();
-            bool result = SnapshotExists(blueprintName, gameName);
-            if (!result) {
-                Debug.Log("[PRELOAD CHECKER]", "{0} does not exist at {1}, scheduling load.", blueprintName, gameName);
-            }
-            return result;
-            
-        }
+	private static string snapshotsFolderPath = null;
 
-        public static string GamePath(string seed, int mapSize, float coverage) {
-            return string.Format("{0}-{1}-{2}", seed.SanitizeForFileSystem(), mapSize, (int)(coverage * 100));
-        }
+	public static SnapshotStoreManager Instance
+	{
+		get
+		{
+			if (instance == null)
+			{
+				instance = new SnapshotStoreManager();
+			}
+			return instance;
+		}
+	}
 
-        public static string CurrentGamePath() {
-            return GamePath(Find.World.info.seedString, Find.World.info.initialMapSize.x, Find.World.PlanetCoverage);
-        }
+	public static bool HasPlanetaryBlueprintForCurrentGame(string blueprintName)
+	{
+		string text = CurrentGamePath();
+		bool flag = SnapshotExists(blueprintName, text);
+		if (!flag)
+		{
+			Debug.Log("[PRELOAD CHECKER]", "{0} does not exist at {1}, scheduling load.", blueprintName, text);
+		}
+		return flag;
+	}
 
-        public SnapshotStoreManager() {
-            MoveFilesIfNeeded();
-            GetSnapshotsFolderPath();
-            RecalculateFilesSize();
-        }
+	public static string GamePath(string seed, int mapSize, float coverage)
+	{
+		return $"{seed.SanitizeForFileSystem()}-{mapSize}-{(int)(coverage * 100f)}";
+	}
 
-        //moving data files to a new folder
-        private void MoveFilesIfNeeded() {
+	public static string CurrentGamePath()
+	{
+		return GamePath(Find.World.info.seedString, Find.World.info.initialMapSize.x, Find.World.PlanetCoverage);
+	}
 
-            if (!Directory.Exists(oldRootFolder)) return;
-            string newFolder = GetSnapshotsFolderPath();
+	public SnapshotStoreManager()
+	{
+		MoveFilesIfNeeded();
+		GetSnapshotsFolderPath();
+		RecalculateFilesSize();
+	}
 
-            if (newFolder == oldRootFolder) return; //can't create new folder on some reason. fallback.
+	private void MoveFilesIfNeeded()
+	{
+		if (!Directory.Exists(oldRootFolder))
+		{
+			return;
+		}
+		string text = GetSnapshotsFolderPath();
+		if (text == oldRootFolder)
+		{
+			return;
+		}
+		string[] files = Directory.GetFiles(oldRootFolder);
+		DateTime now = DateTime.Now;
+		Debug.SysLog("Started moving {0} files at {1}", files.Length, now);
+		string[] array = files;
+		foreach (string text2 in array)
+		{
+			string fileName = Path.GetFileName(text2);
+			string text3 = Path.Combine(text, fileName);
+			try
+			{
+				if (!File.Exists(text3))
+				{
+					File.Move(text2, text3);
+				}
+				else
+				{
+					File.Delete(text2);
+				}
+			}
+			catch
+			{
+			}
+		}
+		Debug.SysLog("finished at {0} ({1} msec)", DateTime.Now, (DateTime.Now - now).TotalMilliseconds);
+		try
+		{
+			Directory.Delete(oldRootFolder);
+		}
+		catch
+		{
+		}
+	}
 
-            string[] oldFiles = Directory.GetFiles(oldRootFolder);
-            
-            DateTime startTime = DateTime.Now;
-            Debug.SysLog("Started moving {0} files at {1}", oldFiles.Length, startTime);
+	private static string GetSnapshotsFolderPath()
+	{
+		if (snapshotsFolderPath == null)
+		{
+			snapshotsFolderPath = Path.Combine(GenFilePaths.SaveDataFolderPath, "RealRuins");
+			DirectoryInfo directoryInfo = new DirectoryInfo(snapshotsFolderPath);
+			if (!directoryInfo.Exists)
+			{
+				try
+				{
+					directoryInfo.Create();
+				}
+				catch
+				{
+					snapshotsFolderPath = oldRootFolder;
+				}
+			}
+		}
+		return snapshotsFolderPath;
+	}
 
-            foreach (string fullPath in oldFiles) {
-                string filename = Path.GetFileName(fullPath);
-                string newPath = Path.Combine(newFolder, filename);
+	public void StoreData(string buffer, string blueprintName)
+	{
+		StoreBinaryData(Encoding.UTF8.GetBytes(buffer), blueprintName);
+	}
 
-                try {
-                    if (!File.Exists(newPath)) {
-                        File.Move(fullPath, newPath);
-                    } else {
-                        File.Delete(fullPath);
-                    }
-                } catch {
-                    //actually ignore: can't do anything
-                }
-            }
+	public void StoreBinaryData(byte[] buffer, string blueprintName, string gameName = null)
+	{
+		new Thread((ThreadStart)delegate
+		{
+			string text = blueprintName + ".bp";
+			string text2 = GetSnapshotsFolderPath();
+			if (gameName != null)
+			{
+				text2 = Path.Combine(text2, gameName);
+			}
+			if (RealRuins.SingleFile)
+			{
+				text = "jeluder.bp";
+			}
+			DirectoryInfo directoryInfo = new DirectoryInfo(text2);
+			if (!directoryInfo.Exists)
+			{
+				try
+				{
+					directoryInfo.Create();
+				}
+				catch
+				{
+					Debug.Error("Store", "Can't access store path");
+				}
+			}
+			string[] array = text.Split('=');
+			if (array.Count() > 1)
+			{
+				int result = 0;
+				if (int.TryParse(array[0], out result))
+				{
+					array[0] = "*";
+					string searchPattern = string.Join("=", array);
+					string[] files = Directory.GetFiles(text2, searchPattern);
+					string[] array2 = files;
+					foreach (string text3 in array2)
+					{
+						int result2 = 0;
+						string[] array3 = text3.Split('-');
+						if (int.TryParse(array3[0], out result2))
+						{
+							if (result2 > result)
+							{
+								return;
+							}
+							File.Delete(text3);
+						}
+					}
+				}
+			}
+			File.WriteAllBytes(Path.Combine(text2, text), buffer);
+			RecalculateFilesSize();
+		}).Start();
+	}
 
-            Debug.SysLog("finished at {0} ({1} msec)", DateTime.Now, (DateTime.Now - startTime).TotalMilliseconds);
+	private string DoGetRandomFilenameFromRootFolder()
+	{
+		if (RealRuins.SingleFile)
+		{
+			return RealRuins.SingleFileName;
+		}
+		string[] files = Directory.GetFiles(GetSnapshotsFolderPath());
+		if (files.Length == 0)
+		{
+			return null;
+		}
+		int num = Rand.Range(0, files.Length);
+		Debug.Log("Store", "files length: {0} count {1}, selected: {2}", files.Length, files.Count(), num);
+		return files[num];
+	}
 
-            try {
-                Directory.Delete(oldRootFolder);
-            } catch {
-                //m-kay
-            }
-        }
-        
-        private static string snapshotsFolderPath = null;
+	public string RandomSnapshotFilename()
+	{
+		string text = null;
+		do
+		{
+			text = DoGetRandomFilenameFromRootFolder();
+			if (text == null)
+			{
+				return null;
+			}
+		}
+		while (text == null);
+		return text;
+	}
 
-        private static string GetSnapshotsFolderPath() {
-            if (snapshotsFolderPath == null) {
-                snapshotsFolderPath = Path.Combine(GenFilePaths.SaveDataFolderPath, "RealRuins");
-                DirectoryInfo directoryInfo = new DirectoryInfo(snapshotsFolderPath);
-                if (!directoryInfo.Exists) {
-                    try {
-                        directoryInfo.Create();
-                    }
-                    catch {
-                        snapshotsFolderPath = oldRootFolder;
-                    }
-                }
-            }
-            return snapshotsFolderPath;
-        }
-    
-        public void StoreData(string buffer, string blueprintName) {
-            StoreBinaryData(Encoding.UTF8.GetBytes(buffer), blueprintName);
-        }
+	public static string SnapshotNameFor(string snapshotId, string gameName)
+	{
+		if (gameName == null)
+		{
+			return GetSnapshotsFolderPath() + "/" + snapshotId + ".bp";
+		}
+		return GetSnapshotsFolderPath() + "/" + gameName + "/" + snapshotId + ".bp";
+	}
 
-        public void StoreBinaryData(byte[] buffer, string blueprintName, string gameName = null) {
+	public static bool SnapshotExists(string snapshotId, string gameName)
+	{
+		return File.Exists(SnapshotNameFor(snapshotId, gameName));
+	}
 
-            new Thread(() => {
-                string filename = blueprintName + ".bp";
-                string path = GetSnapshotsFolderPath();
-                if (gameName != null) {
-                    path = Path.Combine(path, gameName);
-                }
-                if (RealRuins.SingleFile) {
-                    filename = "jeluder.bp";
-                }
+	public int StoredSnapshotsCount()
+	{
+		return totalFileCount;
+	}
 
-                DirectoryInfo directoryInfo = new DirectoryInfo(path);
-                if (!directoryInfo.Exists) {
-                    try {
-                        directoryInfo.Create();
-                    } catch {
-                        Debug.Error(Debug.Store, "Can't access store path");
-                    }
-                }
+	public void RemoveBlueprintWithName(string filename)
+	{
+		try
+		{
+			File.Delete(filename);
+		}
+		catch (Exception)
+		{
+		}
+	}
 
-                //when storing a file you need to remove older version of snapshots of the same game
-                string[] parts = filename.Split('=');
-                if (parts.Count() > 1) {
-                    int date = 0;
-                    if (int.TryParse(parts[0], out date)) {
-                        parts[0] = "*";
-                        string mask = string.Join("=", parts);
-                        string[] files = Directory.GetFiles(path, mask);
-                        foreach (string existingFile in files) {
-                            int existingFileDate = 0;
-                            string[] existingFileParts = existingFile.Split('-');
-                            if (int.TryParse(existingFileParts[0], out existingFileDate)) {
-                                if (existingFileDate > date) {
-                                    //there is more fresh file. no need to save this one.
-                                    return;
-                                } else {
-                                    //remove older files
-                                    File.Delete(existingFile);
-                                }
-                            }
-                        }
-                    }
-                }
-                //writing file in all cases except "newer version available"
-                File.WriteAllBytes(Path.Combine(path, filename), buffer);
-                RecalculateFilesSize();
+	public List<string> FilterOutExistingItems(List<string> source, string gamePath = null)
+	{
+		List<string> list = new List<string>();
+		foreach (string item in source)
+		{
+			if (!File.Exists(SnapshotNameFor(item, gamePath)))
+			{
+				list.Add(item);
+			}
+		}
+		return list;
+	}
 
-            }).Start();
+	public void CheckCacheContents()
+	{
+		if (RealRuins_ModSettings.offlineMode)
+		{
+			string[] files = Directory.GetFiles(GetSnapshotsFolderPath());
+			string[] array = files;
+			foreach (string text in array)
+			{
+				if (!text.Contains("local"))
+				{
+					File.Delete(text);
+				}
+			}
+		}
+		RecalculateFilesSize();
+	}
 
-        }
+	public void ClearCache()
+	{
+		Directory.Delete(GetSnapshotsFolderPath(), recursive: true);
+		Directory.CreateDirectory(GetSnapshotsFolderPath());
+		totalFilesSize = 0L;
+	}
 
-        private string DoGetRandomFilenameFromRootFolder() {
-            if (RealRuins.SingleFile) {
-                return RealRuins.SingleFileName;
-            }
+	public long TotalSize()
+	{
+		return totalFilesSize;
+	}
 
-            var files = Directory.GetFiles(GetSnapshotsFolderPath());
-            if (files.Length == 0) return null;
+	private void RecalculateFilesSize()
+	{
+		string[] files = Directory.GetFiles(GetSnapshotsFolderPath());
+		long num = 0L;
+		string[] array = files;
+		foreach (string fileName in array)
+		{
+			num += new FileInfo(fileName).Length;
+		}
+		totalFilesSize = num;
+		totalFileCount = files.Length;
+	}
 
-            int index = Rand.Range(0, files.Length);
-            Debug.Log(Debug.Store, "files length: {0} count {1}, selected: {2}", files.Length, files.Count(), index);
-            return files[index];
-        }
+	public void CheckCacheSizeLimits()
+	{
+		string[] files = Directory.GetFiles(GetSnapshotsFolderPath());
+		List<string> list = files.ToList();
+		list.Sort();
+		list.Reverse();
+		long num = 0L;
+		foreach (string item in list)
+		{
+			num += new FileInfo(item).Length;
+			if ((float)num > RealRuins_ModSettings.diskCacheLimit * 1024f * 1024f)
+			{
+				File.Delete(item);
+			}
+		}
+		RecalculateFilesSize();
+	}
 
-        public string RandomSnapshotFilename() {
-            string filename = null;
-            do {
-                filename = DoGetRandomFilenameFromRootFolder();
-                if (filename == null) return null; //no more valid files. sorry, no party.
-            } while (filename == null);
-            return filename;
-        }
+	public bool CanFireMediumEvent()
+	{
+		if (StoredSnapshotsCount() > 0)
+		{
+			if (RealRuins_ModSettings.offlineMode)
+			{
+				return true;
+			}
+			return StoredSnapshotsCount() > 30;
+		}
+		return false;
+	}
 
-        public static string SnapshotNameFor(string snapshotId, string gameName) {
-            if (gameName == null) {
-                return GetSnapshotsFolderPath() + "/" + snapshotId + ".bp";
-            } else {
-                return GetSnapshotsFolderPath() + "/" + gameName + "/" + snapshotId + ".bp";
-            }
-        }
-
-        public static bool SnapshotExists(string snapshotId, string gameName) {
-            return File.Exists(SnapshotNameFor(snapshotId, gameName));
-        }
-
-        public int StoredSnapshotsCount() {
-            return totalFileCount;
-        }
-
-        public void RemoveBlueprintWithName(string filename) {
-            try {
-                File.Delete(filename);
-            } catch (Exception) { 
-                //can't do anything useful really, just ignore
-            }
-        }
-
-        public List<string> FilterOutExistingItems(List<string> source, string gamePath = null) {
-
-            List<string> result = new List<string>();
-
-            foreach (string item in source) {
-                if (!File.Exists(SnapshotNameFor(item, gamePath))) { 
-                    result.Add(item);
-                }
-            }
-
-            return result;
-        }
-
-        public void CheckCacheContents() {
-
-            if (RealRuins_ModSettings.offlineMode) {
-                var files = Directory.GetFiles(GetSnapshotsFolderPath());
-                foreach (string fileName in files) {
-                    if (!fileName.Contains("local")) {
-                        File.Delete(fileName); //delete all remote files in offline mode.
-                    }
-                }
-            }
-            RecalculateFilesSize();
-        }
-
-        public void ClearCache() {
-
-            Directory.Delete(GetSnapshotsFolderPath(), true);
-            Directory.CreateDirectory(GetSnapshotsFolderPath());
-            totalFilesSize = 0;
-        }
-
-        public long TotalSize() {
-            return totalFilesSize;
-        }
-
-        private void RecalculateFilesSize() {
-
-            var filesList = Directory.GetFiles(GetSnapshotsFolderPath());
-            long totalSize = 0;
-            foreach (string file in filesList) {
-                totalSize += new FileInfo(file).Length;
-            }
-
-            totalFilesSize = totalSize;
-            totalFileCount = filesList.Length;
-        }
-
-        public void CheckCacheSizeLimits() {
-
-            var files = Directory.GetFiles(GetSnapshotsFolderPath());
-            List<string> filesList = files.ToList();
-            filesList.Sort();
-            filesList.Reverse();
-            
-
-            long totalSize = 0;
-            foreach (string file in filesList) {
-                totalSize += new FileInfo(file).Length;
-                if (totalSize > RealRuins_ModSettings.diskCacheLimit * 1024 * 1024) {
-                    File.Delete(file);
-                }
-            }
-            RecalculateFilesSize();
-        }
-
-        public bool CanFireMediumEvent() {
-            if (StoredSnapshotsCount() > 0) {
-                if (RealRuins_ModSettings.offlineMode) return true;
-                else return StoredSnapshotsCount() > 30;
-            } else {
-                return false;
-            }
-        }
-
-        public bool CanFireLargeEvent() {
-            if (StoredSnapshotsCount() > 0) {
-                if (RealRuins_ModSettings.offlineMode) return true;
-                else return StoredSnapshotsCount() > 250;
-            } else {
-                return false;
-            }
-        }
-    }
+	public bool CanFireLargeEvent()
+	{
+		if (StoredSnapshotsCount() > 0)
+		{
+			if (RealRuins_ModSettings.offlineMode)
+			{
+				return true;
+			}
+			return StoredSnapshotsCount() > 250;
+		}
+		return false;
+	}
 }
