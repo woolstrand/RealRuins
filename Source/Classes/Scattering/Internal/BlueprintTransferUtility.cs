@@ -1,771 +1,792 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Xml;
+
 using RimWorld;
-using RimWorld.BaseGen;
 using Verse;
+using RimWorld.BaseGen;
+using UnityEngine;
+using Verse.AI;
+using Verse.AI.Group;
 
-namespace RealRuins;
+/**
+ * This class does two things: removes things which can't be placed and actually transfers a blueprint to a real map according to options provided
+ * Those two things are separated because they happen at different steps with some steps in between.
+ * Those two things are combined here, because both depends on a real location map and work with it.
+ * Blueprint is transferred as is, so you should do all preprocessing beforehand
+ * */
 
-internal class BlueprintTransferUtility
-{
-	private const long ticksInYear = 3600000L;
+namespace RealRuins {
+    class BlueprintTransferUtility {
 
-	private Blueprint blueprint;
+        private const long ticksInYear = 3600000;
 
-	private ResolveParams rp;
 
-	private ScatterOptions options;
+        Blueprint blueprint;
+        ResolveParams rp;
+        ScatterOptions options;
+        Map map;
 
-	private Map map;
+        int mapOriginX;
+        int mapOriginZ;
 
-	private int mapOriginX;
 
-	private int mapOriginZ;
+        // Clear the cell from other destroyable objects
+        private bool ClearCell(IntVec3 location, Map map, bool shouldForceClear = true) {
+            try {
+                List<Thing> items = map.thingGrid.ThingsListAt(location);
+                foreach (Thing item in items) {
+                    if (item.def.thingClass.ToString().Contains("DubsBadHygiene")) return false; //Don't mess with bad hygiene because it put app into an endless cycle on removal
 
-	private bool ClearCell(IntVec3 location, Map map, bool shouldForceClear = true)
-	{
-		try
-		{
-			List<Thing> list = map.thingGrid.ThingsListAt(location);
-			foreach (Thing item in list)
-			{
-				if (item.def.thingClass.ToString().Contains("DubsBadHygiene"))
-				{
-					return false;
-				}
-				if (!item.def.destroyable)
-				{
-					return false;
-				}
-				if (item.def.mineable && !shouldForceClear)
-				{
-					return false;
-				}
-			}
-			for (int num = list.Count - 1; num >= 0; num--)
-			{
-				list[num].DeSpawn();
-			}
-			return true;
-		}
-		catch
-		{
-			return false;
-		}
-	}
+                    if (!item.def.destroyable) {
+                        return false;
+                    }
+                    if (item.def.mineable && !shouldForceClear) {//mountain is destroyable only when forcing
+                        return false;
+                    }
+                }
 
-	private Pawn MakePawnWithRawXml(string xml)
-	{
-		try
-		{
-			XmlDocument xmlDocument = new XmlDocument();
-			xmlDocument.LoadXml(xml);
-			XmlNode firstChild = xmlDocument.FirstChild;
-			string innerText = firstChild.SelectSingleNode("kind").InnerText;
-			PawnKindDef pawnKindDef = PawnKindDef.Named(innerText);
-			if (pawnKindDef == null)
-			{
-				pawnKindDef = PawnKindDefOf.AncientSoldier;
-			}
-			Pawn pawn = PawnGenerator.GeneratePawn(pawnKindDef, rp.faction);
-			Name name = null;
-			XmlNode xmlNode = firstChild.SelectSingleNode("name");
-			XmlNode namedItem = xmlNode.Attributes.GetNamedItem("first");
-			XmlNode namedItem2 = xmlNode.Attributes.GetNamedItem("last");
-			XmlNode namedItem3 = xmlNode.Attributes.GetNamedItem("nick");
-			name = ((namedItem == null || namedItem2 == null) ? ((Name)new NameSingle(namedItem?.Value ?? "Unknown")) : ((Name)new NameTriple(namedItem.Value, namedItem3?.Value ?? "", namedItem2.Value)));
-			pawn.Name = name;
-			string text = firstChild.SelectSingleNode("gender")?.InnerText;
-			if (text == "Male")
-			{
-				pawn.gender = Gender.Male;
-			}
-			else if (text == "Female")
-			{
-				pawn.gender = Gender.Female;
-			}
-			string text2 = firstChild.SelectSingleNode("biologicalAge")?.InnerText;
-			string text3 = firstChild.SelectSingleNode("chronologicalAge")?.InnerText;
-			if (text2 != null && text3 != null)
-			{
-				long result = 0L;
-				long.TryParse(text2, out result);
-				pawn.ageTracker.AgeBiologicalTicks = result;
-				long.TryParse(text3, out result);
-				pawn.ageTracker.AgeChronologicalTicks = result + 3600000 * -blueprint.dateShift;
-			}
-			XmlNode xmlNode2 = firstChild.SelectSingleNode("saveable[@Class='Pawn_StoryTracker']");
-			if (xmlNode2 != null)
-			{
-			}
-			XmlNode xmlNode3 = firstChild.SelectSingleNode("saveable[@Class='Pawn_SkillTracker']");
-			if (xmlNode3 != null)
-			{
-				XmlNodeList xmlNodeList = xmlNode2.SelectNodes("skills/li");
-				foreach (XmlNode item in xmlNodeList)
-				{
-					string defName = item.SelectSingleNode("def")?.InnerText;
-					int result2 = 0;
-					int.TryParse(item.SelectSingleNode("level")?.InnerText, out result2);
-					float result3 = 0f;
-					float.TryParse(item.SelectSingleNode("xpSinceLastLevel")?.InnerText, out result3);
-					SkillDef namedSilentFail = DefDatabase<SkillDef>.GetNamedSilentFail(defName);
-					if (namedSilentFail == null)
-					{
-						continue;
-					}
-					SkillRecord skillRecord = pawn.skills.GetSkill(namedSilentFail);
-					if (skillRecord == null)
-					{
-						skillRecord = new SkillRecord(pawn, namedSilentFail);
-					}
-					skillRecord.Level = result2;
-					skillRecord.xpSinceLastLevel = result3;
-					try
-					{
-						string text4 = item.SelectSingleNode("passion")?.InnerText;
-						if (text4 != null)
-						{
-							skillRecord.passion = (Passion)Enum.Parse(typeof(Passion), text4);
-						}
-					}
-					catch (Exception)
-					{
-					}
-				}
-			}
-			XmlNode xmlNode5 = firstChild.SelectSingleNode("saveable[@Class='Pawn_HealthTracker']");
-			if (xmlNode5 != null)
-			{
-				if (xmlNode5.SelectSingleNode("healthState")?.InnerText == "Dead")
-				{
-					pawn.health.SetDead();
-				}
-				XmlNodeList xmlNodeList2 = xmlNode5.SelectNodes("hediffSet/hediffs/li");
-				if (xmlNodeList2 != null)
-				{
-					Scribe.mode = LoadSaveMode.LoadingVars;
-					pawn.health?.hediffSet?.hediffs?.RemoveAll((Hediff _) => true);
-					foreach (XmlNode item2 in xmlNodeList2)
-					{
-						XmlNode xmlNode7 = item2.SelectSingleNode("source");
-						string text5 = xmlNode7?.InnerText;
-						if (text5 != null)
-						{
-							ThingDef namedSilentFail2 = DefDatabase<ThingDef>.GetNamedSilentFail(text5);
-							if (namedSilentFail2 == null)
-							{
-								item2.RemoveChild(xmlNode7);
-							}
-						}
-						try
-						{
-							Hediff hediff = ScribeExtractor.SaveableFromNode<Hediff>(item2, null);
-							if (hediff != null && hediff.sourceDef != null && hediff.Part != null)
-							{
-								pawn.health.AddHediff(hediff);
-							}
-						}
-						catch (Exception)
-						{
-						}
-					}
-					Scribe.mode = LoadSaveMode.Inactive;
-				}
-			}
-			XmlNode xmlNode8 = firstChild.SelectSingleNode("apparel");
-			if (xmlNode8 != null)
-			{
-				XmlNodeList xmlNodeList3 = xmlNode8.SelectNodes("item");
-				foreach (XmlNode item3 in xmlNodeList3)
-				{
-					string defName2 = item3.Attributes?.GetNamedItem("def")?.Value;
-					string text6 = item3.Attributes?.GetNamedItem("stuffDef")?.Value;
-					ThingDef stuff = null;
-					ThingDef namedSilentFail3 = DefDatabase<ThingDef>.GetNamedSilentFail(defName2);
-					if (text6 != null)
-					{
-						stuff = DefDatabase<ThingDef>.GetNamedSilentFail(text6);
-					}
-					if (namedSilentFail3 != null)
-					{
-						Apparel apparel = (Apparel)ThingMaker.MakeThing(namedSilentFail3, stuff);
-						apparel.HitPoints = Rand.Range(1, (int)((double)apparel.MaxHitPoints * 0.6));
-						if (apparel != null)
-						{
-							pawn.apparel.Wear(apparel, dropReplacedApparel: false);
-						}
-					}
-				}
-			}
-			return pawn;
-		}
-		catch (Exception)
-		{
-			return PawnGenerator.GeneratePawn(PawnKindDefOf.AncientSoldier, rp.faction);
-		}
-	}
+                for (int index = items.Count - 1; index >= 0; index--) {
+                    items[index].DeSpawn(DestroyMode.Vanish);
+                }
+                return true;
+            } catch {
+                return false;
+            }
+        }
 
-	private Thing MakeThingFromItemTile(ItemTile itemTile, bool enableLogging = false)
-	{
-		try
-		{
-			if (enableLogging)
-			{
-			}
-			if (itemTile.defName.ToLower() == "pawn")
-			{
-				return null;
-			}
-			if (itemTile.defName.ToLower() == "corpse")
-			{
-				if (itemTile.innerItems != null)
-				{
-					Pawn pawn = (Pawn)MakeThingFromItemTile(itemTile.innerItems.First());
-					Corpse corpse = null;
-					if (pawn.Corpse != null)
-					{
-						corpse = pawn.Corpse;
-					}
-					else
-					{
-						corpse = (Corpse)ThingMaker.MakeThing(pawn.RaceProps.corpseDef);
-						corpse.InnerPawn = pawn;
-					}
-					corpse.timeOfDeath = (int)(itemTile.corpseDeathTime + 3600000L * (long)blueprint.dateShift);
-					CompRottable compRottable = corpse.TryGetComp<CompRottable>();
-					if (compRottable != null)
-					{
-						compRottable.RotProgress = 3600000L * (long)(-blueprint.dateShift);
-					}
-					return corpse;
-				}
-				return null;
-			}
-			if (itemTile.defName.ToLower().Contains("corpse") || itemTile.defName.ToLower().Contains("minified"))
-			{
-				List<ItemTile> innerItems = itemTile.innerItems;
-				if (innerItems == null || !innerItems.Any())
-				{
-					return null;
-				}
-			}
-			if (itemTile.defName == "Hive")
-			{
-				return null;
-			}
-			ThingDef named = DefDatabase<ThingDef>.GetNamed(itemTile.defName, errorOnFail: false);
-			if (named.category == ThingCategory.Ethereal)
-			{
-				return null;
-			}
-			ThingDef thingDef = null;
-			if (itemTile.stuffDef != null && named.MadeFromStuff)
-			{
-				thingDef = DefDatabase<ThingDef>.GetNamed(itemTile.stuffDef, errorOnFail: false);
-			}
-			if (thingDef == null)
-			{
-				thingDef = ((!itemTile.isWall || !named.MadeFromStuff) ? GenStuff.DefaultStuffFor(named) : ThingDefOf.BlocksGranite);
-			}
-			Thing thing = ThingMaker.MakeThing(named, thingDef);
-			if (thing != null)
-			{
-				if (itemTile.innerItems != null && thing is IThingHolder)
-				{
-					foreach (ItemTile innerItem in itemTile.innerItems)
-					{
-						Thing thing2 = MakeThingFromItemTile(innerItem, enableLogging: true);
-						if (thing2 != null)
-						{
-							((IThingHolder)thing).GetDirectlyHeldThings().TryAdd(thing2);
-						}
-					}
-					if (thing.GetInnerIfMinified() == null)
-					{
-						return null;
-					}
-				}
-				if (named.CanHaveFaction)
-				{
-					thing.SetFaction(rp.faction);
-				}
-				CompQuality compQuality = thing.TryGetComp<CompQuality>();
-				if (compQuality != null)
-				{
-					byte b = (byte)Math.Abs(Math.Round(Rand.Gaussian(0f, 2f)));
-					if (itemTile.art != null)
-					{
-						if (b > 6)
-						{
-							b = 6;
-						}
-						compQuality.SetQuality((QualityCategory)b, ArtGenerationContext.Outsider);
-						thing.TryGetComp<CompArt>()?.InitializeArt(itemTile.art.author, itemTile.art.title, itemTile.art.TextWithDatesShiftedBy(blueprint.dateShift));
-					}
-					else
-					{
-						if (b > 6)
-						{
-							b = 6;
-						}
-						compQuality.SetQuality((QualityCategory)b, ArtGenerationContext.Outsider);
-					}
-				}
-				if (itemTile.stackCount > 1)
-				{
-					thing.stackCount = itemTile.stackCount;
-					CompRottable compRottable2 = thing.TryGetComp<CompRottable>();
-					if (compRottable2 != null)
-					{
-						if (options.canHaveFood)
-						{
-							compRottable2.RotProgress = (Rand.Value * 0.5f + options.deteriorationMultiplier) * (float)compRottable2.PropsRot.TicksToRotStart;
-						}
-						else
-						{
-							compRottable2.RotProgress = compRottable2.PropsRot.TicksToRotStart + 1;
-						}
-					}
-				}
-				if (itemTile.attachedText != null && thing is ThingWithComps)
-				{
-					ThingWithComps thingWithComps = thing as ThingWithComps;
-					Type type = Type.GetType("SaM.CompText, Signs_and_Memorials");
-					if (type != null)
-					{
-						object obj = null;
-						for (int i = 0; i < thingWithComps.AllComps.Count; i++)
-						{
-							ThingComp thingComp = thingWithComps.AllComps[i];
-							if (thingComp.GetType() == type)
-							{
-								obj = thingComp;
-							}
-						}
-						if (obj != null)
-						{
-							obj?.GetType()?.GetField("text").SetValue(obj, itemTile.attachedText);
-						}
-					}
-				}
-				if (thing is UnfinishedThing)
-				{
-					((UnfinishedThing)thing).workLeft = 10000f;
-					((UnfinishedThing)thing).Creator = Find.WorldPawns.AllPawnsAliveOrDead.RandomElement();
-				}
-				int maxExclusive = 0;
-				if (!options.forceFullHitPoints)
-				{
-					maxExclusive = Math.Min(thing.MaxHitPoints - 1, (int)Math.Abs(Rand.Gaussian(0f, 200f)));
-				}
-				thing.HitPoints = thing.MaxHitPoints - Rand.Range(0, maxExclusive);
-				if (thing.def.EverHaulable)
-				{
-					thing.SetForbidden(value: true, warnOnFail: false);
-				}
-				if (thing is Building_Storage)
-				{
-					((Building_Storage)thing).settings.Priority = StoragePriority.Unstored;
-				}
-			}
-			return thing;
-		}
-		catch (Exception ex)
-		{
-			Debug.Log("BlueprintTransfer", "Failed to spawn item {0} because of {1}", itemTile.defName, ex);
-			return null;
-		}
-	}
 
-	public BlueprintTransferUtility(Blueprint blueprint, Map map, ResolveParams rp, ScatterOptions options)
-	{
-		this.blueprint = blueprint;
-		this.map = map;
-		this.rp = rp;
-		this.options = options;
-		Debug.Log("Transferring blueprint of faction {0}", rp.faction?.Name ?? "none");
-		if (blueprint == null)
-		{
-			Debug.Error("BlueprintTransfer", "Attempting to configure transfer utility with empty blueprint!");
-			return;
-		}
-		if (map == null)
-		{
-			Debug.Error("BlueprintTransfer", "Attempting to configure transfer utility with empty map!");
-			return;
-		}
-		if (options == null)
-		{
-			Debug.Error("BlueprintTransfer", "Attempting to configure transfer utility with empty options!");
-			return;
-		}
-		mapOriginX = rp.rect.minX + rp.rect.Width / 2 - blueprint.width / 2;
-		mapOriginZ = rp.rect.minZ + rp.rect.Height / 2 - blueprint.height / 2;
-		if (mapOriginX < 0)
-		{
-			mapOriginX = 0;
-		}
-		if (mapOriginZ < 0)
-		{
-			mapOriginZ = 0;
-		}
-		if (mapOriginX + blueprint.width >= map.Size.x)
-		{
-			mapOriginX = map.Size.x - blueprint.width - 1;
-		}
-		if (mapOriginZ + blueprint.height >= map.Size.z)
-		{
-			mapOriginZ = map.Size.z - blueprint.height - 1;
-		}
-		if (options.overridePosition != new IntVec3(0, 0, 0))
-		{
-			if (!options.centerIfExceedsBounds || (options.overridePosition.x + blueprint.width < map.Size.x && options.overridePosition.z + blueprint.height < map.Size.z))
-			{
-				mapOriginX = options.overridePosition.x;
-				mapOriginZ = options.overridePosition.z;
-				return;
-			}
-			Debug.Warning("BlueprintTransfer", "Tried to override position, but map exceeded bounds and position was reverted due to corresponding options flag.");
-			Debug.Warning("BlueprintTransfer", "New position: {0}, {1}", mapOriginX, mapOriginZ);
-		}
-	}
 
-	public void RemoveIncompatibleItems()
-	{
-		if (blueprint.roofMap == null)
-		{
-			Debug.Log("BlueprintTransfer", "Trying to process blueprint with empty roof map");
-		}
-		if (map == null)
-		{
-			Debug.Log("BlueprintTransfer", "Trying to process blueprint but map is still null");
-		}
-		try
-		{
-			int num = 0;
-			int num2 = 0;
-			for (int i = 0; i < blueprint.width; i++)
-			{
-				for (int j = 0; j < blueprint.height; j++)
-				{
-					Debug.Extra("BlueprintTransfer", "Starting cell {0} {1}...", i, j);
-					if (blueprint.itemsMap[i, j] == null)
-					{
-						blueprint.itemsMap[i, j] = new List<ItemTile>();
-					}
-					IntVec3 c = new IntVec3(i + mapOriginX, 0, j + mapOriginZ);
-					if (!c.InBounds(map))
-					{
-						continue;
-					}
-					List<ItemTile> list = blueprint.itemsMap[i, j];
-					TerrainTile terrainTile = blueprint.terrainMap[i, j];
-					TerrainDef terrainDef = null;
-					if (terrainTile != null)
-					{
-						terrainDef = DefDatabase<TerrainDef>.GetNamed(terrainTile.defName, errorOnFail: false);
-						if (terrainDef == null)
-						{
-							blueprint.terrainMap[i, j] = null;
-							terrainTile = null;
-						}
-					}
-					TerrainDef terrainDef2 = map.terrainGrid?.TerrainAt(c);
-					if (terrainDef2 != null && terrainDef != null && terrainDef2.affordances != null && terrainDef.terrainAffordanceNeeded != null && !terrainDef2.affordances.Contains(terrainDef.terrainAffordanceNeeded))
-					{
-						terrainDef = null;
-						blueprint.terrainMap[i, j] = null;
-						blueprint.roofMap[i, j] = false;
-					}
-					Debug.Extra("BlueprintTransfer", "Preprocessed cell {0} {1}, moving to items...", i, j);
-					List<ItemTile> list2 = new List<ItemTile>();
-					foreach (ItemTile item in list)
-					{
-						num++;
-						ThingDef named = DefDatabase<ThingDef>.GetNamed(item.defName, errorOnFail: false);
-						if (named == null)
-						{
-							list2.Add(item);
-							continue;
-						}
-						Debug.Extra("BlueprintTransfer", "Making thorough check for thing {0}", item.defName);
-						if (options.overwritesEverything || named.terrainAffordanceNeeded == null || (named.EverTransmitsPower && options.shouldKeepDefencesAndPower))
-						{
-							continue;
-						}
-						if (terrainDef != null && terrainDef.terrainAffordanceNeeded != null && terrainDef2.affordances.Contains(terrainDef.terrainAffordanceNeeded))
-						{
-							if (!terrainDef.affordances.Contains(named.terrainAffordanceNeeded))
-							{
-								list2.Add(item);
-								blueprint.roofMap[i, j] = false;
-							}
-							continue;
-						}
-						List<TerrainAffordanceDef> affordances = terrainDef2.affordances;
-						if (affordances != null && !affordances.Contains(named.terrainAffordanceNeeded))
-						{
-							list2.Add(item);
-							blueprint.roofMap[i, j] = false;
-						}
-					}
-					foreach (ItemTile item2 in list2)
-					{
-						if (item2.isWall || item2.isDoor)
-						{
-							blueprint.RemoveWall(item2.location.x, item2.location.z);
-						}
-						list.Remove(item2);
-						num2++;
-					}
-				}
-			}
-			Debug.Extra("BlueprintTransfer", "Finished check, recalculating stats");
-			blueprint.UpdateBlueprintStats(includeCost: true);
-			Debug.Log("BlueprintTransfer", "Blueprint transfer utility did remove {0}/{1} incompatible items. New cost: {2}", num2, num, blueprint.totalCost);
-		}
-		catch (Exception ex)
-		{
-			Debug.Error("BlueprintTransfer", "Exception while trying to cleanup blueprint details. This should not normally happen, so please report this case: {0}", ex.ToString());
-		}
-	}
 
-	public void Transfer(CoverageMap coverageMap)
-	{
-		float num = 0f;
-		int num2 = 0;
-		int num3 = 0;
-		int num4 = 0;
-		int num5 = 0;
-		rp.rect = new CellRect(mapOriginX, mapOriginZ, blueprint.width, blueprint.height);
-		Debug.Extra("BlueprintTransfer", "Clearing map...");
-		for (int i = 0; i < blueprint.height; i++)
-		{
-			for (int j = 0; j < blueprint.width; j++)
-			{
-				try
-				{
-					IntVec3 intVec = new IntVec3(j + mapOriginX, 0, i + mapOriginZ);
-					if (intVec.InBounds(map) && !intVec.InNoBuildEdgeArea(map) && (options.overwritesEverything || Rand.Chance(0.6f)) && (blueprint.terrainMap[j, i] != null || blueprint.itemsMap[j, i].Count > 0 || blueprint.wallMap[j, i] > 1))
-					{
-						ClearCell(intVec, map);
-					}
-				}
-				catch (Exception ex)
-				{
-					Debug.Warning("BlueprintTransfer", "Failed to clean cell at {0}, {1} because of {2}", j, i, ex);
-				}
-			}
-		}
-		Debug.Extra("BlueprintTransfer", "Transferring map objects");
-		for (int k = 0; k < blueprint.height; k++)
-		{
-			for (int l = 0; l < blueprint.width; l++)
-			{
-				IntVec3 intVec2 = new IntVec3(l + mapOriginX, 0, k + mapOriginZ);
-				if (coverageMap != null)
-				{
-					if (coverageMap.isMarked(intVec2.x, intVec2.z))
-					{
-						continue;
-					}
-					if (blueprint.wallMap[l, k] > 1 || blueprint.wallMap[l, k] == -1)
-					{
-						coverageMap.Mark(intVec2.x, intVec2.z);
-					}
-				}
-				if (!intVec2.InBounds(map) || intVec2.InNoBuildEdgeArea(map))
-				{
-					continue;
-				}
-				try
-				{
-					if (blueprint.terrainMap[l, k] != null)
-					{
-						num4++;
-						TerrainDef newTerr = TerrainDef.Named(blueprint.terrainMap[l, k].defName);
-						if (!map.terrainGrid.TerrainAt(intVec2).IsWater)
-						{
-							map.terrainGrid.SetTerrain(intVec2, newTerr);
-							num += blueprint.terrainMap[l, k].cost;
-							num2++;
-						}
-					}
-					if (blueprint.roofMap[l, k] && options.overwritesEverything && blueprint.wallMap[l, k] != 1)
-					{
-						map.roofGrid.SetRoof(intVec2, RoofDefOf.RoofConstructed);
-					}
-					Debug.Extra("BlueprintTransfer", "Transferred terrain and roof at cell ({0}, {1})", l, k);
-				}
-				catch (Exception ex2)
-				{
-					Debug.Warning("BlueprintTransfer", "Failed to transfer terrain {0} at {1}, {2} because of {3}", blueprint.terrainMap[l, k].defName, l, k, ex2);
-				}
-				if (blueprint.itemsMap[l, k] == null || blueprint.itemsMap[l, k].Count <= 0)
-				{
-					continue;
-				}
-				num5 += blueprint.itemsMap[l, k].Count;
-				foreach (ItemTile item in blueprint.itemsMap[l, k])
-				{
-					Debug.Extra("BlueprintTransfer", "Creating thing {2} at cell ({0}, {1})", l, k, item.defName);
-					Thing thing = MakeThingFromItemTile(item);
-					if (thing == null)
-					{
-						continue;
-					}
-					try
-					{
-						Rot4 rot = new Rot4(item.rot);
-						foreach (IntVec3 item2 in GenAdj.CellsOccupiedBy(intVec2, rot, thing.def.Size))
-						{
-							foreach (Thing item3 in map.thingGrid.ThingsAt(item2).ToList())
-							{
-								if (GenSpawn.SpawningWipes(thing.def, item3.def))
-								{
-									if (thing.def.thingClass.ToString().Contains("DubsBadHygiene"))
-									{
-										throw new Exception("Can't spawn item because it will destroy Dubs Bad Hygiene Item and it will lead to app freeze.");
-									}
-									item3.Destroy();
-								}
-							}
-						}
-						GenSpawn.Spawn(thing, intVec2, map, rot);
-						Debug.Extra("BlueprintTransfer", "Spawned");
-						try
-						{
-							switch (thing.def.tickerType)
-							{
-							case TickerType.Never:
-								break;
-							case TickerType.Normal:
-								thing.Tick();
-								break;
-							case TickerType.Long:
-								thing.TickLong();
-								break;
-							case TickerType.Rare:
-								thing.TickRare();
-								break;
-							}
-						}
-						catch (Exception ex3)
-						{
-							Debug.Log("BlueprintTransfer", "Exception while tried to perform tick for {0} of cost {1}, retrhrowing...", thing.def.defName, item.cost);
-							thing.Destroy();
-							throw ex3;
-						}
-						CompBreakdownable compBreakdownable = thing.TryGetComp<CompBreakdownable>();
-						if (compBreakdownable != null && options.enableDeterioration && Rand.Chance(0.8f))
-						{
-							compBreakdownable.DoBreakdown();
-						}
-						if (thing.def.EverHaulable)
-						{
-							TerrainDef terrainDef = map.terrainGrid.TerrainAt(intVec2);
-							if (terrainDef != null && terrainDef.IsWater)
-							{
-								thing.HitPoints = (thing.HitPoints - 10) / Rand.Range(5, 20) + Rand.Range(1, 10);
-							}
-						}
-						Debug.Extra("BlueprintTransfer", "Item completed");
-						num3++;
-						num += item.cost;
-					}
-					catch (Exception ex4)
-					{
-						Debug.Warning("BlueprintTransfer", "Failed to spawn item {0} of cost {1} because of exception {2}", thing, item.cost, ex4.Message);
-					}
-				}
-			}
-		}
-		Debug.Log("BlueprintTransfer", "Finished transferring");
-		if (options.shouldKeepDefencesAndPower)
-		{
-			RestoreDefencesAndPower();
-		}
-		options.uncoveredCost = num;
-		Debug.Log("BlueprintTransfer", "Transferred blueprint of size {0}x{1}, age {2}, total cost of approximately {3}. Items: {4}/{5}, terrains: {6}/{7}", blueprint.width, blueprint.height, -blueprint.dateShift, num, num3, num5, num2, num4);
-	}
+        private Pawn MakePawnWithRawXml(string xml) {
+            try {
 
-	public void AddFilthAndRubble()
-	{
-		ThingDef[] array = new ThingDef[3]
-		{
-			ThingDefOf.Filth_Dirt,
-			ThingDefOf.Filth_Trash,
-			ThingDefOf.Filth_Ash
-		};
-		float[,] array2 = new float[blueprint.width, blueprint.height];
-		for (int i = 0; i < blueprint.height; i++)
-		{
-			for (int j = 0; j < blueprint.width; j++)
-			{
-				if (blueprint.itemsMap[j, i].Count() > 0 || blueprint.terrainMap[j, i] != null)
-				{
-					array2[j, i] = 1f;
-				}
-			}
-		}
-		array2.Blur(2);
-		for (int k = 0; k < blueprint.height; k++)
-		{
-			for (int l = 0; l < blueprint.width; l++)
-			{
-				try
-				{
-					IntVec3 intVec = new IntVec3(l + mapOriginX, 0, k + mapOriginZ);
-					if (!intVec.InBounds(map) || array2[l, k] <= 0f || Rand.Chance(0.2f))
-					{
-						continue;
-					}
-					FilthMaker.TryMakeFilth(intVec, map, array[0], Rand.Range(0, 3));
-					while ((double)Rand.Value > 0.7)
-					{
-						FilthMaker.TryMakeFilth(intVec, map, array[Rand.Range(0, 2)], Rand.Range(1, 5));
-					}
-					if (options.shouldKeepDefencesAndPower && Rand.Chance(0.05f))
-					{
-						FilthMaker.TryMakeFilth(intVec, map, ThingDefOf.Filth_Blood, Rand.Range(1, 5));
-					}
-					if (!Rand.Chance(0.01f))
-					{
-						continue;
-					}
-					List<Thing> list = map.thingGrid.ThingsListAt(intVec);
-					bool flag = true;
-					foreach (Thing item in list)
-					{
-						if ((double)item.def.fillPercent > 0.5)
-						{
-							flag = false;
-						}
-					}
-					if (flag)
-					{
-						Thing newThing = ThingMaker.MakeThing(ThingDefOf.ChunkSlagSteel);
-						GenSpawn.Spawn(newThing, intVec, map, new Rot4(Rand.Range(0, 4)));
-					}
-				}
-				catch (Exception)
-				{
-				}
-			}
-		}
-	}
+                XmlDocument document = new XmlDocument();
+                document.LoadXml(xml);
+                //Debug.Message("Pawn xml: {0}", xml);
+                XmlNode root = document.FirstChild;
 
-	private void RestoreDefencesAndPower()
-	{
-		foreach (Thing item in (IEnumerable<Thing>)map.spawnedThings)
-		{
-			if (item.TryGetComp<CompPowerPlant>() != null || item.TryGetComp<CompPowerBattery>() != null || (item.def.building != null && item.def.building.IsTurret))
-			{
-				item.TryGetComp<CompBreakdownable>()?.Notify_Repaired();
-			}
-		}
-	}
+                string pawnKind = root.SelectSingleNode("kind").InnerText;
+                PawnKindDef kindDef = PawnKindDef.Named(pawnKind);
+                if (kindDef == null) {
+                    kindDef = PawnKindDefOf.AncientSoldier;
+                }
+
+                Pawn p = PawnGenerator.GeneratePawn(kindDef, rp.faction);
+
+                // ==== NAME AND AGE ====
+                Name name = null;
+                var nameNode = root.SelectSingleNode("name");
+                var attrFirst = nameNode.Attributes.GetNamedItem("first");
+                var attrLast = nameNode.Attributes.GetNamedItem("last");
+                var attrNick = nameNode.Attributes.GetNamedItem("nick");
+                if (attrFirst != null && attrLast != null) {
+                    name = new NameTriple(attrFirst.Value, attrNick?.Value ?? "", attrLast.Value);
+                } else {
+                    name = new NameSingle(attrFirst?.Value ?? "Unknown");
+                }
+                p.Name = name;
+                //Debug.Message("got name");
+
+                string gender = root.SelectSingleNode("gender")?.InnerText;
+                if (gender == "Male") {
+                    p.gender = Gender.Male;
+                } else if (gender == "Female") {
+                    p.gender = Gender.Female;
+                }
+
+                string bioAgeString = root.SelectSingleNode("biologicalAge")?.InnerText;
+                string chronoAgeString = root.SelectSingleNode("chronologicalAge")?.InnerText;
+                if (bioAgeString != null && chronoAgeString != null) {
+                    long result = 0;
+                    Int64.TryParse(bioAgeString, out result);
+                    p.ageTracker.AgeBiologicalTicks = result;
+                    Int64.TryParse(chronoAgeString, out result);
+                    p.ageTracker.AgeChronologicalTicks = result + 3600000 * (-blueprint.dateShift); //+dateShift for dates, -dateShift for ages
+                }
+                //Debug.Message("got age");
+
+
+                // ==== STORY AND APPEARANCE ====
+                var storyNode = root.SelectSingleNode("saveable[@Class='Pawn_StoryTracker']");
+                if (storyNode != null) {/*
+                    Backstory bs = null;
+                    string childhoodDef = storyNode.SelectSingleNode("childhood")?.InnerText;
+                    if (BackstoryDatabase.TryGetWithIdentifier(childhoodDef, out bs)) {
+                        p.story.childhood = bs;
+                    }
+                    string adulthoodDef = storyNode.SelectSingleNode("adulthood")?.InnerText;
+                    if (BackstoryDatabase.TryGetWithIdentifier(adulthoodDef, out bs)) {
+                        p.story.adulthood = bs;
+                    }
+
+                    string bodyTypeDefName = storyNode.SelectSingleNode("bodyType")?.InnerText;
+                    if (bodyTypeDefName != null) {
+                        BodyTypeDef def = DefDatabase<BodyTypeDef>.GetNamedSilentFail(bodyTypeDefName);
+                        if (def != null) { p.story.bodyType = def; }
+
+                        try {
+                            string crownTypeName = storyNode.SelectSingleNode("crownType")?.InnerText;
+                            p.story.crownType = (CrownType)Enum.Parse(typeof(CrownType), crownTypeName);
+                        } catch (Exception) { }
+
+                        string hairDefName = storyNode.SelectSingleNode("hairDef")?.InnerText;
+                        HairDef hairDef = DefDatabase<HairDef>.GetNamedSilentFail(hairDefName);
+                        if (hairDef != null) { p.story.hairDef = hairDef; }
+
+                        float melanin = 0;
+                        if (float.TryParse(storyNode.SelectSingleNode("melanin")?.InnerText, out melanin)) {
+                            p.story.melanin = melanin;
+                        }
+
+                        string hairColorString = storyNode.SelectSingleNode("hairColor")?.InnerText;
+                        Color hairColor = (Color)ParseHelper.FromString(hairColorString, typeof(Color));
+                        if (hairColor != null) {
+                            p.story.hairColor = hairColor;
+                        }
+                    }
+                    XmlNodeList traitsList = storyNode.SelectNodes("traits/allTraits/li");
+                    if (traitsList != null) {
+                        p.story.traits.allTraits.RemoveAll(_ => true);
+                        foreach (XmlNode traitNode in traitsList) {
+                            string traitDefName = traitNode.SelectSingleNode("def")?.InnerText;
+                            int traitDegree = 0;
+                            int.TryParse(traitNode.SelectSingleNode("degree")?.InnerText, out traitDegree);
+
+                            TraitDef traitDef = DefDatabase<TraitDef>.GetNamedSilentFail(traitDefName);
+                            if (traitDef == null) continue;
+
+                            Trait t = new Trait(traitDef, traitDegree);
+                            if (t == null) continue;
+
+                            p.story.traits.allTraits.Add(t);
+                        }
+                    }*/
+                }
+
+                // ==== SKILLS ====
+                var skills = root.SelectSingleNode("saveable[@Class='Pawn_SkillTracker']");
+                if (skills != null) {
+                    XmlNodeList skillsList = storyNode.SelectNodes("skills/li");
+
+                    foreach (XmlNode skillNode in skillsList) {
+                        string skillDefName = skillNode.SelectSingleNode("def")?.InnerText;
+                        int level = 0;
+                        int.TryParse(skillNode.SelectSingleNode("level")?.InnerText, out level);
+
+                        float xp = 0;
+                        float.TryParse(skillNode.SelectSingleNode("xpSinceLastLevel")?.InnerText, out xp);
+
+                        SkillDef skillDef = DefDatabase<SkillDef>.GetNamedSilentFail(skillDefName);
+                        if (skillDef == null) continue;
+
+                        SkillRecord skillRecord = p.skills.GetSkill(skillDef);
+                        if (skillRecord == null) {
+                            skillRecord = new SkillRecord(p, skillDef);
+                        }
+
+                        skillRecord.Level = level;
+                        skillRecord.xpSinceLastLevel = xp;
+
+                        try {
+                            string passionTypeName = skillNode.SelectSingleNode("passion")?.InnerText;
+                            if (passionTypeName != null) {
+                                skillRecord.passion = (Passion)Enum.Parse(typeof(Passion), passionTypeName);
+                            }
+                        } catch (Exception) { }
+                    }
+                }
+                //Debug.Message("got traits and skills");
+
+                // ==== HEALTH ====
+                var healthNode = root.SelectSingleNode("saveable[@Class='Pawn_HealthTracker']");
+                if (healthNode != null) {
+
+
+                    XmlNode healthState = healthNode.SelectSingleNode("healthState");
+                    if (healthState?.InnerText == "Dead") {
+                        p.health.SetDead();
+                    }
+
+                    XmlNodeList hediffsList = healthNode.SelectNodes("hediffSet/hediffs/li");
+                    if (hediffsList != null) {
+
+                        Scribe.mode = LoadSaveMode.LoadingVars;
+                        p.health?.hediffSet?.hediffs?.RemoveAll(_ => true);
+                        //probably should pre-analyze hediffs prior to instantiating
+                        foreach (XmlNode hediffNode in hediffsList) {
+                            var sourceNode = hediffNode.SelectSingleNode("source");
+                            var source = sourceNode?.InnerText;
+                            //Debug.Message("Source is {0} in hediff {1}", source, hediffNode.OuterXml);
+                            if (source != null) {
+                                ThingDef sourceThingDef = DefDatabase<ThingDef>.GetNamedSilentFail(source);
+                                //Debug.Message("Found non-null source node: {0}. Def: {1}", sourceNode.OuterXml, sourceThingDef);
+                                if (sourceThingDef == null) {
+                                    hediffNode.RemoveChild(sourceNode);
+                                    //Debug.Message("def not found, removing node, result: {0}", hediffNode.OuterXml);
+                                    //continue; //skip hediffs with unknown source
+                                    //} else {
+                                    //Debug.Message("def found: {0}", sourceThingDef);
+                                }
+                            }
+                            try {
+                                Hediff hediff = ScribeExtractor.SaveableFromNode<Hediff>(hediffNode, null);
+                                if (hediff != null) {
+                                    if (hediff.sourceDef != null && hediff.Part != null) {
+                                        p.health.AddHediff(hediff);
+                                    }
+                                }
+                            } catch (Exception) {
+                            }
+                        }
+                        Scribe.mode = LoadSaveMode.Inactive;
+                    }
+                }
+                //Debug.Message("got health");
+
+                // ==== APPAREL ====
+                var apparelNode = root.SelectSingleNode("apparel");
+                if (apparelNode != null) {
+                    XmlNodeList apparelList = apparelNode.SelectNodes("item");
+                    foreach (XmlNode item in apparelList) {
+                        string defName = item.Attributes?.GetNamedItem("def")?.Value;
+                        string stuffDefName = item.Attributes?.GetNamedItem("stuffDef")?.Value;
+
+                        ThingDef stuffDef = null;
+                        ThingDef thingDef = DefDatabase<ThingDef>.GetNamedSilentFail(defName);
+                        if (stuffDefName != null) {
+                            stuffDef = DefDatabase<ThingDef>.GetNamedSilentFail(stuffDefName);
+                        }
+
+                        if (thingDef != null) {
+                            Apparel apparel = (Apparel)ThingMaker.MakeThing(thingDef, stuffDef);
+                            apparel.HitPoints = Rand.Range(1, (int)(apparel.MaxHitPoints * 0.6));
+                            if (apparel is Apparel) {
+                                p.apparel.Wear(apparel, false);
+                            }
+                        }
+                    }
+                }
+                return p;
+
+
+            } catch (Exception e) {
+                return PawnGenerator.GeneratePawn(PawnKindDefOf.AncientSoldier, rp.faction);
+            }
+        }
+
+        private Thing MakeThingFromItemTile(ItemTile itemTile, bool enableLogging = false) {
+
+            try {
+                if (enableLogging) {
+                    //Debug.Message("Trying to create new inner item {0}", itemTile.defName);
+                }
+
+                if (itemTile.defName.ToLower() == "pawn") {
+                    //Debug.Message("Now need to instantiate pawn");
+                    // TEMPORARY DISABLED
+                    return null;
+                    //return MakePawnWithRawXml(itemTile.itemXml);
+                }
+
+                if (itemTile.defName.ToLower() == "corpse") {
+                    if (itemTile.innerItems != null) {
+                        //Debug.Message("Creating corpse");
+                        Pawn p = (Pawn)MakeThingFromItemTile(itemTile.innerItems.First());
+                        Corpse corpse = null;
+                        if (p.Corpse != null) {
+                            corpse = p.Corpse;
+                        } else {
+                            corpse = (Corpse)ThingMaker.MakeThing(p.RaceProps.corpseDef);
+                            corpse.InnerPawn = p;
+                        }
+                        corpse.timeOfDeath = (int)(itemTile.corpseDeathTime + (ticksInYear * blueprint.dateShift));
+
+                        CompRottable rottable = corpse.TryGetComp<CompRottable>();
+                        if (rottable != null) rottable.RotProgress = ticksInYear * (-blueprint.dateShift);
+                        return corpse;
+                    }
+                    return null;
+                }
+
+                if (itemTile.defName.ToLower().Contains("corpse") || itemTile.defName.ToLower().Contains("minified")) { //should bypass older minified things and corpses
+                    if ((!itemTile.innerItems?.Any()) ?? true) return null;
+                }
+
+                if (itemTile.defName == "Hive") return null; //Ignore hives, probably should add more comprehensive ignore list here.
+
+                ThingDef thingDef = DefDatabase<ThingDef>.GetNamed(itemTile.defName, false); //here thingDef is definitely not null because it was checked earlier
+                if (thingDef.category == ThingCategory.Ethereal) return null; //don't spawn ethereals like drop pod landing sites and so on
+
+                ThingDef stuffDef = null; //but stuff can still be null, or can be missing, so we have to check and use default just in case.
+                if (itemTile.stuffDef != null && thingDef.MadeFromStuff) { //some mods may alter thing and add stuff parameter to it. this will result in a bug on a vanilla, so need to double-check here
+                    stuffDef = DefDatabase<ThingDef>.GetNamed(itemTile.stuffDef, false);
+                }
+
+                if (stuffDef == null) {
+                    if (itemTile.isWall && thingDef.MadeFromStuff) {
+                        stuffDef = ThingDefOf.BlocksGranite; //walls from modded materials becomes granite walls.
+                    } else {
+                        stuffDef = GenStuff.DefaultStuffFor(thingDef);
+                    }
+                }
+
+                Thing thing = ThingMaker.MakeThing(thingDef, stuffDef);
+
+                
+                if (thing != null) {
+                    if (itemTile.innerItems != null && thing is IThingHolder) {
+                        //Debug.Message("Found inners");
+                        foreach (ItemTile innerTile in itemTile.innerItems) {
+                            Thing innerThing = MakeThingFromItemTile(innerTile, true);
+                            if (innerThing != null) {
+                                ((IThingHolder)thing).GetDirectlyHeldThings().TryAdd(innerThing);
+                            }
+                        }
+                        if (thing.GetInnerIfMinified() == null) return null;
+                    }
+
+                    if (thingDef.CanHaveFaction) {
+                        thing.SetFaction(rp.faction);
+                    }
+
+                    //Check quality and attach art
+                    CompQuality q = thing.TryGetComp<CompQuality>();
+                    if (q != null) {
+                        byte category = (byte)Math.Abs(Math.Round(Rand.Gaussian(0, 2)));
+
+                        if (itemTile.art != null) {
+                            if (category > 6) category = 6;
+                            q.SetQuality((QualityCategory)category, ArtGenerationContext.Outsider); //setquality resets art, so it should go before actual setting art
+                            thing.TryGetComp<CompArt>()?.InitializeArt(itemTile.art.author, itemTile.art.title, itemTile.art.TextWithDatesShiftedBy(blueprint.dateShift));
+                        } else {
+                            if (category > 6) category = 6;
+                            q.SetQuality((QualityCategory)category, ArtGenerationContext.Outsider);
+                        }
+                    }
+
+
+                    if (itemTile.stackCount > 1) {
+                        thing.stackCount = itemTile.stackCount;
+
+
+                        //Spoil things that can be spoiled. You shouldn't find a fresh meat an the old ruins.
+                        CompRottable rottable = thing.TryGetComp<CompRottable>();
+                        if (rottable != null) {
+                            //if deterioration degree is > 0.5 you definitely won't find any food.
+                            //anyway, there is a chance that you also won't get any food even if deterioriation is relatively low. animalr, raiders, you know.
+                            if (options.canHaveFood) {
+                                rottable.RotProgress = (Rand.Value * 0.5f + options.deteriorationMultiplier) * (rottable.PropsRot.TicksToRotStart);
+                            } else {
+                                rottable.RotProgress = rottable.PropsRot.TicksToRotStart + 1;
+                            }
+                        }
+                    }
+
+                    if (itemTile.attachedText != null && thing is ThingWithComps) {
+                        ThingWithComps thingWithComps = thing as ThingWithComps;
+                        Type CompTextClass = Type.GetType("SaM.CompText, Signs_and_Memorials");
+                        if (CompTextClass != null) {
+                            System.Object textComp = null;
+                            for (int i = 0; i < thingWithComps.AllComps.Count; i++) {
+                                var val = thingWithComps.AllComps[i];
+                                if (val.GetType() == CompTextClass) {
+                                    textComp = val;
+                                }
+                            }
+
+                            //var textComp = Activator.CreateInstance(CompTextClass);
+                            if (textComp != null) {
+                                textComp?.GetType()?.GetField("text").SetValue(textComp, itemTile.attachedText);
+                            }
+                            //thingWithComps.
+                        }
+                    }
+
+                    if (thing is UnfinishedThing) {
+                        ((UnfinishedThing)thing).workLeft = 10000;
+                        ((UnfinishedThing)thing).Creator = Find.WorldPawns.AllPawnsAliveOrDead.RandomElement();
+                    }
+
+                    //Subtract some hit points. Most lilkely below 400 (to make really strudy structures stay almost untouched. No more 1% beta poly walls)
+                    var maxDeltaHP = 0;
+                    if (!options.forceFullHitPoints) {
+                        maxDeltaHP = Math.Min(thing.MaxHitPoints - 1, (int)Math.Abs(Rand.Gaussian(0, 200)));
+                    }
+                    thing.HitPoints = thing.MaxHitPoints - Rand.Range(0, maxDeltaHP);
+
+                    //Forbid haulable stuff
+                    if (thing.def.EverHaulable) {
+                        thing.SetForbidden(true, false);
+                    }
+
+                    if (thing is Building_Storage) {
+                        ((Building_Storage)thing).settings.Priority = StoragePriority.Unstored;
+                    }
+                }
+                return thing;
+            } catch (Exception e) {
+                Debug.Log(Debug.BlueprintTransfer, "Failed to spawn item {0} because of {1}", itemTile.defName, e);
+                return null;
+            }
+        }
+
+
+        public BlueprintTransferUtility(Blueprint blueprint, Map map, ResolveParams rp, ScatterOptions options) {
+            this.blueprint = blueprint;
+            this.map = map;
+            this.rp = rp;
+            this.options = options;
+
+            Debug.Log("Transferring blueprint of faction {0}", rp.faction?.Name ?? "none");
+
+            if (blueprint == null) { Debug.Error(Debug.BlueprintTransfer, "Attempting to configure transfer utility with empty blueprint!"); return; }
+            if (map == null) { Debug.Error(Debug.BlueprintTransfer, "Attempting to configure transfer utility with empty map!"); return;  }
+            if (options == null) { Debug.Error(Debug.BlueprintTransfer, "Attempting to configure transfer utility with empty options!"); return;  }
+
+            mapOriginX = rp.rect.minX + rp.rect.Width / 2 - blueprint.width / 2;
+            mapOriginZ = rp.rect.minZ + rp.rect.Height / 2 - blueprint.height / 2;
+
+            if (mapOriginX < 0) mapOriginX = 0;
+            if (mapOriginZ < 0) mapOriginZ = 0;
+
+            if (mapOriginX + blueprint.width >= map.Size.x) {
+                mapOriginX = map.Size.x - blueprint.width - 1;
+            }
+
+            if (mapOriginZ + blueprint.height >= map.Size.z) {
+                mapOriginZ = map.Size.z - blueprint.height - 1;
+            }
+
+            if (options.overridePosition != new IntVec3(0, 0, 0)) {
+                if (!options.centerIfExceedsBounds || (options.overridePosition.x + blueprint.width < map.Size.x && options.overridePosition.z + blueprint.height < map.Size.z)) {
+                    mapOriginX = options.overridePosition.x;
+                    mapOriginZ = options.overridePosition.z;
+                } else {
+                    Debug.Warning(Debug.BlueprintTransfer, "Tried to override position, but map exceeded bounds and position was reverted due to corresponding options flag.");
+                    Debug.Warning(Debug.BlueprintTransfer, "New position: {0}, {1}", mapOriginX, mapOriginZ);
+                }
+            }
+        }
+
+        public void RemoveIncompatibleItems() {
+            //Each item should be checked if it can be placed or not. This should help preventing situations when simulated scavenging removes things which anyway won't be placed.
+            //For each placed item it's cost should be calculated
+            if (blueprint.roofMap == null) Debug.Log(Debug.BlueprintTransfer, "Trying to process blueprint with empty roof map");
+            if (map == null) Debug.Log(Debug.BlueprintTransfer, "Trying to process blueprint but map is still null");
+
+            try {
+                int totalItems = 0;
+                int removedItems = 0;
+                for (int x = 0; x < blueprint.width; x++) {
+                    for (int z = 0; z < blueprint.height; z++) {
+
+                        Debug.Extra(Debug.BlueprintTransfer, "Starting cell {0} {1}...", x, z);
+                        if (blueprint.itemsMap[x, z] == null) { blueprint.itemsMap[x, z] = new List<ItemTile>(); }//to make thngs easier add empty list to every cell
+
+                        IntVec3 mapLocation = new IntVec3(x + mapOriginX, 0, z + mapOriginZ);
+                        if (!mapLocation.InBounds(map)) continue;
+
+                        List<ItemTile> items = blueprint.itemsMap[x, z];
+                        TerrainTile terrain = blueprint.terrainMap[x, z];
+                        TerrainDef terrainDef = null;
+
+                        if (terrain != null) {
+                            terrainDef = DefDatabase<TerrainDef>.GetNamed(terrain.defName, false);
+                            if (terrainDef == null) {
+                                blueprint.terrainMap[x, z] = null; //no terrain def means terrain can't be generated.
+                                terrain = null;
+                            }
+                        }
+
+                        TerrainDef existingTerrain = map.terrainGrid?.TerrainAt(mapLocation);
+                        if (existingTerrain != null &&  terrainDef != null && 
+                            existingTerrain.affordances != null &&
+                            terrainDef.terrainAffordanceNeeded != null && !existingTerrain.affordances.Contains(terrainDef.terrainAffordanceNeeded)) {
+                            terrainDef = null;
+                            blueprint.terrainMap[x, z] = null; //erase terrain if underlying terrain can't support it.
+                            blueprint.roofMap[x, z] = false; //removing roof as well just in case
+                        }
+
+                        Debug.Extra(Debug.BlueprintTransfer, "Preprocessed cell {0} {1}, moving to items...", x, z);
+                        List<ItemTile> itemsToRemove = new List<ItemTile>();
+                        foreach (ItemTile item in items) {
+                            totalItems++;
+
+                            ThingDef thingDef = DefDatabase<ThingDef>.GetNamed(item.defName, false);
+                            if (thingDef == null) {
+                                itemsToRemove.Add(item);
+                                continue;
+                            }
+
+                            Debug.Extra(Debug.BlueprintTransfer, "Making thorough check for thing {0}", item.defName);
+                            if (!options.overwritesEverything && thingDef.terrainAffordanceNeeded != null) {
+                                if (thingDef.EverTransmitsPower && options.shouldKeepDefencesAndPower) continue; //ignore affordances for power transmitters if we need to keep defence systems
+
+                                if (terrainDef != null && terrainDef.terrainAffordanceNeeded != null && existingTerrain.affordances.Contains(terrainDef.terrainAffordanceNeeded)) {
+                                    if (!terrainDef.affordances.Contains(thingDef.terrainAffordanceNeeded)) { //if new terrain can be placed over existing terrain, checking if an item can be placed over a new terrain
+                                        itemsToRemove.Add(item);
+                                        blueprint.roofMap[x, z] = false;
+                                    }
+                                } else {
+                                    if (!(existingTerrain.affordances?.Contains(thingDef.terrainAffordanceNeeded) ?? true)) {//otherwise checking if the item can be placed over the existing terrain.
+                                        itemsToRemove.Add(item);
+                                        blueprint.roofMap[x, z] = false;
+                                    }
+                                }
+                            }
+                        }
+
+                        foreach (ItemTile item in itemsToRemove) {
+                            if (item.isWall || item.isDoor) {
+                                blueprint.RemoveWall(item.location.x, item.location.z);
+                            }
+
+                            items.Remove(item);
+                            removedItems++;
+                        }
+                    }
+                }
+
+
+                Debug.Extra(Debug.BlueprintTransfer, "Finished check, recalculating stats");
+                blueprint.UpdateBlueprintStats(true);
+                Debug.Log(Debug.BlueprintTransfer, "Blueprint transfer utility did remove {0}/{1} incompatible items. New cost: {2}", removedItems, totalItems, blueprint.totalCost);
+            } catch (Exception e) {
+                Debug.Error(Debug.BlueprintTransfer, "Exception while trying to cleanup blueprint details. This should not normally happen, so please report this case: {0}", e.ToString());
+            }
+        }
+
+
+        public void Transfer(CoverageMap coverageMap) {
+            //Planting blueprint
+            float totalCost = 0;
+            int transferredTerrains = 0;
+            int transferredTiles = 0;
+            int totalTerrains = 0;
+            int totalItems = 0;
+
+            //update rect to actual placement rect using width and height
+            rp.rect = new CellRect(mapOriginX, mapOriginZ, blueprint.width, blueprint.height);
+
+            Debug.Extra(Debug.BlueprintTransfer, "Clearing map...");
+
+            for (int z = 0; z < blueprint.height; z++) {
+                for (int x = 0; x < blueprint.width; x++) {
+                    try {
+                        IntVec3 mapLocation = new IntVec3(x + mapOriginX, 0, z + mapOriginZ);
+                        //Check if thepoint is in allowed bounds of the map
+                        if (!mapLocation.InBounds(map) || mapLocation.InNoBuildEdgeArea(map)) {
+                            continue; //ignore invalid cells
+                        }
+
+                        if (options.overwritesEverything || Rand.Chance(0.6f)) {
+                            if (blueprint.terrainMap[x, z] != null ||
+                                blueprint.itemsMap[x, z].Count > 0 ||
+                                blueprint.wallMap[x, z] > 1) {
+                                ClearCell(mapLocation, map, true);
+                            }
+                        }
+                    } catch (Exception e) {
+                        Debug.Warning(Debug.BlueprintTransfer, "Failed to clean cell at {0}, {1} because of {2}", x, z, e);
+                    }
+                }
+            }
+
+            Debug.Extra(Debug.BlueprintTransfer, "Transferring map objects");
+            for (int z = 0; z < blueprint.height; z++) {
+                for (int x = 0; x < blueprint.width; x++) {
+
+                    IntVec3 mapLocation = new IntVec3(x + mapOriginX, 0, z + mapOriginZ);
+                    if (coverageMap != null) {
+                        if (coverageMap.isMarked(mapLocation.x, mapLocation.z) == true) { //cell was used earlier
+                            continue; //skip already covered tiles
+                        } else {
+                            if (blueprint.wallMap[x, z] > 1 || blueprint.wallMap[x, z] == -1) coverageMap.Mark(mapLocation.x, mapLocation.z); //mark cell as used
+                        }
+                    }
+
+
+                    //Check if thepoint is in allowed bounds of the map
+                    if (!mapLocation.InBounds(map) || mapLocation.InNoBuildEdgeArea(map)) {
+                        continue; //ignore invalid cells
+                    }
+
+                    try {
+                        //Construct terrain if some specific terrain stored in the blueprint
+                        if (blueprint.terrainMap[x, z] != null) {
+                            totalTerrains++;
+                            TerrainDef blueprintTerrain = TerrainDef.Named(blueprint.terrainMap[x, z].defName);
+                            if (!map.terrainGrid.TerrainAt(mapLocation).IsWater) {
+                                map.terrainGrid.SetTerrain(mapLocation, blueprintTerrain);
+                                totalCost += blueprint.terrainMap[x, z].cost;
+                                transferredTerrains++;
+                            }
+                        }
+
+
+                        //construct roof evetywhere if we doing complete transfer (ignoring outside: room with index 1).
+                        if (blueprint.roofMap[x, z] == true && options.overwritesEverything && blueprint.wallMap[x, z] != 1) {
+                            map.roofGrid.SetRoof(mapLocation, RoofDefOf.RoofConstructed);
+                        }
+
+
+                        Debug.Extra(Debug.BlueprintTransfer, "Transferred terrain and roof at cell ({0}, {1})", x, z);
+                    } catch (Exception e) {
+                        Debug.Warning(Debug.BlueprintTransfer, "Failed to transfer terrain {0} at {1}, {2} because of {3}", blueprint.terrainMap[x, z].defName, x, z, e);
+                    }
+
+                    //Add items
+                    if (blueprint.itemsMap[x, z] != null && blueprint.itemsMap[x, z].Count > 0/* && cellUsed[mapLocation.x, mapLocation.z] == false*/) {
+
+                        totalItems += blueprint.itemsMap[x, z].Count;
+
+                        
+                        foreach (ItemTile itemTile in blueprint.itemsMap[x, z]) {
+
+                            Debug.Extra(Debug.BlueprintTransfer, "Creating thing {2} at cell ({0}, {1})", x, z, itemTile.defName);
+                            Thing thing = MakeThingFromItemTile(itemTile);
+                            if (thing != null) {
+                                try {
+                                    Rot4 rotation = new Rot4(itemTile.rot);
+                                    //check if there is anything we have to despawn in order to spawn our new item
+                                    //we have to do this, because many dubs bad hygiene items enter endless cycle when removed during mapgen.
+                                    foreach (IntVec3 occupiedCell in GenAdj.CellsOccupiedBy(mapLocation, rotation, thing.def.Size)) {
+                                        foreach (Thing existingItem in map.thingGrid.ThingsAt(occupiedCell).ToList()) {
+                                            if (GenSpawn.SpawningWipes(thing.def, existingItem.def)) {
+                                                if (thing.def.thingClass.ToString().Contains("DubsBadHygiene")) throw new Exception("Can't spawn item because it will destroy Dubs Bad Hygiene Item and it will lead to app freeze.");
+                                                existingItem.Destroy(DestroyMode.Vanish);
+                                            }
+                                        }
+                                    }
+
+
+
+
+                                    
+                                    GenSpawn.Spawn(thing, mapLocation, map, rotation);
+                                    Debug.Extra(Debug.BlueprintTransfer, "Spawned");
+                                    try {
+                                        switch (thing.def.tickerType) {
+                                            case TickerType.Never:
+                                                break;
+                                            case TickerType.Normal:
+                                                thing.Tick();
+                                                break;
+                                            case TickerType.Long:
+                                                thing.TickLong();
+                                                break;
+                                            case TickerType.Rare:
+                                                thing.TickRare();
+                                                break;
+                                        }
+                                        //Debug.Message("Ticked");
+
+                                    } catch (Exception e) {
+                                        Debug.Log(Debug.BlueprintTransfer, "Exception while tried to perform tick for {0} of cost {1}, retrhrowing...", thing.def.defName, itemTile.cost);
+                                        thing.Destroy();
+                                        throw e;
+                                    }
+
+                                    //Debug.Message("Setting up props");
+                                    //Breakdown breakdownables: it't yet impossible to silently breakdown an item which is not spawned.
+                                    CompBreakdownable b = thing.TryGetComp<CompBreakdownable>();
+                                    if (b != null && options.enableDeterioration) {
+                                        if (Rand.Chance(0.8f)) {
+                                            b.DoBreakdown();
+                                        }
+                                    }
+
+                                    //reduce HP for haulable things in water
+                                    if (thing.def.EverHaulable) {
+                                        TerrainDef t = map.terrainGrid.TerrainAt(mapLocation);
+                                        if (t != null && t.IsWater) {
+                                            thing.HitPoints = (thing.HitPoints - 10) / Rand.Range(5, 20) + Rand.Range(1, 10); //things in marsh or river are really in bad condition
+                                        }
+                                    }
+                                    Debug.Extra(Debug.BlueprintTransfer, "Item completed");
+
+                                    transferredTiles++;
+                                    totalCost += itemTile.cost;
+                                } catch (Exception e) {
+                                    Debug.Warning(Debug.BlueprintTransfer, "Failed to spawn item {0} of cost {1} because of exception {2}", thing, itemTile.cost, e.Message);
+                                    //ignore
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            Debug.Log(Debug.BlueprintTransfer, "Finished transferring");
+            if (options.shouldKeepDefencesAndPower) {
+                RestoreDefencesAndPower();
+            }
+            options.uncoveredCost = totalCost;
+            Debug.Log(Debug.BlueprintTransfer, "Transferred blueprint of size {0}x{1}, age {2}, total cost of approximately {3}. Items: {4}/{5}, terrains: {6}/{7}", blueprint.width, blueprint.height, -blueprint.dateShift, totalCost, transferredTiles, totalItems, transferredTerrains, totalTerrains);
+        }
+
+        public void AddFilthAndRubble() {
+            ThingDef[] filthDef = { ThingDefOf.Filth_Dirt, ThingDefOf.Filth_Trash, ThingDefOf.Filth_Ash };
+
+            float[,] filthMap = new float[blueprint.width, blueprint.height];
+            for (int z = 0; z < blueprint.height; z++) {
+                for (int x = 0; x < blueprint.width; x++) {
+                    if (blueprint.itemsMap[x,z].Count() > 0 || blueprint.terrainMap[x, z] != null) {
+                        filthMap[x, z] = 1;
+                    }
+                }
+            }
+            filthMap.Blur(2);
+
+            for (int z = 0; z < blueprint.height; z++) {
+                for (int x = 0; x < blueprint.width; x++) {
+                    try {
+                        IntVec3 mapLocation = new IntVec3(x + mapOriginX, 0, z + mapOriginZ);
+                        if (!mapLocation.InBounds(map)) continue;
+
+                        if (filthMap[x, z] <= 0 || Rand.Chance(0.2f)) continue;
+
+                        FilthMaker.TryMakeFilth(mapLocation, map, filthDef[0], Rand.Range(0, 3));
+
+                        while (Rand.Value > 0.7) {
+                            FilthMaker.TryMakeFilth(mapLocation, map, filthDef[Rand.Range(0, 2)], Rand.Range(1, 5));
+                        }
+
+                        if (options.shouldKeepDefencesAndPower && Rand.Chance(0.05f)) {
+                            FilthMaker.TryMakeFilth(mapLocation, map, ThingDefOf.Filth_Blood, Rand.Range(1, 5));
+                        }
+
+                        if (Rand.Chance(0.01f)) { //chance to spawn slag chunk
+                            List<Thing> things = map.thingGrid.ThingsListAt(mapLocation);
+                            bool canPlace = true;
+                            foreach (Thing t in things) {
+                                if (t.def.fillPercent > 0.5) canPlace = false;
+                            }
+
+                            if (canPlace) {
+                                Thing slag = ThingMaker.MakeThing(ThingDefOf.ChunkSlagSteel);
+                                GenSpawn.Spawn(slag, mapLocation, map, new Rot4(Rand.Range(0, 4)));
+                            }
+                        }
+                    } catch (Exception) {
+                        //what a pity
+                    }
+                }
+            }
+        }
+
+        private void RestoreDefencesAndPower() {
+            foreach (var thing in map.spawnedThings) {
+                if (thing.TryGetComp<CompPowerPlant>() != null || thing.TryGetComp<CompPowerBattery>() != null || (thing.def.building != null && thing.def.building.IsTurret)) {
+                    CompBreakdownable bdcomp = thing.TryGetComp<CompBreakdownable>();
+                    if (bdcomp != null) {
+                        bdcomp.Notify_Repaired();
+                    }
+                }
+            }
+        }
+    }
 }

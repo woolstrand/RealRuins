@@ -1,187 +1,158 @@
-using System;
-using System.Collections.Generic;
+﻿using System;
 using Verse;
+using System.Collections;
+using System.Collections.Generic;
 
-namespace RealRuins;
+namespace RealRuins {
 
-internal class Debug
-{
-	public const string Generic = "Generic";
+    class Debug {
+        public const string Generic = "Generic";
+        public const string Loader = "Loader";
+        public const string Store = "Store";
+        public const string BlueprintGen = "BlueprintGen";
+        public const string BlueprintTransfer = "BlueprintTransfer";
+        public const string Analyzer = "Analyzer";
+        public const string POI = "POI";
+        public const string Scatter = "Scatter";
+        public const string PawnGen = "PawnGen";
+        public const string ThingGen = "ThingGen";
+        public const string Event = "Event";
+        public const string ForceGen = "ForceGen";
+        public const string QuestNode_Find = "QuestNode_Find";
 
-	public const string Loader = "Loader";
+        public static List<string> extras = new List<string> /*(); */ {"PawnGen", "ThingGen"/*, "BlueprintTransfer", "Scatter"*/, "ForceGen"};
 
-	public const string Store = "Store";
 
-	public const string BlueprintGen = "BlueprintGen";
+        public static bool active = true;
+        public static int logLevel => RealRuins_ModSettings.logLevel; //0: all, 1: warnings, 2: errors
 
-	public const string BlueprintTransfer = "BlueprintTransfer";
+        public static void Log(string format, params object[] args) {
+            Log(Generic, format, args);
+        }
 
-	public const string Analyzer = "Analyzer";
+        public static void Warning(string format, params object[] args) {
+            Warning(Generic, format, args);
+        }
 
-	public const string POI = "POI";
+        public static void Error(string format, params object[] args) {
+            Error(Generic, format, args);
+        }
 
-	public const string Scatter = "Scatter";
+        public static void SysLog(string format, params object[] args) {
+            Message("System", format, args);
+        }
 
-	public const string PawnGen = "PawnGen";
+        public static void Extra(string part, string format, params object[] args) {
+            if (logLevel == 0 && extras.Contains(part)) {
+                Message(part, format, args);
+            }
+        }
 
-	public const string ThingGen = "ThingGen";
+        public static void Log(string part, string format, params object[] args) {
+            if (logLevel == 0) {
+                Message(part, format, args);
+            }
+        }
 
-	public const string Event = "Event";
+        public static void Warning(string part, string format, params object[] args) {
+            if (logLevel < 2) {
+                Message(part, format, args);
+            }
+        }
 
-	public const string ForceGen = "ForceGen";
+        public static void Error(string part, string format, params object[] args) {
+            if (logLevel < 3) {
+                Message(part, format, args);
+            }
+        }
 
-	public const string QuestNode_Find = "QuestNode_Find";
 
-	public static List<string> extras = new List<string> { "PawnGen", "ThingGen", "ForceGen" };
+        private static void Message(string part, string format, params object[] args) {
+            if (!active) return;
 
-	public static bool active = true;
+            object[] safeArgs = new object[args.Length];
+            for (int i = 0; i < args.Length; i++) {
+                if (args[i] != null) {
+                    safeArgs[i] = args[i];
+                } else {
+                    safeArgs[i] = "[NULL]";
+                }
+            }
 
-	public static int logLevel => RealRuins_ModSettings.logLevel;
+            string message = "[RealRuins][" + part + "]: " + string.Format(format, safeArgs);
+            Verse.Log.Message(message);
+        }
 
-	public static void Log(string format, params object[] args)
-	{
-		Log("Generic", format, args);
-	}
+        public static void PrintIntMap(int[,] map, string charMap = "#._23456789ABCDEFGHIJKLMNOPQRSTU", int delta = 0) {
 
-	public static void Warning(string format, params object[] args)
-	{
-		Warning("Generic", format, args);
-	}
+            if (!active) return;
 
-	public static void Error(string format, params object[] args)
-	{
-		Error("Generic", format, args);
-	}
+            string output = "============= INT MAP ============ \r\n";
 
-	public static void SysLog(string format, params object[] args)
-	{
-		Message("System", format, args);
-	}
+            for (int i = 0; i < map.GetLength(0); i++) {
+                for (int j = 0; j < map.GetLength(1); j++) {
+                    int val = map[i, j] + delta;
+                    if (val < 0 || val >= charMap.Length) {
+                        output += '!';
+                    } else {
+                        char character = charMap[val];
+                        output += character;
+                    }
+                }
+                output += "\r\n";
+            }
 
-	public static void Extra(string part, string format, params object[] args)
-	{
-		if (logLevel == 0 && extras.Contains(part))
-		{
-			Message(part, format, args);
-		}
-	}
+            Verse.Log.Message(output);
+        }
 
-	public static void Log(string part, string format, params object[] args)
-	{
-		if (logLevel == 0)
-		{
-			Message(part, format, args);
-		}
-	}
+        public static void PrintBoolMap(bool[,] map) {
 
-	public static void Warning(string part, string format, params object[] args)
-	{
-		if (logLevel < 2)
-		{
-			Message(part, format, args);
-		}
-	}
+            if (!active) return;
 
-	public static void Error(string part, string format, params object[] args)
-	{
-		if (logLevel < 3)
-		{
-			Message(part, format, args);
-		}
-	}
+            string output = "============== BOOL MAP ============= \r\n";
 
-	private static void Message(string part, string format, params object[] args)
-	{
-		if (!active)
-		{
-			return;
-		}
-		object[] array = new object[args.Length];
-		for (int i = 0; i < args.Length; i++)
-		{
-			if (args[i] != null)
-			{
-				array[i] = args[i];
-			}
-			else
-			{
-				array[i] = "[NULL]";
-			}
-		}
-		string text = "[RealRuins][" + part + "]: " + string.Format(format, array);
-		Verse.Log.Message(text);
-	}
+            for (int i = 0; i < map.GetLength(0); i++) {
+                for (int j = 0; j < map.GetLength(1); j++) {
+                    if (map[i, j]) output += "#";
+                    else output += " ";
+                }
+                output += "\r\n";
+            }
 
-	public static void PrintIntMap(int[,] map, string charMap = "#._23456789ABCDEFGHIJKLMNOPQRSTU", int delta = 0)
-	{
-		if (!active)
-		{
-			return;
-		}
-		string text = "============= INT MAP ============ \r\n";
-		for (int i = 0; i < map.GetLength(0); i++)
-		{
-			for (int j = 0; j < map.GetLength(1); j++)
-			{
-				int num = map[i, j] + delta;
-				text = ((num >= 0 && num < charMap.Length) ? (text + charMap[num]) : (text + "!"));
-			}
-			text += "\r\n";
-		}
-		Verse.Log.Message(text);
-	}
+            Verse.Log.Message(output);
+        }
 
-	public static void PrintBoolMap(bool[,] map)
-	{
-		if (!active)
-		{
-			return;
-		}
-		string text = "============== BOOL MAP ============= \r\n";
-		for (int i = 0; i < map.GetLength(0); i++)
-		{
-			for (int j = 0; j < map.GetLength(1); j++)
-			{
-				text = ((!map[i, j]) ? (text + " ") : (text + "#"));
-			}
-			text += "\r\n";
-		}
-		Verse.Log.Message(text);
-	}
+        public static void PrintNormalizedFloatMap(float[,] map, string charMap = " .,oO8") {
 
-	public static void PrintNormalizedFloatMap(float[,] map, string charMap = " .,oO8")
-	{
-		if (!active)
-		{
-			return;
-		}
-		int length = charMap.Length;
-		string text = "============== FLOAT MAP ============= \r\n";
-		for (int i = 0; i < map.GetLength(0); i++)
-		{
-			for (int j = 0; j < map.GetLength(1); j++)
-			{
-				float num = map[i, j];
-				int num2 = (int)Math.Round(num * (float)length);
-				if (num2 >= charMap.Length)
-				{
-					num2 = charMap.Length - 1;
-				}
-				text += charMap[num2];
-			}
-			text += "\r\n";
-		}
-		Verse.Log.Message(text);
-	}
+            if (!active) return;
 
-	public static void PrintArray(object[] list)
-	{
-		string text = "";
-		foreach (object obj in list)
-		{
-			text += obj.ToString();
-			text += "\r\n";
-		}
-		Verse.Log.Message(text);
-	}
+            int scaleLength = charMap.Length;
+            
+            string output = "============== FLOAT MAP ============= \r\n";
+
+            for (int i = 0; i < map.GetLength(0); i++) {
+                for (int j = 0; j < map.GetLength(1); j++) {
+                    float val = map[i, j];
+                    int index = (int)Math.Round(val * scaleLength);
+                    if (index >= charMap.Length) {
+                        index = charMap.Length - 1;
+                    }
+                    char character = charMap[index];
+                    output += character;
+                }
+                output += "\r\n";
+            }
+
+            Verse.Log.Message(output);
+        }
+
+        public static void PrintArray(object[] list) {
+            var s = "";
+            foreach (object o in list) {
+                s += o.ToString();
+                s += "\r\n";
+            }
+            Verse.Log.Message(s);
+        }
+    }
 }
