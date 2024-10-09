@@ -26,11 +26,11 @@
     <None Remove="Properties\Settings.settings" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Krafs.Publicizer" Version="2.2.1">
+    <PackageReference Include="Krafs.Publicizer" Version="2.*">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Krafs.Rimworld.Ref" Version="1.5.4146-beta" />
+    <PackageReference Include="Krafs.Rimworld.Ref" Version="1.*-*" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="0Harmony">
