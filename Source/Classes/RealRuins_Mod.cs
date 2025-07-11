@@ -78,6 +78,7 @@ namespace RealRuins {
 
         public RealRuins_Mod(ModContentPack mcp)
         : base(mcp) {
+            Debug.SysLog("Loaded RealRuins_Mod (no HugsLib)");
             LongEventHandler.ExecuteWhenFinished(GetSettings);
         }
 
@@ -275,7 +276,7 @@ namespace RealRuins {
 
             if (bottom.ButtonText("RealRuins.MapsModuleButton".Translate(), null)) {
                 Page_PlanetaryRuinsLoader page = new Page_PlanetaryRuinsLoader();
-                Find.WindowStack.TryRemove(typeof(HugsLib.Settings.Dialog_ModSettings));
+                //Find.WindowStack.TryRemove(typeof(HugsLib.Settings.Dialog_ModSettings));
 
                 Find.WindowStack.Add(page);
             }
