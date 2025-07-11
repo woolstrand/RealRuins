@@ -673,7 +673,7 @@ namespace RealRuins {
                                             case TickerType.Never:
                                                 break;
                                             case TickerType.Normal:
-                                                thing.Tick();
+                                                thing.DoTick();
                                                 break;
                                             case TickerType.Long:
                                                 thing.TickLong();

@@ -29,15 +29,15 @@ namespace RealRuins
 
         public float CalculateDistanceToNearestSettlement(Map map)
         {
-            int rootTile = map.Tile;
+            PlanetTile rootTile = map.Tile;
             int proximityLimit = 16;
             int minDistance = proximityLimit;
 
             foreach (WorldObject wo in Find.World.worldObjects.ObjectsAt(map.Tile)) {
                 if (wo.Faction != Faction.OfPlayer && (wo is Settlement || wo is Site)) return 1.0f; //some default proximity index for bases and sites. not too much, but not flat area.
             }
-            
-            Find.WorldFloodFiller.FloodFill(rootTile, (int x) => !Find.World.Impassable(x), delegate(int tile, int traversalDistance)
+
+            rootTile.Layer.Filler.FloodFill(rootTile, (PlanetTile x) => !Find.World.Impassable(x), delegate(PlanetTile tile, int traversalDistance)
             {
                 if (traversalDistance > proximityLimit)
                 {

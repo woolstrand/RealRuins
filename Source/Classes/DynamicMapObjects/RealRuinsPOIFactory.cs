@@ -22,7 +22,7 @@ namespace RealRuins {
                 return false;
             }
 
-            if (biomeStrict && tileInfo.biomeName != Find.WorldGrid.tiles[tileInfo.tile].biome.defName) {
+            if (biomeStrict && tileInfo.biomeName != Find.WorldGrid.Surface.Tiles[tileInfo.tile].PrimaryBiome.defName) {
                 Debug.Log(Debug.POI, "[3] Skipped: Filtered by biome (biome filter is ON)");
                 return false;
             }

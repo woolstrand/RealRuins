@@ -32,18 +32,31 @@ namespace RealRuins
         static RealRuins() {
             DateTime startTime = DateTime.Now;
             Debug.SysLog("RealRuins started patching at {0}", startTime);
+
+
+
+            var method = AccessTools.Method(typeof(Page_SelectStartingSite), "PostOpen", new Type[0]);
+
+            if (method == null)
+                Log.Error("PostOpen method not found.");
+            else if (method.GetMethodBody() == null)
+                Log.Error("PostOpen has no method body and cannot be patched.");
+            else
+                Log.Message("PostOpen is patchable.");
+
+
             var harmony = new Harmony("com.woolstrand.realruins");
             harmony.PatchAll(Assembly.GetExecutingAssembly());
 
             Debug.SysLog("RealRuins performing manual patching optional mods at {0}", startTime);
-
+/*
             var srtsExists = LoadedModManager.RunningMods.ToList().Exists(m => m.Name.Contains("SRTS"));
             if (srtsExists) {
                 Debug.SysLog("SRTS found, patching...");
                 PatchSRTS(harmony);
             } else {
                 Debug.SysLog("SRTS not found, skipping...");
-            }
+            }*/
 
             Debug.SysLog("RealRuins finished patching at {0} ({1} msec)", DateTime.Now, (DateTime.Now - startTime).TotalMilliseconds);
 
@@ -54,6 +67,7 @@ namespace RealRuins
 
         }
 
+        /*
         static void PatchSRTS(Harmony harmony) {
             Type classType = Type.GetType("SRTS.SRTSStatic, SRTS");
             MethodInfo originalMethod = classType.GetMethod("getFM", BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.FlattenHierarchy);
@@ -136,7 +150,7 @@ namespace RealRuins
             }
 
             return newOptions;
-        }
+        }*/
 
         static class SnapshotSaver {
 
@@ -151,18 +165,6 @@ namespace RealRuins
                         SnapshotManager.Instance.UploadCurrentMapSnapshot();
                     }
                 }
-            }
-        }
-
-        
-        // This patch loads snapshots on app start
-        [HarmonyPatch(typeof(UIRoot_Entry), "Init", new Type[0])]
-        static class UIRoot_Entry_Init_Patch {
-            static void Postfix() {
-                if (RealRuins_ModSettings.allowDownloads && !RealRuins_ModSettings.offlineMode && SnapshotStoreManager.Instance.StoredSnapshotsCount() < 100) {
-                    SnapshotManager.Instance.AggressiveLoadSnapshots();
-                }
-                SnapshotStoreManager.Instance.CheckCacheSizeLimits();
             }
         }
 
