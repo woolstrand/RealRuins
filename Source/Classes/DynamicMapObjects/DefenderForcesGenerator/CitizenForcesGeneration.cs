@@ -129,7 +129,7 @@ namespace RealRuins{
             }
 
             LordJob lordJob = null;
-            lordJob = new LordJob_DefendBase(faction, rect.CenterCell);
+            lordJob = new LordJob_DefendBase(faction, rect.CenterCell, Rand.Range(10, 150));
 
             if (lordJob != null) {
                 LordMaker.MakeNewLord(faction, lordJob, map, pawns);

@@ -35,7 +35,7 @@ namespace RealRuins {
             if (faction == null) {
                 return false;
             }
-            if (!TryFindTile(out int tile)) {
+            if (!TryFindTile(out PlanetTile tile)) {
                 return false;
             }
 
@@ -82,9 +82,16 @@ namespace RealRuins {
             return true;
         }
 
-        private bool TryFindTile(out int tile) {
+        private bool TryFindTile(out PlanetTile tile) {
             IntRange ruinsRange = new IntRange(5, 30);
-            return TileFinder.TryFindNewSiteTile(out tile, ruinsRange.min, ruinsRange.max, false, TileFinderMode.Random, -1, false);
+            return TileFinder.TryFindNewSiteTile(
+                tile: out tile,
+                minDist: ruinsRange.min,
+                maxDist: ruinsRange.max,
+                allowCaravans: false,
+                tileFinderMode: TileFinderMode.Random
+                // TODO: Check if ruins can / can not be spawned on water
+            );
         }
 
 

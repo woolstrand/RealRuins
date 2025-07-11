@@ -156,8 +156,8 @@ namespace RealRuins {
             }
 
             left.Label(Text_Option_Density.Translate() + ": x" + RealRuins_ModSettings.defaultScatterOptions.densityMultiplier.ToString("F"), -1, Text_Option_DensityTT.Translate());
-            left.Label(Text_Option_Size_Min.Translate() + ": " + RealRuins_ModSettings.defaultScatterOptions.minRadius, -1, Text_Option_SizeTT.Translate());
-            left.Label(Text_Option_Size_Max.Translate() + ": " + RealRuins_ModSettings.defaultScatterOptions.maxRadius, -1, Text_Option_SizeTT.Translate());
+            left.Label(label: Text_Option_Size_Min.Translate() + ": " + RealRuins_ModSettings.defaultScatterOptions.minRadius, maxHeight: -1, tooltip: Text_Option_SizeTT.Translate());
+            left.Label(label: Text_Option_Size_Max.Translate() + ": " + RealRuins_ModSettings.defaultScatterOptions.maxRadius, maxHeight: -1, tooltip: Text_Option_SizeTT.Translate());
             left.Gap(15);
             left.Label(Text_Option_Deterioration.Translate() + ": " + RealRuins_ModSettings.defaultScatterOptions.deteriorationMultiplier.ToString("F"), -1, Text_Option_DeteriorationTT.Translate());
             left.Label(Text_Option_Scavengers.Translate() + ": " + RealRuins_ModSettings.defaultScatterOptions.scavengingMultiplier.ToString("F"), -1, Text_Option_ScavengersTT.Translate());
