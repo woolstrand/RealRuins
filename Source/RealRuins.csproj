@@ -105,9 +105,6 @@
     <Reference Include="HarmonyMod">
       <HintPath>..\..\..\Library\Application Support\Steam\steamapps\workshop\content\294100\2009463077\Current\Assemblies\HarmonyMod.dll</HintPath>
     </Reference>
-    <Reference Include="HugsLib">
-      <HintPath>..\..\..\Library\Application Support\Steam\steamapps\workshop\content\294100\818773962\v1.4\Assemblies\HugsLib.dll</HintPath>
-    </Reference>
     <Reference Include="SRTS">
       <HintPath>..\..\..\Library\Application Support\Steam\steamapps\workshop\content\294100\1845423808\Assemblies\SRTS.dll</HintPath>
     </Reference>
@@ -209,6 +206,7 @@
     <Compile Include="Classes\Quest\QuestNode_GenerateRuinsObject.cs" />
     <Compile Include="Classes\Utility\SmallQuestionDialog.cs" />
     <Compile Include="Classes\Utility\PlanetaryRuinsOptions.cs" />
+    <Compile Include="Classes\Utility\CoroutineManager.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="MapGenerators_RealRuins.xml" />
