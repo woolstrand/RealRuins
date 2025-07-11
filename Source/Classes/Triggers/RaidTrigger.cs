@@ -38,7 +38,7 @@ namespace RealRuins {
             return ticksLeft;
         }
         
-        public override void Tick() {
+        protected override void Tick() {
             if (Find.TickManager.TicksGame % 250 == 0)
             {
                 TickRare();

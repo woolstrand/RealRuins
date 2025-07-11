@@ -73,11 +73,11 @@ namespace RealRuins {
             }
         }
 
-        public override IEnumerable<FloatMenuOption> GetTransportPodsFloatMenuOptions(IEnumerable<IThingHolder> pods, CompLaunchable representative) {
-            foreach (FloatMenuOption transportPodsFloatMenuOption in base.GetTransportPodsFloatMenuOptions(pods, representative)) {
+        public override IEnumerable<FloatMenuOption> GetTransportersFloatMenuOptions(IEnumerable<IThingHolder> pods, Action<PlanetTile, TransportersArrivalAction> launchAction) { 
+            foreach (FloatMenuOption transportPodsFloatMenuOption in base.GetTransportersFloatMenuOptions(pods, launchAction)) {
                 yield return transportPodsFloatMenuOption;
             }
-            foreach (FloatMenuOption floatMenuOption in TransportPodsArrivalAction_VisitRuinsPOI.GetFloatMenuOptions(representative, pods, this)) {
+            foreach (FloatMenuOption floatMenuOption in TransportPodsArrivalAction_VisitRuinsPOI.GetFloatMenuOptions(launchAction, pods, this)) {
                 yield return floatMenuOption;
             }
         }
@@ -105,7 +105,7 @@ namespace RealRuins {
             Debug.Log(Debug.POI, "Started with cost of  {0}", wealthOnEnter);
         }
 
-        public override void Tick() {
+        protected override void Tick() {
             base.Tick();
             if (HasMap && Faction != Faction.OfPlayer) {
                 if (!GenHostility.AnyHostileActiveThreatToPlayer(Map)) {
