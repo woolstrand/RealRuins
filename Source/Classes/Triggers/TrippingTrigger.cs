@@ -4,7 +4,7 @@ using Verse;
 
 namespace RealRuins {
     public class TrippingTrigger : Thing {
-        public override void Tick()
+        protected override void Tick()
         {
             if (base.Spawned) {
                 List<Thing> thingList = base.Position.GetThingList(base.Map);

@@ -18,7 +18,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\1.5\Assemblies\</OutputPath>
+    <OutputPath>..\1.6\Assemblies\</OutputPath>
     <DefineConstants>DEBUG</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -75,9 +75,6 @@
     <None Include="..\Languages\Japanese\LanguageInfo.xml" />
     <None Include="..\Languages\Russian\Keyed\RealRuins_Options.xml" />
     <None Include="..\Patches\**" />
-    <Reference Include="Assembly-CSharp-firstpass">
-      <HintPath>..\..\..\..\rr_support\Assembly-CSharp-firstpass.dll</HintPath>
-    </Reference>
     <Reference Include="Unity.TextMeshPro">
       <HintPath>..\..\..\..\rr_support\Unity.TextMeshPro.dll</HintPath>
     </Reference>
@@ -130,9 +127,6 @@
       <HintPath>..\DLL_Cache\UnityEngine.TextRenderingModule.dll</HintPath>
     </Reference>
     <None Include="..\Languages\Russian\DefInjected\QuestScriptDef\Script_IntactRuins.xml" />
-    <Reference Include="Assembly-CSharp-firstpass">
-      <HintPath>..\DLL_Cache\Assembly-CSharp-firstpass.dll</HintPath>
-    </Reference>
     <Reference Include="Assembly-CSharp">
       <HintPath>..\DLL_Cache\Assembly-CSharp.dll</HintPath>
     </Reference>
