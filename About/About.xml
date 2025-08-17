@@ -11,7 +11,12 @@
 		<li>1.5</li>
 		<li>1.6</li>
 	</supportedVersions>
-	<modDependencies />
+	<modDependencies>
+		<li>
+			<packageId>brrainz.harmony</packageId>
+			<displayName>Harmony</displayName>
+		</li>
+	</modDependencies>
 	<loadAfter />
 
 	<packageId>Woolstrand.RealRuins</packageId>
