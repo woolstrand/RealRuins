@@ -21,6 +21,7 @@ namespace RealRuins {
         }
 
         public override Color ExpandingIconColor => this.Faction == null ? Color.white : this.Faction.Color;
+        public override bool GravShipCanLandOn => true;
         private Material cachedMat;
         private float wealthOnEnter = 1;
         private Faction originalFaction;

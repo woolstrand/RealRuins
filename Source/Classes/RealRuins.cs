@@ -410,8 +410,8 @@ namespace RealRuins
                     Map map = (Map)(typeof(Dialog_FormCaravan).GetField("map", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(__instance));
                     if (map.Parent is AbandonedBaseWorldObject) {
                         //if this is a pristine ruins event map, invoke regular caravan forming INSTEAD of instant caravan forming.
-                        int destinationTile = (int)(typeof(Dialog_FormCaravan).GetField("destinationTile", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(__instance));
-                        if (destinationTile < 0) {
+                        PlanetTile destinationTile = (PlanetTile)(typeof(Dialog_FormCaravan).GetField("destinationTile", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(__instance));
+                        if (!destinationTile.Valid) {
                             Messages.Message("MessageMustChooseRouteFirst".Translate(), MessageTypeDefOf.RejectInput, historical: false);
                             return false;
                         }

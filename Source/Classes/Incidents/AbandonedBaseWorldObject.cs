@@ -14,6 +14,7 @@ namespace RealRuins {
     class AbandonedBaseWorldObject: MapParent {
         public override Texture2D ExpandingIcon => ContentFinder<Texture2D>.Get("ruinedbase");
         public override Color ExpandingIconColor => Color.white;
+        public override bool GravShipCanLandOn => true;
         private Material cachedMat;
 
         private bool hasStartedCountdown = false;
