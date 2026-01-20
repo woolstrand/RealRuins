@@ -7,13 +7,13 @@ using Verse.AI;
 using System;
 
 namespace RealRuins {
+    // Previously the idea behind the trigger was to have it as a map object which could be triggered manually (by stepping on it)
+    // or automatically after a timeout. It was done to spawn forces more quickly if the user actively explores the map. It turned out
+    // to be useless and always worked in auto mode.
     public class RaidTrigger : Thing, IAttackTarget {
 
         public Faction faction;
         public float value;
-        private bool triggered;
-        private int ticksLeft = 200; // shows how many ticks left before auto triggering (if trigger is not triggered yet) or before raid itself (if trigger was triggered by any means)
-        private int referenceTimeoutAfterTriggered = 200;
 
         public float TargetPriorityFactor {
             get {
@@ -25,14 +25,7 @@ namespace RealRuins {
 
         public LocalTargetInfo TargetCurrentlyAimingAt => null;
 
-        public void SetTimeouts(int timeoutUntilAutoTrigger, int referenceTimeoutAfterTriggered = 200) {
-            ticksLeft = timeoutUntilAutoTrigger;
-            this.referenceTimeoutAfterTriggered = referenceTimeoutAfterTriggered;
-        }
-
-        public bool IsTriggered() {
-            return triggered;
-        }
+        private int ticksLeft = (int) Math.Abs(Rand.Gaussian(0, 100));
 
         public int TicksLeft() {
             return ticksLeft;
@@ -49,43 +42,28 @@ namespace RealRuins {
         {
             if (Spawned) {
                 ticksLeft--;
-                if (!triggered) {
-                    if (ticksLeft < 0) {
-                        ticksLeft = (int)Math.Abs(Rand.Gaussian(0, referenceTimeoutAfterTriggered));
-                        triggered = true;
-                        Debug.Log("Battle", "Auto triggered raid at {0}, {1} of value {2} after {3} long ticks (approximately max speed seconds)", base.Position.x, base.Position.z, value, ticksLeft);
-                    }
+                if (ticksLeft < 0) {
+                    Debug.Log(Debug.Generic, "Raid trigger fired, faction: {0}", faction);
+                    IncidentDef incidentDef = IncidentDefOf.RaidEnemy;
+                    IncidentParms parms = new IncidentParms {
+                        faction = faction,
+                        points = value,
+                        target = base.Map
+                    };
 
-                    List<Thing> searchSet = PawnsFinder.AllMaps_FreeColonistsSpawned.ToList().ConvertAll(pawn => (Thing)pawn);
+                    incidentDef.Worker.TryExecute(parms);
 
-                    Thing thing = GenClosest.ClosestThing_Global(base.Position, searchSet, 10.0f);
-                    if (thing != null) {
-                        ticksLeft = (int)Math.Abs(Rand.Gaussian(0, referenceTimeoutAfterTriggered));
-                        triggered = true;
-                        Debug.Log("Battle", "Triggered raid at {0}, {1} of value {2} after {3} long ticks (approximately max speed seconds)", base.Position.x, base.Position.z, value, ticksLeft);
-                    }
-                } else { 
-                    if (ticksLeft < 0) {
-                        IncidentDef incidentDef = IncidentDefOf.RaidEnemy;
-                        IncidentParms parms = new IncidentParms {
-                            faction = faction, points = value, target = base.Map
-                        };
-                        
-                        incidentDef.Worker.TryExecute(parms);                        
-                        
-                        Destroy();
-                    }
+                    Destroy();
                 }
             }
         }
- 
+
 
         public override void ExposeData()
         {
             base.ExposeData();
             Scribe_References.Look(ref faction, "faction", false);
             Scribe_Values.Look(ref value, "value", 0.0f, false);
-            Scribe_Values.Look(ref triggered, "triggered", false);
             Scribe_Values.Look(ref ticksLeft, "ticksLeft", 0, false);
         }
 

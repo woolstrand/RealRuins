@@ -47,12 +47,10 @@ namespace RealRuins {
                 if (raidValue > 10000) raidValue = Rand.Range(8000, 11000); //sanity cap. against some beta-poly bases.
                 remainingCost -= raidValue * ratio;
 
-                int timeout = (int)Math.Abs(Rand.Gaussian(0, 75));
                 trigger.value = ScalePointsToDifficulty(raidValue);
-                trigger.SetTimeouts(timeout, 200);
 
                 GenSpawn.Spawn(trigger, mapLocation, map);
-                Debug.Log(Debug.ForceGen, "Spawned trigger at {0}, {1} for {2} points, autofiring after {3} rare ticks", mapLocation.x, mapLocation.z, trigger.value, timeout);
+                Debug.Log(Debug.ForceGen, "Spawned trigger at {0}, {1} for {2} points, ticks left: {3}, faction: {4}", mapLocation.x, mapLocation.z, trigger.value, trigger.TicksLeft(), trigger.faction);
                 addedTriggers++;
 
                 options.uncoveredCost = Math.Abs(remainingCost);
@@ -94,7 +92,6 @@ namespace RealRuins {
                 RaidTrigger trigger = ThingMaker.MakeThing(raidTriggerDef) as RaidTrigger;
 
                 trigger.faction = rp.faction;
-                trigger.SetTimeouts(0, 300);
 
                 int raidMaxPoints = (int)(10000 / Math.Max(Math.Sqrt(d: militaryPower), 1.0));
                 float raidValue = Math.Abs(Rand.Gaussian()) * raidMaxPoints + Rand.Value * raidMaxPoints + 250.0f;

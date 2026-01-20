@@ -62,6 +62,7 @@ namespace RealRuins {
                 var comp = this.GetComponent<RuinedBaseComp>();
                 if (comp != null) {
                     var signalTag = comp.successSignal;
+                    Debug.Log("Quest", "Sending success signal: {0}", signalTag);
                     Find.SignalManager.SendSignal(new Signal(signalTag));
                 }
             }

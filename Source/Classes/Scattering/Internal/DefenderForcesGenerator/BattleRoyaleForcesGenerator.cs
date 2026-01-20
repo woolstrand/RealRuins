@@ -47,7 +47,7 @@ namespace RealRuins {
                 trigger.value = ScalePointsToDifficulty(raidValue);
 
                 GenSpawn.Spawn(trigger, mapLocation, map);
-                Debug.Log(Debug.ForceGen, "Spawned trigger at {0}, {1} for {2} points, autofiring after {3} rare ticks", mapLocation.x, mapLocation.z, trigger.value, 0);
+                Debug.Log(Debug.ForceGen, "Spawned trigger at {0}, {1} for {2} points, ticks left: {3}", mapLocation.x, mapLocation.z, trigger.value, trigger.TicksLeft());
                 addedTriggers++;
 
                 options.uncoveredCost = Math.Abs(remainingCost);

@@ -217,6 +217,9 @@
   <RealRuins.AbsoluteWealthCapTT>Максимальная стоимость, которой будет ограничено богатство руин в событиях. При определении стоимости деревянные стены и двери не учитываются. Не влияет на планетарные руины.</RealRuins.AbsoluteWealthCapTT>
   <RealRuins.LeaveVanillaRuinsTT>Если включено, то на карте будут появляться вперемешку и руины из мода, и стандартные руины</RealRuins.LeaveVanillaRuinsTT>
 
+  <RealRuins.UseForcesGenerationV2>Включить новый метод генерации врагов для событий</RealRuins.UseForcesGenerationV2>
+  <RealRuins.UseForcesGenerationV2TT>Раньше во время рейдов на древние руины искатели сокровищ из других фракций приходили несколькими огромными группами. Теперь вдобавок к этим большим группам добавлен постоянный приток врагов маленькими отрядами, чтобы постоянно держать игрока в напряжении. Если вам не нравится такой подход, эту функцию можно отключить и все будет как раньше.</RealRuins.UseForcesGenerationV2TT>
+
   <RealRuins.FactionOwnedStartTile>Ячейка занята</RealRuins.FactionOwnedStartTile>
   <RealRuins.FactionOwnedStartTileDesc>Вы собираетесь высадиться на ячейке, где уже есть поселение, принадлежащее другой фракции. Вы можете превратить его в руины и поселиться там, можете присвоить его себе в первозданном виде, либо вы можете атаковать это поселение своей стартовой группой.</RealRuins.FactionOwnedStartTileDesc>
   <RealRuins.FactionOwnedStartTile.MakeAbandoned>Сделать руинами и высадиться</RealRuins.FactionOwnedStartTile.MakeAbandoned>

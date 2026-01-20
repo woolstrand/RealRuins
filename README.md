@@ -1,5 +1,20 @@
 # RealRuins
 
+## Development Setup
+
+This repository includes decompiled RimWorld game code for reference when debugging and fixing bugs. The decompiled sources are located in `DecompiledSources/` and are **read-only reference code only**.
+
+**Important**: Never modify the decompiled RimWorld code directly. Use Harmony patches in your mod's source code instead.
+
+To regenerate decompiled sources after RimWorld updates, run:
+```bash
+./scripts/decompile_rimworld.sh
+```
+
+See `DecompiledSources/README.md` for more details.
+
+---
+
 Done recently:
  * Add support for SRTS ships
 

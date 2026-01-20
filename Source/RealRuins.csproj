@@ -202,6 +202,7 @@
     <Compile Include="Classes\Utility\PlanetaryRuinsOptions.cs" />
     <Compile Include="Classes\Utility\CoroutineManager.cs" />
     <Compile Include="Classes\Utility\RealRuins_StartupHook.cs" />
+    <Compile Include="Classes\Utility\FactionSelector.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="MapGenerators_RealRuins.xml" />

@@ -35,7 +35,6 @@ namespace RealRuins {
             base.Initialize(props);
         }
 
-
         public override void PostExposeData() {
             base.PostExposeData();
             Scribe_Values.Look(ref blueprintName, "blueprintName", "");
@@ -49,6 +48,4 @@ namespace RealRuins {
             Scribe_Values.Look(ref mannableCount, "mannableCount", 0);
         }
     }
-
-
 }

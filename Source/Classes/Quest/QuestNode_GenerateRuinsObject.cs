@@ -10,7 +10,7 @@ namespace RealRuins
 
         public SlateRef<string> blueprintFilename;
         public SlateRef<int> blueprintCachedCost;
-        public SlateRef<int> tile; // tile where object to be placed
+        public SlateRef<PlanetTile> tile; // tile where object to be placed
 		public SlateRef<string> storeAs;
 
 		private AbandonedBaseWorldObject TryGenerateWorldObject(Slate slate) {

@@ -217,6 +217,9 @@
   <RealRuins.AbsoluteWealthCapTT>Determines absolute wealth cap for ruins events. Wooden walls and doors are not counted against total wealth.</RealRuins.AbsoluteWealthCapTT>
   <RealRuins.LeaveVanillaRuinsTT>If checked, both real ruins and vanilla ruins will be spawned</RealRuins.LeaveVanillaRuinsTT>
 
+  <RealRuins.UseForcesGenerationV2>Use new raids system for events</RealRuins.UseForcesGenerationV2>
+  <RealRuins.UseForcesGenerationV2TT>In previous versions, there were several large raids during the ruins found event. Now besides of those several large raids, there also is a constant flow of smaller groups of enemies to the map, to put the player under small, but constant pressure. You can disable this if you liked previous approach more.</RealRuins.UseForcesGenerationV2TT>
+
   <RealRuins.FactionOwnedStartTile>Tile is occupied</RealRuins.FactionOwnedStartTile>
   <RealRuins.FactionOwnedStartTileDesc>You're about to enter a tile with a settlement on it, and this settlement belongs to another faction. You can either make it abandoned and settle in ruins, you can make it yours, or you can attack it with your starting party.</RealRuins.FactionOwnedStartTileDesc>
   <RealRuins.FactionOwnedStartTile.MakeAbandoned>Make abandoned and settle</RealRuins.FactionOwnedStartTile.MakeAbandoned>
