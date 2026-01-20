@@ -23,8 +23,7 @@ namespace RealRuins {
 
         public override void Generate(Map map, GenStepParams parms) {
             Find.TickManager.Pause();
-            //Debug.Message("Overridden LARGE generate");
-
+            
             RealRuinsPOIComp poiComp;
             bool skipForcesGeneration = false;
             bool overrideSpawnAsRuins = false;
@@ -51,8 +50,17 @@ namespace RealRuins {
                         break;
                 }
             } else {
+                Debug.Log("[MapGen]", "Settling at POI out of game init context. Ship landing?");
                 poiComp = map.Parent.GetComponent<RealRuinsPOIComp>();
                 faction = map.ParentFaction;
+                
+                if (faction == null || faction == Faction.OfPlayer) {
+                    faction = null; // reset faction if it is set to player's (this happens when the faction is null initially)
+                    skipForcesGeneration = true;
+                    overrideSpawnAsRuins = true;
+                } else {
+                    Faction.OfPlayer.TryAffectGoodwillWith(faction, Faction.OfPlayer.GoodwillToMakeHostile(faction), canSendMessage: false, canSendHostilityLetter: false, HistoryEventDefOf.AttackedSettlement);
+                }
             }
            
             string filename = SnapshotStoreManager.SnapshotNameFor(poiComp.blueprintName, poiComp.gameName);
@@ -113,7 +121,7 @@ namespace RealRuins {
                 bp.width, bp.height);
 
             List<AbstractDefenderForcesGenerator> generators = null;
-            if (!skipForcesGeneration) {
+            if (!skipForcesGeneration && faction != null && faction != Faction.OfPlayer) {
                 generators = GeneratorsForBlueprint(bp, poiComp, faction);
             }
 

@@ -104,17 +104,6 @@ namespace RealRuins {
             }
         }
 
-        /*
-        public static IEnumerable<FloatMenuOption> GetFloatMenuOptions(CompLaunchable representative, IEnumerable<IThingHolder> pods, MapParent site) {
-            foreach (FloatMenuOption floatMenuOption in TransportersArrivalActionUtility.GetFloatMenuOptions(() => CanVisit(pods, site), () => new TransportPodsArrivalAction_VisitRuinsPOI(site, PawnsArrivalModeDefOf.EdgeDrop), "DropAtEdge".Translate(), representative, site.Tile)) {
-                yield return floatMenuOption;
-            }
-            foreach (FloatMenuOption floatMenuOption2 in TransportersArrivalActionUtility.GetFloatMenuOptions(() => CanVisit(pods, site), () => new TransportPodsArrivalAction_VisitRuinsPOI(site, PawnsArrivalModeDefOf.CenterDrop), "DropInCenter".Translate(), representative, site.Tile)) {
-                yield return floatMenuOption2;
-            }
-        }
-        */
-
         private void AffectRelationsIfNeeded(ref TaggedString letterText) {
             if (site.Faction == null || site.Faction == Faction.OfPlayer) {
                 return;
@@ -123,7 +112,6 @@ namespace RealRuins {
             FactionRelationKind playerRelationKind = site.Faction.PlayerRelationKind;
             Faction.OfPlayer.TryAffectGoodwillWith(site.Faction, Faction.OfPlayer.GoodwillToMakeHostile(site.Faction),
                 canSendMessage: false, canSendHostilityLetter: false, HistoryEventDefOf.AttackedSettlement);
-            //            letterText = letterText + "RelationsWith".Translate(mapParent.Faction.Name) + ": " + (-50).ToStringWithSign();
             site.Faction.TryAppendRelationKindChangedInfo(ref letterText, playerRelationKind, site.Faction.PlayerRelationKind);
         }
     }

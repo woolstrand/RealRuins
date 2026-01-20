@@ -169,9 +169,10 @@ namespace RealRuins {
             left.Gap(15);
             left.Label("RealRuins.ForceMultiplier".Translate() + ": x" + RealRuins_ModSettings.forceMultiplier.ToString("F"), -1, "RealRuins.ForceMultiplierTT".Translate());
             left.Label("RealRuins.AbsoluteWealthCap".Translate() + ": " + wealthCapStr, -1, "RealRuins.AbsoluteWealthCapTT".Translate());
-            
+
             left.Gap(15);
 
+            left.CheckboxLabeled("RealRuins.UseForcesGenerationV2".Translate(), ref RealRuins_ModSettings.useRuinsForcesGenerationV2, "RealRuins.UseForcesGenerationV2TT".Translate());
             left.CheckboxLabeled(Text_Option_DisableHaulables.Translate(), ref RealRuins_ModSettings.defaultScatterOptions.disableSpawnItems, Text_Option_DisableHaulablesTT.Translate());
             left.CheckboxLabeled(Text_Option_WallsAndDoorsOnly.Translate(), ref RealRuins_ModSettings.defaultScatterOptions.wallsDoorsOnly, Text_Option_WallsAndDoorsOnlyTT.Translate());
             left.CheckboxLabeled(Text_Option_Proximity.Translate(), ref RealRuins_ModSettings.defaultScatterOptions.enableProximity, Text_Option_ProximityTT.Translate());
@@ -221,7 +222,7 @@ namespace RealRuins {
             }
 
             //generation settings
-            right.Gap(gapHeight: 32);
+            right.Gap(gapHeight: 48);
             RealRuins_ModSettings.defaultScatterOptions.densityMultiplier = right.Slider(RealRuins_ModSettings.defaultScatterOptions.densityMultiplier, 0.0f, 20.0f);
             RealRuins_ModSettings.defaultScatterOptions.minRadius = (int)right.Slider(RealRuins_ModSettings.defaultScatterOptions.minRadius, 4.0f, 64.0f);
             RealRuins_ModSettings.defaultScatterOptions.maxRadius = (int)right.Slider(RealRuins_ModSettings.defaultScatterOptions.maxRadius, 4.0f, 64.0f);

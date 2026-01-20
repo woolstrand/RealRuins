@@ -5,6 +5,7 @@ using System.Linq;
 using System.Collections.Generic;
 
 using RimWorld;
+using Verse.Noise;
 
 namespace RealRuins {
 
@@ -31,6 +32,9 @@ namespace RealRuins {
         public bool isActive => state != RuinedBaseState.Inactive;
         public string expireSignal = null;
         public string successSignal = null;
+        private float baseSmallRaidChance = 0.05f;
+
+        private float destructionLevel = 0.0f; // 1.0 = intact, 0.0 = total destruction
 
         public bool mapExitLocked {
             get {
@@ -64,7 +68,7 @@ namespace RealRuins {
             }
 
             foreach (RaidTrigger raidTrigger in triggersCache) {
-                if (raidTrigger.IsTriggered() == false || raidTrigger.TicksLeft() > 0) return;
+                if (raidTrigger.TicksLeft() > 0) return;
             }
 
             //we got here only when all triggers have fired.
@@ -84,8 +88,16 @@ namespace RealRuins {
             if (state == RuinedBaseState.WaitingForArrival) {
                 state = RuinedBaseState.FightingWaves;
                 BuildRaidTriggersCache();
-                //Debug.Message("Built cache, cache has size of {0}", triggersCache.Count);
             }
+
+            var map = (parent as MapParent)?.Map;
+            var currentCost = GetTotalMapWealth(map);
+            Debug.Log(Debug.Generic, "Generated map. Cap cost: {0}, actual cost: {1}. Overwriting capCost with current.", currentCapCost, currentCost);
+
+            // For smaller bases we want to limit upcoming forces, so let's assume that a reference wealth is 150k, and neighbours
+            // are not really interested in smaller wealths that much.
+            currentCapCost = Math.Max((int)currentCost, 150000);
+            destructionLevel = currentCost / currentCapCost;
         }
 
         public void StartScavenging(int initialCost) {
@@ -95,7 +107,6 @@ namespace RealRuins {
         }
 
         public override void PostExposeData() {
-            
             base.PostExposeData();
             Scribe_Values.Look(ref blueprintFileName, "blueprintFileName", "");
             Scribe_Values.Look(ref currentCapCost, "currentCapCost", -1);
@@ -104,19 +115,18 @@ namespace RealRuins {
             Scribe_Values.Look(ref state, "state", RuinedBaseState.Inactive);
             Scribe_Values.Look(ref expireSignal, "expireSignal", "");
             Scribe_Values.Look(ref successSignal, "successSignal", "");
-
         }
 
         public override void CompTick() {
             base.CompTick();
             if (ShouldRemoveWorldObjectNow) {
                 var signalTag = expireSignal;
+                Debug.Log("Quest", "Sending expiration signal: {0}", signalTag);
                 Find.SignalManager.SendSignal(new Signal(signalTag));
                 Find.WorldObjects.Remove(parent);
             }
 
             if (state == RuinedBaseState.Inactive) return;
-
 
             if (!ParentHasMap) {
                 //base "do maradeur" act chance is once per 1.5 game days, but high activity can make it as often as once per game hour
@@ -145,6 +155,30 @@ namespace RealRuins {
                 }
             }
 
+            if (Find.TickManager.TicksGame % 60 == 12) {
+                DoRareTask();
+            }
+        }
+
+        // Support constnt density of forces on the map
+        private void DoRareTask() {
+            if (state == RuinedBaseState.FightingWaves) {
+                if (RealRuins_ModSettings.useRuinsForcesGenerationV2) {
+                    var map = (parent as MapParent)?.Map;
+                    int hostileCount = map.mapPawns.AllPawnsSpawned.Count(p => p.HostileTo(Faction.OfPlayer));
+                    if (hostileCount < 15 * destructionLevel * RealRuins_ModSettings.forceMultiplier && map.mapPawns.AllPawnsSpawned.Count < 90) {
+                        if (Rand.Chance(baseSmallRaidChance)) {
+                            Debug.Log(Debug.Generic, "Triggering small raid");
+                            TriggerRaid((int)(Rand.Range(500, 2500) * destructionLevel * RealRuins_ModSettings.forceMultiplier));
+
+                            var currentWealth = GetTotalMapWealth(map);
+                            destructionLevel = currentWealth / currentCapCost;
+                            baseSmallRaidChance = (float)(0.05f * destructionLevel) * RealRuins_ModSettings.forceMultiplier;
+                            Debug.Log(Debug.Generic, "Recalculating raid chance. Destruction level is {0}, new chance is {1}", destructionLevel, baseSmallRaidChance);
+                        }
+                    }
+                }
+            }
 
             if (RealRuins_ModSettings.caravanReformType == 2 && ParentHasMap) {
                 if (state == RuinedBaseState.FightingWaves) {
@@ -153,7 +187,7 @@ namespace RealRuins {
                     //AnyHostileActiveThreatToPlayer is a proxy call to AnyHostileActiveThreatTo, but it is postfixed with additional check by this mod.
                     //Here I want to do original check, without my postfix, so I call directly the checking method. So-so solution, but cant think of anything better AND worthwhile
                     if (!GenHostility.AnyHostileActiveThreatTo((parent as MapParent).Map, Faction.OfPlayer)) {
-                        unlockTargetTime = Find.TickManager.TicksGame + Rand.Range(30000, 30000 + currentCapCost);
+                        unlockTargetTime = Find.TickManager.TicksGame + Rand.Range(45000, 60000 + currentCapCost);
                         state = RuinedBaseState.WaitingTimeoutAfterEnemiesDefeat;
                         //Debug.Message("no more hostiles. time: {0}, unlocktime: {1}", Find.TickManager.TicksGame, unlockTargetTime);
                     }
@@ -166,9 +200,8 @@ namespace RealRuins {
                     }
                 }
             }
-
-
         }
+       
 
         public override string CompInspectStringExtra() {
             if (!ParentHasMap && state == RuinedBaseState.WaitingForArrival) {
@@ -207,6 +240,36 @@ namespace RealRuins {
                 if (result.Length > 0) return result;
             }
             return null;
+        }
+
+        // Triggers small raid to keep constant number of defenders
+        private void TriggerRaid(int points) {
+            var map = (parent as MapParent)?.Map;
+            if (map == null) return;
+
+            // Get the raid incident def
+            IncidentDef raidDef = IncidentDefOf.RaidEnemy;
+
+            IncidentParms parms = StorytellerUtility.DefaultParmsNow(raidDef.category, map);
+            parms.forced = true;
+            parms.target = map;
+            parms.points = points;
+            parms.faction = FactionSelector.GetRandomFaction();
+            parms.raidStrategy = RaidStrategyDefOf.ImmediateAttack;
+            parms.canSteal = true;
+            parms.canTimeoutOrFlee = true;
+            parms.sendLetter = false;
+
+            // Fire the incident
+            raidDef.Worker.TryExecute(parms);
+        }
+
+        private float GetTotalMapWealth(Map map) {
+            if (map == null) return 0f;
+
+            return map.listerThings.AllThings
+                .Where(t => t.def != null && t.def.CountAsResource)
+                .Sum(t => t.MarketValue * t.stackCount);
         }
     }
 }
