@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -280,6 +280,22 @@ namespace RealRuins {
                 //Find.WindowStack.TryRemove(typeof(HugsLib.Settings.Dialog_ModSettings));
 
                 Find.WindowStack.Add(page);
+            }
+
+            // Debug section (only visible in dev mode)
+            if (Prefs.DevMode) {
+                bottom.Gap(15f);
+                bottom.Label("RealRuins.DebugSettings.Caption".Translate());
+                bottom.GapLine();
+                bottom.CheckboxLabeled("RealRuins.DebugSettings.KeepSnapshotsAfterUpload".Translate(), ref RealRuins_ModSettings.debugKeepSnapshotsAfterUpload, "RealRuins.DebugSettings.KeepSnapshotsAfterUploadTooltip".Translate());
+                if (bottom.ButtonText("RealRuins.DebugSettings.ManualUpload".Translate(), "RealRuins.DebugSettings.ManualUploadTooltip".Translate())) {
+                    if (Find.CurrentMap != null) {
+                        SnapshotManager.Instance.UploadCurrentMapSnapshot();
+                        Messages.Message("RealRuins.DebugSettings.UploadTriggered".Translate(), MessageTypeDefOf.NeutralEvent);
+                    } else {
+                        Messages.Message("RealRuins.DebugSettings.NoMap".Translate(), MessageTypeDefOf.RejectInput);
+                    }
+                }
             }
 
             bottom.End();
