@@ -9,6 +9,7 @@ using System.Xml;
 using Verse;
 using RimWorld;
 using System.Reflection;
+using System.Diagnostics;
 
 namespace RealRuins
 {
@@ -243,10 +244,12 @@ namespace RealRuins
 
         public string Generate()
         {
+            var planetTile = map.Parent.Tile;
             // Ignore non-surface layers for now
-            if (!planetTile.Layer.isRootSurface)
+            if (!planetTile.Layer.IsRootSurface)
             {
-                return;
+                Debug.Log(Debug.BlueprintGen, "Snapshot generation for non-surface layers is not supported yet.");
+                return null;
             }
 
             StringBuilder builder = new StringBuilder();
@@ -264,7 +267,7 @@ namespace RealRuins
                 if (cell.z > zmax) zmax = cell.z;
             }
 
-            Log.Message(string.Format("Home area bounds: ({0}, {1}) - ({2}, {3})", xmin, zmin, xmax, zmax));
+            Debug.Log(Debug.BlueprintGen, string.Format("Home area bounds: ({0}, {1}) - ({2}, {3})", xmin, zmin, xmax, zmax));
 
             int originX = xmin;// Rand.Range(xmin, (xmin + xmax) / 2);
             int originZ = zmin;// Rand.Range(zmin, (zmin + zmax) / 2);
@@ -272,11 +275,11 @@ namespace RealRuins
             int width = xmax - xmin;// Rand.Range(originX + 1, xmax) - originX;
             int height = zmax - zmin;// Rand.Range(originZ + 1, zmax) - originZ;
 
-            Log.Message(string.Format("Origin: {0}, {1}", originX, originZ));
+            Debug.Log(Debug.BlueprintGen, string.Format("Origin: {0}, {1}", originX, originZ));
 
             CellRect rect = new CellRect(originX, originZ, width, height);
 
-            Log.Message(string.Format("Start capturing in area of: ({0},{1})-({2},{3})", rect.minX, rect.minZ, rect.maxX, rect.maxZ));
+            Debug.Log(Debug.BlueprintGen, string.Format("Start capturing in area of: ({0},{1})-({2},{3})", rect.minX, rect.minZ, rect.maxX, rect.maxZ));
 
             writer.WriteStartElement("snapshot");
             writer.WriteAttributeString("version", typeof(RealRuins).Assembly.GetName().Version.ToString());
@@ -291,7 +294,6 @@ namespace RealRuins
             writer.WriteStartElement("world");
             writer.WriteAttributeString("seed", Find.World.info.seedString);
 
-            var planetTile = map.Parent.Tile;
             writer.WriteAttributeString("tile", planetTile.tileId.ToString());
             writer.WriteAttributeString("gameId", Math.Abs(Find.World.info.persistentRandomValue).ToString());
             writer.WriteAttributeString("percentage", Find.World.info.planetCoverage.ToString());
