@@ -13,8 +13,10 @@ using System.Net;
 using System.IO;
 using System.Collections;
 
-namespace RealRuins {
-    class APIService {
+namespace RealRuins
+{
+    class APIService
+    {
 
         private const string APIRoot = "https://woolstrand.art/";
         //private const string APIRoot = "http://173.23.44.32/"; //for testing unresponsive host
@@ -25,54 +27,72 @@ namespace RealRuins {
         private const string MapUploadPath = "maps";
 
 
-        public static void AwaitUnityDataWebResponse(UnityWebRequest request, Action<byte[]> onSuccess, Action<Exception> onFailure, HttpStatusCode successStatus = HttpStatusCode.OK, float timeout = 30f) {
+        public static void AwaitUnityDataWebResponse(UnityWebRequest request, Action<byte[]> onSuccess, Action<Exception> onFailure, HttpStatusCode successStatus = HttpStatusCode.OK, float timeout = 30f)
+        {
             CoroutineManager.Instance.RunCoroutine(AwaitResponseCoroutine(request, onSuccess, onFailure, successStatus, timeout));
         }
 
-        private static IEnumerator AwaitResponseCoroutine(UnityWebRequest request, Action<byte[]> onSuccess, Action<Exception> onFailure, HttpStatusCode successStatus, float timeout) {
+        private static IEnumerator AwaitResponseCoroutine(UnityWebRequest request, Action<byte[]> onSuccess, Action<Exception> onFailure, HttpStatusCode successStatus, float timeout)
+        {
             request.SendWebRequest();
             float timeoutTime = Time.unscaledTime + timeout;
 
-            while (!request.isDone && Time.unscaledTime < timeoutTime) {
+            while (!request.isDone && Time.unscaledTime < timeoutTime)
+            {
                 yield return null;  // Wait until next frame
             }
 
-            if (request.isDone) {
-                if (request.isHttpError || request.isNetworkError) {
+            if (request.isDone)
+            {
+                if (request.isHttpError || request.isNetworkError)
+                {
                     onFailure?.Invoke(new Exception(request.error));
-                } else if ((HttpStatusCode)request.responseCode != successStatus) {
+                }
+                else if ((HttpStatusCode)request.responseCode != successStatus)
+                {
                     onFailure?.Invoke(new Exception($"{request.url} replied with {(HttpStatusCode)request.responseCode}: {request.downloadHandler.text}"));
-                } else {
+                }
+                else
+                {
                     onSuccess?.Invoke(request.downloadHandler.data);
                 }
-            } else {
+            }
+            else
+            {
                 request.Abort();
                 onFailure?.Invoke(new Exception("Request timed out"));
             }
         }
 
-        public void LoadRandomMapsList(Action<bool, List<string>> completionHandler) {
+        public void LoadRandomMapsList(Action<bool, List<string>> completionHandler)
+        {
             LoadRandomMapsList(50, completionHandler);
         }
 
 
-        public void LoadRandomMapsList(int limit, Action<bool, List<string>> completionHandler) {
+        public void LoadRandomMapsList(int limit, Action<bool, List<string>> completionHandler)
+        {
             var path = APIRoot + MapsRandomListPath;
 
-            UnityWebRequest request = new UnityWebRequest(path + "?limit=" + limit.ToString(), "GET") {
+            UnityWebRequest request = new UnityWebRequest(path + "?limit=" + limit.ToString(), "GET")
+            {
                 downloadHandler = new DownloadHandlerBuffer()
             };
 
-            Action<byte[]> internalSuccessHandler = delegate (byte[] response) {
+            Action<byte[]> internalSuccessHandler = delegate (byte[] response)
+            {
                 string jsonString = Encoding.UTF8.GetString(response);
 
                 List<string> names = new List<string>();
 
                 var json = JSON.Parse(jsonString);
-                if (json != null) {
-                    foreach (JSONNode node in json) {
+                if (json != null)
+                {
+                    foreach (JSONNode node in json)
+                    {
                         string name = node["nameInBucket"]?.Value;
-                        if (name != null) {
+                        if (name != null)
+                        {
                             names.Add(name);
                         }
                     }
@@ -81,7 +101,8 @@ namespace RealRuins {
                 completionHandler(true, names);
             };
 
-            void failureHandler(Exception ex) {
+            void failureHandler(Exception ex)
+            {
                 Debug.Warning(Debug.Loader, string.Format("Could not load maps list, but that's ok if you already have enough maps.", ex), true);
                 completionHandler(false, null);
             }
@@ -89,28 +110,35 @@ namespace RealRuins {
             AwaitUnityDataWebResponse(request, internalSuccessHandler, failureHandler);
         }
 
-        public void LoadAllMapsForSeed(string seed, int mapSize, float coverage, Action<bool, List<PlanetTileInfo>> completionHandler) {
+        public void LoadAllMapsForSeed(string seed, int mapSize, float coverage, Action<bool, List<PlanetTileInfo>> completionHandler)
+        {
             var path = APIRoot + MapsBySeedListPath + seed;
 
             string requestLink = path + "?limit=9999&coverage=" + coverage + "&mapSize=" + mapSize;
             Debug.Log(Debug.Loader, "Loading all compatible blueprings by link {0}", requestLink);
-            UnityWebRequest request = new UnityWebRequest(requestLink, "GET") {
+            UnityWebRequest request = new UnityWebRequest(requestLink, "GET")
+            {
                 downloadHandler = new DownloadHandlerBuffer()
             };
 
-            Action<byte[]> internalSuccessHandler = delegate (byte[] response) {
+            Action<byte[]> internalSuccessHandler = delegate (byte[] response)
+            {
                 string jsonString = Encoding.UTF8.GetString(response);
 
                 List<PlanetTileInfo> tiles = new List<PlanetTileInfo>();
 
                 var json = JSON.Parse(jsonString);
-                if (json != null) {
-                    foreach (JSONNode node in json) {
+                if (json != null)
+                {
+                    foreach (JSONNode node in json)
+                    {
                         string name = node["nameInBucket"]?.Value;
-                        if (name != null) {
+                        if (name != null)
+                        {
                             PlanetTileInfo tileInfo = new PlanetTileInfo();
                             tileInfo.mapId = name;
                             tileInfo.tile = node["tileId"]?.AsInt ?? 0;
+                            tileInfo.tileLayer = node["tileLayer"]?.AsInt ?? 0;  // Default to 0 for backward compatibility
                             tileInfo.biomeName = node["biome"]?.Value;
                             tileInfo.originX = node["originX"]?.AsInt ?? 0;
                             tileInfo.originZ = node["originZ"]?.AsInt ?? 0;
@@ -122,7 +150,8 @@ namespace RealRuins {
                 completionHandler(true, tiles);
             };
 
-            void failureHandler(Exception ex) {
+            void failureHandler(Exception ex)
+            {
                 Debug.Error(Debug.Loader, string.Format("Could not load maps list. Try not to alt-tab while waiting for maps loading."), true);
                 completionHandler(false, null);
             }
@@ -132,18 +161,22 @@ namespace RealRuins {
 
 
 
-        public void LoadMap(string link, Action<bool, byte[]> completionHandler) {
+        public void LoadMap(string link, Action<bool, byte[]> completionHandler)
+        {
             var path = BucketRoot + link + ".bp";
 
-            UnityWebRequest request = new UnityWebRequest(path, "GET") {
+            UnityWebRequest request = new UnityWebRequest(path, "GET")
+            {
                 downloadHandler = new DownloadHandlerBuffer()
             };
 
-            Action<byte[]> internalSuccessHandler = delegate (byte[] response) {
+            Action<byte[]> internalSuccessHandler = delegate (byte[] response)
+            {
                 completionHandler(true, response);
             };
 
-            void failureHandler(Exception ex) {
+            void failureHandler(Exception ex)
+            {
                 Debug.Warning(Debug.Loader, string.Format("Could not load a blueprint, but that's not a problem if you already have enough. If your storage is empty, try manual download and do not alt-tab while loading."), true);
                 completionHandler(false, null);
             }
@@ -151,26 +184,31 @@ namespace RealRuins {
             AwaitUnityDataWebResponse(request, internalSuccessHandler, failureHandler);
         }
 
-        public bool UploadMap(string sourceFileName, Action<bool> completionHandler = null) {
+        public bool UploadMap(string sourceFileName, Action<bool> completionHandler = null)
+        {
             var path = APIRoot + MapUploadPath;
 
             var data = File.ReadAllBytes(sourceFileName);
             if (data == null) return false;
 
-            UnityWebRequest request = new UnityWebRequest(path, "POST") {
+            UnityWebRequest request = new UnityWebRequest(path, "POST")
+            {
                 downloadHandler = new DownloadHandlerBuffer(),
-                uploadHandler = new UploadHandlerRaw(data) {
+                uploadHandler = new UploadHandlerRaw(data)
+                {
                     contentType = "binary/octet-stream"
                 }
             };
 
 
-            Action<byte[]> internalSuccessHandler = delegate (byte[] response) {
+            Action<byte[]> internalSuccessHandler = delegate (byte[] response)
+            {
                 Debug.Log(Debug.Loader, "Map upload successful");
                 completionHandler?.Invoke(true);
             };
 
-            void failureHandler(Exception ex) {
+            void failureHandler(Exception ex)
+            {
                 Debug.Warning(Debug.Loader, "Exception during uploading: {0}", ex);
                 completionHandler?.Invoke(false);
             }
