@@ -159,6 +159,7 @@
     <Compile Include="Classes\Scattering\Internal\BlueprintPreprocessor.cs" />
     <Compile Include="Classes\Scattering\Constants.cs" />
     <Compile Include="Classes\Scattering\Internal\Art.cs" />
+    <Compile Include="Classes\Scattering\Internal\BakedLogEntry.cs" />
     <Compile Include="Classes\Scattering\Internal\Blueprint.cs" />
     <Compile Include="Classes\Scattering\Internal\BlueprintFinder.cs" />
     <Compile Include="Classes\Scattering\Internal\BlueprintLoader.cs" />
