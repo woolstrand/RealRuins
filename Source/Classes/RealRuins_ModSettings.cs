@@ -5,8 +5,10 @@ using System.Text;
 
 using Verse;
 
-namespace RealRuins {
-    class RealRuins_ModSettings : ModSettings {
+namespace RealRuins
+{
+    class RealRuins_ModSettings : ModSettings
+    {
         public static bool offlineMode = false;
         public static bool allowDownloads = true;
         public static bool allowUploads = true;
@@ -20,11 +22,13 @@ namespace RealRuins {
         public static bool useRuinsForcesGenerationV2 = true; // support fixed amount of troops on ruins maps
         public static int logLevel = 2; //0 = all, 1 = warnings, 2 = errors
         public static bool debugKeepSnapshotsAfterUpload = false; // debug: keep snapshot files after upload instead of deleting
+        public static int debugTileFocusId = -1; // debug: tile ID to focus/select in world view
 
         public static ScatterOptions defaultScatterOptions = ScatterOptions.Default;
         public static PlanetaryRuinsOptions planetaryRuinsOptions = new PlanetaryRuinsOptions();
 
-        public override void ExposeData() {
+        public override void ExposeData()
+        {
             base.ExposeData();
             Scribe_Values.Look(ref offlineMode, "offlineMode", false, false);
             Scribe_Values.Look(ref allowDownloads, "allowDownloads", true, false);
@@ -39,16 +43,19 @@ namespace RealRuins {
             Scribe_Values.Look(ref useRuinsForcesGenerationV2, "useRuinsForcesGenerationV2", true, true);
             Scribe_Values.Look(ref logLevel, "logLevel", 2, false);
             Scribe_Values.Look(ref debugKeepSnapshotsAfterUpload, "debugKeepSnapshotsAfterUpload", false, false);
+            Scribe_Values.Look(ref debugTileFocusId, "debugTileFocusId", -1, false);
             Scribe_Deep.Look(ref defaultScatterOptions, "defaultScatterOptions");
             Scribe_Deep.Look(ref planetaryRuinsOptions, "planetaryRuinsOptions");
 
-            if (allowInstantCaravanReform == true) {
+            if (allowInstantCaravanReform == true)
+            {
                 allowInstantCaravanReform = false; //migrate settings
                 caravanReformType = 1;
             }
         }
 
-        public static void Reset() {
+        public static void Reset()
+        {
             defaultScatterOptions = new ScatterOptions();
             planetaryRuinsOptions = new PlanetaryRuinsOptions();
 
@@ -63,7 +70,7 @@ namespace RealRuins {
             ruinsCostCap = 1.0e+9f;
             logLevel = 2;
             debugKeepSnapshotsAfterUpload = false;
+            debugTileFocusId = -1;
         }
     }
 }
-    
