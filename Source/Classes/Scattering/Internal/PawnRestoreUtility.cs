@@ -514,7 +514,7 @@ namespace RealRuins
         {
             try
             {
-                var logEntry = new BakedLogEntry(combatLogText, pawn, dateShift);
+                var logEntry = new BakedLogEntry(combatLogText, pawn, -(ticksInYear * dateShift));
                 Find.BattleLog.Add(logEntry);
                 hediff.combatLogEntry = new Verse.WeakReference<LogEntry>(logEntry);
             }
