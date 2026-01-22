@@ -165,10 +165,20 @@ namespace RealRuins
                                 continue;
                             }
 
+                            // Extract combat log message if present before deserialization
+                            string combatLogMessage = hediffNode.SelectSingleNode("combatLogText")?.InnerText;
+
                             Hediff hediff = ScribeExtractor.SaveableFromNode<Hediff>(hediffNode, null);
                             if (hediff != null && hediff.Part != null && !p.health.hediffSet.PartIsMissing(hediff.Part))
                             {
                                 p.health.AddHediff(hediff);
+                            }
+
+                            // Add the combat log message to the pawn's combat log if present. even for missing parts.
+                            if (!string.IsNullOrEmpty(combatLogMessage))
+                            {
+                                Debug.Extra(Debug.BlueprintPawnDecoder, "Trying to add combat log message: {0}", combatLogMessage);
+                                AddCombatLogMessage(p, combatLogMessage, hediff);
                             }
                         }
                         catch (Exception ex)
@@ -497,6 +507,20 @@ namespace RealRuins
             catch (Exception ex)
             {
                 Debug.Extra(Debug.BlueprintPawnDecoder, "Exception during nested hediff validation: {0}", ex.Message);
+            }
+        }
+
+        private void AddCombatLogMessage(Pawn pawn, string combatLogText, Hediff hediff)
+        {
+            try
+            {
+                var logEntry = new BakedLogEntry(combatLogText, pawn, dateShift);
+                Find.BattleLog.Add(logEntry);
+                hediff.combatLogEntry = new Verse.WeakReference<LogEntry>(logEntry);
+            }
+            catch (Exception ex)
+            {
+                Debug.Extra(Debug.BlueprintPawnDecoder, "Exception adding combat log message: {0}", ex.Message);
             }
         }
     }
