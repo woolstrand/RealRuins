@@ -11,6 +11,7 @@ namespace RealRuins {
         public const string Store = "Store";
         public const string BlueprintGen = "BlueprintGen";
         public const string BlueprintTransfer = "BlueprintTransfer";
+        public const string BlueprintPawnDecoder = "BlueprintPawnDecoder";
         public const string Analyzer = "Analyzer";
         public const string POI = "POI";
         public const string Scatter = "Scatter";
@@ -20,7 +21,7 @@ namespace RealRuins {
         public const string ForceGen = "ForceGen";
         public const string QuestNode_Find = "QuestNode_Find";
 
-        public static List<string> extras = new List<string> /*(); */ {"PawnGen", "ThingGen"/*, "BlueprintTransfer", "Scatter"*/, "ForceGen"};
+        public static List<string> extras = new List<string> /*(); */ {"BlueprintPawnDecoder" /*"PawnGen", "ThingGen", "BlueprintTransfer", "Scatter", "ForceGen"*/};
 
 
         public static bool active = true;

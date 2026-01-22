@@ -163,6 +163,7 @@
     <Compile Include="Classes\Scattering\Internal\BlueprintFinder.cs" />
     <Compile Include="Classes\Scattering\Internal\BlueprintLoader.cs" />
     <Compile Include="Classes\Scattering\Internal\BlueprintTransferUtility.cs" />
+    <Compile Include="Classes\Scattering\Internal\PawnRestoreUtility.cs" />
     <Compile Include="Classes\Scattering\Internal\CoverageMap.cs" />
     <Compile Include="Classes\Scattering\Internal\DefenderForcesGenerator\AnimalInhabitantsForcesGenerator.cs" />
     <Compile Include="Classes\Scattering\Internal\DefenderForcesGenerator\BattleRoyaleForcesGenerator.cs" />
@@ -200,6 +201,7 @@
     <Compile Include="Classes\Utility\CoroutineManager.cs" />
     <Compile Include="Classes\Utility\RealRuins_StartupHook.cs" />
     <Compile Include="Classes\Utility\FactionSelector.cs" />
+    <Compile Include="Classes\Utility\RealRuinsDebugUtils.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="MapGenerators_RealRuins.xml" />
