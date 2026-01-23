@@ -17,8 +17,6 @@ namespace RealRuins {
         public override bool GravShipCanLandOn => true;
         private Material cachedMat;
 
-        private bool hasStartedCountdown = false;
-
         public override Material Material {
             get {
                 if (cachedMat == null) {

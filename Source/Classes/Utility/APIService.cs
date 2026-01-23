@@ -44,7 +44,8 @@ namespace RealRuins
 
             if (request.isDone)
             {
-                if (request.isHttpError || request.isNetworkError)
+                if (request.result == UnityWebRequest.Result.ConnectionError 
+                || request.result == UnityWebRequest.Result.ProtocolError)
                 {
                     onFailure?.Invoke(new Exception(request.error));
                 }
