@@ -6,6 +6,7 @@ using System.Xml;
 
 using RimWorld;
 using Verse;
+using UnityEngine;
 
 /**
  * This class handles restoration of pawns from saved XML data.
@@ -41,10 +42,16 @@ namespace RealRuins
                 XmlNode root = document.FirstChild;
 
                 string pawnKind = root.SelectSingleNode("kind").InnerText;
-                PawnKindDef kindDef = PawnKindDef.Named(pawnKind);
-                if (kindDef == null)
+                PawnKindDef kindDef = DefDatabase<PawnKindDef>.GetNamedSilentFail(pawnKind);
+                if (kindDef == null) 
                 {
-                    kindDef = PawnKindDefOf.AncientSoldier;
+                    if (HasTripleName(root)) 
+                    {
+                        // Fallback only for pawns with triple name. It means that it was most likely a humanlike pawn
+                        // with a missing definition, so we can try to use Villager as a generic humanlike pawn kind.
+                        kindDef = PawnKindDefOf.Villager;
+                        Debug.Extra(Debug.BlueprintPawnDecoder, "PawnKindDef not found: {0}, using Villager as fallback", pawnKind);
+                    }
                 }
 
                 Pawn p = PawnGenerator.GeneratePawn(kindDef, faction);
@@ -55,14 +62,34 @@ namespace RealRuins
                 RestorePawnHealth(root, p);
                 RestorePawnApparel(root, p);
                 RestorePawnStory(root, p);
-                // Skills are temporarily disabled in original code
-
+                RestorePawnSkills(root, p);
+                RestorePawnBodyAndTraits(root, p);
                 return p;
             }
             catch (Exception e)
             {
                 Debug.Log(Debug.BlueprintPawnDecoder, "Pawn decoding failed: {0}", e);
                 return null;
+            }
+        }
+
+        private bool HasTripleName(XmlNode root)
+        {
+            try
+            {
+                var nameNode = root.SelectSingleNode("name");
+                if (nameNode != null)
+                {
+                    var attrFirst = nameNode.Attributes.GetNamedItem("first");
+                    var attrLast = nameNode.Attributes.GetNamedItem("last");
+                    return (attrFirst != null && attrLast != null);
+                } else {
+                    return false;
+                }
+            }
+            catch (Exception ex)
+            {
+                return false;
             }
         }
 
@@ -80,6 +107,7 @@ namespace RealRuins
                     if (attrFirst != null && attrLast != null)
                     {
                         name = new NameTriple(attrFirst.Value, attrNick?.Value ?? "", attrLast.Value);
+                        Debug.Extra(Debug.BlueprintPawnDecoder, "Restored pawn triple name: {0}", name.ToStringFull);
                     }
                     else
                     {
@@ -218,7 +246,7 @@ namespace RealRuins
 
                     if (thingDef != null)
                     {
-                        Apparel apparel = (Apparel)ThingMaker.MakeThing(thingDef, stuffDef);
+                        Apparel apparel = (Apparel)ThingMaker.MakeThing(thingDef, thingDef.MadeFromStuff ? stuffDef : null);
                         apparel.HitPoints = Rand.Range(1, (int)(apparel.MaxHitPoints * 0.6));
                         if (apparel is Apparel)
                         {
@@ -235,7 +263,7 @@ namespace RealRuins
 
         /// <summary>
         /// Restores pawn story and appearance from saved XML.
-        /// Currently mostly disabled (commented) pending future implementation.
+        /// Includes backstory, body type, hair, traits, and other appearance settings.
         /// </summary>
         private void RestorePawnStory(XmlNode root, Pawn p)
         {
@@ -244,66 +272,261 @@ namespace RealRuins
                 var storyNode = root.SelectSingleNode("saveable[@Class='Pawn_StoryTracker']");
                 if (storyNode == null)
                     return;
-
-                /*
-                Backstory bs = null;
-                string childhoodDef = storyNode.SelectSingleNode("childhood")?.InnerText;
-                if (BackstoryDatabase.TryGetWithIdentifier(childhoodDef, out bs)) {
-                    p.story.childhood = bs;
+                
+                // Restore childhood backstory
+                string childhoodDefName = storyNode.SelectSingleNode("childhood")?.InnerText;
+                if (!string.IsNullOrEmpty(childhoodDefName))
+                {
+                    BackstoryDef childhoodDef = DefDatabase<BackstoryDef>.AllDefs
+                        .FirstOrDefault(b => b.defName == childhoodDefName);
+                    if (childhoodDef != null)
+                    {
+                        p.story.Childhood = childhoodDef;
+                    }
+                    else
+                    {
+                        Debug.Extra(Debug.BlueprintPawnDecoder, "Childhood backstory not found: {0}", childhoodDefName);
+                    }
                 }
-                string adulthoodDef = storyNode.SelectSingleNode("adulthood")?.InnerText;
-                if (BackstoryDatabase.TryGetWithIdentifier(adulthoodDef, out bs)) {
-                    p.story.adulthood = bs;
+                
+                // Restore adulthood backstory
+                string adulthoodDefName = storyNode.SelectSingleNode("adulthood")?.InnerText;
+                if (!string.IsNullOrEmpty(adulthoodDefName))
+                {
+                    BackstoryDef adulthoodDef = DefDatabase<BackstoryDef>.AllDefs
+                        .FirstOrDefault(b => b.defName == adulthoodDefName);
+                    if (adulthoodDef != null)
+                    {
+                        p.story.Adulthood = adulthoodDef;
+                    }
+                    else
+                    {
+                        Debug.Extra(Debug.BlueprintPawnDecoder, "Adulthood backstory not found: {0}", adulthoodDefName);
+                    }
                 }
-
+                
+                // Restore body type
                 string bodyTypeDefName = storyNode.SelectSingleNode("bodyType")?.InnerText;
-                if (bodyTypeDefName != null) {
-                    BodyTypeDef def = DefDatabase<BodyTypeDef>.GetNamedSilentFail(bodyTypeDefName);
-                    if (def != null) { p.story.bodyType = def; }
-
-                    try {
-                        string crownTypeName = storyNode.SelectSingleNode("crownType")?.InnerText;
-                        p.story.crownType = (CrownType)Enum.Parse(typeof(CrownType), crownTypeName);
-                    } catch (Exception) { }
-
-                    string hairDefName = storyNode.SelectSingleNode("hairDef")?.InnerText;
+                if (!string.IsNullOrEmpty(bodyTypeDefName))
+                {
+                    BodyTypeDef bodyTypeDef = DefDatabase<BodyTypeDef>.GetNamedSilentFail(bodyTypeDefName);
+                    if (bodyTypeDef != null)
+                    {
+                        p.story.bodyType = bodyTypeDef;
+                    }
+                }
+                
+                // Restore hair
+                string hairDefName = storyNode.SelectSingleNode("hairDef")?.InnerText;
+                if (!string.IsNullOrEmpty(hairDefName))
+                {
                     HairDef hairDef = DefDatabase<HairDef>.GetNamedSilentFail(hairDefName);
-                    if (hairDef != null) { p.story.hairDef = hairDef; }
-
-                    float melanin = 0;
-                    if (float.TryParse(storyNode.SelectSingleNode("melanin")?.InnerText, out melanin)) {
-                        p.story.melanin = melanin;
-                    }
-
-                    string hairColorString = storyNode.SelectSingleNode("hairColor")?.InnerText;
-                    Color hairColor = (Color)ParseHelper.FromString(hairColorString, typeof(Color));
-                    if (hairColor != null) {
-                        p.story.hairColor = hairColor;
+                    if (hairDef != null)
+                    {
+                        p.story.hairDef = hairDef;
                     }
                 }
+                
+                // Restore hair color (stored as UnityEngine.Color in XML, e.g., "RGBA(0.277, 0.250, 0.232, 1.000)")
+                string hairColorString = storyNode.SelectSingleNode("hairColor")?.InnerText;
+                if (!string.IsNullOrEmpty(hairColorString))
+                {
+                    try
+                    {
+                        Color hairColor = (Color)ParseHelper.FromString(hairColorString, typeof(Color));
+                        p.story.HairColor = hairColor;
+                    }
+                    catch (Exception ex)
+                    {
+                        Debug.Extra(Debug.BlueprintPawnDecoder, "Failed to parse hair color {0}: {1}", hairColorString, ex.Message);
+                    }
+                }
+                
+                // Restore favorite color (stored as ColorDef reference)
+                string favoriteColorString = storyNode.SelectSingleNode("favoriteColor")?.InnerText;
+                if (!string.IsNullOrEmpty(favoriteColorString))
+                {
+                    try
+                    {
+                        ColorDef favoriteColorDef = DefDatabase<ColorDef>.GetNamedSilentFail(favoriteColorString);
+                        if (favoriteColorDef != null)
+                        {
+                            p.story.favoriteColor = favoriteColorDef;
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Debug.Extra(Debug.BlueprintPawnDecoder, "Failed to restore favorite color {0}: {1}", favoriteColorString, ex.Message);
+                    }
+                }
+                
+                // Restore birth last name
+                string birthLastName = storyNode.SelectSingleNode("birthLastName")?.InnerText;
+                if (!string.IsNullOrEmpty(birthLastName))
+                {
+                    p.story.birthLastName = birthLastName;
+                }
+                
+                // Restore head type if available (RimWorld 1.6+)
+                string headTypeName = storyNode.SelectSingleNode("headType")?.InnerText;
+                if (!string.IsNullOrEmpty(headTypeName))
+                {
+                    try
+                    {
+                        HeadTypeDef headTypeDef = DefDatabase<HeadTypeDef>.GetNamedSilentFail(headTypeName);
+                        if (headTypeDef != null)
+                        {
+                            p.story.headType = headTypeDef;
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Debug.Extra(Debug.BlueprintPawnDecoder, "Failed to restore head type {0}: {1}", headTypeName, ex.Message);
+                    }
+                }
+                
+                // Restore traits
                 XmlNodeList traitsList = storyNode.SelectNodes("traits/allTraits/li");
-                if (traitsList != null) {
-                    p.story.traits.allTraits.RemoveAll(_ => true);
-                    foreach (XmlNode traitNode in traitsList) {
-                        string traitDefName = traitNode.SelectSingleNode("def")?.InnerText;
-                        int traitDegree = 0;
-                        int.TryParse(traitNode.SelectSingleNode("degree")?.InnerText, out traitDegree);
-
-                        TraitDef traitDef = DefDatabase<TraitDef>.GetNamedSilentFail(traitDefName);
-                        if (traitDef == null) continue;
-
-                        Trait t = new Trait(traitDef, traitDegree);
-                        if (t == null) continue;
-
-                        p.story.traits.allTraits.Add(t);
+                if (traitsList != null && traitsList.Count > 0)
+                {
+                    foreach (XmlNode traitNode in traitsList)
+                    {
+                        try
+                        {
+                            string traitDefName = traitNode.SelectSingleNode("def")?.InnerText;
+                            if (string.IsNullOrEmpty(traitDefName))
+                                continue;
+                            
+                            TraitDef traitDef = DefDatabase<TraitDef>.GetNamedSilentFail(traitDefName);
+                            if (traitDef == null)
+                            {
+                                Debug.Extra(Debug.BlueprintPawnDecoder, "Trait def not found: {0}", traitDefName);
+                                continue;
+                            }
+                            
+                            string degreeTxt = traitNode.SelectSingleNode("degree")?.InnerText;
+                            int traitDegree = 0;
+                            if (!string.IsNullOrEmpty(degreeTxt))
+                            {
+                                int.TryParse(degreeTxt, out traitDegree);
+                            }
+                            
+                            // Check if pawn already has this trait
+                            if (p.story.traits.HasTrait(traitDef))
+                            {
+                                continue;
+                            }
+                            
+                            Trait t = new Trait(traitDef, traitDegree);
+                            p.story.traits.GainTrait(t);
+                        }
+                        catch (Exception ex)
+                        {
+                            Debug.Extra(Debug.BlueprintPawnDecoder, "Failed to restore trait: {0}", ex.Message);
+                        }
                     }
                 }
-                */
             }
             catch (Exception ex)
             {
                 Debug.Extra(Debug.BlueprintPawnDecoder, "Failed to restore pawn story: {0}", ex.Message);
             }
+        }
+
+        /// <summary>
+        /// Restores pawn skills from saved XML data.
+        /// Includes skill levels, passion levels, and XP progress.
+        /// </summary>
+        private void RestorePawnSkills(XmlNode root, Pawn p)
+        {
+            try
+            {
+                var skillsNode = root.SelectSingleNode("saveable[@Class='Pawn_SkillTracker']");
+                if (skillsNode == null)
+                    return;
+
+                XmlNodeList skillsList = skillsNode.SelectNodes("skills/li");
+                if (skillsList == null || skillsList.Count == 0)
+                    return;
+
+                foreach (XmlNode skillNode in skillsList)
+                {
+                    try
+                    {
+                        // Get skill definition
+                        string skillDefName = skillNode.SelectSingleNode("def")?.InnerText;
+                        if (string.IsNullOrEmpty(skillDefName))
+                            continue;
+
+                        SkillDef skillDef = DefDatabase<SkillDef>.GetNamedSilentFail(skillDefName);
+                        if (skillDef == null)
+                        {
+                            Debug.Extra(Debug.BlueprintPawnDecoder, "Skill def not found: {0}", skillDefName);
+                            continue;
+                        }
+
+                        // Get the skill record from pawn (should exist, created during pawn generation)
+                        SkillRecord skillRecord = p.skills.GetSkill(skillDef);
+                        if (skillRecord == null)
+                        {
+                            Debug.Extra(Debug.BlueprintPawnDecoder, "Failed to get skill {0} from pawn", skillDefName);
+                            continue;
+                        }
+
+                        // Restore skill level
+                        string levelTxt = skillNode.SelectSingleNode("level")?.InnerText;
+                        if (!string.IsNullOrEmpty(levelTxt) && int.TryParse(levelTxt, out int level))
+                        {
+                            skillRecord.Level = level;
+                        }
+
+                        // Restore XP since last level
+                        string xpTxt = skillNode.SelectSingleNode("xpSinceLastLevel")?.InnerText;
+                        if (!string.IsNullOrEmpty(xpTxt) && float.TryParse(xpTxt, out float xp))
+                        {
+                            skillRecord.xpSinceLastLevel = xp;
+                        }
+
+                        // Restore passion level
+                        string passionTxt = skillNode.SelectSingleNode("passion")?.InnerText;
+                        if (!string.IsNullOrEmpty(passionTxt))
+                        {
+                            try
+                            {
+                                // Try to parse as Passion enum (None, Minor, Major)
+                                if (Enum.TryParse<Passion>(passionTxt, out Passion passion))
+                                {
+                                    skillRecord.passion = passion;
+                                }
+                                else
+                                {
+                                    // Some mods may use different passion names, try to handle them gracefully
+                                    Debug.Extra(Debug.BlueprintPawnDecoder, "Unknown passion level for skill {0}: {1}", skillDefName, passionTxt);
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                Debug.Extra(Debug.BlueprintPawnDecoder, "Failed to parse passion for skill {0}: {1}", skillDefName, ex.Message);
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Debug.Extra(Debug.BlueprintPawnDecoder, "Failed to restore skill: {0}", ex.Message);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.Extra(Debug.BlueprintPawnDecoder, "Failed to restore pawn skills: {0}", ex.Message);
+            }
+        }
+
+        private void RestorePawnBodyAndTraits(XmlNode root, Pawn p)
+        {
+            // Note: RestorePawnStory() already handles body type, hair, and traits restoration
+            // This method is kept for potential future use if additional body/appearance 
+            // properties need to be restored beyond what RestorePawnStory() handles
         }
 
         /// <summary>
@@ -380,6 +603,13 @@ namespace RealRuins
                     }
                 }
 
+                // Validate and fix source body part group reference
+                var sourceBodyPartGroupNode = hediffNode.SelectSingleNode("sourceBodyPartGroup");
+                if (sourceBodyPartGroupNode != null)
+                {
+                    hediffNode.RemoveChild(sourceBodyPartGroupNode);
+                }
+                
                 // Validate nested hediff effects/stages
                 ValidateAndFixNestedHediffs(hediffNode, pawn);
 
