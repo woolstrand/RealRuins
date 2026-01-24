@@ -271,3 +271,6 @@ __pycache__/
 Snapshots/
 HugsLib.xml
 *.dll.config
+
+# Ensure builds are always there
+!1.*/**
