@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,8 +10,10 @@ using UnityEngine;
 using Verse.Noise;
 using System.Reflection.Emit;
 
-namespace RealRuins {
-    public class RealRuins_Mod : Mod {
+namespace RealRuins
+{
+    public class RealRuins_Mod : Mod
+    {
 
 
         public static string Text_NetSettings_Category = "RealRuins_ModOptions_Category";
@@ -77,35 +79,42 @@ namespace RealRuins {
         //<RealRuins_M..Options_([^>]*)>[^<]*<\/([^>]*)>     ===>     public static string Text_Option_$1 = "$2";
 
         public RealRuins_Mod(ModContentPack mcp)
-        : base(mcp) {
+        : base(mcp)
+        {
             Debug.SysLog("Loaded RealRuins_Mod (no HugsLib)");
             LongEventHandler.ExecuteWhenFinished(GetSettings);
         }
 
-        public void GetSettings() {
+        public void GetSettings()
+        {
             GetSettings<RealRuins_ModSettings>();
-            if (RealRuins_ModSettings.defaultScatterOptions == null) {
+            if (RealRuins_ModSettings.defaultScatterOptions == null)
+            {
                 Debug.Warning("Scatter settings is null! setting default");
                 RealRuins_ModSettings.defaultScatterOptions = ScatterOptions.Default;
             }
             //Debug.Message("Settings scatter: {1}", RealRuins_ModSettings.defaultScatterOptions);
         }
 
-        public override void WriteSettings() {
+        public override void WriteSettings()
+        {
             base.WriteSettings();
             SnapshotStoreManager.Instance.CheckCacheContents();
             SnapshotStoreManager.Instance.CheckCacheSizeLimits();
         }
 
-        public override string SettingsCategory() {
+        public override string SettingsCategory()
+        {
             return Text_NetSettings_Category.Translate();
         }
 
-        private void ResetSettings() {
+        private void ResetSettings()
+        {
             RealRuins_ModSettings.Reset();
         }
 
-        private void ReadableLabeledTextInput(Rect rect, String title, ref int value, ref string buffer) {
+        private void ReadableLabeledTextInput(Rect rect, String title, ref int value, ref string buffer)
+        {
             Rect rect2 = rect.LeftHalf().Rounded();
             Rect rect3 = rect.RightPartPixels(100);
             TextAnchor anchor = Text.Anchor;
@@ -115,8 +124,9 @@ namespace RealRuins {
             Widgets.TextFieldNumeric(rect3, ref value, ref buffer);
         }
 
-        public override void DoSettingsWindowContents(Rect rect) {
-            Rect innerRect = new Rect(0, 0, rect.width - 20, 1000);
+        public override void DoSettingsWindowContents(Rect rect)
+        {
+            Rect innerRect = new Rect(0, 0, rect.width - 20, 1600);
 
             Widgets.BeginScrollView(rect, ref scrollPosition, innerRect);
             Rect rect2 = innerRect.TopPartPixels(800).LeftPart(0.45f).Rounded();
@@ -133,11 +143,14 @@ namespace RealRuins {
             left.Label(Text_Option_CurrentCacheSize.Translate() + " " + SnapshotStoreManager.Instance.TotalSize() / (1024 * 1024) + " MB");
             left.Label(Text_Option_CurrentCacheCount.Translate() + " " + SnapshotStoreManager.Instance.StoredSnapshotsCount());
             left.Label(Text_Option_CacheSize.Translate() + "  " + ((int)(RealRuins_ModSettings.diskCacheLimit)).ToString() + " MB", -1f, Text_Option_CacheSizeTooltip.Translate());
-            if (left.ButtonText(Text_Option_DownloadMore.Translate() + " (50)", null)) {//one five-threaded loader to load single subset on 50 blueprints
+            if (left.ButtonText(Text_Option_DownloadMore.Translate() + " (50)", null))
+            {//one five-threaded loader to load single subset on 50 blueprints
                 SnapshotManager.Instance.LoadSomeSnapshots(5);
             }
-            if (left.ButtonText(Text_Option_DownloadMore.Translate() + "(500)", null)) {
-                for (int i = 0; i < 10; i++) {//ten single-threaded loaders to load ten subsets of 50 blueprints
+            if (left.ButtonText(Text_Option_DownloadMore.Translate() + "(500)", null))
+            {
+                for (int i = 0; i < 10; i++)
+                {//ten single-threaded loaders to load ten subsets of 50 blueprints
                     SnapshotManager.Instance.LoadSomeSnapshots();
                 }
             }
@@ -148,10 +161,12 @@ namespace RealRuins {
             left.GapLine();
             int sizeMin = RealRuins_ModSettings.defaultScatterOptions.minRadius;
             int sizeMax = RealRuins_ModSettings.defaultScatterOptions.maxRadius;
-            string costStr = "∞"; if (RealRuins_ModSettings.defaultScatterOptions.itemCostLimit < 1000) {
+            string costStr = "∞"; if (RealRuins_ModSettings.defaultScatterOptions.itemCostLimit < 1000)
+            {
                 costStr = RealRuins_ModSettings.defaultScatterOptions.itemCostLimit.ToString();
             }
-            string wealthCapStr = "∞"; if (RealRuins_ModSettings.ruinsCostCap < 9.9999e8) {
+            string wealthCapStr = "∞"; if (RealRuins_ModSettings.ruinsCostCap < 9.9999e8)
+            {
                 wealthCapStr = RealRuins_ModSettings.ruinsCostCap.ToString();
             }
 
@@ -184,10 +199,12 @@ namespace RealRuins {
             bool result = Widgets.ButtonText(ttrect.RightHalf(), CaravanReformOptions[Math.Min(2, RealRuins_ModSettings.caravanReformType)].Translate());
             left.Gap(30f);
 
-            if (result) {
+            if (result)
+            {
                 List<FloatMenuOption> list = new List<FloatMenuOption>();
-                
-                for (int i = 0; i < 3; i ++) {
+
+                for (int i = 0; i < 3; i++)
+                {
                     string text = CaravanReformOptions[i].Translate();
                     int value = i;
                     FloatMenuOption item = new FloatMenuOption(text, delegate
@@ -201,7 +218,8 @@ namespace RealRuins {
             TooltipHandler.TipRegion(ttrect, "RealRuins.CaravanReformTooltip".Translate());
             left.Gap(4);
 
-            if (left.ButtonText(Text_Option_ResetToDefaults.Translate(), null)) {
+            if (left.ButtonText(Text_Option_ResetToDefaults.Translate(), null))
+            {
                 ResetSettings();
             }
             left.End();
@@ -212,12 +230,14 @@ namespace RealRuins {
             right.CheckboxLabeled(Text_Option_AllowUploads.Translate(), ref RealRuins_ModSettings.allowUploads, Text_Option_AllowUploadsTooltip.Translate());
             right.Gap(25f);
             RealRuins_ModSettings.diskCacheLimit = right.Slider(RealRuins_ModSettings.diskCacheLimit, 20.0f, 2048.0f);
-            if (right.ButtonText(Text_Option_RemoveAll.Translate(), null)) {
+            if (right.ButtonText(Text_Option_RemoveAll.Translate(), null))
+            {
                 SnapshotStoreManager.Instance.ClearCache();
             }
             right.Gap(58);
 
-            if (RealRuins_ModSettings.defaultScatterOptions.minRadius > RealRuins_ModSettings.defaultScatterOptions.maxRadius) {
+            if (RealRuins_ModSettings.defaultScatterOptions.minRadius > RealRuins_ModSettings.defaultScatterOptions.maxRadius)
+            {
                 RealRuins_ModSettings.defaultScatterOptions.minRadius = RealRuins_ModSettings.defaultScatterOptions.maxRadius;
             }
 
@@ -243,13 +263,16 @@ namespace RealRuins {
             Widgets.Label(ggrect.LeftHalf().ContractedBy(0, 5), "RealRuins.LogLevel".Translate());
             bool eresult = Widgets.ButtonText(ggrect.RightHalf(), LogLevelOptions[Math.Min(2, RealRuins_ModSettings.logLevel)].Translate());
             right.Gap(30f);
-            if (eresult) {
+            if (eresult)
+            {
                 List<FloatMenuOption> list = new List<FloatMenuOption>();
 
-                for (int i = 0; i < 3; i++) {
+                for (int i = 0; i < 3; i++)
+                {
                     string text = LogLevelOptions[i].Translate();
                     int value = i;
-                    FloatMenuOption item = new FloatMenuOption(text, delegate {
+                    FloatMenuOption item = new FloatMenuOption(text, delegate
+                    {
                         RealRuins_ModSettings.logLevel = value;
                     });
                     list.Add(item);
@@ -275,11 +298,34 @@ namespace RealRuins {
             string sliderLabel = "RealRuins.PlanetarySettings.AbandonedPercentage".Translate() + ": " + ((int)RealRuins_ModSettings.planetaryRuinsOptions.abandonedLocations).ToString() + "%";
             RealRuins_ModSettings.planetaryRuinsOptions.abandonedLocations = bottom.SliderLabeled(sliderLabel, RealRuins_ModSettings.planetaryRuinsOptions.abandonedLocations, 0.0f, 100.0f);
 
-            if (bottom.ButtonText("RealRuins.MapsModuleButton".Translate(), null)) {
+            if (bottom.ButtonText("RealRuins.MapsModuleButton".Translate(), null))
+            {
                 Page_PlanetaryRuinsLoader page = new Page_PlanetaryRuinsLoader();
                 //Find.WindowStack.TryRemove(typeof(HugsLib.Settings.Dialog_ModSettings));
 
                 Find.WindowStack.Add(page);
+            }
+
+
+            // Debug section (only visible in dev mode)
+            if (Prefs.DevMode)
+            {
+                bottom.Gap(15f);
+                bottom.Label("RealRuins.DebugSettings.Caption".Translate());
+                bottom.GapLine();
+                bottom.CheckboxLabeled("RealRuins.DebugSettings.KeepSnapshotsAfterUpload".Translate(), ref RealRuins_ModSettings.debugKeepSnapshotsAfterUpload, "RealRuins.DebugSettings.KeepSnapshotsAfterUploadTooltip".Translate());
+                if (bottom.ButtonText("RealRuins.DebugSettings.ManualUpload".Translate(), "RealRuins.DebugSettings.ManualUploadTooltip".Translate()))
+                {
+                    if (Find.CurrentMap != null)
+                    {
+                        SnapshotManager.Instance.UploadCurrentMapSnapshot();
+                        Messages.Message("RealRuins.DebugSettings.UploadTriggered".Translate(), MessageTypeDefOf.NeutralEvent);
+                    }
+                    else
+                    {
+                        Messages.Message("RealRuins.DebugSettings.NoMap".Translate(), MessageTypeDefOf.RejectInput);
+                    }
+                }
             }
 
             bottom.End();

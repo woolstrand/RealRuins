@@ -39,8 +39,14 @@ namespace RealRuins {
                     if (items == null) continue;
 
                     foreach (ItemTile item in items) {
-                        if (item.defName == "Corpse") continue; //TODO: make some better way of handling corpses
-                        //We can't move further with corpse item, because this item's thingDef is always null (actual corpse's def name depends on it's kind)
+                        // Handle corpses specially - they don't have a standard ThingDef, but we can process them if they have inner items
+                        if (item.defName.ToLower() == "corpse") {
+                            // Check if corpse has a pawn inside; if not, remove it
+                            if ((item.innerItems?.Count() ?? 0) == 0 && item.itemXml == null) {
+                                itemsToRemove.Add(item);
+                            }
+                            continue; // Skip the standard thingDef lookup for corpses
+                        }
 
                         ThingDef thingDef = DefDatabase<ThingDef>.GetNamed(item.defName, false);
 

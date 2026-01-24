@@ -149,7 +149,7 @@ namespace RealRuins {
                                     tile.defName = ThingDefOf.Wall.defName;
                                     tile.location = new IntVec3(x, 0, z);
                                     blueprint.itemsMap[x, z].Add(tile); //now it's a wall
-                                } else if (tile.defName == "Corpse") {
+                                } else if (tile.defName.ToLower() == "corpse") {
                                     tile.location = new IntVec3(x, 0, z);
                                     blueprint.itemsMap[x, z].Add(tile); // corpse is ok
                                 }
@@ -158,7 +158,9 @@ namespace RealRuins {
                         } else if (cellElement.Name.Equals("roof")) {
                             blueprint.roofMap[x, z] = true;
                         }
-                    } catch (Exception) {
+                    } catch (Exception e) {
+                        Debug.Log(Debug.BlueprintTransfer, "Could not load cell element {0} at {1}, {2} because of {3}",
+                            cellElement.Name, x, z, e);
                         //ignore invalid or unloadable cells
                     }
                 }
