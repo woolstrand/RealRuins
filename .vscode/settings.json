@@ -1,0 +1,19 @@
+{
+    "dotnet.defaultSolutionOrFolder": "Real_Ruins.sln",
+    "omnisharp.enableRoslynAnalyzers": true,
+    "omnisharp.enableEditorConfigSupport": true,
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "ms-dotnettools.csharp",
+    "[csharp]": {
+        "editor.defaultFormatter": "ms-dotnettools.csharp",
+        "editor.formatOnSave": true,
+        "editor.formatOnPaste": true
+    },
+    "files.exclude": {
+        "**/.git": true,
+        "**/.vscode": false,
+        "**/bin": true,
+        "**/obj": true,
+        ".vs": true
+    }
+}

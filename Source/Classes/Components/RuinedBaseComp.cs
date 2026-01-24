@@ -30,6 +30,11 @@ namespace RealRuins {
         public float raidersActivity = -1; //battle points amount of starting raiders group
         private bool ShouldRemoveWorldObjectNow => state == RuinedBaseState.ScavengedCompletely && !base.ParentHasMap;
         public bool isActive => state != RuinedBaseState.Inactive;
+        // Signal tags for quest completion. Can be null/empty in these cases:
+        // 1. World object created via IncidentWorker_RuinsFound (not quest-based) - starts as null
+        // 2. After save/load if signals weren't saved - becomes empty string "" due to Scribe_Values.Look default
+        // 3. If QuestGenUtility.HardcodedSignalWithQuestID returns null/empty (unlikely)
+        // Empty/null signals can match Lords with null/empty inSignalLeave tags, causing unintended "are leaving" messages
         public string expireSignal = null;
         public string successSignal = null;
         private float baseSmallRaidChance = 0.05f;
@@ -121,8 +126,12 @@ namespace RealRuins {
             base.CompTick();
             if (ShouldRemoveWorldObjectNow) {
                 var signalTag = expireSignal;
-                Debug.Log("Quest", "Sending expiration signal: {0}", signalTag);
-                Find.SignalManager.SendSignal(new Signal(signalTag));
+                // Only send signal if it's not null or empty to avoid triggering unintended Lord jobs
+                // Signals are global and can match Lords from other quests/raids, causing "are leaving" messages
+                if (!signalTag.NullOrEmpty()) {
+                    Debug.Log("Quest", "Sending expiration signal: {0}", signalTag);
+                    Find.SignalManager.SendSignal(new Signal(signalTag));
+                }
                 Find.WorldObjects.Remove(parent);
             }
 
