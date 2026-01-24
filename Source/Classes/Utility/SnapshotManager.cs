@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -221,7 +221,11 @@ namespace RealRuins {
                     Debug.Log(Debug.Store, "Uploading file {0}", tmpFilename);
                     APIService service = new APIService();
                     service.UploadMap(tmpFilename, delegate (bool success) {
-                        File.Delete(tmpFilename);
+                        if (!RealRuins_ModSettings.debugKeepSnapshotsAfterUpload) {
+                            File.Delete(tmpFilename);
+                        } else {
+                            Debug.Log(Debug.Store, "[DEBUG] Keeping snapshot file: {0}", tmpFilename);
+                        }
                         completion?.Invoke(success);
                     });
                 }

@@ -11,10 +11,9 @@ DecompiledSources/
 DecompiledResources/
 !DecompiledResources/README.md
 
-# include mod itself
-!*/RealRuins.dll
-!1.1/Assemblies/0Harmony.dll
-!Assemblies/0Harmony.dll
+# Include RealRuins.dll and 0Harmony.dll in all folders (recursively)
+!**/RealRuins.dll
+!**/0Harmony.dll
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs

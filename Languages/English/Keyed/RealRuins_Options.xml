@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
+<?xml version="1.0" encoding="utf-8" ?>
 <LanguageData>
   <RealRuins_ModOptions_Category>Real Ruins</RealRuins_ModOptions_Category>
   <RealRuins_ModOptions_AllowDownloads>Allow downloading ruins from database</RealRuins_ModOptions_AllowDownloads>
@@ -231,4 +231,13 @@
   <RealRuins.LogLevel.All>Log everything</RealRuins.LogLevel.All>
   <RealRuins.LogLevel.Warnings>Warnings and errors</RealRuins.LogLevel.Warnings>
   <RealRuins.LogLevel.Errors>Errors only</RealRuins.LogLevel.Errors>
+
+  <!-- Debug settings (dev mode only) -->
+  <RealRuins.DebugSettings.Caption>Debug Settings</RealRuins.DebugSettings.Caption>
+  <RealRuins.DebugSettings.KeepSnapshotsAfterUpload>Keep snapshot files after upload</RealRuins.DebugSettings.KeepSnapshotsAfterUpload>
+  <RealRuins.DebugSettings.KeepSnapshotsAfterUploadTooltip>When enabled, snapshot files will be kept in the temp directory after uploading instead of being deleted. Useful for debugging upload issues.</RealRuins.DebugSettings.KeepSnapshotsAfterUploadTooltip>
+  <RealRuins.DebugSettings.ManualUpload>Manually trigger blueprint capture</RealRuins.DebugSettings.ManualUpload>
+  <RealRuins.DebugSettings.ManualUploadTooltip>Manually trigger a blueprint capture and upload of the current map. Useful for testing upload functionality.</RealRuins.DebugSettings.ManualUploadTooltip>
+  <RealRuins.DebugSettings.UploadTriggered>Blueprint capture triggered. Check logs for details.</RealRuins.DebugSettings.UploadTriggered>
+  <RealRuins.DebugSettings.NoMap>No map available. Please load a game first.</RealRuins.DebugSettings.NoMap>
 </LanguageData>

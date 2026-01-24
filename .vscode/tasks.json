@@ -1,0 +1,90 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Build Debug (1.6)",
+            "type": "shell",
+            "command": "dotnet",
+            "args": [
+                "build",
+                "Source/RealRuins.csproj",
+                "-c",
+                "Debug"
+            ],
+            "problemMatcher": "$msCompile",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "presentation": {
+                "reveal": "always",
+                "panel": "shared"
+            }
+        },
+        {
+            "label": "Build Release (1.5)",
+            "type": "shell",
+            "command": "dotnet",
+            "args": [
+                "build",
+                "Source/RealRuins.csproj",
+                "-c",
+                "Release"
+            ],
+            "problemMatcher": "$msCompile",
+            "group": {
+                "kind": "build"
+            },
+            "presentation": {
+                "reveal": "always",
+                "panel": "shared"
+            }
+        },
+        {
+            "label": "Build and Copy to RimWorld (Debug)",
+            "type": "shell",
+            "command": "cmd",
+            "args": [
+                "/c",
+                "cd Source && dotnet build -c Debug && cd .. && postbuildwin.bat"
+            ],
+            "problemMatcher": "$msCompile",
+            "group": {
+                "kind": "build"
+            },
+            "presentation": {
+                "reveal": "always",
+                "panel": "shared"
+            },
+            "dependsOn": []
+        },
+        {
+            "label": "Copy to RimWorld",
+            "type": "shell",
+            "command": "cmd",
+            "args": [
+                "/c",
+                "postbuildwin.bat"
+            ],
+            "problemMatcher": [],
+            "presentation": {
+                "reveal": "always",
+                "panel": "shared"
+            }
+        },
+        {
+            "label": "Clean Build",
+            "type": "shell",
+            "command": "dotnet",
+            "args": [
+                "clean",
+                "Source/RealRuins.csproj"
+            ],
+            "problemMatcher": "$msCompile",
+            "presentation": {
+                "reveal": "always",
+                "panel": "shared"
+            }
+        }
+    ]
+}
