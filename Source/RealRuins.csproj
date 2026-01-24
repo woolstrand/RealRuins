@@ -93,17 +93,14 @@
     <Reference Include="UnityEngine.UnityWebRequestWWWModule">
       <HintPath>..\..\..\..\rr_support\UnityEngine.UnityWebRequestWWWModule.dll</HintPath>
     </Reference>
-    <Reference Include="SRTS">
-      <HintPath>..\..\..\..\rr_support\mods\SRTS.dll</HintPath>
-    </Reference>
     <Reference Include="0Harmony">
-      <HintPath>..\..\..\Library\Application Support\Steam\steamapps\workshop\content\294100\2009463077\Current\Assemblies\0Harmony.dll</HintPath>
+      <HintPath>..\DLL_Cache\0Harmony.dll</HintPath>
     </Reference>
     <Reference Include="HarmonyMod">
-      <HintPath>..\..\..\Library\Application Support\Steam\steamapps\workshop\content\294100\2009463077\Current\Assemblies\HarmonyMod.dll</HintPath>
+      <HintPath>..\DLL_Cache\HarmonyMod.dll</HintPath>
     </Reference>
     <Reference Include="SRTS">
-      <HintPath>..\..\..\Library\Application Support\Steam\steamapps\workshop\content\294100\1845423808\Assemblies\SRTS.dll</HintPath>
+      <HintPath>..\DLL_Cache\SRTS.dll</HintPath>
     </Reference>
     <Reference Include="Unity.TextMeshPro">
       <HintPath>..\DLL_Cache\Unity.TextMeshPro.dll</HintPath>
@@ -134,7 +131,6 @@
   <ItemGroup>
     <Compile Include="Classes\Components\FormCaravanFromRuinsComp.cs" />
     <Compile Include="Classes\Components\WorldObjectCompProperties_FormCaravanFromRuins.cs" />
-    <Compile Include="Classes\Debug.cs" />
     <Compile Include="Classes\DynamicMapObjects\BlueprintAnalyzer.cs" />
     <Compile Include="Classes\DynamicMapObjects\CaravanArrivalAction_VisitRealRuinsPOI.cs" />
     <Compile Include="Classes\DynamicMapObjects\DefenderForcesGenerator\CitizenForcesGeneration.cs" />
@@ -162,10 +158,12 @@
     <Compile Include="Classes\Scattering\Internal\BlueprintPreprocessor.cs" />
     <Compile Include="Classes\Scattering\Constants.cs" />
     <Compile Include="Classes\Scattering\Internal\Art.cs" />
+    <Compile Include="Classes\Scattering\Internal\BakedLogEntry.cs" />
     <Compile Include="Classes\Scattering\Internal\Blueprint.cs" />
     <Compile Include="Classes\Scattering\Internal\BlueprintFinder.cs" />
     <Compile Include="Classes\Scattering\Internal\BlueprintLoader.cs" />
     <Compile Include="Classes\Scattering\Internal\BlueprintTransferUtility.cs" />
+    <Compile Include="Classes\Scattering\Internal\PawnRestoreUtility.cs" />
     <Compile Include="Classes\Scattering\Internal\CoverageMap.cs" />
     <Compile Include="Classes\Scattering\Internal\DefenderForcesGenerator\AnimalInhabitantsForcesGenerator.cs" />
     <Compile Include="Classes\Scattering\Internal\DefenderForcesGenerator\BattleRoyaleForcesGenerator.cs" />
@@ -183,6 +181,9 @@
     <Compile Include="Classes\Thoughts\ThoughtWorker_ScavengingRuins.cs" />
     <Compile Include="Classes\Triggers\RaidTrigger.cs" />
     <Compile Include="Classes\Triggers\TrippingTrigger.cs" />
+    <Compile Include="Classes\Utility\Debug\Debug.cs" />
+    <Compile Include="Classes\Utility\Debug\DebugActionsRealRuins.cs" />
+    <Compile Include="Classes\Utility\Debug\RealRuinsDebugUtils.cs" />
     <Compile Include="Classes\Utility\APIService.cs" />
     <Compile Include="Classes\Utility\Compressor.cs" />
     <Compile Include="Classes\Utility\Extensions.cs" />
@@ -220,7 +221,7 @@
   </PropertyGroup>
   <PropertyGroup>
     <StartAction>Program</StartAction>
-    <StartProgram>$(SolutionDir)..\..\RimWorldWin.exe</StartProgram>
+    <StartProgram>F:\SteamLibrary\steamapps\common\RimWorld\RimWorldWin64.exe</StartProgram>
   </PropertyGroup>
   <PropertyGroup>
     <PostBuildEvent>

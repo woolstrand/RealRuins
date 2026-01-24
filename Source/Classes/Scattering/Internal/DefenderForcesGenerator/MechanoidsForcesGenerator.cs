@@ -29,8 +29,6 @@ namespace RealRuins {
                 return; //interrupt if there are no closed cells available
             }*/
 
-            PawnKindDef pawnKindDef = null;
-
             if (powerMax == 0) {
                 powerMax = rect.Area / 30.0f;
             }

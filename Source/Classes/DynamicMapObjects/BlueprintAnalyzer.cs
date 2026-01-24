@@ -55,8 +55,6 @@ namespace RealRuins {
         private float militaryFeatures;
         public float militaryPower;
         public int mannableCount;
-        public int approximateDisplayValue;
-        public List<string> randomMostValueableItemDefNames;
 
         public BlueprintAnalyzerResult result { get; private set; }
         public bool shouldSuppressLogging = true;
@@ -190,7 +188,6 @@ namespace RealRuins {
 
         private POIType supposedType() {
             float prodScore = 0;
-            float researchScore = 0;
 
             militaryFeatures = 0;
             militaryPower = 0;
