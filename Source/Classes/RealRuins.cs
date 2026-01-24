@@ -9,7 +9,6 @@ using Verse;
 using RimWorld;
 using UnityEngine;
 using RimWorld.Planet;
-using HugsLib;
 using RimWorld.BaseGen;
 
 using SRTS;
@@ -17,9 +16,9 @@ using SRTS;
 namespace RealRuins
 {
     [StaticConstructorOnStartup]
-    class RealRuins : ModBase {
+    class RealRuins {
 
-        public override string ModIdentifier => "RealRuins";
+        public string ModIdentifier => "RealRuins";
 
         public static string SingleFileName = null;
         //public static string SingleFileName = "C:/Users/dieworld/AppData/LocalLow/Ludeon Studios/RimWorld by Ludeon Studios\\RealRuins\\9900A83A-1DFA-433F-8441-E4E22077059C.bp";

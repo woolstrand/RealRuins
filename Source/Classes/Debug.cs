@@ -80,14 +80,14 @@ namespace RealRuins {
             }
 
             string message = "[RealRuins][" + part + "]: " + string.Format(format, safeArgs);
-            Verse.Log.Message(message, true);
+            Verse.Log.Message(message);
         }
 
         public static void PrintIntMap(int[,] map, string charMap = "#._23456789ABCDEFGHIJKLMNOPQRSTU", int delta = 0) {
 
             if (!active) return;
 
-            string output = "============== INT MAP ============= \r\n";
+            string output = "============= INT MAP ============ \r\n";
 
             for (int i = 0; i < map.GetLength(0); i++) {
                 for (int j = 0; j < map.GetLength(1); j++) {
@@ -102,7 +102,7 @@ namespace RealRuins {
                 output += "\r\n";
             }
 
-            Verse.Log.Message(output, true);
+            Verse.Log.Message(output);
         }
 
         public static void PrintBoolMap(bool[,] map) {
@@ -119,7 +119,7 @@ namespace RealRuins {
                 output += "\r\n";
             }
 
-            Verse.Log.Message(output, true);
+            Verse.Log.Message(output);
         }
 
         public static void PrintNormalizedFloatMap(float[,] map, string charMap = " .,oO8") {
@@ -143,7 +143,7 @@ namespace RealRuins {
                 output += "\r\n";
             }
 
-            Verse.Log.Message(output, true);
+            Verse.Log.Message(output);
         }
 
         public static void PrintArray(object[] list) {

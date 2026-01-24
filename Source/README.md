@@ -14,3 +14,10 @@ speed > memory.
 ## To Do
 
 ## Done
+
+## Updating instructions
+1. Add supported version to About.xml
+2. Add new folder for new version
+3. Mention this folder in LoadFolders.xml
+4. Update project settings to the new output folder for new version
+5. Update postbuild.sh to copy from new output folder as well

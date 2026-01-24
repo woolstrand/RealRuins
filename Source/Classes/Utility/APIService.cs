@@ -9,9 +9,9 @@ using SimpleJSON;
 using UnityEngine;
 using UnityEngine.Networking;
 
-using HugsLib;
 using System.Net;
 using System.IO;
+using System.Collections;
 
 namespace RealRuins {
     class APIService {
@@ -25,43 +25,31 @@ namespace RealRuins {
         private const string MapUploadPath = "maps";
 
 
-        //local copy of hugslib method.
-        //hugslib original method always returns string response, which renders it unusable for downloading binary data.
         public static void AwaitUnityDataWebResponse(UnityWebRequest request, Action<byte[]> onSuccess, Action<Exception> onFailure, HttpStatusCode successStatus = HttpStatusCode.OK, float timeout = 30f) {
-            request.Send();
-            float timeoutTime = Time.unscaledTime + timeout;
-            Action pollingAction = null;
-            pollingAction = delegate {
-                bool flag = Time.unscaledTime > timeoutTime;
-                try {
-                    if (!request.isDone && !flag) {
-                        HugsLibController.Instance.DoLater.DoNextUpdate(pollingAction);
-                    } else {
-                        if (flag) {
-                            if (!request.isDone) {
-                                request.Abort();
-                            }
-                            throw new Exception("timed out");
-                        }
-                        if (request.isHttpError || request.isNetworkError) {
-                            throw new Exception(request.error);
-                        }
-                        HttpStatusCode httpStatusCode = (HttpStatusCode)request.responseCode;
-                        if (httpStatusCode != successStatus) {
-                            throw new Exception($"{request.url} replied with {httpStatusCode}: {request.downloadHandler.text}");
-                        }
-                        onSuccess?.Invoke(request.downloadHandler.data);
-                    }
-                } catch (Exception ex) {
-                    if (onFailure != null) {
-                        onFailure(ex);
-                    }
-                }
-            };
-            pollingAction();
+            CoroutineManager.Instance.RunCoroutine(AwaitResponseCoroutine(request, onSuccess, onFailure, successStatus, timeout));
         }
 
+        private static IEnumerator AwaitResponseCoroutine(UnityWebRequest request, Action<byte[]> onSuccess, Action<Exception> onFailure, HttpStatusCode successStatus, float timeout) {
+            request.SendWebRequest();
+            float timeoutTime = Time.unscaledTime + timeout;
 
+            while (!request.isDone && Time.unscaledTime < timeoutTime) {
+                yield return null;  // Wait until next frame
+            }
+
+            if (request.isDone) {
+                if (request.isHttpError || request.isNetworkError) {
+                    onFailure?.Invoke(new Exception(request.error));
+                } else if ((HttpStatusCode)request.responseCode != successStatus) {
+                    onFailure?.Invoke(new Exception($"{request.url} replied with {(HttpStatusCode)request.responseCode}: {request.downloadHandler.text}"));
+                } else {
+                    onSuccess?.Invoke(request.downloadHandler.data);
+                }
+            } else {
+                request.Abort();
+                onFailure?.Invoke(new Exception("Request timed out"));
+            }
+        }
 
         public void LoadRandomMapsList(Action<bool, List<string>> completionHandler) {
             LoadRandomMapsList(50, completionHandler);

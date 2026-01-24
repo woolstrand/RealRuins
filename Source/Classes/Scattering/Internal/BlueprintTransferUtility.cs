@@ -234,7 +234,7 @@ namespace RealRuins {
                             try {
                                 Hediff hediff = ScribeExtractor.SaveableFromNode<Hediff>(hediffNode, null);
                                 if (hediff != null) {
-                                    if (hediff.source != null && hediff.Part != null) {
+                                    if (hediff.sourceDef != null && hediff.Part != null) {
                                         p.health.AddHediff(hediff);
                                     }
                                 }
