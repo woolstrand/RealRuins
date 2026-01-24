@@ -74,7 +74,6 @@ namespace RealRuins
         private Vector2 scrollPosition = new Vector2(0, 0);
         private string buf1 = "";
         private string buf2 = "";
-        private string debugTileIdBuffer = "";
 
         // fast regex from xml:
         //<RealRuins_M..Options_([^>]*)>[^<]*<\/([^>]*)>     ===>     public static string Text_Option_$1 = "$2";
@@ -325,21 +324,6 @@ namespace RealRuins
                     else
                     {
                         Messages.Message("RealRuins.DebugSettings.NoMap".Translate(), MessageTypeDefOf.RejectInput);
-                    }
-                }
-                bottom.Gap(15f);
-                Rect tileSelectRect = bottom.GetRect(30f);
-                Widgets.Label(tileSelectRect.LeftHalf().ContractedBy(0, 5), "RealRuins.DebugSettings.FocusTile".Translate());
-                Widgets.TextFieldNumeric(tileSelectRect.RightHalf().LeftPartPixels(100), ref RealRuins_ModSettings.debugTileFocusId, ref debugTileIdBuffer);
-                if (bottom.ButtonText("RealRuins.DebugSettings.FocusTileButton".Translate(), "RealRuins.DebugSettings.FocusTileButtonTooltip".Translate()))
-                {
-                    if (RealRuins_ModSettings.debugTileFocusId >= 0)
-                    {
-                        RealRuinsDebugUtils.FocusTile(RealRuins_ModSettings.debugTileFocusId);
-                    }
-                    else
-                    {
-                        Messages.Message("RealRuins.DebugSettings.InvalidTileId".Translate(), MessageTypeDefOf.RejectInput);
                     }
                 }
             }

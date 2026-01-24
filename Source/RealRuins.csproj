@@ -131,7 +131,6 @@
   <ItemGroup>
     <Compile Include="Classes\Components\FormCaravanFromRuinsComp.cs" />
     <Compile Include="Classes\Components\WorldObjectCompProperties_FormCaravanFromRuins.cs" />
-    <Compile Include="Classes\Debug.cs" />
     <Compile Include="Classes\DynamicMapObjects\BlueprintAnalyzer.cs" />
     <Compile Include="Classes\DynamicMapObjects\CaravanArrivalAction_VisitRealRuinsPOI.cs" />
     <Compile Include="Classes\DynamicMapObjects\DefenderForcesGenerator\CitizenForcesGeneration.cs" />
@@ -182,6 +181,9 @@
     <Compile Include="Classes\Thoughts\ThoughtWorker_ScavengingRuins.cs" />
     <Compile Include="Classes\Triggers\RaidTrigger.cs" />
     <Compile Include="Classes\Triggers\TrippingTrigger.cs" />
+    <Compile Include="Classes\Utility\Debug\Debug.cs" />
+    <Compile Include="Classes\Utility\Debug\DebugActionsRealRuins.cs" />
+    <Compile Include="Classes\Utility\Debug\RealRuinsDebugUtils.cs" />
     <Compile Include="Classes\Utility\APIService.cs" />
     <Compile Include="Classes\Utility\Compressor.cs" />
     <Compile Include="Classes\Utility\Extensions.cs" />
@@ -202,7 +204,6 @@
     <Compile Include="Classes\Utility\CoroutineManager.cs" />
     <Compile Include="Classes\Utility\RealRuins_StartupHook.cs" />
     <Compile Include="Classes\Utility\FactionSelector.cs" />
-    <Compile Include="Classes\Utility\RealRuinsDebugUtils.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="MapGenerators_RealRuins.xml" />

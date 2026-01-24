@@ -87,7 +87,7 @@ namespace RealRuins
                     return false;
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return false;
             }
