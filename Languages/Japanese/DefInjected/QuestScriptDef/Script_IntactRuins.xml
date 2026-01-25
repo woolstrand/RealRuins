@@ -1,0 +1,40 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<LanguageData>
+
+  <RealRuins_AbandonedBase.questNameRules.rulesStrings>
+    <li>questName->[abandoned][base]</li>
+    <li>questName->[intact][ruins]</li>
+    <li>abandoned->放棄された</li>
+    <li>abandoned->破壊された</li>
+    <li>abandoned->封印された</li>
+    <li>base->拠点</li>
+    <li>base->前哨基地</li>
+    <li>base->複合施設</li>
+    <li>base->都市</li>
+    <li>base->工場</li>
+    <li>intact->手つかずの</li>
+    <li>intact->無傷の</li>
+    <li>intact->手つかずの</li>
+    <li>ruins->廃墟</li>
+  </RealRuins_AbandonedBase.questNameRules.rulesStrings>
+
+  <RealRuins_AbandonedBase.questDescriptionRules.rulesStrings>
+    <li>questDescription->[source].建物は非常に古く,空っぽのようですが,扉は封印されており,備品や機械類はすべて内部に残っています.噂は瞬く間に広まり,近隣の集落は既にこの遺跡に眠る財宝を巡り,戦闘態勢を整えています.財宝は莫大なものになる可能性があり,これまでのように慎重にバランスを取った戦闘ではなく,真の大虐殺を覚悟してください.時間に猶予はありません:既に誰かが[stealing]のが見えます.遺跡は長くは持ちません.</li>
+    <li>source->斥候たちは古代の建物群を発見しました</li>
+    <li>source->商人から古代の建物群を発見したと噂を聞きました</li>
+    <li>source->近くの山で発生した大きな爆発の後で,古代の建築物が姿を現しました</li>
+    <li>stealing->すべての部屋の金色の床タイルを剥がしている</li>
+    <li>stealing->先進コンポーネントを山ほど運んでいる</li>
+    <li>stealing->ポッドランチャーにワノメトリック発電器を載せている</li>
+    <li>stealing->反物質弾頭を奪取しようとしている</li>
+  </RealRuins_AbandonedBase.questDescriptionRules.rulesStrings>
+
+  <RealRuins_AbandonedBase.root.nodes.FindBlueprint.storeAs.slateRef>遺跡名</RealRuins_AbandonedBase.root.nodes.FindBlueprint.storeAs.slateRef>
+  <RealRuins_AbandonedBase.root.nodes.FindBlueprint.storeCostAs.slateRef>遺跡のキャッシュコスト</RealRuins_AbandonedBase.root.nodes.FindBlueprint.storeCostAs.slateRef>
+  <RealRuins_AbandonedBase.root.nodes.GenerateRuinsObject.storeAs.slateRef>遺跡</RealRuins_AbandonedBase.root.nodes.GenerateRuinsObject.storeAs.slateRef>
+
+  <RealRuins_AbandonedBase.root.nodes.ruinsScavenged.node.nodes.Letter.label.slateRef>クエスト期限切れ：[resolvedQuestName]</RealRuins_AbandonedBase.root.nodes.ruinsScavenged.node.nodes.Letter.label.slateRef>
+  <RealRuins_AbandonedBase.root.nodes.ruinsScavenged.node.nodes.Letter.text.slateRef>発見された遺跡の場所は略奪され,物資が回収されました.クエスト[resolvedQuestName]は期限切れです.</RealRuins_AbandonedBase.root.nodes.ruinsScavenged.node.nodes.Letter.text.slateRef>
+
+
+</LanguageData>

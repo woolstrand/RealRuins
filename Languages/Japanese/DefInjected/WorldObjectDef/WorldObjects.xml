@@ -4,8 +4,14 @@
   <AbandonedBase.label>放棄拠点</AbandonedBase.label>
   <AbandonedBase.description>放棄された拠点</AbandonedBase.description>
 
+  <AbandonedSettlement.label>放棄拠点</AbandonedSettlement.label>
+  <AbandonedSettlement.description>放棄された拠点</AbandonedSettlement.description>
+
   <RealRuinsPOI.label>集合建築物</RealRuinsPOI.label>
   <RealRuinsPOI.description>調査に値する集合した多くの建築物群</RealRuinsPOI.description>
+
+  <RealRuinsPOI_Unlisted.label>集合建築物</RealRuinsPOI_Unlisted.label>
+  <RealRuinsPOI_Unlisted.description>集合建築物.調査する価値がある.</RealRuinsPOI_Unlisted.description>
 
   <CaravanSmallRuinsWorldObject.label>小さな遺跡</CaravanSmallRuinsWorldObject.label>
   <CaravanSmallRuinsWorldObject.description>近くで発見した小さな遺跡</CaravanSmallRuinsWorldObject.description>

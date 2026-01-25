@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LanguageData>
 
-  <RealRuins_1_2_0.modNameReadable>Real Ruins</RealRuins_1_2_0.modNameReadable>
+  <!-- <RealRuins_1_2_0.modNameReadable>Real Ruins</RealRuins_1_2_0.modNameReadable>
   <RealRuins_1_2_0.content>
 &lt;i&gt;ヒント1：マップの端にある緑色のエリアにポーンを移動すると遺跡イベントマップから出ることが可能です。
 ヒント2：前線基地の廃墟を略奪するなら、マウスの右ボタンを使用してあらゆるものを拾うことができます。キャラバン隊の動物も同じ方法で積み込めます。&lt;/i&gt;
@@ -72,6 +72,6 @@
 Juijote提供による簡体字中国語翻訳を追加しました。\n</RealRuins_2_3_0.content>
 
   <RealRuins_2_4_0.modNameReadable>Real Ruins</RealRuins_2_4_0.modNameReadable>
-  <RealRuins_2_4_0.content>\n|&lt;b&gt;Version1.4と互換性&lt;/b&gt;\n\n1.4ゲームバージョンで動作するようにmodを更新しました。\n</RealRuins_2_4_0.content>
+  <RealRuins_2_4_0.content>\n|&lt;b&gt;Version1.4と互換性&lt;/b&gt;\n\n1.4ゲームバージョンで動作するようにmodを更新しました。\n</RealRuins_2_4_0.content> -->
 
 </LanguageData>
