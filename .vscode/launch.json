@@ -2,45 +2,16 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Launch RimWorld (Debug)",
-            "type": "coreclr",
+            "name": "Build, Copy, and Launch RimWorld",
+            "type": "node",
             "request": "launch",
-            "preLaunchTask": "Build Debug (1.6)",
-            "program": "F:\\SteamLibrary\\steamapps\\common\\RimWorld\\RimWorldWin64.exe",
-            "args": [],
-            "stopAtEntry": false,
-            "console": "integratedTerminal",
-            "cwd": "${workspaceFolder}",
-            "justMyCode": true,
-            "presentation": {
-                "hidden": false,
-                "group": "default",
-                "order": 1
-            }
-        },
-        {
-            "name": "Launch RimWorld (Run without Debugging)",
-            "type": "coreclr",
-            "request": "launch",
-            "preLaunchTask": "Build and Copy to RimWorld (Debug)",
-            "program": "F:\\SteamLibrary\\steamapps\\common\\RimWorld\\RimWorldWin64.exe",
-            "args": [],
-            "stopAtEntry": false,
-            "console": "integratedTerminal",
-            "cwd": "${workspaceFolder}",
-            "justMyCode": true,
-            "noDebug": true,
-            "presentation": {
-                "hidden": false,
-                "group": "default",
-                "order": 2
-            }
-        },
-        {
-            "name": ".NET Core Attach",
-            "type": "coreclr",
-            "request": "attach",
-            "processId": "${command:pickProcess}"
+            "preLaunchTask": "Build, Copy, and Launch RimWorld",
+            "program": "${workspaceFolder}/.vscode/launch-helper.js",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "console": "internalConsole",
+            "internalConsoleOptions": "neverOpen"
         }
     ]
 }

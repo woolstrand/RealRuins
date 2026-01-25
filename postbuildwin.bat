@@ -1,6 +1,9 @@
 @echo off
 setlocal enabledelayedexpansion
 
+REM Change to the directory where this script is located
+cd /d "%~dp0"
+
 REM Define the RimWorld mods folder - uses %USERPROFILE% for cross-user compatibility
 REM Update the path after RimWorld if your Steam library is in a different location
 REM set "MOD_BASE_FOLDER=%USERPROFILE%\Documents\Steam\steamapps\common\RimWorld\Mods\RealRuins"

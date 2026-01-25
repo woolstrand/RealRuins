@@ -88,11 +88,11 @@
     <Reference Include="Assembly-CSharp">
       <HintPath>..\DLL_Cache\Assembly-CSharp.dll</HintPath>
     </Reference>
-    <ItemGroup>
-      <Reference Update="*">
-        <Private>false</Private>
-      </Reference>
-    </ItemGroup>
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Update="*">
+      <Private>false</Private>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Classes\**\*.cs" />
@@ -102,18 +102,34 @@
     <WCFMetadata Include="Connected Services\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <Target Name="PostBuildMac"
-        AfterTargets="Build"
-        Condition="'$(OS)' != 'Windows_NT'">
-    <Exec Command="zsh &quot;$(ProjectDir)..\postbuild.sh&quot;" />
-  </Target>
+  
+  <!-- Post-build: Copy files to RimWorld mod folder -->
+  <!-- For Windows -->
   <Target Name="PostBuildWin"
         AfterTargets="Build"
-        Condition="'$(OS)' == 'Windows_NT'">
-    <Exec Command="&quot;$(ProjectDir)..\postbuildwin.bat&quot;" />
+        Condition="'$(OS)' == 'Windows_NT' Or '$(OS)' == 'Windows'">
+    <Exec Command="call &quot;$(ProjectDir)..\postbuildwin.bat&quot;" 
+          WorkingDirectory="$(ProjectDir).." 
+          IgnoreExitCode="false" />
   </Target>
-  <PropertyGroup>
+  
+  <!-- For Unix-like systems (macOS, Linux) - runs if not Windows -->
+  <Target Name="PostBuildUnix"
+        AfterTargets="Build"
+        Condition="'$(OS)' != 'Windows_NT' And '$(OS)' != 'Windows'">
+    <Exec Command="zsh &quot;$(ProjectDir)..\postbuild.sh&quot;" 
+          WorkingDirectory="$(ProjectDir).." 
+          IgnoreExitCode="false" />
+  </Target>
+  
+  <!-- Platform-specific RimWorld executable paths -->
+  <PropertyGroup Condition="'$(OS)' == 'Windows_NT' Or '$(OS)' == 'Windows'">
     <StartAction>Program</StartAction>
     <StartProgram>F:\SteamLibrary\steamapps\common\RimWorld\RimWorldWin64.exe</StartProgram>
+  </PropertyGroup>
+  
+  <PropertyGroup Condition="'$(OS)' != 'Windows_NT' And '$(OS)' != 'Windows'">
+    <StartAction>Program</StartAction>
+    <StartProgram>$(HOME)/Library/Application Support/Steam/steamapps/common/RimWorld/RimWorldMac.app/Contents/MacOS/RimWorld</StartProgram>
   </PropertyGroup>
 </Project>
