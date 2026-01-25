@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -512,10 +512,15 @@ namespace RealRuins
                         }
 
 
-                        //construct roof evetywhere if we doing complete transfer (ignoring outside: room with index 1).
-                        if (blueprint.roofMap[x, z] == true && options.overwritesEverything && blueprint.wallMap[x, z] != 1)
+                        //construct roof everywhere where it exists in blueprint (for ruins ignoring outside: room with index 1).
+                        if (blueprint.roofMap[x, z] == true && (options.overwritesEverything || blueprint.wallMap[x, z] != 1))
                         {
-                            map.roofGrid.SetRoof(mapLocation, RoofDefOf.RoofConstructed);
+                            // Only set roof if terrain allows it (not over water, etc.)
+                            TerrainDef terrainAtLocation = map.terrainGrid?.TerrainAt(mapLocation);
+                            if (terrainAtLocation != null && !terrainAtLocation.IsWater)
+                            {
+                                map.roofGrid.SetRoof(mapLocation, RoofDefOf.RoofConstructed);
+                            }
                         }
 
 
