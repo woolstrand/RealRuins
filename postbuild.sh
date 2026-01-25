@@ -1,57 +1,20 @@
+#!/bin/bash
+
+# Mod base folder - uses $HOME for cross-user compatibility
+MOD_BASE_FOLDER="$HOME/Library/Application Support/Steam/steamapps/common/RimWorld/RimWorldMac.app/Mods/RealRuins"
 
 # --- common ---
+cp -R ../About "$MOD_BASE_FOLDER"
+cp -R ../LoadFolders.xml "$MOD_BASE_FOLDER/LoadFolders.xml"
+cp -R ../Assemblies "$MOD_BASE_FOLDER"
+cp -R ../Defs "$MOD_BASE_FOLDER"
+cp -R ../Languages "$MOD_BASE_FOLDER"
+cp -R ../Patches "$MOD_BASE_FOLDER"
+cp -R ../Textures "$MOD_BASE_FOLDER"
 
-cp -R ../About /Users/woolstrand/Library/Application\ Support/Steam/steamapps/common/RimWorld/RimWorldMac.app/Mods/RealRuins
-
-cp -R ../LoadFolders.xml /Users/woolstrand/Library/Application\ Support/Steam/steamapps/common/RimWorld/RimWorldMac.app/Mods/RealRuins/LoadFolders.xml
-
-cp -R ../Assemblies /Users/woolstrand/Library/Application\ Support/Steam/steamapps/common/RimWorld/RimWorldMac.app/Mods/RealRuins
-
-cp -R ../Defs /Users/woolstrand/Library/Application\ Support/Steam/steamapps/common/RimWorld/RimWorldMac.app/Mods/RealRuins
-
-cp -R ../Languages /Users/woolstrand/Library/Application\ Support/Steam/steamapps/common/RimWorld/RimWorldMac.app/Mods/RealRuins
-
-cp -R ../Patches /Users/woolstrand/Library/Application\ Support/Steam/steamapps/common/RimWorld/RimWorldMac.app/Mods/RealRuins
-
-cp -R ../Textures /Users/woolstrand/Library/Application\ Support/Steam/steamapps/common/RimWorld/RimWorldMac.app/Mods/RealRuins
-
-# --- 1.1 ---
-
-cp -R ../1.1 /Users/woolstrand/Library/Application\ Support/Steam/steamapps/common/RimWorld/RimWorldMac.app/Mods/RealRuins
-
-# --- 1.4 ---
-
-mkdir -p /Users/woolstrand/Library/Application\ Support/Steam/steamapps/common/RimWorld/RimWorldMac.app/Mods/RealRuins/1.4/Assemblies
-
-rm -f /Users/woolstrand/Library/Application\ Support/Steam/steamapps/common/RimWorld/RimWorldMac.app/Mods/RealRuins/1.4/Assemblies/*.dll
-
-cp -R ../1.4/Assemblies/RealRuins.dll /Users/woolstrand/Library/Application\ Support/Steam/steamapps/common/RimWorld/RimWorldMac.app/Mods/RealRuins/1.4/Assemblies/RealRuins.dll
-
-cp -R ../1.4/Defs /Users/woolstrand/Library/Application\ Support/Steam/steamapps/common/RimWorld/RimWorldMac.app/Mods/RealRuins/1.4
-
-cp -R ../1.4/Patches /Users/woolstrand/Library/Application\ Support/Steam/steamapps/common/RimWorld/RimWorldMac.app/Mods/RealRuins/1.4
-
-# --- 1.5 ---
-
-mkdir -p /Users/woolstrand/Library/Application\ Support/Steam/steamapps/common/RimWorld/RimWorldMac.app/Mods/RealRuins/1.5/Assemblies
-
-rm -f /Users/woolstrand/Library/Application\ Support/Steam/steamapps/common/RimWorld/RimWorldMac.app/Mods/RealRuins/1.5/Assemblies/*.dll
-
-cp -R ../1.5/Assemblies/RealRuins.dll /Users/woolstrand/Library/Application\ Support/Steam/steamapps/common/RimWorld/RimWorldMac.app/Mods/RealRuins/1.5/Assemblies/RealRuins.dll
-
-cp -R ../1.5/Defs /Users/woolstrand/Library/Application\ Support/Steam/steamapps/common/RimWorld/RimWorldMac.app/Mods/RealRuins/1.5
-
-cp -R ../1.5/Patches /Users/woolstrand/Library/Application\ Support/Steam/steamapps/common/RimWorld/RimWorldMac.app/Mods/RealRuins/1.5
-
-# --- 1.6 ---
-
-mkdir -p /Users/woolstrand/Library/Application\ Support/Steam/steamapps/common/RimWorld/RimWorldMac.app/Mods/RealRuins/1.6/Assemblies
-
-rm -f /Users/woolstrand/Library/Application\ Support/Steam/steamapps/common/RimWorld/RimWorldMac.app/Mods/RealRuins/1.6/Assemblies/*.dll
-
-cp -R ../1.6/Assemblies/RealRuins.dll /Users/woolstrand/Library/Application\ Support/Steam/steamapps/common/RimWorld/RimWorldMac.app/Mods/RealRuins/1.6/Assemblies/RealRuins.dll
-
-cp -R ../1.6/Defs /Users/woolstrand/Library/Application\ Support/Steam/steamapps/common/RimWorld/RimWorldMac.app/Mods/RealRuins/1.6
-
-cp -R ../1.6/Patches /Users/woolstrand/Library/Application\ Support/Steam/steamapps/common/RimWorld/RimWorldMac.app/Mods/RealRuins/1.6
-
+# --- versioned folders ---
+cp -R ../1.1 "$MOD_BASE_FOLDER"
+cp -R ../1.3 "$MOD_BASE_FOLDER"
+cp -R ../1.4 "$MOD_BASE_FOLDER"
+cp -R ../1.5 "$MOD_BASE_FOLDER"
+cp -R ../1.6 "$MOD_BASE_FOLDER"
