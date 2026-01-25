@@ -4,12 +4,14 @@
         {
             "label": "Build Debug (1.6)",
             "type": "shell",
-            "command": "dotnet",
+            "command": "msbuild",
             "args": [
-                "build",
                 "Source/RealRuins.csproj",
-                "-c",
-                "Debug"
+                "/p:Configuration=Debug",
+                "/p:Platform=AnyCPU",
+                "/t:Build",
+                "/nologo",
+                "/v:minimal"
             ],
             "problemMatcher": "$msCompile",
             "group": {
@@ -19,17 +21,27 @@
             "presentation": {
                 "reveal": "always",
                 "panel": "shared"
+            },
+            "windows": {
+                "options": {
+                    "shell": {
+                        "executable": "cmd.exe",
+                        "args": ["/d", "/c"]
+                    }
+                }
             }
         },
         {
-            "label": "Build Release (1.5)",
+            "label": "Build Release (1.6)",
             "type": "shell",
-            "command": "dotnet",
+            "command": "msbuild",
             "args": [
-                "build",
                 "Source/RealRuins.csproj",
-                "-c",
-                "Release"
+                "/p:Configuration=Release",
+                "/p:Platform=AnyCPU",
+                "/t:Build",
+                "/nologo",
+                "/v:minimal"
             ],
             "problemMatcher": "$msCompile",
             "group": {
@@ -38,17 +50,22 @@
             "presentation": {
                 "reveal": "always",
                 "panel": "shared"
+            },
+            "windows": {
+                "options": {
+                    "shell": {
+                        "executable": "cmd.exe",
+                        "args": ["/d", "/c"]
+                    }
+                }
             }
         },
         {
             "label": "Build and Copy to RimWorld (Debug)",
+            "dependsOn": "Build Debug (1.6)",
             "type": "shell",
-            "command": "cmd",
-            "args": [
-                "/c",
-                "cd Source && dotnet build -c Debug && cd .. && postbuildwin.bat"
-            ],
-            "problemMatcher": "$msCompile",
+            "command": "zsh postbuild.sh",
+            "problemMatcher": [],
             "group": {
                 "kind": "build"
             },
@@ -56,31 +73,97 @@
                 "reveal": "always",
                 "panel": "shared"
             },
-            "dependsOn": []
+            "windows": {
+                "command": "postbuildwin.bat",
+                "options": {
+                    "shell": {
+                        "executable": "cmd.exe",
+                        "args": ["/d", "/c"]
+                    }
+                }
+            }
         },
         {
             "label": "Copy to RimWorld",
             "type": "shell",
-            "command": "cmd",
-            "args": [
-                "/c",
-                "postbuildwin.bat"
-            ],
+            "command": "zsh postbuild.sh",
             "problemMatcher": [],
             "presentation": {
                 "reveal": "always",
                 "panel": "shared"
+            },
+            "windows": {
+                "command": "postbuildwin.bat",
+                "options": {
+                    "shell": {
+                        "executable": "cmd.exe",
+                        "args": ["/d", "/c"]
+                    }
+                }
             }
         },
         {
             "label": "Clean Build",
             "type": "shell",
-            "command": "dotnet",
+            "command": "msbuild",
             "args": [
-                "clean",
-                "Source/RealRuins.csproj"
+                "Source/RealRuins.csproj",
+                "/t:Clean",
+                "/nologo",
+                "/v:minimal"
             ],
             "problemMatcher": "$msCompile",
+            "presentation": {
+                "reveal": "always",
+                "panel": "shared"
+            },
+            "windows": {
+                "options": {
+                    "shell": {
+                        "executable": "cmd.exe",
+                        "args": ["/d", "/c"]
+                    }
+                }
+            }
+        },
+        {
+            "label": "Launch RimWorld",
+            "type": "shell",
+            "command": "open",
+            "args": [
+                "-a",
+                "${env:HOME}/Library/Application Support/Steam/steamapps/common/RimWorld/RimWorldMac.app"
+            ],
+            "problemMatcher": [],
+            "presentation": {
+                "reveal": "always",
+                "panel": "shared"
+            },
+            "windows": {
+                "command": "cmd",
+                "args": [
+                    "/c",
+                    "start",
+                    "\"\"",
+                    "F:\\SteamLibrary\\steamapps\\common\\RimWorld\\RimWorldWin64.exe"
+                ],
+                "options": {
+                    "shell": {
+                        "executable": "cmd.exe",
+                        "args": ["/d", "/c"]
+                    }
+                }
+            },
+            "isBackground": true
+        },
+        {
+            "label": "Build, Copy, and Launch RimWorld",
+            "dependsOrder": "sequence",
+            "dependsOn": [
+                "Build and Copy to RimWorld (Debug)",
+                "Launch RimWorld"
+            ],
+            "problemMatcher": [],
             "presentation": {
                 "reveal": "always",
                 "panel": "shared"

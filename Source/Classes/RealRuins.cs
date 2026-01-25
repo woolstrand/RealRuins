@@ -11,8 +11,6 @@ using UnityEngine;
 using RimWorld.Planet;
 using RimWorld.BaseGen;
 
-using SRTS;
-
 namespace RealRuins
 {
     [StaticConstructorOnStartup]

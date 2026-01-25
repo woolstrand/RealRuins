@@ -8,8 +8,6 @@ using UnityEngine;
 using RimWorld;
 using Verse;
 
-using SRTS;
-
 namespace RealRuins {
     [StaticConstructorOnStartup]
     class RealRuinsPOIWorldObject : MapParent {
