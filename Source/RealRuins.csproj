@@ -45,11 +45,6 @@
     <LangVersion>7.2</LangVersion>
   </PropertyGroup>
   <ItemGroup>
-    <None Include="app.config" />
-    <None Include="Properties\Settings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
-    </None>
     <None Include="README.md" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -78,9 +73,6 @@
     <Reference Include="HarmonyMod">
       <HintPath>..\DLL_Cache\HarmonyMod.dll</HintPath>
     </Reference>
-    <Reference Include="Unity.TextMeshPro">
-      <HintPath>..\DLL_Cache\Unity.TextMeshPro.dll</HintPath>
-    </Reference>
     <Reference Include="UnityEngine.CoreModule">
       <HintPath>..\DLL_Cache\UnityEngine.CoreModule.dll</HintPath>
     </Reference>
@@ -107,11 +99,6 @@
   <ItemGroup>
     <Compile Include="Classes\**\*.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Properties\Settings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <DependentUpon>Settings.settings</DependentUpon>
-    </Compile>
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Connected Services\" />
