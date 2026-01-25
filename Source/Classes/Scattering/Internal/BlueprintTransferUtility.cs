@@ -90,6 +90,7 @@ namespace RealRuins
                     {
                         Debug.Log(Debug.BlueprintTransfer, "Now need to instantiate corpse at {0}, {1}", x, z);
                         Pawn p = (Pawn)MakeThingFromItemTile(itemTile.innerItems.First(), x: x, z: z,enableLogging: true);
+                        Find.WorldPawns.PassToWorld(p);
                         Corpse corpse = null;
                         if (p.Corpse != null)
                         {
@@ -97,6 +98,11 @@ namespace RealRuins
                         }
                         else
                         {
+                            // Ensure the pawn is marked as dead before creating the corpse
+                            if (p != null && !p.Dead)
+                            {
+                                p.health.SetDead();
+                            }
                             corpse = (Corpse)ThingMaker.MakeThing(p.RaceProps.corpseDef);
                             corpse.InnerPawn = p;
                         }
