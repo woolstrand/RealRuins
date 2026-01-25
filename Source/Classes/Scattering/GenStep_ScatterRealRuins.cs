@@ -103,6 +103,7 @@ namespace RealRuins
                 float distanceToSettlement = 0.0f;
                 float totalDensity = RealRuins_ModSettings.defaultScatterOptions.densityMultiplier;
                 currentOptions = RealRuins_ModSettings.defaultScatterOptions.Copy(); //store as instance variable to keep accessible on subsequent ScatterAt calls
+                currentOptions.doorOwnershipProbability = 0.05f;
 
                 if (RealRuins_ModSettings.defaultScatterOptions.enableProximity) {
                         
@@ -206,6 +207,7 @@ namespace RealRuins
             currentOptions.scavengingMultiplier = 0.1f;
             currentOptions.deteriorationMultiplier = 0.0f;
             currentOptions.hostileChance = 1.0f;
+            currentOptions.doorOwnershipProbability = 0.05f;
 
 
             currentOptions.blueprintFileName = filename;

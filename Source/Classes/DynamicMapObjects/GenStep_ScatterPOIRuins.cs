@@ -81,6 +81,7 @@ namespace RealRuins {
 
 
             currentOptions.blueprintFileName = filename;
+            currentOptions.doorOwnershipProbability = 1.0f;
             currentOptions.costCap = -1;
             currentOptions.startingPartyPoints = -1;
             currentOptions.minimumCostRequired = 0;
@@ -94,6 +95,9 @@ namespace RealRuins {
 
 
             if (poiComp.poiType == (int)POIType.Ruins || faction == null || overrideSpawnAsRuins) {
+                if (faction != null) {
+                    currentOptions.doorOwnershipProbability = 0.0f;
+                }
                 currentOptions.shouldAddFilth = true;
                 currentOptions.forceFullHitPoints = false;
                 currentOptions.enableDeterioration = true;

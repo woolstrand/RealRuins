@@ -158,7 +158,13 @@ namespace RealRuins
 
                     if (thingDef.CanHaveFaction)
                     {
-                        thing.SetFaction(rp.faction);
+                        if (thingDef.IsDoor || thingDef.IsWall) {
+                            if (Rand.Chance(options.doorOwnershipProbability)) {
+                                thing.SetFaction(rp.faction);
+                            } else {
+                                thing.SetFaction(null);
+                            }
+                        }
                     }
 
                     //Check quality and attach art
