@@ -46,11 +46,17 @@ namespace RealRuins
             Scribe_Values.Look(ref debugTileFocusId, "debugTileFocusId", -1, false);
             Scribe_Deep.Look(ref defaultScatterOptions, "defaultScatterOptions");
             Scribe_Deep.Look(ref planetaryRuinsOptions, "planetaryRuinsOptions");
-
-            if (allowInstantCaravanReform == true)
+        
+            if (Scribe.mode == LoadSaveMode.LoadingVars) 
             {
-                allowInstantCaravanReform = false; //migrate settings
-                caravanReformType = 1;
+                if (defaultScatterOptions == null)
+                {
+                    defaultScatterOptions = ScatterOptions.Default;
+                }
+                if (planetaryRuinsOptions == null)
+                {
+                    planetaryRuinsOptions = new PlanetaryRuinsOptions();
+                }
             }
         }
 

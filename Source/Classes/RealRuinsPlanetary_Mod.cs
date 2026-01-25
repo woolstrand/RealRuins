@@ -42,26 +42,4 @@ namespace RealRuins {
             state = PlanetaryRuinsState.spawned;
         }
     }
-
-    /*
-    public class RealRuinsPlanetary_Mod : Mod {
-
-        Page_PlanetaryRuinsLoader embeddedPage;
-
-        public RealRuinsPlanetary_Mod(ModContentPack content)
-        : base(content) {
-        }
-
-        public override string SettingsCategory() {
-            return "RealRuins.PlanetarySettignsCaption".Translate();
-        }
-
-        public override void DoSettingsWindowContents(Rect rect) {
-            if (embeddedPage == null) {
-                embeddedPage = new Page_PlanetaryRuinsLoader();
-            }
-
-            embeddedPage.DoWindowContents(rect, standalone: false);
-        }
-    }*/
 }
