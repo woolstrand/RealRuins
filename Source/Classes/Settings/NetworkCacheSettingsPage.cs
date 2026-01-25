@@ -6,23 +6,30 @@ namespace RealRuins.Settings
 {
     public class NetworkCacheSettingsPage : SettingsPage
     {
-        public override string TabLabel => "RealRuins.CacheSettings.Caption".Translate();
+        public override string TabLabel => "RealRuins.CacheSettings.TabCaption".Translate();
 
         public override void Draw(Rect rect)
         {
             Listing_Standard listing = new Listing_Standard();
-            listing.Begin(rect);
+            
+            float contentWidth = rect.width * 2f / 3f;
+            Rect contentRect = rect;
+            contentRect.width = contentWidth;
+            
+            listing.Begin(contentRect);
 
             GameFont font = Text.Font;
             Text.Font = GameFont.Medium;
             listing.Label("RealRuins.CacheSettings.Caption".Translate());
             Text.Font = font;
+            
+            float descHeight = Text.LineHeight * 3f;
+            Rect descRect = listing.GetRect(descHeight);
+            string description = "RealRuins.CacheSettings.Description".Translate();
+            Widgets.Label(descRect, description);
+            listing.Gap(descHeight - Text.LineHeight);
+            
             listing.GapLine();
-
-            listing.CheckboxLabeled(
-                "RealRuins_ModOptions_OfflineMode".Translate(),
-                ref RealRuins_ModSettings.offlineMode,
-                "RealRuins_ModOptions_OfflineModeTooltip".Translate());
 
             listing.Label(
                 "RealRuins_ModOptions_CurrentCacheSize".Translate() + " " +
@@ -34,9 +41,25 @@ namespace RealRuins.Settings
 
             listing.Label(
                 "RealRuins_ModOptions_CacheSize".Translate() + "  " +
-                ((int)(RealRuins_ModSettings.diskCacheLimit)).ToString() + " MB",
+                (RealRuins_ModSettings.diskCacheLimit < 0 ? "RealRuins_ModOptions_NoLimit".Translate() : ((int)(RealRuins_ModSettings.diskCacheLimit)).ToString() + " MB"),
                 -1f,
                 "RealRuins_ModOptions_CacheSizeTooltip".Translate());
+
+            listing.Gap(10f);
+
+            float sliderValue = listing.Slider(
+                RealRuins_ModSettings.diskCacheLimit,
+                20.0f,
+                4096.0f);
+            
+            if (sliderValue >= 4095.0f)
+            {
+                RealRuins_ModSettings.diskCacheLimit = -1f;
+            }
+            else
+            {
+                RealRuins_ModSettings.diskCacheLimit = sliderValue;
+            }
 
             listing.Gap(15f);
 
@@ -56,6 +79,11 @@ namespace RealRuins.Settings
             listing.Gap(25f);
 
             listing.CheckboxLabeled(
+                "RealRuins_ModOptions_OfflineMode".Translate(),
+                ref RealRuins_ModSettings.offlineMode,
+                "RealRuins_ModOptions_OfflineModeTooltip".Translate());
+
+            listing.CheckboxLabeled(
                 "RealRuins_ModOptions_AllowDownloads".Translate(),
                 ref RealRuins_ModSettings.allowDownloads,
                 "RealRuins_ModOptions_AllowDownloadsTooltip".Translate());
@@ -67,17 +95,18 @@ namespace RealRuins.Settings
 
             listing.Gap(15f);
 
-            RealRuins_ModSettings.diskCacheLimit = listing.Slider(
-                RealRuins_ModSettings.diskCacheLimit,
-                20.0f,
-                2048.0f);
-
-            listing.Gap(10f);
-
-            if (listing.ButtonText("RealRuins_ModOptions_RemoveAll".Translate(), null))
+            Rect buttonRect = listing.GetRect(40f);
+            Color prevColor = GUI.color;
+            GUI.color = new Color(1f, 0.3f, 0.3f);
+            if (Widgets.ButtonText(buttonRect, "RealRuins_ModOptions_RemoveAll".Translate()))
             {
-                SnapshotStoreManager.Instance.ClearCache();
+                Find.WindowStack.Add(Dialog_MessageBox.CreateConfirmation(
+                    "RealRuins_ModOptions_ClearCacheConfirm".Translate(),
+                    () => SnapshotStoreManager.Instance.ClearCache(),
+                    true,
+                    null));
             }
+            GUI.color = prevColor;
 
             listing.End();
         }

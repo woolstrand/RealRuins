@@ -8,17 +8,29 @@ namespace RealRuins.Settings
 {
     public class MapGenerationSettingsPage : SettingsPage
     {
-        public override string TabLabel => "RealRuins.SpawnSettings.Caption".Translate();
+        public override string TabLabel => "RealRuins.SpawnSettings.TabCaption".Translate();
 
         public override void Draw(Rect rect)
         {
             Listing_Standard listing = new Listing_Standard();
-            listing.Begin(rect);
+            
+            float contentWidth = rect.width * 2f / 3f;
+            Rect contentRect = rect;
+            contentRect.width = contentWidth;
+            
+            listing.Begin(contentRect);
 
             GameFont font = Text.Font;
             Text.Font = GameFont.Medium;
             listing.Label("RealRuins.SpawnSettings.Caption".Translate());
             Text.Font = font;
+            
+            float descHeight = Text.LineHeight * 3f;
+            Rect descRect = listing.GetRect(descHeight);
+            string description = "RealRuins.SpawnSettings.Description".Translate();
+            Widgets.Label(descRect, description);
+            listing.Gap(descHeight - Text.LineHeight);
+            
             listing.GapLine();
 
             // Size range info
@@ -32,60 +44,84 @@ namespace RealRuins.Settings
                 costStr = RealRuins_ModSettings.defaultScatterOptions.itemCostLimit.ToString();
             }
 
-            // Display current values as info labels
+            // Density
             listing.Label(
                 "RealRuins_MapOptions_Density".Translate() + ": x" +
                 RealRuins_ModSettings.defaultScatterOptions.densityMultiplier.ToString("F"),
                 -1,
                 "RealRuins_MapOptions_DensityTT".Translate());
 
+            RealRuins_ModSettings.defaultScatterOptions.densityMultiplier =
+                listing.Slider(RealRuins_ModSettings.defaultScatterOptions.densityMultiplier, 0.0f, 20.0f);
+
+            listing.Gap(15);
+
+            // Size min
             listing.Label(
                 label: "RealRuins_MapOptions_Size".Translate() + ": " +
                 RealRuins_ModSettings.defaultScatterOptions.minRadius,
                 maxHeight: -1,
                 tooltip: "RealRuins_MapOptions_SizeTT".Translate());
 
+            RealRuins_ModSettings.defaultScatterOptions.minRadius =
+                (int)listing.Slider(RealRuins_ModSettings.defaultScatterOptions.minRadius, 4.0f, 64.0f);
+
+            // Size max
             listing.Label(
                 label: "RealRuins_MapOptions_Size_Max".Translate() + ": " +
                 RealRuins_ModSettings.defaultScatterOptions.maxRadius,
                 maxHeight: -1,
                 tooltip: "RealRuins_MapOptions_SizeTT".Translate());
 
+            RealRuins_ModSettings.defaultScatterOptions.maxRadius =
+                (int)listing.Slider(RealRuins_ModSettings.defaultScatterOptions.maxRadius, 4.0f, 64.0f);
+
+            if (RealRuins_ModSettings.defaultScatterOptions.minRadius > RealRuins_ModSettings.defaultScatterOptions.maxRadius)
+            {
+                RealRuins_ModSettings.defaultScatterOptions.minRadius = RealRuins_ModSettings.defaultScatterOptions.maxRadius;
+            }
+
             listing.Gap(15);
 
+            // Deterioration
             listing.Label(
                 "RealRuins_MapOptions_Deterioration".Translate() + ": " +
                 RealRuins_ModSettings.defaultScatterOptions.deteriorationMultiplier.ToString("F"),
                 -1,
                 "RealRuins_MapOptions_DeteriorationTT".Translate());
 
+            RealRuins_ModSettings.defaultScatterOptions.deteriorationMultiplier =
+                listing.Slider(RealRuins_ModSettings.defaultScatterOptions.deteriorationMultiplier, 0.0f, 1.0f);
+
+            // Scavengers
             listing.Label(
                 "RealRuins_MapOptions_Scavengers".Translate() + ": " +
                 RealRuins_ModSettings.defaultScatterOptions.scavengingMultiplier.ToString("F"),
                 -1,
                 "RealRuins_MapOptions_ScavengersTT".Translate());
 
+            RealRuins_ModSettings.defaultScatterOptions.scavengingMultiplier =
+                listing.Slider(RealRuins_ModSettings.defaultScatterOptions.scavengingMultiplier, 0.0f, 5.0f);
+
+            // Cost limit
             listing.Label(
                 "RealRuins_MapOptions_CostLimit".Translate() + ": " + costStr,
                 -1,
                 "RealRuins_MapOptions_CostLimitTT".Translate());
 
+            RealRuins_ModSettings.defaultScatterOptions.itemCostLimit =
+                (int)listing.Slider(RealRuins_ModSettings.defaultScatterOptions.itemCostLimit, 0.0f, 1000.0f);
+
             listing.Gap(15);
 
-            listing.Label(
-                "RealRuins_MapOptions_DisableDecoration".Translate(),
-                -1,
-                "RealRuins_MapOptions_DisableDecorationTT".Translate());
-
-            listing.Label(
-                "RealRuins_MapOptions_DisableTraps".Translate(),
-                -1,
-                "RealRuins_MapOptions_DisableTrapsTT".Translate());
-
+            // Hostiles
             listing.Label(
                 "RealRuins_MapOptions_DisableHostiles".Translate(),
                 -1,
                 "RealRuins_MapOptions_DisableHostilesTT".Translate());
+
+            RealRuins_ModSettings.defaultScatterOptions.hostileChance =
+                listing.Slider(RealRuins_ModSettings.defaultScatterOptions.hostileChance, 0.0f, 1.0f);
 
             listing.Gap(15);
 
@@ -110,50 +146,9 @@ namespace RealRuins.Settings
                 "RealRuins_MapOptions_StartWithoutRuinsTT".Translate());
 
             listing.CheckboxLabeled(
-                "RealRuins.LeaveVanillaRuins".Translate(),
+                "RealRuins.KeepVanillaRuins".Translate(),
                 ref RealRuins_ModSettings.preserveStandardRuins,
-                "RealRuins.LeaveVanillaRuinsTT".Translate());
-
-            // Sliders
-            listing.Gap(15);
-
-            RealRuins_ModSettings.defaultScatterOptions.densityMultiplier =
-                listing.Slider(RealRuins_ModSettings.defaultScatterOptions.densityMultiplier, 0.0f, 20.0f);
-
-            RealRuins_ModSettings.defaultScatterOptions.minRadius =
-                (int)listing.Slider(RealRuins_ModSettings.defaultScatterOptions.minRadius, 4.0f, 64.0f);
-
-            RealRuins_ModSettings.defaultScatterOptions.maxRadius =
-                (int)listing.Slider(RealRuins_ModSettings.defaultScatterOptions.maxRadius, 4.0f, 64.0f);
-
-            if (RealRuins_ModSettings.defaultScatterOptions.minRadius > RealRuins_ModSettings.defaultScatterOptions.maxRadius)
-            {
-                RealRuins_ModSettings.defaultScatterOptions.minRadius = RealRuins_ModSettings.defaultScatterOptions.maxRadius;
-            }
-
-            listing.Gap(12);
-
-            RealRuins_ModSettings.defaultScatterOptions.deteriorationMultiplier =
-                listing.Slider(RealRuins_ModSettings.defaultScatterOptions.deteriorationMultiplier, 0.0f, 1.0f);
-
-            RealRuins_ModSettings.defaultScatterOptions.scavengingMultiplier =
-                listing.Slider(RealRuins_ModSettings.defaultScatterOptions.scavengingMultiplier, 0.0f, 5.0f);
-
-            RealRuins_ModSettings.defaultScatterOptions.itemCostLimit =
-                (int)listing.Slider(RealRuins_ModSettings.defaultScatterOptions.itemCostLimit, 0.0f, 1000.0f);
-
-            listing.Gap(12);
-
-            RealRuins_ModSettings.defaultScatterOptions.decorationChance =
-                listing.Slider(RealRuins_ModSettings.defaultScatterOptions.decorationChance, 0.0f, 0.01f);
-
-            RealRuins_ModSettings.defaultScatterOptions.trapChance =
-                listing.Slider(RealRuins_ModSettings.defaultScatterOptions.trapChance, 0.0f, 0.01f);
-
-            RealRuins_ModSettings.defaultScatterOptions.hostileChance =
-                listing.Slider(RealRuins_ModSettings.defaultScatterOptions.hostileChance, 0.0f, 1.0f);
-
-            listing.Gap(15);
+                "RealRuins.KeepVanillaRuinsTT".Translate());
 
             listing.CheckboxLabeled(
                 "RealRuins.UseForcesGenerationV2".Translate(),
