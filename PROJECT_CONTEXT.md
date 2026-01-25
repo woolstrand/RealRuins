@@ -6,6 +6,8 @@ Real Ruins is a RimWorld mod that periodically uploads player bases to a server 
 **Game Version Support**: 1.0, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6
 
 ## Project Structure
+Project uses RealRuins.csproj for building, so each time you add a new file, you
+need to csproj in order to be compiled.
 
 ### Important Directories
 - **Source/Classes/** - Mod source code (C#)
