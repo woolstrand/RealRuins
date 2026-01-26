@@ -26,6 +26,8 @@ namespace RealRuins
         public static List<string> debugExtras = new List<string>() { "BlueprintPawnDecoder" }; // debug: extra debug categories to log
         public static bool disableFriendlyRaids = false; // disable friendly raids on ruins
         public static string spawnBlacklist = ""; // newline-separated list of defs to exclude from spawning
+        public static string materialBlacklist = ""; // newline-separated list of materials to exclude from spawning
+        public static string fallbackMaterial = "Wood"; // material to use when blacklisted material is encountered
 
         public static ScatterOptions defaultScatterOptions = ScatterOptions.Default;
         public static PlanetaryRuinsOptions planetaryRuinsOptions = new PlanetaryRuinsOptions();
@@ -50,6 +52,8 @@ namespace RealRuins
             Scribe_Collections.Look(ref debugExtras, "debugExtras", LookMode.Value);
             Scribe_Values.Look(ref disableFriendlyRaids, "disableFriendlyRaids", false, false);
             Scribe_Values.Look(ref spawnBlacklist, "spawnBlacklist", "", false);
+            Scribe_Values.Look(ref materialBlacklist, "materialBlacklist", "", false);
+            Scribe_Values.Look(ref fallbackMaterial, "fallbackMaterial", "Wood", false);
             Scribe_Deep.Look(ref defaultScatterOptions, "defaultScatterOptions");
             Scribe_Deep.Look(ref planetaryRuinsOptions, "planetaryRuinsOptions");
         
@@ -90,6 +94,8 @@ namespace RealRuins
             debugExtras = new List<string>() { "BlueprintPawnDecoder" };
             disableFriendlyRaids = false;
             spawnBlacklist = "";
+            materialBlacklist = "";
+            fallbackMaterial = "Wood";
         }
     }
 }

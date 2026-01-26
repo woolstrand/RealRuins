@@ -104,6 +104,7 @@ namespace RealRuins
                 float totalDensity = RealRuins_ModSettings.defaultScatterOptions.densityMultiplier;
                 currentOptions = RealRuins_ModSettings.defaultScatterOptions.Copy(); //store as instance variable to keep accessible on subsequent ScatterAt calls
                 currentOptions.doorOwnershipProbability = 0.05f;
+                currentOptions.allowFriendlyRaids = !RealRuins_ModSettings.disableFriendlyRaids;
 
                 if (RealRuins_ModSettings.defaultScatterOptions.enableProximity) {
                         
@@ -234,6 +235,7 @@ namespace RealRuins
             BaseGen.globalSettings.mainRect = resolveParams.rect;
 
             float uncoveredCost = currentOptions.uncoveredCost;
+            currentOptions.allowFriendlyRaids = !RealRuins_ModSettings.disableFriendlyRaids;
             if (uncoveredCost < 0) {
                 if (Rand.Chance(0.5f)) {
                     uncoveredCost = -uncoveredCost; //adding really small party

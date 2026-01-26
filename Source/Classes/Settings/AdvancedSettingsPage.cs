@@ -15,6 +15,8 @@ namespace RealRuins.Settings
         };
 
         private string spawnBlacklistBuffer = "";
+        private string materialBlacklistBuffer = "";
+        private string fallbackMaterialBuffer = "";
 
         public override string TabLabel => "RealRuins.AdvancedSettings".Translate();
 
@@ -115,7 +117,35 @@ namespace RealRuins.Settings
             
             TooltipHandler.TipRegion(spawnBlacklistRect, "RealRuins.SpawnBlacklistTT".Translate());
 
-            listing.End();
+            listing.Gap(15);
+
+            Rect materialBlacklistRect = listing.GetRect(25f);
+            Widgets.Label(
+                materialBlacklistRect.LeftHalf().ContractedBy(0, 0),
+                "RealRuins.MaterialBlacklist".Translate());
+            
+            materialBlacklistBuffer = Widgets.TextField(materialBlacklistRect.RightHalf().ContractedBy(0, 3), materialBlacklistBuffer);
+            if (materialBlacklistBuffer != RealRuins_ModSettings.materialBlacklist)
+            {
+                RealRuins_ModSettings.materialBlacklist = materialBlacklistBuffer;
+            }
+            
+            TooltipHandler.TipRegion(materialBlacklistRect, "RealRuins.MaterialBlacklistTT".Translate());
+
+            listing.Gap(15);
+
+            Rect fallbackMaterialRect = listing.GetRect(25f);
+            Widgets.Label(
+                fallbackMaterialRect.LeftHalf().ContractedBy(0, 0),
+                "RealRuins.FallbackMaterial".Translate());
+            
+            fallbackMaterialBuffer = Widgets.TextField(fallbackMaterialRect.RightHalf().ContractedBy(0, 3), fallbackMaterialBuffer);
+            if (fallbackMaterialBuffer != RealRuins_ModSettings.fallbackMaterial)
+            {
+                RealRuins_ModSettings.fallbackMaterial = fallbackMaterialBuffer;
+            }
+            
+            TooltipHandler.TipRegion(fallbackMaterialRect, "RealRuins.FallbackMaterialTT".Translate());
         }
     }
 }

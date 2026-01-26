@@ -25,6 +25,12 @@ namespace RealRuins
 
         private const long ticksInYear = 3600000;
 
+        // Cached blacklists for efficient O(1) lookup
+        private HashSet<string> spawnBlacklistCache;
+        private HashSet<string> materialBlacklistCache;
+        private string fallbackMaterialName;
+
+        private ThingDef cachedFallbackMaterial;
 
         Blueprint blueprint;
         ResolveParams rp;
@@ -68,10 +74,38 @@ namespace RealRuins
         }
 
 
+        private ThingDef GetFallbackMaterial()
+        {
+            if (cachedFallbackMaterial != null) return cachedFallbackMaterial;
+            
+            if (!string.IsNullOrEmpty(fallbackMaterialName))
+            {
+                cachedFallbackMaterial = DefDatabase<ThingDef>.GetNamed(fallbackMaterialName, false);
+            }
+            
+            if (cachedFallbackMaterial == null)
+            {
+                // Fallback to wood if specified material not found
+                cachedFallbackMaterial = DefDatabase<ThingDef>.GetNamed("Wood", false);
+            }
+            
+            return cachedFallbackMaterial;
+        }
+
         private Thing MakeThingFromItemTile(ItemTile itemTile, bool enableLogging = false, int? x = null, int? z = null)
         {
             try
             {
+                // Check if this item is blacklisted
+                if (spawnBlacklistCache.Contains(itemTile.defName))
+                {
+                    if (enableLogging)
+                    {
+                        Debug.Extra(Debug.BlueprintTransfer, "Skipping blacklisted item {0}", itemTile.defName);
+                    }
+                    return null;
+                }
+
                 if (enableLogging)
                 {
                     Debug.Log(Debug.BlueprintTransfer, "Trying to create new inner item {0}", itemTile.defName);
@@ -129,6 +163,21 @@ namespace RealRuins
                 if (itemTile.stuffDef != null && thingDef.MadeFromStuff)
                 { //some mods may alter thing and add stuff parameter to it. this will result in a bug on a vanilla, so need to double-check here
                     stuffDef = DefDatabase<ThingDef>.GetNamed(itemTile.stuffDef, false);
+                    
+                    // Check if this material is blacklisted
+                    if (materialBlacklistCache.Contains(itemTile.stuffDef))
+                    {
+                        ThingDef fallback = GetFallbackMaterial();
+                        if (fallback != null)
+                        {
+                            stuffDef = fallback;
+                        }
+                        else
+                        {
+                            // No valid fallback material, discard this item
+                            return null;
+                        }
+                    }
                 }
 
                 if (stuffDef == null)
@@ -281,6 +330,36 @@ namespace RealRuins
             this.map = map;
             this.rp = rp;
             this.options = options;
+
+            // Parse and cache blacklists for efficient O(1) lookup
+            spawnBlacklistCache = new HashSet<string>();
+            if (!string.IsNullOrEmpty(RealRuins_ModSettings.spawnBlacklist))
+            {
+                foreach (string line in RealRuins_ModSettings.spawnBlacklist.Split(new[] { "\r\n", "\r", "\n", "," }, StringSplitOptions.RemoveEmptyEntries))
+                {
+                    string trimmed = line.Trim();
+                    if (!string.IsNullOrEmpty(trimmed))
+                    {
+                        spawnBlacklistCache.Add(trimmed);
+                    }
+                }
+            }
+
+            materialBlacklistCache = new HashSet<string>();
+            if (!string.IsNullOrEmpty(RealRuins_ModSettings.materialBlacklist))
+            {
+                foreach (string line in RealRuins_ModSettings.materialBlacklist.Split(new[] { "\r\n", "\r", "\n", "," }, StringSplitOptions.RemoveEmptyEntries))
+                {
+                    string trimmed = line.Trim();
+                    if (!string.IsNullOrEmpty(trimmed))
+                    {
+                        materialBlacklistCache.Add(trimmed);
+                    }
+                }
+            }
+
+            fallbackMaterialName = RealRuins_ModSettings.fallbackMaterial;
+            cachedFallbackMaterial = null; // Will be resolved lazily
 
             Debug.Log("Transferring blueprint of faction {0}", rp.faction?.Name ?? "none");
 
