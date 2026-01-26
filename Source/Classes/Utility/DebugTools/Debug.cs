@@ -6,6 +6,7 @@ using System.Collections.Generic;
 namespace RealRuins {
 
     class Debug {
+        // Debug categories as constants and in an array for dynamic access
         public const string Generic = "Generic";
         public const string Loader = "Loader";
         public const string Store = "Store";
@@ -21,7 +22,31 @@ namespace RealRuins {
         public const string ForceGen = "ForceGen";
         public const string QuestNode_Find = "QuestNode_Find";
 
-        public static List<string> extras = new List<string> /*(); */ {"BlueprintPawnDecoder" /*"PawnGen", "ThingGen", "BlueprintTransfer", "Scatter", "ForceGen"*/};
+        // Array of all debug categories for dynamic access
+        public static readonly string[] AllCategories = new string[]
+        {
+            Generic,
+            Loader,
+            Store,
+            BlueprintGen,
+            BlueprintTransfer,
+            BlueprintPawnDecoder,
+            Analyzer,
+            POI,
+            Scatter,
+            PawnGen,
+            ThingGen,
+            Event,
+            ForceGen,
+            QuestNode_Find
+        };
+
+        // Extra categories for verbose logging - persisted in settings
+        public static List<string> extras
+        {
+            get { return RealRuins_ModSettings.debugExtras; }
+            set { RealRuins_ModSettings.debugExtras = value; }
+        }
 
 
         public static bool active = true;

@@ -14,11 +14,7 @@ namespace RealRuins.Settings
             "RealRuins.Reform.Manual"
         };
 
-        private static readonly string[] LogLevelOptions = {
-            "RealRuins.LogLevel.All",
-            "RealRuins.LogLevel.Warnings",
-            "RealRuins.LogLevel.Errors"
-        };
+        private string spawnBlacklistBuffer = "";
 
         public override string TabLabel => "RealRuins.AdvancedSettings".Translate();
 
@@ -34,45 +30,43 @@ namespace RealRuins.Settings
             listing.GapLine();
 
             // Force Multiplier
-            listing.Label(
-                "RealRuins.ForceMultiplier".Translate() + ": x" +
-                RealRuins_ModSettings.forceMultiplier.ToString("F"),
-                -1,
-                "RealRuins.ForceMultiplierTT".Translate());
-
+            Rect forceMultiplierRect = listing.GetRect(25f);
+            Widgets.Label(
+                forceMultiplierRect.LeftHalf().ContractedBy(0, 0),
+                "RealRuins.ForceMultiplier".Translate() + ": x" + RealRuins_ModSettings.forceMultiplier.ToString("F"));
+            
             RealRuins_ModSettings.forceMultiplier =
-                listing.Slider(RealRuins_ModSettings.forceMultiplier, 0.0f, 2.0f);
+                Widgets.HorizontalSlider(forceMultiplierRect.RightHalf().ContractedBy(0, 3), RealRuins_ModSettings.forceMultiplier, 0.0f, 2.0f);
 
+            TooltipHandler.TipRegion(forceMultiplierRect, "RealRuins.ForceMultiplierTT".Translate());
             listing.Gap(15);
 
             // Wealth Cost Cap
-            string wealthCapStr = "∞";
-            if (RealRuins_ModSettings.ruinsCostCap < 9.9999e8)
-            {
-                wealthCapStr = RealRuins_ModSettings.ruinsCostCap.ToString();
-            }
-
-            listing.Label(
-                "RealRuins.AbsoluteWealthCap".Translate() + ": " + wealthCapStr,
-                -1,
-                "RealRuins.AbsoluteWealthCapTT".Translate());
+            string wealthCapStr = RealRuins_ModSettings.ruinsCostCap < 9.9999e8 ? RealRuins_ModSettings.ruinsCostCap.ToString("#,0") : (string)"RealRuins.Unlimited".Translate();
+            
+            Rect wealthCapRect = listing.GetRect(25f);
+            Widgets.Label(
+                wealthCapRect.LeftHalf().ContractedBy(0, 0),
+                "RealRuins.AbsoluteWealthCap".Translate() + ": " + wealthCapStr);
 
             RealRuins_ModSettings.ruinsCostCap =
-                (float)System.Math.Exp(listing.Slider(
+                (float)System.Math.Exp(Widgets.HorizontalSlider(
+                    wealthCapRect.RightHalf().ContractedBy(0, 3),
                     (float)System.Math.Log(RealRuins_ModSettings.ruinsCostCap),
                     6.908f,
                     (float)System.Math.Log(1.0e9)));
 
+            TooltipHandler.TipRegion(wealthCapRect, "RealRuins.AbsoluteWealthCapTT".Translate());
             listing.Gap(15);
 
             // Caravan Reform Type
-            Rect ttrect = listing.GetRect(30f);
+            Rect caravanRect = listing.GetRect(25f);
             Widgets.Label(
-                ttrect.LeftHalf().ContractedBy(0, 5),
+                caravanRect.LeftHalf().ContractedBy(0, 0),
                 "RealRuins.CaravanReformType".Translate());
 
             bool caravanResult = Widgets.ButtonText(
-                ttrect.RightHalf(),
+                caravanRect.RightHalf().ContractedBy(0, 3),
                 CaravanReformOptions[System.Math.Min(2, RealRuins_ModSettings.caravanReformType)].Translate());
 
             if (caravanResult)
@@ -91,43 +85,35 @@ namespace RealRuins.Settings
                 Find.WindowStack.Add(new FloatMenu(options));
             }
 
-            TooltipHandler.TipRegion(ttrect, "RealRuins.CaravanReformTooltip".Translate());
+            TooltipHandler.TipRegion(caravanRect, "RealRuins.CaravanReformTooltip".Translate());
+            listing.Gap(15);
 
-            listing.Gap(25);
+            listing.CheckboxLabeled(
+                "RealRuins.UseForcesGenerationV2".Translate(),
+                ref RealRuins_ModSettings.useRuinsForcesGenerationV2,
+                "RealRuins.UseForcesGenerationV2TT".Translate());
 
-            // Log Level
-            Rect loglevelRect = listing.GetRect(30f);
+            listing.Gap(15);
+
+            listing.CheckboxLabeled(
+                "RealRuins.DisableFriendlyRaids".Translate(),
+                ref RealRuins_ModSettings.disableFriendlyRaids,
+                "RealRuins.DisableFriendlyRaidsTT".Translate());
+
+            listing.Gap(15);
+
+            Rect spawnBlacklistRect = listing.GetRect(25f);
             Widgets.Label(
-                loglevelRect.LeftHalf().ContractedBy(0, 5),
-                "RealRuins.LogLevel".Translate());
-
-            bool logLevelResult = Widgets.ButtonText(
-                loglevelRect.RightHalf(),
-                LogLevelOptions[System.Math.Min(2, RealRuins_ModSettings.logLevel)].Translate());
-
-            if (logLevelResult)
+                spawnBlacklistRect.LeftHalf().ContractedBy(0, 0),
+                "RealRuins.SpawnBlacklist".Translate());
+            
+            spawnBlacklistBuffer = Widgets.TextField(spawnBlacklistRect.RightHalf().ContractedBy(0, 3), spawnBlacklistBuffer);
+            if (spawnBlacklistBuffer != RealRuins_ModSettings.spawnBlacklist)
             {
-                List<FloatMenuOption> options = new List<FloatMenuOption>();
-                for (int i = 0; i < 3; i++)
-                {
-                    string text = LogLevelOptions[i].Translate();
-                    int value = i;
-                    FloatMenuOption item = new FloatMenuOption(text, delegate
-                    {
-                        RealRuins_ModSettings.logLevel = value;
-                    });
-                    options.Add(item);
-                }
-                Find.WindowStack.Add(new FloatMenu(options));
+                RealRuins_ModSettings.spawnBlacklist = spawnBlacklistBuffer;
             }
-
-            listing.Gap(30);
-
-            // Reset Button
-            if (listing.ButtonText("RealRuins_ModOptions_Reset".Translate(), null))
-            {
-                RealRuins_ModSettings.Reset();
-            }
+            
+            TooltipHandler.TipRegion(spawnBlacklistRect, "RealRuins.SpawnBlacklistTT".Translate());
 
             listing.End();
         }

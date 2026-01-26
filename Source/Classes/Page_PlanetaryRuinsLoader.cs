@@ -43,6 +43,7 @@ namespace RealRuins {
         private bool costStrict = false;
         private bool areaStrict = false;
         private bool aggressiveDiscard = RealRuins_ModSettings.planetaryRuinsOptions.excludePlainRuins;
+        private bool disableFriendlyLocations = RealRuins_ModSettings.planetaryRuinsOptions.disableSpawnFriendlyLocations;
 
         private bool forceStopLoading = false;
         private bool forceStopTransfer = false;
@@ -277,6 +278,7 @@ namespace RealRuins {
             list.CheckboxLabeled("RealRuins.CostFiltering".Translate(), ref costStrict, "RealRuins.CostFilteringTT".Translate());
             list.CheckboxLabeled("RealRuins.AreaFiltering".Translate(), ref areaStrict, "RealRuins.AreaFilteringTT".Translate());
             list.CheckboxLabeled("RealRuins.DiscardAbandoned".Translate(), ref aggressiveDiscard, "RealRuins.DiscardAbandonedTT".Translate());
+            list.CheckboxLabeled("RealRuins.DisableFriendlyLocations".Translate(), ref disableFriendlyLocations, "RealRuins.DisableFriendlyLocationsTT".Translate());
         }
 
         public override void DoWindowContents(Rect rect) {
@@ -455,7 +457,7 @@ namespace RealRuins {
                     }
                 }
                 try {
-                    if (RealRuinsPOIFactory.CreatePOI(t, SnapshotStoreManager.CurrentGamePath(), biomeStrict, costStrict, areaStrict, abandonedPercentage, aggressiveDiscard)) {
+                    if (RealRuinsPOIFactory.CreatePOI(t, SnapshotStoreManager.CurrentGamePath(), biomeStrict, costStrict, areaStrict, abandonedPercentage, aggressiveDiscard, disableFriendlyLocations)) {
                         blueprintsUsed++;
                         if (blueprintsUsed >= transferLimit && transferLimit != 0) {
                             Debug.Log(Debug.POI, "Reached limit of {0} blueprints", transferLimit);

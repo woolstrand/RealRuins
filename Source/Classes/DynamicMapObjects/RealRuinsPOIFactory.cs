@@ -12,7 +12,7 @@ namespace RealRuins
 {
     class RealRuinsPOIFactory
     {
-        public static bool CreatePOI(PlanetTileInfo tileInfo, string gameName, bool biomeStrict, bool costStrict, bool itemsStrict, int abandonedChance = 25, bool aggressiveDiscard = false)
+        public static bool CreatePOI(PlanetTileInfo tileInfo, string gameName, bool biomeStrict, bool costStrict, bool itemsStrict, int abandonedChance = 25, bool aggressiveDiscard = false, bool disableFriendlyLocations = false)
         {
             if (tileInfo.tile >= Find.WorldGrid.TilesCount)
             {
@@ -84,7 +84,7 @@ namespace RealRuins
 
             if (baseChance)
             {
-                Find.FactionManager.TryGetRandomNonColonyHumanlikeFaction(out faction, false, false, minTechLevel: MinTechLevelForPOIType(poiType));
+                Find.FactionManager.TryGetRandomNonColonyHumanlikeFaction(out faction, false, false, minTechLevel: MinTechLevelForPOIType(poiType), requireHostile: disableFriendlyLocations);
             }
 
             RealRuinsPOIWorldObject site = TryCreateWorldObject(tileInfo.tile, faction, poiType == POIType.Ruins);

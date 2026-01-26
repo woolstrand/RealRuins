@@ -23,6 +23,9 @@ namespace RealRuins
         public static int logLevel = 2; //0 = all, 1 = warnings, 2 = errors
         public static bool debugKeepSnapshotsAfterUpload = false; // debug: keep snapshot files after upload instead of deleting
         public static int debugTileFocusId = -1; // debug: tile ID to focus/select in world view
+        public static List<string> debugExtras = new List<string>() { "BlueprintPawnDecoder" }; // debug: extra debug categories to log
+        public static bool disableFriendlyRaids = false; // disable friendly raids on ruins
+        public static string spawnBlacklist = ""; // newline-separated list of defs to exclude from spawning
 
         public static ScatterOptions defaultScatterOptions = ScatterOptions.Default;
         public static PlanetaryRuinsOptions planetaryRuinsOptions = new PlanetaryRuinsOptions();
@@ -44,11 +47,18 @@ namespace RealRuins
             Scribe_Values.Look(ref logLevel, "logLevel", 2, false);
             Scribe_Values.Look(ref debugKeepSnapshotsAfterUpload, "debugKeepSnapshotsAfterUpload", false, false);
             Scribe_Values.Look(ref debugTileFocusId, "debugTileFocusId", -1, false);
+            Scribe_Collections.Look(ref debugExtras, "debugExtras", LookMode.Value);
+            Scribe_Values.Look(ref disableFriendlyRaids, "disableFriendlyRaids", false, false);
+            Scribe_Values.Look(ref spawnBlacklist, "spawnBlacklist", "", false);
             Scribe_Deep.Look(ref defaultScatterOptions, "defaultScatterOptions");
             Scribe_Deep.Look(ref planetaryRuinsOptions, "planetaryRuinsOptions");
         
             if (Scribe.mode == LoadSaveMode.LoadingVars) 
             {
+                if (debugExtras == null)
+                {
+                    debugExtras = new List<string>() { "BlueprintPawnDecoder" };
+                }
                 if (defaultScatterOptions == null)
                 {
                     defaultScatterOptions = ScatterOptions.Default;
@@ -77,6 +87,9 @@ namespace RealRuins
             logLevel = 2;
             debugKeepSnapshotsAfterUpload = false;
             debugTileFocusId = -1;
+            debugExtras = new List<string>() { "BlueprintPawnDecoder" };
+            disableFriendlyRaids = false;
+            spawnBlacklist = "";
         }
     }
 }

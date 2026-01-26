@@ -19,8 +19,8 @@ namespace RealRuins.Settings
         {
             new Color(0.2f, 0.35f, 0.5f),   // Network & Cache - Blue
             new Color(0.2f, 0.45f, 0.3f),   // Map Generation - Green
-            new Color(0.45f, 0.35f, 0.2f),  // Planetary Ruins - Purple/Orange
-            new Color(0.4f, 0.3f, 0.45f),   // Advanced - Purple
+            new Color(0.4f, 0.3f, 0.45f),   // Events & Advanced - Purple
+            new Color(0.45f, 0.35f, 0.2f),  // Planetary Ruins - Orange
             new Color(0.55f, 0.2f, 0.2f)    // Debug - Red
         };
 
@@ -38,15 +38,10 @@ namespace RealRuins.Settings
             {
                 new NetworkCacheSettingsPage(),
                 new MapGenerationSettingsPage(),
+                new AdvancedSettingsPage(),
                 new PlanetaryRuinsSettingsPage(),
-                new AdvancedSettingsPage()
+                new DebugSettingsPage()
             };
-
-            // Add debug page only in dev mode
-            if (Prefs.DevMode)
-            {
-                pages.Add(new DebugSettingsPage());
-            }
         }
 
         public void DoSettingsWindowContents(Rect rect)
@@ -67,8 +62,8 @@ namespace RealRuins.Settings
         {
             Widgets.DrawBoxSolid(rect, TabBackgroundColor);
 
-            float tabWidth = rect.width / pages.Count;
             float tabSpacing = 2f;
+            float tabWidth = (rect.width - tabSpacing * (pages.Count - 1)) / pages.Count;
             
             for (int i = 0; i < pages.Count; i++)
             {

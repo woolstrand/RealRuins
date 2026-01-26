@@ -54,7 +54,7 @@ namespace RealRuins.Settings
             RealRuins_ModSettings.defaultScatterOptions.densityMultiplier =
                 listing.Slider(RealRuins_ModSettings.defaultScatterOptions.densityMultiplier, 0.0f, 20.0f);
 
-            listing.Gap(15);
+            listing.Gap(12);
 
             // Size min
             listing.Label(
@@ -65,6 +65,8 @@ namespace RealRuins.Settings
 
             RealRuins_ModSettings.defaultScatterOptions.minRadius =
                 (int)listing.Slider(RealRuins_ModSettings.defaultScatterOptions.minRadius, 4.0f, 64.0f);
+
+            listing.Gap(12);
 
             // Size max
             listing.Label(
@@ -81,7 +83,7 @@ namespace RealRuins.Settings
                 RealRuins_ModSettings.defaultScatterOptions.minRadius = RealRuins_ModSettings.defaultScatterOptions.maxRadius;
             }
 
-            listing.Gap(15);
+            listing.Gap(12);
 
             // Deterioration
             listing.Label(
@@ -93,6 +95,8 @@ namespace RealRuins.Settings
             RealRuins_ModSettings.defaultScatterOptions.deteriorationMultiplier =
                 listing.Slider(RealRuins_ModSettings.defaultScatterOptions.deteriorationMultiplier, 0.0f, 1.0f);
 
+            listing.Gap(12);
+
             // Scavengers
             listing.Label(
                 "RealRuins_MapOptions_Scavengers".Translate() + ": " +
@@ -103,6 +107,8 @@ namespace RealRuins.Settings
             RealRuins_ModSettings.defaultScatterOptions.scavengingMultiplier =
                 listing.Slider(RealRuins_ModSettings.defaultScatterOptions.scavengingMultiplier, 0.0f, 5.0f);
 
+            listing.Gap(12);
+
             // Cost limit
             listing.Label(
                 "RealRuins_MapOptions_CostLimit".Translate() + ": " + costStr,
@@ -112,7 +118,7 @@ namespace RealRuins.Settings
             RealRuins_ModSettings.defaultScatterOptions.itemCostLimit =
                 (int)listing.Slider(RealRuins_ModSettings.defaultScatterOptions.itemCostLimit, 0.0f, 1000.0f);
 
-            listing.Gap(15);
+            listing.Gap(12);
 
             // Hostiles
             listing.Label(
@@ -123,39 +129,42 @@ namespace RealRuins.Settings
             RealRuins_ModSettings.defaultScatterOptions.hostileChance =
                 listing.Slider(RealRuins_ModSettings.defaultScatterOptions.hostileChance, 0.0f, 1.0f);
 
-            listing.Gap(15);
+            listing.Gap(12);
 
             listing.CheckboxLabeled(
                 "RealRuins_MapOptions_DisableHaulables".Translate(),
                 ref RealRuins_ModSettings.defaultScatterOptions.disableSpawnItems,
                 "RealRuins_MapOptions_DisableHaulablesTT".Translate());
 
+            listing.Gap(12);
+
             listing.CheckboxLabeled(
                 "RealRuins_MapOptions_WallsAndDoorsOnly".Translate(),
                 ref RealRuins_ModSettings.defaultScatterOptions.wallsDoorsOnly,
                 "RealRuins_MapOptions_WallsAndDoorsOnlyTT".Translate());
+
+            listing.Gap(12);
 
             listing.CheckboxLabeled(
                 "RealRuins_MapOptions_EnableProximity".Translate(),
                 ref RealRuins_ModSettings.defaultScatterOptions.enableProximity,
                 "RealRuins_MapOptions_EnableProximityTT".Translate());
 
+            listing.Gap(12);
+
             listing.CheckboxLabeled(
                 "RealRuins_MapOptions_StartWithoutRuins".Translate(),
                 ref RealRuins_ModSettings.startWithoutRuins,
                 "RealRuins_MapOptions_StartWithoutRuinsTT".Translate());
+
+            listing.Gap(12);
 
             listing.CheckboxLabeled(
                 "RealRuins.KeepVanillaRuins".Translate(),
                 ref RealRuins_ModSettings.preserveStandardRuins,
                 "RealRuins.KeepVanillaRuinsTT".Translate());
 
-            listing.CheckboxLabeled(
-                "RealRuins.UseForcesGenerationV2".Translate(),
-                ref RealRuins_ModSettings.useRuinsForcesGenerationV2,
-                "RealRuins.UseForcesGenerationV2TT".Translate());
-
-            listing.End();
+             listing.End();
         }
     }
 }
