@@ -57,8 +57,48 @@
   <RealRuins_MapOptions_CaravanReforming>Activer la reformation instantanée de la caravane entre les raids</RealRuins_MapOptions_CaravanReforming>
   <RealRuins_MapOptions_CaravanReformingTT>Normalement, pendant les événements de récupération de ruines, vous ne devriez pas être en mesure de reformer la caravane instantanément juste après la défaite du groupe hostile initial. De par sa conception, vous deviez rechercher manuellement le butin, ramasser et partir en utilisant le bord de la carte même s'il n'y a pas d'unités hostiles pour le moment. Cependant, si vous préférez l'ancienne méthode avec une fonction de refonte instantanée de la caravane, vous pouvez activer cette fonction.</RealRuins_MapOptions_CaravanReformingTT>
 
-  <!-- Ruins info -->
-  <RealRuins.RuinsWealth>Richesse: </RealRuins.RuinsWealth>
+  <RealRuins.CacheSettings.TabCaption>Général, réseau et cache</RealRuins.CacheSettings.TabCaption>
+  <RealRuins.CacheSettings.Caption>Paramètres généraux, réseau et cache</RealRuins.CacheSettings.Caption>
+  <RealRuins.CacheSettings.Description>Gérez vos paramètres de cache. Ajustez la limite de stockage.</RealRuins.CacheSettings.Description>
+  <RealRuins_ModOptions_NoLimit>Illimité</RealRuins_ModOptions_NoLimit>
+  <RealRuins_ModOptions_ClearCacheConfirm>Êtes-vous sûr de vouloir vider tout le cache? Cette action ne peut pas être annulée.</RealRuins_ModOptions_ClearCacheConfirm>
+  <RealRuins_ModOptions_DownloadMoreTooltip>Téléchargez des plans supplémentaires depuis le serveur.</RealRuins_ModOptions_DownloadMoreTooltip>
+
+  <RealRuins.SpawnSettings.TabCaption>Paramètres d'apparition</RealRuins.SpawnSettings.TabCaption>
+  <RealRuins.SpawnSettings.Caption>Paramètres d'apparition</RealRuins.SpawnSettings.Caption>
+  <RealRuins.SpawnSettings.Description>Configurez comment les ruines apparaissent, leur taille, leur densité et leur contenu.</RealRuins.SpawnSettings.Description>
+  <RealRuins.KeepVanillaRuins>Conserver les ruines vanille</RealRuins.KeepVanillaRuins>
+  <RealRuins.KeepVanillaRuinsTT>Si activé, les ruines standard de RimWorld seront conservées aux côtés de Real Ruins.</RealRuins.KeepVanillaRuinsTT>
+
+  <RealRuins.PlanetarySettings.DisableFriendly>Ne pas créer de lieux amicaux</RealRuins.PlanetarySettings.DisableFriendly>
+  <RealRuins.PlanetarySettings.DisableFriendlyTT>Si activé, les lieux mondiaux seront occupés uniquement par des factions ennemies.</RealRuins.PlanetarySettings.DisableFriendlyTT>
+  <RealRuins.DisableFriendlyLocations>Ne pas créer de lieux amicaux</RealRuins.DisableFriendlyLocations>
+  <RealRuins.DisableFriendlyLocationsTT>Si activé, les lieux mondiaux seront occupés uniquement par des factions ennemies.</RealRuins.DisableFriendlyLocationsTT>
+  <RealRuins.PlanetarySettings.RemoveAll>Supprimer tous les lieux</RealRuins.PlanetarySettings.RemoveAll>
+  <RealRuins.PlanetarySettings.RemoveAllConfirm>Êtes-vous sûr de vouloir supprimer tous les lieux créés par Real Ruins?</RealRuins.PlanetarySettings.RemoveAllConfirm>
+
+  <RealRuins.DisableFriendlyRaids>Désactiver les raids amicaux</RealRuins.DisableFriendlyRaids>
+  <RealRuins.DisableFriendlyRaidsTT>Si activé, seuls les raids des factions ennemies se produiront pendant les événements de ruines.</RealRuins.DisableFriendlyRaidsTT>
+
+  <RealRuins.SpawnBlacklist>Liste noire d'objets</RealRuins.SpawnBlacklist>
+  <RealRuins.SpawnBlacklistTT>Liste séparée par des virgules des définitions d'objets à exclure.</RealRuins.SpawnBlacklistTT>
+
+  <RealRuins.MaterialBlacklist>Liste noire des matériaux</RealRuins.MaterialBlacklist>
+  <RealRuins.MaterialBlacklistTT>Liste séparée par des virgules des matériaux à exclure. Lorsqu'un objet fabriqué à partir d'un matériau sur la liste noire est rencontré, il sera remplacé par le matériau de secours.</RealRuins.MaterialBlacklistTT></RealRuins.MaterialBlacklistTT>
+
+  <RealRuins.FallbackMaterial>Matériau de secours</RealRuins.FallbackMaterial>
+  <RealRuins.FallbackMaterialTT>Matériau à utiliser lorsqu'un matériau de la liste noire est rencontré. Par défaut bois.</RealRuins.FallbackMaterialTT>
+
+  <RealRuins.Unlimited>Illimité</RealRuins.Unlimited>
+  <RealRuins.AdvancedSettings>Paramètres avancés et événements</RealRuins.AdvancedSettings>
+
+  <RealRuins.DebugSettings.LogLevel>Niveau de journalisation</RealRuins.DebugSettings.LogLevel>
+  <RealRuins.DebugSettings.LogLevelAll>Tous les messages</RealRuins.DebugSettings.LogLevelAll>
+  <RealRuins.DebugSettings.LogLevelWarnings>Avertissements et erreurs</RealRuins.DebugSettings.LogLevelWarnings>
+  <RealRuins.DebugSettings.LogLevelErrors>Erreurs uniquement</RealRuins.DebugSettings.LogLevelErrors>
+  <RealRuins.DebugSettings.DebugCategories>Catégories de débogage</RealRuins.DebugSettings.DebugCategories>
+  <RealRuins.DebugSettings.ResetSettings>Réinitialiser tous les paramètres</RealRuins.DebugSettings.ResetSettings>
+  <RealRuins.DebugSettings.ResetSettingsConfirm>Êtes-vous sûr de vouloir réinitialiser tous les paramètres aux valeurs par défaut?</RealRuins.DebugSettings.ResetSettingsConfirm>
   <RealRuins.RuinsActivity>Présence de pillards: </RealRuins.RuinsActivity>
 
   <RealRuins.RuinsWealth.0>presque zéro (&lt;10K)</RealRuins.RuinsWealth.0>

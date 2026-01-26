@@ -97,7 +97,48 @@
   <RealRuins.CaptionPOI7>大型軍事基地</RealRuins.CaptionPOI7>
   <RealRuins.CaptionPOI8>倉庫</RealRuins.CaptionPOI8>
   <RealRuins.CaptionPOI9>通訊站</RealRuins.CaptionPOI9>
-  <RealRuins.CaptionPOI10>遺跡</RealRuins.CaptionPOI10>
+  <RealRuins.CacheSettings.TabCaption>一般、網路和快取</RealRuins.CacheSettings.TabCaption>
+  <RealRuins.CacheSettings.Caption>一般、網路和快取設定</RealRuins.CacheSettings.Caption>
+  <RealRuins.CacheSettings.Description>管理您的快照快取設定。調整儲存限制和下載選項。</RealRuins.CacheSettings.Description>
+  <RealRuins_ModOptions_NoLimit>無限制</RealRuins_ModOptions_NoLimit>
+  <RealRuins_ModOptions_ClearCacheConfirm>您確定要清除所有快取的快照嗎？此操作無法復原。</RealRuins_ModOptions_ClearCacheConfirm>
+  <RealRuins_ModOptions_DownloadMoreTooltip>從伺服器下載額外的藍圖。</RealRuins_ModOptions_DownloadMoreTooltip>
+
+  <RealRuins.SpawnSettings.TabCaption>生成設定</RealRuins.SpawnSettings.TabCaption>
+  <RealRuins.SpawnSettings.Caption>生成設定</RealRuins.SpawnSettings.Caption>
+  <RealRuins.SpawnSettings.Description>配置遺跡如何生成、大小、密度和內容。</RealRuins.SpawnSettings.Description>
+  <RealRuins.KeepVanillaRuins>保留原生遺跡</RealRuins.KeepVanillaRuins>
+  <RealRuins.KeepVanillaRuinsTT>若啟用，將在真實遺跡旁邊保留RimWorld原生遺跡。</RealRuins.KeepVanillaRuinsTT>
+
+  <RealRuins.PlanetarySettings.DisableFriendly>不生成友善位置</RealRuins.PlanetarySettings.DisableFriendly>
+  <RealRuins.PlanetarySettings.DisableFriendlyTT>若啟用，世界位置將僅由敵對勢力占據。</RealRuins.PlanetarySettings.DisableFriendlyTT>
+  <RealRuins.DisableFriendlyLocations>不生成友善位置</RealRuins.DisableFriendlyLocations>
+  <RealRuins.DisableFriendlyLocationsTT>若啟用，世界位置將僅由敵對勢力占據。</RealRuins.DisableFriendlyLocationsTT>
+  <RealRuins.PlanetarySettings.RemoveAll>刪除所有位置</RealRuins.PlanetarySettings.RemoveAll>
+  <RealRuins.PlanetarySettings.RemoveAllConfirm>您確定要刪除由真實遺跡生成的所有位置嗎？</RealRuins.PlanetarySettings.RemoveAllConfirm>
+
+  <RealRuins.DisableFriendlyRaids>禁用友善襲擊</RealRuins.DisableFriendlyRaids>
+  <RealRuins.DisableFriendlyRaidsTT>若啟用，在遺跡事件中只會進行敵對勢力的襲擊。</RealRuins.DisableFriendlyRaidsTT>
+
+  <RealRuins.SpawnBlacklist>物品黑名單</RealRuins.SpawnBlacklist>
+  <RealRuins.SpawnBlacklistTT>逗號分隔的物品定義清單，用於排除不應生成的物品。</RealRuins.SpawnBlacklistTT>
+
+  <RealRuins.MaterialBlacklist>材料黑名單</RealRuins.MaterialBlacklist>
+  <RealRuins.MaterialBlacklistTT>逗號分隔的材料清單，用於排除不應生成的材料。當遇到由黑名單材料製成的物品時，它將被替換為備用材料。</RealRuins.MaterialBlacklistTT>
+
+  <RealRuins.FallbackMaterial>備用材料</RealRuins.FallbackMaterial>
+  <RealRuins.FallbackMaterialTT>當遇到黑名單材料時使用的材料。預設為木材。</RealRuins.FallbackMaterialTT>
+
+  <RealRuins.Unlimited>無限制</RealRuins.Unlimited>
+  <RealRuins.AdvancedSettings>進階和事件設定</RealRuins.AdvancedSettings>
+
+  <RealRuins.DebugSettings.LogLevel>日誌級別</RealRuins.DebugSettings.LogLevel>
+  <RealRuins.DebugSettings.LogLevelAll>所有訊息</RealRuins.DebugSettings.LogLevelAll>
+  <RealRuins.DebugSettings.LogLevelWarnings>警告和錯誤</RealRuins.DebugSettings.LogLevelWarnings>
+  <RealRuins.DebugSettings.LogLevelErrors>僅錯誤</RealRuins.DebugSettings.LogLevelErrors>
+  <RealRuins.DebugSettings.DebugCategories>除錯類別</RealRuins.DebugSettings.DebugCategories>
+  <RealRuins.DebugSettings.ResetSettings>重設所有設定</RealRuins.DebugSettings.ResetSettings>
+  <RealRuins.DebugSettings.ResetSettingsConfirm>您確定要將所有設定重設為預設值嗎？</RealRuins.DebugSettings.ResetSettingsConfirm>
   <RealRuins.CaptionPOI11>據點</RealRuins.CaptionPOI11>
 
 

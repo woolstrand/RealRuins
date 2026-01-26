@@ -49,16 +49,32 @@
   <RealRuins_MapOptions_StartWithoutRuinsTT>No ruins will be generated on starting map. Later ruins will be generated normally accoring to settings.</RealRuins_MapOptions_StartWithoutRuinsTT>
 
   <!-- Captions -->
-  <RealRuins.PlanetaryRuinsSettings.Caption>Planetary ruins and locations</RealRuins.PlanetaryRuinsSettings.Caption>
-  <RealRuins.CacheSettings.Caption>Cache settings</RealRuins.CacheSettings.Caption>
-  <RealRuins.SpawnSettings.Caption>Spawn settings</RealRuins.SpawnSettings.Caption>
+  <RealRuins.CacheSettings.TabCaption>General, Network and Cache</RealRuins.CacheSettings.TabCaption>
+  <RealRuins.CacheSettings.Caption>General, Network and Cache settings</RealRuins.CacheSettings.Caption>
+  <RealRuins.CacheSettings.Description>Manage your snapshot cache settings. Adjust the storage limit and download options. You can find more options on the other tabs.</RealRuins.CacheSettings.Description>
+  <RealRuins_ModOptions_NoLimit>No limit</RealRuins_ModOptions_NoLimit>
+  <RealRuins_ModOptions_ClearCacheConfirm>Are you sure you want to clear all cached snapshots? This action cannot be undone.</RealRuins_ModOptions_ClearCacheConfirm>
+  <RealRuins_ModOptions_DownloadMoreTooltip>Download additional blueprints from the server.</RealRuins_ModOptions_DownloadMoreTooltip>
+
+  <RealRuins.SpawnSettings.TabCaption>Spawn Settings</RealRuins.SpawnSettings.TabCaption>
+  <RealRuins.SpawnSettings.Caption>Spawn Settings</RealRuins.SpawnSettings.Caption>
+  <RealRuins.SpawnSettings.Description>Configure how ruins spawn on the map, their size, density, and contents. Those settings affect only ruins naturally appeating on the map. Those settigs have no effect on events and planetary ruins.</RealRuins.SpawnSettings.Description>
+  <RealRuins.KeepVanillaRuins>Keep vanilla ruins</RealRuins.KeepVanillaRuins>
+  <RealRuins.KeepVanillaRuinsTT>If enabled, vanilla RimWorld ruins will be preserved alongside Real Ruins.</RealRuins.KeepVanillaRuinsTT>
 
   <!-- Planetary ruins section -->
+  <RealRuins.PlanetaryRuinsSettings.Caption>Planetary ruins and locations</RealRuins.PlanetaryRuinsSettings.Caption>
   <RealRuins.PlanetarySettings.Enable>Enable spawning ruin at game start</RealRuins.PlanetarySettings.Enable>
   <RealRuins.PlanetarySettings.DownloadLimit>Maximum number of blueprints to download</RealRuins.PlanetarySettings.DownloadLimit>
   <RealRuins.PlanetarySettings.TransferLimit>Maximum number of locations to spawn</RealRuins.PlanetarySettings.TransferLimit>
   <RealRuins.PlanetarySettings.ExcludePlain>Discard uncategorized locations (plain ruins)</RealRuins.PlanetarySettings.ExcludePlain>
   <RealRuins.PlanetarySettings.AbandonedPercentage>Amount of abandoned locations</RealRuins.PlanetarySettings.AbandonedPercentage>
+  <RealRuins.PlanetarySettings.DisableFriendly>Do not spawn friendly locations</RealRuins.PlanetarySettings.DisableFriendly>
+  <RealRuins.PlanetarySettings.DisableFriendlyTT>If enabled, world location will be occupied by a hostile factions only.</RealRuins.PlanetarySettings.DisableFriendlyTT>
+  <RealRuins.PlanetarySettings.RemoveAll>Remove All Locations</RealRuins.PlanetarySettings.RemoveAll>
+  <RealRuins.PlanetarySettings.RemoveAllConfirm>Are you sure you want to remove all locations spawned by Real Ruins?</RealRuins.PlanetarySettings.RemoveAllConfirm>
+  <RealRuins.DisableFriendlyLocations>Do not spawn friendly locations</RealRuins.DisableFriendlyLocations>
+  <RealRuins.DisableFriendlyLocationsTT>If enabled, world location will be occupied by a hostile factions only.</RealRuins.DisableFriendlyLocationsTT>
 
   <!-- Caravan entered map -->
   <LetterLabelCaravanEnteredRuins>Caravan arrived at ruins</LetterLabelCaravanEnteredRuins>
@@ -220,6 +236,21 @@
   <RealRuins.UseForcesGenerationV2>Use new raids system for events</RealRuins.UseForcesGenerationV2>
   <RealRuins.UseForcesGenerationV2TT>In previous versions, there were several large raids during the ruins found event. Now besides of those several large raids, there also is a constant flow of smaller groups of enemies to the map, to put the player under small, but constant pressure. You can disable this if you liked previous approach more.</RealRuins.UseForcesGenerationV2TT>
 
+  <RealRuins.DisableFriendlyRaids>Disable friendly raids</RealRuins.DisableFriendlyRaids>
+  <RealRuins.DisableFriendlyRaidsTT>If enabled, only hostile factions will spawn raids during ruins events. Friendly faction raids will be prevented.</RealRuins.DisableFriendlyRaidsTT>
+
+  <RealRuins.SpawnBlacklist>Item spawn blacklist</RealRuins.SpawnBlacklist>
+  <RealRuins.SpawnBlacklistTT>Comma-separated list of item defs to exclude from spawning.</RealRuins.SpawnBlacklistTT>
+
+  <RealRuins.MaterialBlacklist>Material blacklist</RealRuins.MaterialBlacklist>
+  <RealRuins.MaterialBlacklistTT>Comma-separated list of materials to exclude from spawning. When a thing made of a blacklisted material is encountered, it will be replaced with the fallback material.</RealRuins.MaterialBlacklistTT>
+
+  <RealRuins.FallbackMaterial>Fallback material</RealRuins.FallbackMaterial>
+  <RealRuins.FallbackMaterialTT>Material to use when a blacklisted material is encountered. Default is Wood. If invalid or empty, items with blacklisted materials will be discarded.</RealRuins.FallbackMaterialTT>
+
+  <RealRuins.Unlimited>Unlimited</RealRuins.Unlimited>
+  <RealRuins.AdvancedSettings>Events and Advanced Settings</RealRuins.AdvancedSettings>
+
   <RealRuins.FactionOwnedStartTile>Tile is occupied</RealRuins.FactionOwnedStartTile>
   <RealRuins.FactionOwnedStartTileDesc>You're about to enter a tile with a settlement on it, and this settlement belongs to another faction. You can either make it abandoned and settle in ruins, you can make it yours, or you can attack it with your starting party.</RealRuins.FactionOwnedStartTileDesc>
   <RealRuins.FactionOwnedStartTile.MakeAbandoned>Make abandoned and settle</RealRuins.FactionOwnedStartTile.MakeAbandoned>
@@ -234,6 +265,13 @@
 
   <!-- Debug settings (dev mode only) -->
   <RealRuins.DebugSettings.Caption>Debug Settings</RealRuins.DebugSettings.Caption>
+  <RealRuins.DebugSettings.LogLevel>Log Level</RealRuins.DebugSettings.LogLevel>
+  <RealRuins.DebugSettings.LogLevelAll>All Messages</RealRuins.DebugSettings.LogLevelAll>
+  <RealRuins.DebugSettings.LogLevelWarnings>Warnings &amp; Errors</RealRuins.DebugSettings.LogLevelWarnings>
+  <RealRuins.DebugSettings.LogLevelErrors>Errors Only</RealRuins.DebugSettings.LogLevelErrors>
+  <RealRuins.DebugSettings.DebugCategories>Debug Categories</RealRuins.DebugSettings.DebugCategories>
+  <RealRuins.DebugSettings.ResetSettings>Reset All Settings</RealRuins.DebugSettings.ResetSettings>
+  <RealRuins.DebugSettings.ResetSettingsConfirm>Are you sure you want to reset all settings to their default values?</RealRuins.DebugSettings.ResetSettingsConfirm>
   <RealRuins.DebugSettings.KeepSnapshotsAfterUpload>Keep snapshot files after upload</RealRuins.DebugSettings.KeepSnapshotsAfterUpload>
   <RealRuins.DebugSettings.KeepSnapshotsAfterUploadTooltip>When enabled, snapshot files will be kept in the temp directory after uploading instead of being deleted. Useful for debugging upload issues.</RealRuins.DebugSettings.KeepSnapshotsAfterUploadTooltip>
   <RealRuins.DebugSettings.ManualUpload>Manually trigger blueprint capture</RealRuins.DebugSettings.ManualUpload>

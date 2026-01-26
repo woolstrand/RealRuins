@@ -231,4 +231,47 @@
   <RealRuins.LogLevel.All>Записывать всё</RealRuins.LogLevel.All>
   <RealRuins.LogLevel.Warnings>Записывать предупреждения и ошибки</RealRuins.LogLevel.Warnings>
   <RealRuins.LogLevel.Errors>Записывать только ошибки</RealRuins.LogLevel.Errors>
+
+  <RealRuins.CacheSettings.TabCaption>Общие, сеть и кэш</RealRuins.CacheSettings.TabCaption>
+  <RealRuins.CacheSettings.Caption>Общие, сетевые и настройки кэша</RealRuins.CacheSettings.Caption>
+  <RealRuins.CacheSettings.Description>Управление настройками кэша. Отрегулируйте лимит хранилища и опции загрузки.</RealRuins.CacheSettings.Description>
+  <RealRuins_ModOptions_NoLimit>Без ограничений</RealRuins_ModOptions_NoLimit>
+  <RealRuins_ModOptions_ClearCacheConfirm>Вы уверены, что хотите очистить весь кэш? Это действие невозможно отменить.</RealRuins_ModOptions_ClearCacheConfirm>
+  <RealRuins_ModOptions_DownloadMoreTooltip>Загрузить дополнительные планы из базы данных.</RealRuins_ModOptions_DownloadMoreTooltip>
+
+  <RealRuins.SpawnSettings.TabCaption>Настройки генерации</RealRuins.SpawnSettings.TabCaption>
+  <RealRuins.SpawnSettings.Caption>Настройки генерации</RealRuins.SpawnSettings.Caption>
+  <RealRuins.SpawnSettings.Description>Конфигурация появления руин на карте, их размер, плотность и содержимое.</RealRuins.SpawnSettings.Description>
+  <RealRuins.KeepVanillaRuins>Сохранять стандартные руины</RealRuins.KeepVanillaRuins>
+  <RealRuins.KeepVanillaRuinsTT>Если включено, стандартные руины RimWorld будут сохранены вместе с Real Ruins.</RealRuins.KeepVanillaRuinsTT>
+
+  <RealRuins.PlanetarySettings.DisableFriendly>Не порождать дружественные локации</RealRuins.PlanetarySettings.DisableFriendly>
+  <RealRuins.PlanetarySettings.DisableFriendlyTT>Если включено, мировые локации будут заняты только враждебными фракциями.</RealRuins.PlanetarySettings.DisableFriendlyTT>
+  <RealRuins.DisableFriendlyLocations>Не порождать дружественные локации</RealRuins.DisableFriendlyLocations>
+  <RealRuins.DisableFriendlyLocationsTT>Если включено, мировые локации будут заняты только враждебными фракциями.</RealRuins.DisableFriendlyLocationsTT>
+  <RealRuins.PlanetarySettings.RemoveAll>Удалить все локации</RealRuins.PlanetarySettings.RemoveAll>
+  <RealRuins.PlanetarySettings.RemoveAllConfirm>Вы уверены, что хотите удалить все локации, созданные Real Ruins?</RealRuins.PlanetarySettings.RemoveAllConfirm>
+
+  <RealRuins.DisableFriendlyRaids>Отключить дружественные набеги</RealRuins.DisableFriendlyRaids>
+  <RealRuins.DisableFriendlyRaidsTT>Если включено, во время событий на руинах будут приходить только партии враждебных фракций.</RealRuins.DisableFriendlyRaidsTT>
+
+  <RealRuins.SpawnBlacklist>Чёрный список предметов</RealRuins.SpawnBlacklist>
+  <RealRuins.SpawnBlacklistTT>Список, разделённый запятыми. Идентификаторы предметов, которые не должны появляться.</RealRuins.SpawnBlacklistTT>
+
+  <RealRuins.MaterialBlacklist>Чёрный список материалов</RealRuins.MaterialBlacklist>
+  <RealRuins.MaterialBlacklistTT>Список, разделённый запятыми, материалы, которые не должны использоваться. Когда встречается предмет из чёрного списка материалов, он будет заменён на запасной материал.</RealRuins.MaterialBlacklistTT>
+
+  <RealRuins.FallbackMaterial>Материал для замены</RealRuins.FallbackMaterial>
+  <RealRuins.FallbackMaterialTT>Если установлен, то материалы из черного списка будут заменены на этот материал. Если пуст, то предметы сделанные из запрещенных материалов будут удалены.</RealRuins.FallbackMaterialTT>
+
+  <RealRuins.Unlimited>Без ограничений</RealRuins.Unlimited>
+  <RealRuins.AdvancedSettings>Продвинутые и событийные настройки</RealRuins.AdvancedSettings>
+
+  <RealRuins.DebugSettings.LogLevel>Уровень логирования</RealRuins.DebugSettings.LogLevel>
+  <RealRuins.DebugSettings.LogLevelAll>Все сообщения</RealRuins.DebugSettings.LogLevelAll>
+  <RealRuins.DebugSettings.LogLevelWarnings>Предупреждения и ошибки</RealRuins.DebugSettings.LogLevelWarnings>
+  <RealRuins.DebugSettings.LogLevelErrors>Только ошибки</RealRuins.DebugSettings.LogLevelErrors>
+  <RealRuins.DebugSettings.DebugCategories>Категории отладки</RealRuins.DebugSettings.DebugCategories>
+  <RealRuins.DebugSettings.ResetSettings>Сбросить все настройки</RealRuins.DebugSettings.ResetSettings>
+  <RealRuins.DebugSettings.ResetSettingsConfirm>Вы уверены, что хотите сбросить все настройки на значения по умолчанию?</RealRuins.DebugSettings.ResetSettingsConfirm>
 </LanguageData>

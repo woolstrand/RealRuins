@@ -53,8 +53,48 @@
   <RealRuins_MapOptions_CaravanReformingTT>Normally during ruins scavenging events you should not be able to reform caravan instantly right after the initial hostile party is defeated. By design you had to manually search for loot, pick up and leave using map edge even if there are no hostile units right now. However, if you prefer the old way with overpowered instant reform feature, you can enable this feature</RealRuins_MapOptions_CaravanReformingTT>
 
   <!-- Ruins info -->
-  <RealRuins.RuinsWealth>Reichtum: </RealRuins.RuinsWealth>
-  <RealRuins.RuinsActivity>Anwesenheit von Räubern: </RealRuins.RuinsActivity>
+  <RealRuins.CacheSettings.TabCaption>Allgemein, Netzwerk und Cache</RealRuins.CacheSettings.TabCaption>
+  <RealRuins.CacheSettings.Caption>Allgemein, Netzwerk und Cache Einstellungen</RealRuins.CacheSettings.Caption>
+  <RealRuins.CacheSettings.Description>Verwalten Sie Ihre Cache-Einstellungen. Passen Sie die Speicherbeschränkung an.</RealRuins.CacheSettings.Description>
+  <RealRuins_ModOptions_NoLimit>Unbegrenzt</RealRuins_ModOptions_NoLimit>
+  <RealRuins_ModOptions_ClearCacheConfirm>Möchten Sie wirklich den Cache löschen? Dies kann nicht rückgängig gemacht werden.</RealRuins_ModOptions_ClearCacheConfirm>
+  <RealRuins_ModOptions_DownloadMoreTooltip>Laden Sie zusätzliche Blaupausen vom Server herunter.</RealRuins_ModOptions_DownloadMoreTooltip>
+
+  <RealRuins.SpawnSettings.TabCaption>Erzeugungseinstellungen</RealRuins.SpawnSettings.TabCaption>
+  <RealRuins.SpawnSettings.Caption>Erzeugungseinstellungen</RealRuins.SpawnSettings.Caption>
+  <RealRuins.SpawnSettings.Description>Konfigurieren Sie, wie Ruinen erscheinen, ihre Größe, Dichte und ihren Inhalt.</RealRuins.SpawnSettings.Description>
+  <RealRuins.KeepVanillaRuins>Vanille-Ruinen behalten</RealRuins.KeepVanillaRuins>
+  <RealRuins.KeepVanillaRuinsTT>Wenn aktiviert, werden die Standardruinen von RimWorld neben Real Ruins beibehalten.</RealRuins.KeepVanillaRuinsTT>
+
+  <RealRuins.PlanetarySettings.DisableFriendly>Keine freundlichen Standorte erzeugen</RealRuins.PlanetarySettings.DisableFriendly>
+  <RealRuins.PlanetarySettings.DisableFriendlyTT>Wenn aktiviert, werden Weltorte nur von feindlichen Fraktionen besetzt.</RealRuins.PlanetarySettings.DisableFriendlyTT>
+  <RealRuins.DisableFriendlyLocations>Keine freundlichen Standorte erzeugen</RealRuins.DisableFriendlyLocations>
+  <RealRuins.DisableFriendlyLocationsTT>Wenn aktiviert, werden Weltorte nur von feindlichen Fraktionen besetzt.</RealRuins.DisableFriendlyLocationsTT>
+  <RealRuins.PlanetarySettings.RemoveAll>Alle Standorte entfernen</RealRuins.PlanetarySettings.RemoveAll>
+  <RealRuins.PlanetarySettings.RemoveAllConfirm>Möchten Sie wirklich alle von Real Ruins erzeugten Standorte entfernen?</RealRuins.PlanetarySettings.RemoveAllConfirm>
+
+  <RealRuins.DisableFriendlyRaids>Freundliche Überfälle deaktivieren</RealRuins.DisableFriendlyRaids>
+  <RealRuins.DisableFriendlyRaidsTT>Wenn aktiviert, werden während Ruinenereignissen nur Angriffe durch feindliche Fraktionen durchgeführt.</RealRuins.DisableFriendlyRaidsTT>
+
+  <RealRuins.SpawnBlacklist>Gegenstands-Blacklist</RealRuins.SpawnBlacklist>
+  <RealRuins.SpawnBlacklistTT>Kommagetrennte Liste von Gegenstandsdefinitionen, die nicht erscheinen sollen.</RealRuins.SpawnBlacklistTT>
+
+  <RealRuins.MaterialBlacklist>Material-Blacklist</RealRuins.MaterialBlacklist>
+  <RealRuins.MaterialBlacklistTT>Kommagetrennte Liste von Materialien, die nicht verwendet werden sollen. Wenn ein Objekt aus einem auf der Blacklist stehenden Material gefertigt wird, wird es durch das Fallback-Material ersetzt.</RealRuins.MaterialBlacklistTT>
+
+  <RealRuins.FallbackMaterial>Fallback-Material</RealRuins.FallbackMaterial>
+  <RealRuins.FallbackMaterialTT>Material zur Verwendung, wenn ein Blacklist-Material gefunden wird. Standard ist Holz.</RealRuins.FallbackMaterialTT>
+
+  <RealRuins.Unlimited>Unbegrenzt</RealRuins.Unlimited>
+  <RealRuins.AdvancedSettings>Erweiterte und Ereigniseinstellungen</RealRuins.AdvancedSettings>
+
+  <RealRuins.DebugSettings.LogLevel>Protokollierungsstufe</RealRuins.DebugSettings.LogLevel>
+  <RealRuins.DebugSettings.LogLevelAll>Alle Meldungen</RealRuins.DebugSettings.LogLevelAll>
+  <RealRuins.DebugSettings.LogLevelWarnings>Warnungen und Fehler</RealRuins.DebugSettings.LogLevelWarnings>
+  <RealRuins.DebugSettings.LogLevelErrors>Nur Fehler</RealRuins.DebugSettings.LogLevelErrors>
+  <RealRuins.DebugSettings.DebugCategories>Debug-Kategorien</RealRuins.DebugSettings.DebugCategories>
+  <RealRuins.DebugSettings.ResetSettings>Alle Einstellungen zurücksetzen</RealRuins.DebugSettings.ResetSettings>
+  <RealRuins.DebugSettings.ResetSettingsConfirm>Möchten Sie wirklich alle Einstellungen auf Standardwerte zurücksetzen?</RealRuins.DebugSettings.ResetSettingsConfirm>
 
   <RealRuins.RuinsWealth.0>nahe null (&lt;10K)</RealRuins.RuinsWealth.0>
   <RealRuins.RuinsWealth.1>klein</RealRuins.RuinsWealth.1>
