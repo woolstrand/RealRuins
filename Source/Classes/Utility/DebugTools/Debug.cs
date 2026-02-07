@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Verse;
 using System.Collections;
 using System.Collections.Generic;
@@ -21,6 +21,10 @@ namespace RealRuins {
         public const string Event = "Event";
         public const string ForceGen = "ForceGen";
         public const string QuestNode_Find = "QuestNode_Find";
+        public const string QuestNode_FindBlueprint = "QuestNode_FindBlueprint";
+        public const string QuestNode_FindBlueprintNode = "QuestNode_FindBlueprintNode";
+        public const string QuestNode_GenerateRuinsObject = "QuestNode_GenerateRuinsObject";
+        public const string QuestNode_GenerateRuinsNode = "QuestNode_GenerateRuinsNode";
 
         // Array of all debug categories for dynamic access
         public static readonly string[] AllCategories = new string[]
@@ -38,7 +42,11 @@ namespace RealRuins {
             ThingGen,
             Event,
             ForceGen,
-            QuestNode_Find
+            QuestNode_Find,
+            QuestNode_FindBlueprint,
+            QuestNode_FindBlueprintNode,
+            QuestNode_GenerateRuinsObject,
+            QuestNode_GenerateRuinsNode
         };
 
         // Extra categories for verbose logging - persisted in settings

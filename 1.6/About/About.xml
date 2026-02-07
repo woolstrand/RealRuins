@@ -14,6 +14,7 @@
 	<modDependencies>
 		<li>
 			<packageId>brrainz.harmony</packageId>
+			<steamWorkshopUrl>https://steamcommunity.com/sharedfiles/filedetails/?id=2009463077</steamWorkshopUrl>
 			<displayName>Harmony</displayName>
 		</li>
 	</modDependencies>

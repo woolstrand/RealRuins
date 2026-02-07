@@ -23,7 +23,7 @@ namespace RealRuins {
                 return false;
             }
 
-            return Find.FactionManager.RandomNonHostileFaction(false, false, false, TechLevel.Undefined) != null;
+            return Find.FactionManager.RandomNonHostileFaction(true, false, true, TechLevel.Undefined) != null;
         }
 
         protected override bool TryExecuteWorker(IncidentParms parms) {
