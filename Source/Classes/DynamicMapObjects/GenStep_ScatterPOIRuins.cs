@@ -93,6 +93,10 @@ namespace RealRuins {
             currentOptions.shouldAddRaidTriggers = false;
             currentOptions.claimableBlocks = false;
 
+            if currentOptions.threatScale == 0.0f {
+                currentOptions.shouldAddRaidTriggers = false;
+                currentOptions.skipForcesGeneration = true;
+            }
 
             if (poiComp.poiType == (int)POIType.Ruins || faction == null || overrideSpawnAsRuins) {
                 if (faction != null) {

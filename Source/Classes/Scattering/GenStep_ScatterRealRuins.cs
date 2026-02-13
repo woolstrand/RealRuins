@@ -224,6 +224,11 @@ namespace RealRuins
             currentOptions.claimableBlocks = false;
             currentOptions.enableDeterioration = false;
 
+            if (currentOptions.threatScale == 0) {
+                currentOptions.shouldAddRaidTriggers = false;
+                currentOptions.skipForcesGeneration = true;
+            }
+
 
             ResolveParams resolveParams = default(ResolveParams);
             BaseGen.globalSettings.map = map;
@@ -245,6 +250,7 @@ namespace RealRuins
 
             RuinsScatterer.Scatter(resolveParams, currentOptions, null, generators);
             BaseGen.symbolStack.Push("chargeBatteries", resolveParams);
+            BaseGen.symbolStack.Push("ensureCanHoldRoof", resolveParams);
             BaseGen.symbolStack.Push("refuel", resolveParams);
             BaseGen.Generate();
 
