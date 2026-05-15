@@ -13,23 +13,18 @@ namespace RealRuins.Settings
         public override void Draw(Rect rect)
         {
             Listing_Standard listing = new Listing_Standard();
-            
-            float contentWidth = rect.width * 2f / 3f;
-            Rect contentRect = rect;
-            contentRect.width = contentWidth;
-            
-            listing.Begin(contentRect);
+            listing.Begin(rect);
 
             GameFont font = Text.Font;
             Text.Font = GameFont.Medium;
             listing.Label("RealRuins.SpawnSettings.Caption".Translate());
             Text.Font = font;
             
-            float descHeight = Text.LineHeight * 3f;
+            float descHeight = Text.CalcHeight("RealRuins.SpawnSettings.Description".Translate(), rect.width);
             Rect descRect = listing.GetRect(descHeight);
             string description = "RealRuins.SpawnSettings.Description".Translate();
             Widgets.Label(descRect, description);
-            listing.Gap(descHeight - Text.LineHeight);
+            listing.Gap(5f);
             
             listing.GapLine();
 

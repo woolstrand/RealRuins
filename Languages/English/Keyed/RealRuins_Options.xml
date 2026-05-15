@@ -58,7 +58,7 @@
 
   <RealRuins.SpawnSettings.TabCaption>Spawn Settings</RealRuins.SpawnSettings.TabCaption>
   <RealRuins.SpawnSettings.Caption>Spawn Settings</RealRuins.SpawnSettings.Caption>
-  <RealRuins.SpawnSettings.Description>Configure how ruins spawn on the map, their size, density, and contents. Those settings affect only ruins naturally appeating on the map. Those settigs have no effect on events and planetary ruins.</RealRuins.SpawnSettings.Description>
+  <RealRuins.SpawnSettings.Description>Configure how ruins spawn on the map, their size, density, and contents. Those settings affect only ruins naturally appearing on the map. These settings have no effect on events and planetary ruins.</RealRuins.SpawnSettings.Description>
   <RealRuins.KeepVanillaRuins>Keep vanilla ruins</RealRuins.KeepVanillaRuins>
   <RealRuins.KeepVanillaRuinsTT>If enabled, vanilla RimWorld ruins will be preserved alongside Real Ruins.</RealRuins.KeepVanillaRuinsTT>
 
@@ -234,7 +234,7 @@
   <RealRuins.LeaveVanillaRuinsTT>If checked, both real ruins and vanilla ruins will be spawned</RealRuins.LeaveVanillaRuinsTT>
 
   <RealRuins.UseForcesGenerationV2>Use new raids system for events</RealRuins.UseForcesGenerationV2>
-  <RealRuins.UseForcesGenerationV2TT>In previous versions, there were several large raids during the ruins found event. Now besides of those several large raids, there also is a constant flow of smaller groups of enemies to the map, to put the player under small, but constant pressure. You can disable this if you liked previous approach more.</RealRuins.UseForcesGenerationV2TT>
+  <RealRuins.UseForcesGenerationV2TT>In previous versions, there were several large raids during the ruins found event. Now besides of those several large raids, there also is a constant inflow of smaller groups of enemies. This puts the player under a little, but constant pressure. You can disable this if you liked previous approach more.</RealRuins.UseForcesGenerationV2TT>
 
   <RealRuins.DisableFriendlyRaids>Disable friendly raids</RealRuins.DisableFriendlyRaids>
   <RealRuins.DisableFriendlyRaidsTT>If enabled, only hostile factions will spawn raids during ruins events. Friendly faction raids will be prevented.</RealRuins.DisableFriendlyRaidsTT>

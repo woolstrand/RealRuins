@@ -24,11 +24,11 @@ namespace RealRuins.Settings
             listing.Label("RealRuins.CacheSettings.Caption".Translate());
             Text.Font = font;
             
-            float descHeight = Text.LineHeight * 3f;
+            float descHeight = Text.CalcHeight("RealRuins.CacheSettings.Description".Translate(), rect.width);
             Rect descRect = listing.GetRect(descHeight);
             string description = "RealRuins.CacheSettings.Description".Translate();
             Widgets.Label(descRect, description);
-            listing.Gap(descHeight - Text.LineHeight);
+            listing.Gap(5f);
             
             listing.GapLine();
 

@@ -224,9 +224,10 @@ namespace RealRuins
             currentOptions.claimableBlocks = false;
             currentOptions.enableDeterioration = false;
 
-            if (currentOptions.threatScale == 0) {
+            var skipForcesGeneration = false;
+            if (RealRuins_ModSettings.forceMultiplier == 0) {
                 currentOptions.shouldAddRaidTriggers = false;
-                currentOptions.skipForcesGeneration = true;
+                skipForcesGeneration = true;
             }
 
 
@@ -234,7 +235,12 @@ namespace RealRuins
             BaseGen.globalSettings.map = map;
             resolveParams.faction = Find.FactionManager.OfAncientsHostile;
             resolveParams.rect = new CellRect(0, 0, map.Size.x, map.Size.z);
-            List<AbstractDefenderForcesGenerator> generators = new List<AbstractDefenderForcesGenerator> { new BattleRoyaleForcesGenerator() };
+            List<AbstractDefenderForcesGenerator> generators = null;
+            
+            if (!skipForcesGeneration) {
+                generators = new List<AbstractDefenderForcesGenerator> { new BattleRoyaleForcesGenerator() };
+            }
+
 
 
             BaseGen.globalSettings.mainRect = resolveParams.rect;
@@ -248,7 +254,9 @@ namespace RealRuins
             }
 
 
-            RuinsScatterer.Scatter(resolveParams, currentOptions, null, generators);
+            if (generators != null) {
+                RuinsScatterer.Scatter(resolveParams, currentOptions, null, generators);
+            }
             BaseGen.symbolStack.Push("chargeBatteries", resolveParams);
             BaseGen.symbolStack.Push("ensureCanHoldRoof", resolveParams);
             BaseGen.symbolStack.Push("refuel", resolveParams);

@@ -146,6 +146,8 @@ namespace RealRuins.Settings
             }
             
             TooltipHandler.TipRegion(fallbackMaterialRect, "RealRuins.FallbackMaterialTT".Translate());
+            
+            listing.End();
         }
     }
 }

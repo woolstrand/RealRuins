@@ -93,9 +93,9 @@ namespace RealRuins {
             currentOptions.shouldAddRaidTriggers = false;
             currentOptions.claimableBlocks = false;
 
-            if currentOptions.threatScale == 0.0f {
+            if (RealRuins_ModSettings.forceMultiplier == 0.0f) {
                 currentOptions.shouldAddRaidTriggers = false;
-                currentOptions.skipForcesGeneration = true;
+                skipForcesGeneration = true;
             }
 
             if (poiComp.poiType == (int)POIType.Ruins || faction == null || overrideSpawnAsRuins) {

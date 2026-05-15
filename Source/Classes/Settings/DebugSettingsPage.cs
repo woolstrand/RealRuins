@@ -87,13 +87,18 @@ namespace RealRuins.Settings
         {
             float buttonWidth = 160f;
             float spacing = 5f;
-            Rect baseRect = listing.GetRect(100f);
+            float rowHeight = 25f;
+            
+            // Calculate required height based on number of categories
+            int categoriesCount = Debug.AllCategories.Length;
+            float requiredHeight = ((categoriesCount + 2) / 3) * (rowHeight + spacing) + spacing;
+            
+            Rect baseRect = listing.GetRect(requiredHeight);
             float x = baseRect.x;
             float y = baseRect.y;
             float maxWidth = baseRect.width;
             float currentX = x;
             float currentY = y;
-            float rowHeight = 25f;
 
             foreach (string category in Debug.AllCategories)
             {

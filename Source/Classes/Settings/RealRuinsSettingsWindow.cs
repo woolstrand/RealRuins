@@ -119,15 +119,28 @@ namespace RealRuins.Settings
 
         private void DrawPageContent(Rect rect)
         {
+            // Calculate actual height needed based on content
+            float innerHeight = EstimatePageHeight();
+            float viewportHeight = rect.height;
+            float scrollHeight = Mathf.Max(innerHeight, viewportHeight);
+            
+            Rect innerRect = new Rect(0, 0, rect.width - 20f, scrollHeight);
+            
             Widgets.BeginScrollView(
                 rect,
                 ref scrollPosition,
-                new Rect(0, 0, rect.width - 20f, 2000f));
+                innerRect);
 
-            pages[selectedTabIndex].Draw(
-                new Rect(0, 0, rect.width - 20f, 2000f));
+            pages[selectedTabIndex].Draw(innerRect);
 
             Widgets.EndScrollView();
+        }
+        
+        private float EstimatePageHeight()
+        {
+            // Conservative estimate: approximately 35 pixels per setting item
+            // This can be adjusted based on actual testing
+            return 1000f;
         }
     }
 }
