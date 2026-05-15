@@ -13,6 +13,8 @@ namespace RealRuins.Settings
 
         public override string TabLabel => "RealRuins.PlanetaryRuinsSettings.Caption".Translate();
 
+        public override float ContentHeight => 390f;
+
         public override void Draw(Rect rect)
         {
             Listing_Standard listing = new Listing_Standard();

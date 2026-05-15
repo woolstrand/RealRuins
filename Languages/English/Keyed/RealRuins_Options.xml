@@ -278,4 +278,21 @@
   <RealRuins.DebugSettings.ManualUploadTooltip>Manually trigger a blueprint capture and upload of the current map. Useful for testing upload functionality.</RealRuins.DebugSettings.ManualUploadTooltip>
   <RealRuins.DebugSettings.UploadTriggered>Blueprint capture triggered. Check logs for details.</RealRuins.DebugSettings.UploadTriggered>
   <RealRuins.DebugSettings.NoMap>No map available. Please load a game first.</RealRuins.DebugSettings.NoMap>
+
+  <!-- Event toggles -->
+  <RealRuins.EnableAbandonedRuinsFoundEvent>Enable "abandoned ruins found" event</RealRuins.EnableAbandonedRuinsFoundEvent>
+  <RealRuins.EnableAbandonedRuinsFoundEventTT>When enabled, the large "abandoned ruins found" world event can fire, marking a location with sizeable ruins on the world map.</RealRuins.EnableAbandonedRuinsFoundEventTT>
+  <RealRuins.EnableCaravanFoundRuinsEvent>Enable "caravan spotted small ruins" event</RealRuins.EnableCaravanFoundRuinsEvent>
+  <RealRuins.EnableCaravanFoundRuinsEventTT>When enabled, travelling caravans can spot a small ruin nearby and give you the option to investigate it.</RealRuins.EnableCaravanFoundRuinsEventTT>
+
+  <!-- Import/Export settings -->
+  <RealRuins.Settings.ExportSettings>Export Settings</RealRuins.Settings.ExportSettings>
+  <RealRuins.Settings.ImportSettings>Import Settings</RealRuins.Settings.ImportSettings>
+  <RealRuins.Settings.ExportTitle>Export Settings</RealRuins.Settings.ExportTitle>
+  <RealRuins.Settings.ImportTitle>Import Settings</RealRuins.Settings.ImportTitle>
+  <RealRuins.Settings.CopyToClipboard>Copy to clipboard</RealRuins.Settings.CopyToClipboard>
+  <RealRuins.Settings.CopiedToClipboard>Settings string copied to clipboard.</RealRuins.Settings.CopiedToClipboard>
+  <RealRuins.Settings.ImportApply>Import</RealRuins.Settings.ImportApply>
+  <RealRuins.Settings.ImportSuccess>Settings imported successfully.</RealRuins.Settings.ImportSuccess>
+  <RealRuins.Settings.ImportFailed>Failed to import settings. The string may be invalid or corrupted.</RealRuins.Settings.ImportFailed>
 </LanguageData>

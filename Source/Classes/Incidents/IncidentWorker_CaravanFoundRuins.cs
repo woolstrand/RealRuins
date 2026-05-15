@@ -10,6 +10,10 @@ namespace RealRuins {
 				return false;
 			}
 
+            if (!RealRuins_ModSettings.enableCaravanFoundRuinsEvent) {
+                return false;
+            }
+
             if (!SnapshotStoreManager.Instance.CanFireMediumEvent()) {
                 return false;
             }

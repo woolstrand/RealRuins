@@ -10,7 +10,13 @@ namespace RealRuins.Settings
     public abstract class SettingsPage
     {
         public abstract string TabLabel { get; }
-        
+
+        /// <summary>
+        /// Height of this page's content in pixels. Used by the scroll view.
+        /// Override in subclasses to avoid unnecessary scrollbars.
+        /// </summary>
+        public virtual float ContentHeight => 900f;
+
         public abstract void Draw(Rect rect);
         
         protected void ReadableLabeledTextInput(Rect rect, string title, ref int value, ref string buffer)

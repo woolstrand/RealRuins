@@ -9,6 +9,8 @@ namespace RealRuins.Settings
     {
         public override string TabLabel => "RealRuins.CacheSettings.TabCaption".Translate();
 
+        public override float ContentHeight => 480f;
+
         public override void Draw(Rect rect)
         {
             Listing_Standard listing = new Listing_Standard();

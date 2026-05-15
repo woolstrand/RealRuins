@@ -19,6 +19,10 @@ namespace RealRuins {
                 return false;
             }
 
+            if (!RealRuins_ModSettings.enableAbandonedRuinsFoundEvent) {
+                return false;
+            }
+
             if (!SnapshotStoreManager.Instance.CanFireLargeEvent()) {
                 return false;
             }

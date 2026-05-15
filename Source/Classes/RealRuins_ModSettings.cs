@@ -25,6 +25,8 @@ namespace RealRuins
         public static int debugTileFocusId = -1; // debug: tile ID to focus/select in world view
         public static List<string> debugExtras = new List<string>() { "BlueprintPawnDecoder" }; // debug: extra debug categories to log
         public static bool disableFriendlyRaids = false; // disable friendly raids on ruins
+        public static bool enableAbandonedRuinsFoundEvent = true; // enable/disable the abandoned ruins found event
+        public static bool enableCaravanFoundRuinsEvent = true; // enable/disable the caravan spotted small ruins event
         public static string spawnBlacklist = ""; // newline-separated list of defs to exclude from spawning
         public static string materialBlacklist = ""; // newline-separated list of materials to exclude from spawning
         public static string fallbackMaterial = "Wood"; // material to use when blacklisted material is encountered
@@ -51,6 +53,8 @@ namespace RealRuins
             Scribe_Values.Look(ref debugTileFocusId, "debugTileFocusId", -1, false);
             Scribe_Collections.Look(ref debugExtras, "debugExtras", LookMode.Value);
             Scribe_Values.Look(ref disableFriendlyRaids, "disableFriendlyRaids", false, false);
+            Scribe_Values.Look(ref enableAbandonedRuinsFoundEvent, "enableAbandonedRuinsFoundEvent", true, false);
+            Scribe_Values.Look(ref enableCaravanFoundRuinsEvent, "enableCaravanFoundRuinsEvent", true, false);
             Scribe_Values.Look(ref spawnBlacklist, "spawnBlacklist", "", false);
             Scribe_Values.Look(ref materialBlacklist, "materialBlacklist", "", false);
             Scribe_Values.Look(ref fallbackMaterial, "fallbackMaterial", "Wood", false);
@@ -93,6 +97,8 @@ namespace RealRuins
             debugTileFocusId = -1;
             debugExtras = new List<string>() { "BlueprintPawnDecoder" };
             disableFriendlyRaids = false;
+            enableAbandonedRuinsFoundEvent = true;
+            enableCaravanFoundRuinsEvent = true;
             spawnBlacklist = "";
             materialBlacklist = "";
             fallbackMaterial = "Wood";
