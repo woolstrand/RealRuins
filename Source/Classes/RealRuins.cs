@@ -378,7 +378,7 @@ namespace RealRuins
                 if (poi != null) {
                     Debug.Log("[MapGen]", "Found RR POI in game start context. Generator def name was {0}, changing to {1}", mapGenerator.defName, poi.MapGeneratorDef.defName);
                     mapGenerator = poi.MapGeneratorDef;
-                    extraGenStepDefs.Concat(poi.ExtraGenStepDefs);
+                    extraGenStepDefs = extraGenStepDefs.Concat(poi.ExtraGenStepDefs);
                 } else {
                     Debug.Log("[MapGen]", "Game start context is empty, generating map as usual");
                 }

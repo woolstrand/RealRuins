@@ -48,6 +48,7 @@ namespace RealRuins {
         static Dictionary<string, DateTime> snapshotTimestamps = new Dictionary<string, DateTime>();
 
         private List<string> snapshotsToLoad = new List<string>();
+        private readonly object snapshotsToLoadLock = new object();
 
         private int snapshotsToLoadCount = 0;
         private int loadedSnapshotsCount = 0;
@@ -161,7 +162,11 @@ namespace RealRuins {
                 return;
             }
 
-            string next = snapshotsToLoad.Pop();
+            string next;
+            lock (snapshotsToLoadLock) {
+                if (snapshotsToLoad.Count == 0) return;
+                next = snapshotsToLoad.Pop();
+            }
 
             Debug.Log(Debug.Store, "Loading snapshot {0}", next);
 
@@ -177,7 +182,12 @@ namespace RealRuins {
 
                 progress?.Invoke(loadedSnapshotsCount, snapshotsToLoadCount);
 
-                if (snapshotsToLoad.Count > 0) {
+                bool hasMore;
+                lock (snapshotsToLoadLock) {
+                    hasMore = snapshotsToLoad.Count > 0;
+                }
+
+                if (hasMore) {
                     //Debug.Message("Snapshots to load: {0}", snapshotsToLoad);
                     LoadNextSnapshot(gamePath);
                 } else {

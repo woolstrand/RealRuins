@@ -14,9 +14,15 @@ namespace RealRuins.Settings
             "RealRuins.Reform.Manual"
         };
 
-        private string spawnBlacklistBuffer = "";
-        private string materialBlacklistBuffer = "";
-        private string fallbackMaterialBuffer = "";
+        private string spawnBlacklistBuffer;
+        private string materialBlacklistBuffer;
+        private string fallbackMaterialBuffer;
+
+        public AdvancedSettingsPage() {
+            spawnBlacklistBuffer = RealRuins_ModSettings.spawnBlacklist ?? "";
+            materialBlacklistBuffer = RealRuins_ModSettings.materialBlacklist ?? "";
+            fallbackMaterialBuffer = RealRuins_ModSettings.fallbackMaterial ?? "";
+        }
 
         public override string TabLabel => "RealRuins.AdvancedSettings".Translate();
 

@@ -125,7 +125,7 @@ namespace RealRuins {
 
 
         public static ScatterOptions asIs() {
-            var options = Default;
+            var options = Default.Copy();
             options.overwritesEverything = true;
             options.canHaveFood = true;
             options.scavengingMultiplier = 0.0f;

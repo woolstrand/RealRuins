@@ -6,44 +6,19 @@ This report documents bugs, code smells, design weaknesses, and architectural co
 
 ## CRITICAL — Active Bugs That Cause Data Loss or Incorrect Behavior
 
-### 1. Settings Text Buffers Silently Erase Saved Blacklists
-**File**: `Source/Classes/Settings/AdvancedSettingsPage.cs`
-**What**: `spawnBlacklistBuffer`, `materialBlacklistBuffer`, and `fallbackMaterialBuffer` are instance fields initialized to `""`. They are never seeded from the saved settings values. On the very first render frame after the Advanced tab is opened, the comparison `if (buffer != savedValue)` is true (because `"" != savedValue`), so `savedValue` is immediately overwritten with `""`.
-**Impact**: Any configured spawn/material blacklist and fallback material setting is **silently erased** the moment the user opens the Advanced settings tab — even if they make no changes.
-**Fix**: Initialize the buffers from settings values before first draw (lazy init or `Initialize()` called from constructor).
-
+### 1. Fixed
 ---
 
-### 2. `extraGenStepDefs.Concat()` Result Discarded
-**File**: `Source/Classes/RealRuins.cs`, `MapGenerator_GenerateMap_Patch`
-**What**: `IEnumerable.Concat()` returns a new sequence — it does not modify the source. The result is not assigned back.
-**Impact**: POI extra gen steps (e.g., from POI world object defs) are **never applied** when entering a POI map. The map may be generated missing intended post-processing steps.
-**Fix**: Assign the result: `extraGenStepDefs = extraGenStepDefs.Concat(poi.ExtraGenStepDefs).ToList();`
-
+### 2. Fixed
 ---
 
-### 3. `snapshotsToLoad.Pop()` Race Condition
-**File**: `Source/Classes/Utility/SnapshotManager.cs`
-**What**: `snapshotsToLoad` is a `List<string>` accessed via `.Pop()` (remove-last extension) from up to 10 concurrent download callback threads. No lock protects access.
-**Impact**: Two threads can simultaneously pass the `Count > 0` check, then one calls `Pop()` on a now-empty list, causing `ArgumentOutOfRangeException` or duplicated downloads.
-**Fix**: Lock on `snapshotsToLoad` before the Count check and Pop, or use `ConcurrentQueue<string>` instead of `List<string>`.
-
+### 3. Fixed
 ---
 
-### 4. `SnapshotStoreManager` Version Deduplication Broken
-**File**: `Source/Classes/Utility/SnapshotStoreManager.cs`, `StoreBinaryData()`
-**What**: To check if a newer version already exists, the code splits the new filename by `'='` to get the date integer. But when iterating existing files, it splits by `'-'` instead of `'='`. Since the filename format is `{dateInt}={rest}.bp`, splitting on `'-'` never isolates the date correctly.
-**Impact**: Older versions of a blueprint are **never detected and deleted**, and newer already-downloaded versions are never detected as "already present." The dedup logic is completely non-functional.
-**Fix**: Use consistent delimiter (`'='`) for both the new and existing filename parsing.
-
+### 4. Fixed
 ---
 
-### 5. `ScatterOptions.asIs()` Mutates the Shared `Default` Singleton
-**File**: `Source/Classes/Scattering/ScatterOptions.cs`
-**What**: `asIs()` sets `options.overwritesEverything = true` and other fields directly on `ScatterOptions.Default` before returning it. `Default` is a static singleton.
-**Impact**: Calling `asIs()` permanently modifies `Default` for any subsequent caller in the same session. Calling `asIs()` twice compounds the mutation.
-**Fix**: `asIs()` should call `Default.Copy()` first, then mutate and return the copy.
-
+### 5. Fixed
 ---
 
 ### 6. `MapRuinsStore.remoteMapIds` Uses `LookMode.Undefined`

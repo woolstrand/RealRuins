@@ -149,7 +149,7 @@ namespace RealRuins
                         string[] files = Directory.GetFiles(path, mask);
                         foreach (string existingFile in files) {
                             int existingFileDate = 0;
-                            string[] existingFileParts = existingFile.Split('-');
+                            string[] existingFileParts = Path.GetFileName(existingFile).Split('=');
                             if (int.TryParse(existingFileParts[0], out existingFileDate)) {
                                 if (existingFileDate > date) {
                                     //there is more fresh file. no need to save this one.
