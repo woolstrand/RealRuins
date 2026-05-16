@@ -26,7 +26,7 @@ namespace RealRuins.Settings
 
         public override string TabLabel => "RealRuins.AdvancedSettings".Translate();
 
-        public override float ContentHeight => 660f;
+        public override float ContentHeight => 615f;
 
         public override void Draw(Rect rect)
         {
@@ -168,24 +168,6 @@ namespace RealRuins.Settings
             }
             
             TooltipHandler.TipRegion(fallbackMaterialRect, "RealRuins.FallbackMaterialTT".Translate());
-
-            listing.Gap(15);
-
-            // Export / Import settings buttons
-            Rect importExportRect = listing.GetRect(30f);
-            float halfW = (importExportRect.width - 10f) / 2f;
-            Rect exportRect = new Rect(importExportRect.x, importExportRect.y, halfW, importExportRect.height);
-            Rect importRect = new Rect(importExportRect.x + halfW + 10f, importExportRect.y, halfW, importExportRect.height);
-
-            if (Widgets.ButtonText(exportRect, "RealRuins.Settings.ExportSettings".Translate()))
-            {
-                Find.WindowStack.Add(new Dialog_ImportExportSettings(true));
-            }
-
-            if (Widgets.ButtonText(importRect, "RealRuins.Settings.ImportSettings".Translate()))
-            {
-                Find.WindowStack.Add(new Dialog_ImportExportSettings(false));
-            }
 
             listing.End();
         }

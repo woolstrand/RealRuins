@@ -197,9 +197,21 @@ namespace RealRuins
                             string combatLogMessage = hediffNode.SelectSingleNode("combatLogText")?.InnerText;
 
                             Hediff hediff = ScribeExtractor.SaveableFromNode<Hediff>(hediffNode, null);
-                            if (hediff != null && hediff.Part != null && !p.health.hediffSet.PartIsMissing(hediff.Part))
+                            if (hediff != null)
                             {
-                                p.health.AddHediff(hediff);
+                                // If the hediff targets a specific body part, verify the part is still
+                                // present and not missing (PartIsMissing can use a stale cache after
+                                // a MissingPart hediff was added earlier in the same loop).
+                                bool partOk = hediff.Part == null
+                                    || p.health.hediffSet.GetNotMissingParts().Contains(hediff.Part);
+                                if (partOk)
+                                {
+                                    p.health.AddHediff(hediff);
+                                }
+                                else
+                                {
+                                    Debug.Extra(Debug.BlueprintPawnDecoder, "Skipping hediff {0}: part {1} is missing or not present", hediff.def?.defName ?? "unknown", hediff.Part);
+                                }
                             }
 
                             // Add the combat log message to the pawn's combat log if present. even for missing parts.
@@ -246,7 +258,17 @@ namespace RealRuins
 
                     if (thingDef != null)
                     {
-                        Apparel apparel = (Apparel)ThingMaker.MakeThing(thingDef, thingDef.MadeFromStuff ? stuffDef : null);
+                        ThingDef resolvedStuff = null;
+                        if (thingDef.MadeFromStuff)
+                        {
+                            resolvedStuff = stuffDef ?? GenStuff.DefaultStuffFor(thingDef);
+                            if (resolvedStuff == null)
+                            {
+                                Debug.Extra(Debug.BlueprintPawnDecoder, "No valid stuff for apparel {0}, skipping", thingDef.defName);
+                                continue;
+                            }
+                        }
+                        Apparel apparel = (Apparel)ThingMaker.MakeThing(thingDef, resolvedStuff);
                         apparel.HitPoints = Rand.Range(1, (int)(apparel.MaxHitPoints * 0.6));
                         if (apparel is Apparel)
                         {
@@ -600,6 +622,18 @@ namespace RealRuins
                     {
                         Debug.Extra(Debug.BlueprintPawnDecoder, "Hediff {0} has missing source {1}, removing source reference", hediffDefName, sourceNode.InnerText);
                         hediffNode.RemoveChild(sourceNode);
+                    }
+                }
+
+                // Validate and fix lastInjury reference (HediffDef; present on Hediff_MissingPart)
+                var lastInjuryNode = hediffNode.SelectSingleNode("lastInjury");
+                if (lastInjuryNode != null && !string.IsNullOrEmpty(lastInjuryNode.InnerText))
+                {
+                    HediffDef lastInjuryDef = DefDatabase<HediffDef>.GetNamedSilentFail(lastInjuryNode.InnerText);
+                    if (lastInjuryDef == null)
+                    {
+                        Debug.Extra(Debug.BlueprintPawnDecoder, "Hediff {0} has missing lastInjury {1}, removing reference", hediffDefName, lastInjuryNode.InnerText);
+                        hediffNode.RemoveChild(lastInjuryNode);
                     }
                 }
 

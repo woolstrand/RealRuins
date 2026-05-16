@@ -63,11 +63,8 @@ This report documents bugs, code smells, design weaknesses, and architectural co
 
 ---
 
-### 11. `BlueprintRecoveryService` Reads Compressed Files as Plain Text
-**File**: `Source/Classes/Utility/BlueprintRecoveryService.cs`
-**What**: The service reads the file as a plain text string (`File.ReadAllText`). But `.bp` files are GZip-compressed. This would produce garbled or error output on any compressed file.
-**Impact**: Blueprint recovery will never successfully repair any `.bp` file (the format it's supposed to fix). It would only ever work on uncompressed XML files, which are temporary intermediates not normally persisted.
-**Fix**: Decompress first (via `Compressor.UnzipFile()`), repair the XML in memory, re-compress, and write back.
+### 11. Not a Bug — `BlueprintRecoveryService` Works on Decompressed Files
+`BlueprintLoader.LoadBlueprint()` always decompresses `.bp` files to a `.bp.xml` intermediate before XML parsing, and passes that decompressed path (`deflatedName`) to `BlueprintRecoveryService`. The service correctly reads and repairs plain-text XML. No fix needed.
 
 ---
 

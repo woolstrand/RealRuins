@@ -9,7 +9,7 @@ namespace RealRuins.Settings
     {
         public override string TabLabel => "RealRuins.CacheSettings.TabCaption".Translate();
 
-        public override float ContentHeight => 480f;
+        public override float ContentHeight => 525f;
 
         public override void Draw(Rect rect)
         {
@@ -144,6 +144,24 @@ namespace RealRuins.Settings
             TooltipHandler.TipRegion(download50Rect, "RealRuins_ModOptions_DownloadMoreTooltip".Translate());
             TooltipHandler.TipRegion(clearCacheRect, "RealRuins_ModOptions_CacheSizeTooltip".Translate());
             TooltipHandler.TipRegion(uploadRect, "RealRuins.DebugSettings.ManualUploadTooltip".Translate());
+
+            listing.Gap(15f);
+
+            // Export / Import settings buttons
+            Rect importExportRect = listing.GetRect(30f);
+            float halfW = (importExportRect.width - 10f) / 2f;
+            Rect exportRect = new Rect(importExportRect.x, importExportRect.y, halfW, importExportRect.height);
+            Rect importRect = new Rect(importExportRect.x + halfW + 10f, importExportRect.y, halfW, importExportRect.height);
+
+            if (Widgets.ButtonText(exportRect, "RealRuins.Settings.ExportSettings".Translate()))
+            {
+                Find.WindowStack.Add(new Dialog_ImportExportSettings(true));
+            }
+
+            if (Widgets.ButtonText(importRect, "RealRuins.Settings.ImportSettings".Translate()))
+            {
+                Find.WindowStack.Add(new Dialog_ImportExportSettings(false));
+            }
 
             listing.End();
         }

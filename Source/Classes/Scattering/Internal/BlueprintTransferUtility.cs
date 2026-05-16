@@ -638,14 +638,11 @@ namespace RealRuins
                                             if (GenSpawn.SpawningWipes(thing.def, existingItem.def))
                                             {
                                                 if (thing.def.thingClass.ToString().Contains("DubsBadHygiene")) throw new Exception("Can't spawn item because it will destroy Dubs Bad Hygiene Item and it will lead to app freeze.");
+                                                if (!existingItem.def.destroyable) throw new Exception($"Can't spawn item because it would destroy non-destroyable thing {existingItem.def.defName}.");
                                                 existingItem.Destroy(DestroyMode.Vanish);
                                             }
                                         }
                                     }
-
-
-
-
 
                                     GenSpawn.Spawn(thing, mapLocation, map, rotation);
                                     Debug.Extra(Debug.BlueprintTransfer, "Spawned");
