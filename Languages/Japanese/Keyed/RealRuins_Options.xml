@@ -274,6 +274,8 @@
   <RealRuins.DebugSettings.ResetSettingsConfirm>すべての設定をデフォルト値にリセットしてもよろしいですか？</RealRuins.DebugSettings.ResetSettingsConfirm>
   <RealRuins.DebugSettings.KeepSnapshotsAfterUpload>アップロード後にスナップショットを保持する</RealRuins.DebugSettings.KeepSnapshotsAfterUpload>
   <RealRuins.DebugSettings.KeepSnapshotsAfterUploadTooltip>有効にすると,アップロード後にスナップショットファイルが削除されず,一時ディレクトリに保持されます.アップロードに関する問題のデバッグに役立ちます.</RealRuins.DebugSettings.KeepSnapshotsAfterUploadTooltip>
+  <RealRuins.DebugSettings.UseStagingEnvironment>ステージング機能を使う</RealRuins.DebugSettings.UseStagingEnvironment>
+  <RealRuins.DebugSettings.UseStagingEnvironmentTooltip>有効にすると,すべてのAPIリクエストはstaging.woolstorm.artに送信され,設計図はステージングバケット(realruins-staging,sfo3) に保存されます.通信が膨大になるので通常のプレイでは無効にしてください.</RealRuins.DebugSettings.UseStagingEnvironmentTooltip>
   <RealRuins.DebugSettings.ManualUpload>設計図のキャプチャを手動でトリガーする</RealRuins.DebugSettings.ManualUpload>
   <RealRuins.DebugSettings.ManualUploadTooltip>現在のマップの設計図キャプチャとアップロードを手動で実行します.アップロード機能のテストに役立ちます.</RealRuins.DebugSettings.ManualUploadTooltip>
   <RealRuins.DebugSettings.UploadTriggered>設計図のキャプチャが実行されました.詳細はログを確認してください.</RealRuins.DebugSettings.UploadTriggered>
