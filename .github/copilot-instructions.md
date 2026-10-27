@@ -7,7 +7,7 @@ RealRuins is a RimWorld mod (C#, .NET 4.7.2, Harmony patching) that:
 2. Downloads blueprints from other players and places them as ruins on newly generated maps
 3. Creates persistent Points of Interest (POIs) on the world map from other players' bases
 
-**Game Version**: 1.6 (current build target). Source in `Source/Classes/`. Output: `1.6/Assemblies/RealRuins.dll`.
+**Game Version**: 1.7 (current build target). Source in `Source/Classes/`. Output: `1.7/Assemblies/RealRuins.dll`.
 
 ## Knowledge Base
 
@@ -40,7 +40,7 @@ Detailed documentation is in `docs/`. Read the relevant file before making chang
 
 ## Build
 
-Never build unless explicitly asked. Build target: `Source/RealRuins.csproj` → `1.6/Assemblies/RealRuins.dll`.
+Never build unless explicitly asked. Build target: `Source/RealRuins.csproj` → `1.7/Assemblies/RealRuins.dll`.
 
 ## Important Rules
 

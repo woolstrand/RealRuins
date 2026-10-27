@@ -194,5 +194,5 @@ Lightweight DTO for tile metadata returned by `APIService.LoadAllMapsForSeed()`.
 ## POI World Object Defs
 
 Registered in XML:
-- `1.6/Patches/WorldObjects_Patch.xml` — patches world object defs to add POI components
+- `1.7/Patches/WorldObjects_Patch.xml` — patches world object defs to add POI components
 - POI world objects use def names `RealRuinsPOI` and `RealRuinsPOI_Unlisted`

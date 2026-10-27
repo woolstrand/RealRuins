@@ -3,7 +3,7 @@
 ## Overview
 Real Ruins is a RimWorld mod that periodically uploads player bases to a server database and populates new maps with ruins from other players' abandoned bases. Players encounter procedurally-degraded versions of real bases as discoverable ruins.
 
-**Game Version Support**: 1.0, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6
+**Game Version Support**: 1.0, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7
 
 ## Project Structure
 Project uses RealRuins.csproj for building, so each time you add a new file, you

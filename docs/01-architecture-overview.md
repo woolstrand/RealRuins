@@ -13,7 +13,7 @@ RealRuins periodically uploads the player's base (as an XML "blueprint") to a ce
 - **Patching**: Harmony 2.x (attribute-based patches in nested inner classes)
 - **Serialization**: RimWorld's `Scribe` system for save/load; custom XML writer for blueprints
 - **HTTP**: Unity `UnityWebRequest` routed through `CoroutineManager`
-- **Build**: MSBuild project, outputs to `1.6/Assemblies/RealRuins.dll`
+- **Build**: MSBuild project, outputs to `1.7/Assemblies/RealRuins.dll`
 
 ## Major Subsystems
 

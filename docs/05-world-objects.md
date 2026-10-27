@@ -258,7 +258,7 @@ Generates mood thoughts based on `RuinedBaseComp.currentCapCost`. Five stages:
 
 ## XML Def Registration
 
-- `1.6/Defs/ThingDefs_Triggers/` — `RaidTrigger` and `TrippingTrigger` ThingDefs
-- `1.6/Defs/Thoughts/` — `ThoughtDef` for scavenging ruins
-- `1.6/Defs/Storyteller/` — storyteller settings for incident pacing
-- `1.6/Patches/WorldObjects_Patch.xml` — patches vanilla world object defs to add components
+- `1.7/Defs/ThingDefs_Triggers/` — `RaidTrigger` and `TrippingTrigger` ThingDefs
+- `1.7/Defs/Thoughts/` — `ThoughtDef` for scavenging ruins
+- `1.7/Defs/Storyteller/` — storyteller settings for incident pacing
+- `1.7/Patches/WorldObjects_Patch.xml` — patches vanilla world object defs to add components
