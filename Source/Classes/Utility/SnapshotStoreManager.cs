@@ -229,6 +229,33 @@ namespace RealRuins
             return result;
         }
 
+        public List<string> GetAvailableBlueprintsForGamePath(string gamePath = null) {
+            List<string> result = new List<string>();
+
+            string folderPath = GetSnapshotsFolderPath();
+            if (gamePath != null) {
+                folderPath = Path.Combine(folderPath, gamePath);
+            }
+
+            try {
+                if (!Directory.Exists(folderPath)) {
+                    return result;
+                }
+
+                string[] files = Directory.GetFiles(folderPath, "*.bp");
+                foreach (string filePath in files) {
+                    string filename = Path.GetFileName(filePath);
+                    // Remove .bp extension to get blueprint ID
+                    string blueprintId = filename.Substring(0, filename.Length - 3);
+                    result.Add(blueprintId);
+                }
+            } catch (Exception e) {
+                Debug.Error(Debug.Store, "Error scanning blueprints folder: {0}", e);
+            }
+
+            return result;
+        }
+
         public void CheckCacheContents() {
 
             if (RealRuins_ModSettings.offlineMode) {

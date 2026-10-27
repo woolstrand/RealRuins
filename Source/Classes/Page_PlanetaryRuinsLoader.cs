@@ -369,13 +369,28 @@ namespace RealRuins {
 
         private void LoadItems() {
             filteredList = null;
-          
-            if (downloadLimit == 0 || blueprintIds.Count() < downloadLimit) {
-                filteredList = blueprintIds.ListFullCopy();
-            } else {
-                filteredList = blueprintIds.ListFullCopy().InRandomOrder().ToList().GetRange(0, downloadLimit);
+            
+            // Get blueprints already available on disk for this game
+            List<string> alreadyAvailable = SnapshotStoreManager.Instance.GetAvailableBlueprintsForGamePath(SnapshotStoreManager.CurrentGamePath());
+            
+            // Filter to get only NEW blueprints (not yet available)
+            List<string> newBlueprints = new List<string>();
+            foreach (string bp in blueprintIds) {
+                if (!alreadyAvailable.Contains(bp)) {
+                    newBlueprints.Add(bp);
+                }
             }
-            Debug.Log(Debug.POI, "limit: {0}, in list: {1}, loading: {2}", downloadLimit, blueprintIds.Count, filteredList.Count);
+            
+            Debug.Log(Debug.POI, "Already available: {0}, new blueprints: {1}, total available: {2}", 
+                alreadyAvailable.Count, newBlueprints.Count, blueprintIds.Count);
+          
+            // Apply download limit to NEW blueprints
+            if (downloadLimit == 0 || newBlueprints.Count() < downloadLimit) {
+                filteredList = newBlueprints.ListFullCopy();
+            } else {
+                filteredList = newBlueprints.ListFullCopy().InRandomOrder().ToList().GetRange(0, downloadLimit);
+            }
+            Debug.Log(Debug.POI, "limit: {0}, new blueprints: {1}, will download: {2}", downloadLimit, newBlueprints.Count, filteredList.Count);
 
             if (pageState == RuinsPageState.LoadedHeader) {
                 pageState = RuinsPageState.LoadingBlueprints;
@@ -440,16 +455,24 @@ namespace RealRuins {
         }
 
         private bool CreateSitesInt() {
+            // Get all blueprints available on disk for this game (previous sessions + current)
+            HashSet<string> availableBlueprints = new HashSet<string>(
+                SnapshotStoreManager.Instance.GetAvailableBlueprintsForGamePath(SnapshotStoreManager.CurrentGamePath())
+            );
+            
             foreach (PlanetTileInfo t in mapTiles) {
-                if (!filteredList.Contains(t.mapId)) {
-                    continue;
-                }
-
                 if (forceStopTransfer) {
                     return false;
                 }
 
                 blueprintsProcessedCount++;
+                
+                // Only create POIs for blueprints that exist locally
+                if (!availableBlueprints.Contains(t.mapId)) {
+                    Debug.Log(Debug.POI, "Skipped: Blueprint {0} is not available locally", t.mapId);
+                    continue;
+                }
+
                 if (biomeStrict) {
                     if (t.originX == 0 && t.originZ == 0 || t.biomeName == null) {
                         Debug.Log(Debug.POI, "Skipped: Biome filtering is on, but blueprint does not contain biome or location information");

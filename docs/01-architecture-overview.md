@@ -53,7 +53,6 @@ Pre-game setup that populates the planet with POI ruins before a new game starts
 - `Page_PlanetaryRuinsLoader` — wizard UI (download → create sites)
 - `RealRuinsPOIFactory` — blueprint-to-world-object creation
 - `BlueprintAnalyzer` — classifies blueprints (type, military power, etc.)
-- `MapRuinsStore` — world component storing remote map IDs
 → Details: [06-planetary-ruins.md](06-planetary-ruins.md)
 
 ### 7. Settings & UI

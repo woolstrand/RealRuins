@@ -20,7 +20,7 @@ Detailed documentation is in `docs/`. Read the relevant file before making chang
 | [docs/03-blueprint-pipeline.md](docs/03-blueprint-pipeline.md) | Blueprint data model, XML loading, preprocessing, deterioration, scavenging, map placement (BlueprintTransferUtility), pawn restoration, defender forces |
 | [docs/04-scattering.md](docs/04-scattering.md) | ScatterOptions, RuinsScatterer, GenStep_ScatterRealRuins, GenStep_ScatterPOIRuins, proximity system |
 | [docs/05-world-objects.md](docs/05-world-objects.md) | AbandonedBaseWorldObject, SmallRuinsWorldObject, RealRuinsPOIWorldObject, incidents, caravan/pod arrival actions, RuinedBaseComp state machine, triggers, thoughts |
-| [docs/06-planetary-ruins.md](docs/06-planetary-ruins.md) | Pre-game wizard (Page_PlanetaryRuinsLoader), blueprint classification (BlueprintAnalyzer), POI factory (RealRuinsPOIFactory), world component (MapRuinsStore) |
+| [docs/06-planetary-ruins.md](docs/06-planetary-ruins.md) | Pre-game wizard (Page_PlanetaryRuinsLoader), blueprint classification (BlueprintAnalyzer), POI factory (RealRuinsPOIFactory), blueprint pool management |
 | [docs/07-settings-ui.md](docs/07-settings-ui.md) | Settings pages, RealRuins_ModSettings, import/export serialization — including known critical bugs |
 | [docs/08-utility-debug.md](docs/08-utility-debug.md) | Extensions, CoroutineManager, FactionSelector, SimpleJSON, Debug logging system, startup sequence |
 
@@ -36,9 +36,7 @@ Detailed documentation is in `docs/`. Read the relevant file before making chang
 
 5. **`ScatterOptions.asIs()` mutates shared Default** — `ScatterOptions.asIs()` directly modifies `ScatterOptions.Default` singleton before returning it. Never call `asIs()` in a context where `Default` might be read again.
 
-6. **`MapRuinsStore` uses `LookMode.Undefined`** — `remoteMapIds` list will not serialize correctly. Should be `LookMode.Value`.
-
-7. **`chronologicalAge` writes biological age** — `SnapshotGenerator.EncodePawn` writes `AgeBiologicalTicks` for both fields.
+6. **`chronologicalAge` writes biological age** — `SnapshotGenerator.EncodePawn` writes `AgeBiologicalTicks` for both fields.
 
 ## Build
 
