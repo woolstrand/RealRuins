@@ -134,7 +134,7 @@
             "command": "open",
             "args": [
                 "-a",
-                "${env:HOME}/Library/Application Support/Steam/steamapps/common/RimWorld/RimWorldMac.app"
+                "${env:HOME}/Library/Application Support/Steam/steamapps/common/RimWorld/RimWorld.app"
             ],
             "problemMatcher": [],
             "presentation": {

@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Mod base folder - uses $HOME for cross-user compatibility
-MOD_BASE_FOLDER="$HOME/Library/Application Support/Steam/steamapps/common/RimWorld/RimWorldMac.app/Mods/RealRuins"
+MOD_BASE_FOLDER="$HOME/Library/Application Support/Steam/steamapps/common/RimWorld/Mods/RealRuins"
 
 # Get the directory where this script is located
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
