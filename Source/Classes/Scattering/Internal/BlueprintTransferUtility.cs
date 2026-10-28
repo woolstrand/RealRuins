@@ -40,6 +40,30 @@ namespace RealRuins
         int mapOriginX;
         int mapOriginZ;
 
+        private const int UsedRectsPadding = 2;
+        private List<CellRect> protectedRects;
+
+        private bool IsProtected(IntVec3 cell)
+        {
+            if (protectedRects == null)
+            {
+                protectedRects = new List<CellRect>();
+                if (options.avoidUsedRects)
+                {
+                    foreach (CellRect used in MapGenerator.UsedRects)
+                    {
+                        protectedRects.Add(used.ExpandedBy(UsedRectsPadding));
+                    }
+                }
+            }
+
+            for (int i = 0; i < protectedRects.Count; i++)
+            {
+                if (protectedRects[i].Contains(cell)) return true;
+            }
+            return false;
+        }
+
 
         // Clear the cell from other destroyable objects
         private bool ClearCell(IntVec3 location, Map map, bool shouldForceClear = true)
@@ -77,18 +101,18 @@ namespace RealRuins
         private ThingDef GetFallbackMaterial()
         {
             if (cachedFallbackMaterial != null) return cachedFallbackMaterial;
-            
+
             if (!string.IsNullOrEmpty(fallbackMaterialName))
             {
                 cachedFallbackMaterial = DefDatabase<ThingDef>.GetNamed(fallbackMaterialName, false);
             }
-            
+
             if (cachedFallbackMaterial == null)
             {
                 // Fallback to wood if specified material not found
                 cachedFallbackMaterial = DefDatabase<ThingDef>.GetNamed("Wood", false);
             }
-            
+
             return cachedFallbackMaterial;
         }
 
@@ -123,7 +147,7 @@ namespace RealRuins
                     if (itemTile.innerItems != null)
                     {
                         Debug.Log(Debug.BlueprintTransfer, "Now need to instantiate corpse at {0}, {1}", x, z);
-                        Pawn p = (Pawn)MakeThingFromItemTile(itemTile.innerItems.First(), x: x, z: z,enableLogging: true);
+                        Pawn p = (Pawn)MakeThingFromItemTile(itemTile.innerItems.First(), x: x, z: z, enableLogging: true);
                         Find.WorldPawns.PassToWorld(p);
                         Corpse corpse = null;
                         if (p.Corpse != null)
@@ -163,7 +187,7 @@ namespace RealRuins
                 if (itemTile.stuffDef != null && thingDef.MadeFromStuff)
                 { //some mods may alter thing and add stuff parameter to it. this will result in a bug on a vanilla, so need to double-check here
                     stuffDef = DefDatabase<ThingDef>.GetNamed(itemTile.stuffDef, false);
-                    
+
                     // Check if this material is blacklisted
                     if (materialBlacklistCache.Contains(itemTile.stuffDef))
                     {
@@ -213,10 +237,14 @@ namespace RealRuins
 
                     if (thingDef.CanHaveFaction)
                     {
-                        if (thingDef.IsDoor || thingDef.IsWall) {
-                            if (Rand.Chance(options.doorOwnershipProbability)) {
+                        if (thingDef.IsDoor || thingDef.IsWall)
+                        {
+                            if (Rand.Chance(options.doorOwnershipProbability))
+                            {
                                 thing.SetFaction(rp.faction);
-                            } else {
+                            }
+                            else
+                            {
                                 thing.SetFaction(null);
                             }
                         }
@@ -533,9 +561,9 @@ namespace RealRuins
                     {
                         IntVec3 mapLocation = new IntVec3(x + mapOriginX, 0, z + mapOriginZ);
                         //Check if thepoint is in allowed bounds of the map
-                        if (!mapLocation.InBounds(map) || mapLocation.InNoBuildEdgeArea(map))
+                        if (!mapLocation.InBounds(map) || mapLocation.InNoBuildEdgeArea(map) || IsProtected(mapLocation))
                         {
-                            continue; //ignore invalid cells
+                            continue; //ignore invalid and protected cells
                         }
 
                         if (options.overwritesEverything || Rand.Chance(0.6f))
@@ -562,6 +590,8 @@ namespace RealRuins
                 {
 
                     IntVec3 mapLocation = new IntVec3(x + mapOriginX, 0, z + mapOriginZ);
+                    if (mapLocation.InBounds(map) && IsProtected(mapLocation)) continue;
+
                     if (coverageMap != null)
                     {
                         if (coverageMap.isMarked(mapLocation.x, mapLocation.z) == true)
@@ -741,7 +771,7 @@ namespace RealRuins
                     try
                     {
                         IntVec3 mapLocation = new IntVec3(x + mapOriginX, 0, z + mapOriginZ);
-                        if (!mapLocation.InBounds(map)) continue;
+                        if (!mapLocation.InBounds(map) || IsProtected(mapLocation)) continue;
 
                         if (filthMap[x, z] <= 0 || Rand.Chance(0.2f)) continue;
 
