@@ -52,6 +52,9 @@ searching to figure out. Keep entries short; no screen coordinates (they change 
 
 ## Log signals (`[RealRuins][<part>]`)
 
+Spawn failures found while testing go into `docs/PROBLEMATIC_ITEMS.md` (with log excerpt, code location,
+blueprint id) - that file also states the spawn philosophy: spawn what can be spawned, discard the rest quietly.
+
 - `[StartGame]: Starting tile` / `[[MapGen]]: Game start context is empty` - printed on every map
   generation, not just game start.
 - `[Scatter]: Spawning N ruin chunks` → per chunk `[Store]: Acceptable blueprint ...` +
