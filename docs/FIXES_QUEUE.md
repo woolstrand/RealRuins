@@ -15,11 +15,7 @@ Single list of known bugs, code smells and design weaknesses. Entries are groupe
 
 ## CRITICAL — Data loss or incorrect behavior
 
-### C1. `chronologicalAge` Writes Biological Age
-**File**: `Source/Classes/Snapshotting/SnapshotGenerator.cs`, `EncodePawn()`
-**What**: `writer.WriteElementString("chronologicalAge", pawn.ageTracker.AgeBiologicalTicks.ToString())` — should be `AgeChronologicalTicks`.
-**Impact**: For pawns with slow aging (Royalty trait) or long-lived xenotypes, the chronological age is saved as the biological age. When the pawn is restored in another player's game, their lifespan/appearance may be subtly wrong.
-**Fix**: Replace `AgeBiologicalTicks` with `AgeChronologicalTicks` for the `chronologicalAge` element.
+### C1. Fixed
 
 ---
 

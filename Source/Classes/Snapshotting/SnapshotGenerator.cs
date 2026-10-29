@@ -76,7 +76,7 @@ namespace RealRuins
 
             //age
             writer.WriteElementString("biologicalAge", pawn.ageTracker.AgeBiologicalTicks.ToString());
-            writer.WriteElementString("chronologicalAge", pawn.ageTracker.AgeBiologicalTicks.ToString());
+            writer.WriteElementString("chronologicalAge", pawn.ageTracker.AgeChronologicalTicks.ToString());
 
             //story and appearance
             if (pawn.story != null)
