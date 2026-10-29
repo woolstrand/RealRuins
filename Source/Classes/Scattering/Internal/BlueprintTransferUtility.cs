@@ -35,6 +35,7 @@ namespace RealRuins
         Blueprint blueprint;
         ResolveParams rp;
         ScatterOptions options;
+        ScatterContext context;
         Map map;
 
         int mapOriginX;
@@ -352,41 +353,17 @@ namespace RealRuins
         }
 
 
-        public BlueprintTransferUtility(Blueprint blueprint, Map map, ResolveParams rp, ScatterOptions options)
+        public BlueprintTransferUtility(Blueprint blueprint, Map map, ResolveParams rp, ScatterContext context)
         {
             this.blueprint = blueprint;
             this.map = map;
             this.rp = rp;
-            this.options = options;
+            this.context = context;
+            this.options = context?.options;
 
-            // Parse and cache blacklists for efficient O(1) lookup
-            spawnBlacklistCache = new HashSet<string>();
-            if (!string.IsNullOrEmpty(RealRuins_ModSettings.spawnBlacklist))
-            {
-                foreach (string line in RealRuins_ModSettings.spawnBlacklist.Split(new[] { "\r\n", "\r", "\n", "," }, StringSplitOptions.RemoveEmptyEntries))
-                {
-                    string trimmed = line.Trim();
-                    if (!string.IsNullOrEmpty(trimmed))
-                    {
-                        spawnBlacklistCache.Add(trimmed);
-                    }
-                }
-            }
-
-            materialBlacklistCache = new HashSet<string>();
-            if (!string.IsNullOrEmpty(RealRuins_ModSettings.materialBlacklist))
-            {
-                foreach (string line in RealRuins_ModSettings.materialBlacklist.Split(new[] { "\r\n", "\r", "\n", "," }, StringSplitOptions.RemoveEmptyEntries))
-                {
-                    string trimmed = line.Trim();
-                    if (!string.IsNullOrEmpty(trimmed))
-                    {
-                        materialBlacklistCache.Add(trimmed);
-                    }
-                }
-            }
-
-            fallbackMaterialName = RealRuins_ModSettings.fallbackMaterial;
+            spawnBlacklistCache = context?.settings?.spawnBlacklist ?? new HashSet<string>();
+            materialBlacklistCache = context?.settings?.materialBlacklist ?? new HashSet<string>();
+            fallbackMaterialName = context?.settings?.fallbackMaterialName;
             cachedFallbackMaterial = null; // Will be resolved lazily
 
             Debug.Log("Transferring blueprint of faction {0}", rp.faction?.Name ?? "none");
@@ -548,8 +525,8 @@ namespace RealRuins
             int totalTerrains = 0;
             int totalItems = 0;
 
-            //update rect to actual placement rect using width and height
-            rp.rect = new CellRect(mapOriginX, mapOriginZ, blueprint.width, blueprint.height);
+            //report actual placement rect using width and height
+            context.state.placementRect = new CellRect(mapOriginX, mapOriginZ, blueprint.width, blueprint.height);
 
             Debug.Extra(Debug.BlueprintTransfer, "Clearing map...");
 
@@ -743,7 +720,7 @@ namespace RealRuins
             {
                 RestoreDefencesAndPower();
             }
-            options.uncoveredCost = totalCost;
+            context.state.uncoveredCost = totalCost;
             Debug.Log(Debug.BlueprintTransfer, "Transferred blueprint of size {0}x{1}, age {2}, total cost of approximately {3}. Items: {4}/{5}, terrains: {6}/{7}", blueprint.width, blueprint.height, -blueprint.dateShift, totalCost, transferredTiles, totalItems, transferredTerrains, totalTerrains);
         }
 

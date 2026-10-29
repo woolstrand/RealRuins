@@ -62,9 +62,9 @@ namespace RealRuins {
         private Dictionary<string, ItemStatRecord> itemStats;
         private ScatterOptions options;
 
-        public BlueprintAnalyzer(Blueprint blueprint, ScatterOptions options = null) {
+        public BlueprintAnalyzer(Blueprint blueprint) {
             this.blueprint = blueprint;
-            this.options = options ?? ScatterOptions.asIs();
+            this.options = ScatterOptionsFactory.ForAnalyzer();
             itemStats = new Dictionary<string, ItemStatRecord>();
         }
 

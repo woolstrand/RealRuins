@@ -18,13 +18,13 @@ namespace RealRuins{
             faction = factionOverride;
         }
 
-        public override void GenerateForces(Map map, ResolveParams rp, ScatterOptions options) {
-            if (options == null) return;
+        public override void GenerateForces(Map map, ResolveParams rp, ScatterContext context) {
+            if (context == null) return;
 
             int addedTriggers = 0;
             float ratio = 10;
-            float remainingCost = options.uncoveredCost * (Rand.Value + 0.5f); //cost estimation as seen by other factions
-            Debug.Log(Debug.ForceGen, "Running citizen force generation with remaining cost of {0} (while uncovered is {1})", remainingCost, options.uncoveredCost);
+            float remainingCost = context.state.uncoveredCost * (Rand.Value + 0.5f); //cost estimation as seen by other factions
+            Debug.Log(Debug.ForceGen, "Running citizen force generation with remaining cost of {0} (while uncovered is {1})", remainingCost, context.state.uncoveredCost);
 
             float initialCost = remainingCost;
 
@@ -32,7 +32,7 @@ namespace RealRuins{
 
             while (remainingCost > 0) {
 
-                IntVec3 mapLocation = rp.rect.RandomCell;
+                IntVec3 mapLocation = context.state.placementRect.RandomCell;
                 if (!mapLocation.InBounds(map)) continue;
 
                 ThingDef raidTriggerDef = ThingDef.Named("RaidTrigger");
@@ -45,13 +45,13 @@ namespace RealRuins{
                 if (raidValue > 10000) raidValue = Rand.Range(8000, 11000); //sanity cap. against some beta-poly bases.
                 remainingCost -= raidValue * ratio;
 
-                trigger.value = ScalePointsToDifficulty(raidValue);
+                trigger.value = ScalePointsToDifficulty(raidValue, context);
 
                 GenSpawn.Spawn(trigger, mapLocation, map);
                 Debug.Log(Debug.ForceGen, "Spawned trigger at {0}, {1} for {2} points, ticks left: {3}, faction: {4}", mapLocation.x, mapLocation.z, trigger.value, trigger.TicksLeft(), trigger.faction);
                 addedTriggers++;
 
-                options.uncoveredCost = Math.Abs(remainingCost);
+                context.state.uncoveredCost = Math.Abs(remainingCost);
 
                 if (addedTriggers > triggersAbsoluteMaximum) {
                     if (remainingCost < initialCost * 0.2f) {
@@ -66,8 +66,8 @@ namespace RealRuins{
             }
         }
 
-        public override void GenerateStartingParty(Map map, ResolveParams rp, ScatterOptions currentOptions) {
-            float uncoveredCost = currentOptions.uncoveredCost;
+        public override void GenerateStartingParty(Map map, ResolveParams rp, ScatterContext context) {
+            float uncoveredCost = context.state.uncoveredCost;
 
             Faction faction = rp.faction;
             if (this.faction != null) {
@@ -77,10 +77,10 @@ namespace RealRuins{
                 faction = Find.FactionManager.RandomEnemyFaction(true, true, false);
             }
 
-            Debug.Log(Debug.ForceGen, "Citizen force gen: uncoveredCost {0}. rect {1}", uncoveredCost, rp.rect);
+            Debug.Log(Debug.ForceGen, "Citizen force gen: uncoveredCost {0}. rect {1}", uncoveredCost, context.state.placementRect);
             int maxPoints = Math.Min((int)(uncoveredCost / 10), 5000);
-            SpawnGroup((int)ScalePointsToDifficulty(maxPoints), rp.rect, faction, map, Rand.Range(Math.Max(2, (int)(bedCount * 0.7)), (int)(bedCount * 1.5)));
-            currentOptions.uncoveredCost -= maxPoints * 10;
+            SpawnGroup((int)ScalePointsToDifficulty(maxPoints, context), context.state.placementRect, faction, map, Rand.Range(Math.Max(2, (int)(bedCount * 0.7)), (int)(bedCount * 1.5)));
+            context.state.uncoveredCost -= maxPoints * 10;
         }
 
         private void SpawnGroup(int points, CellRect locationRect, Faction faction, Map map, int countCap) {

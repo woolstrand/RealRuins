@@ -16,16 +16,16 @@ namespace RealRuins {
             powerMax = power;
         }
 
-        public override void GenerateForces(Map map, ResolveParams rp, ScatterOptions options) {
+        public override void GenerateForces(Map map, ResolveParams rp, ScatterContext context) {
             Debug.Log(Debug.ForceGen, "Generating mechanoid forces");
 
-            CellRect rect = rp.rect;
+            CellRect rect = context.state.placementRect;
 
             /*if (rect.minX < 15 || rect.minZ < 15 || rect.maxX > map.Size.x - 15 || rect.maxZ > map.Size.z - 15) {
                 return; //do not add enemies if we're on the map edge
             }
 
-            if (!CellFinder.TryFindRandomCellInsideWith(rect, (IntVec3 x) => x.Standable(map) && options.roomMap[x.x - rect.BottomLeft.x, x.z - rect.BottomLeft.z] > 1, out IntVec3 testCell)) {
+            if (!CellFinder.TryFindRandomCellInsideWith(rect, (IntVec3 x) => x.Standable(map) && context.state.roomMap[x.x - rect.BottomLeft.x, x.z - rect.BottomLeft.z] > 1, out IntVec3 testCell)) {
                 return; //interrupt if there are no closed cells available
             }*/
 
@@ -33,7 +33,7 @@ namespace RealRuins {
                 powerMax = rect.Area / 30.0f;
             }
 
-            powerMax = ScalePointsToDifficulty(powerMax);
+            powerMax = ScalePointsToDifficulty(powerMax, context);
 
             float powerThreshold = (Math.Abs(Rand.Gaussian(0.5f, 1)) * powerMax) + 1;
             float cumulativePower = 0;
@@ -72,7 +72,7 @@ namespace RealRuins {
             }
         }
 
-        public override void GenerateStartingParty(Map map, ResolveParams rp, ScatterOptions options) {
+        public override void GenerateStartingParty(Map map, ResolveParams rp, ScatterContext context) {
         }
     }
 }

@@ -9,13 +9,13 @@ using Verse.AI.Group;
 
 namespace RealRuins {
     class BattleRoyaleForcesGenerator : AbstractDefenderForcesGenerator {
-        public override void GenerateForces(Map map, ResolveParams rp, ScatterOptions options) {
-            if (options == null) return;
+        public override void GenerateForces(Map map, ResolveParams rp, ScatterContext context) {
+            if (context == null) return;
 
             int addedTriggers = 0;
             float ratio = 10;
-            float remainingCost = options.uncoveredCost * (Rand.Value + 0.5f); //cost estimation as seen by other factions
-            Debug.Log(Debug.ForceGen, "Running battle royale force generation with remaining cost of {0} (while uncovered is {1})", remainingCost, options.uncoveredCost);
+            float remainingCost = context.state.uncoveredCost * (Rand.Value + 0.5f); //cost estimation as seen by other factions
+            Debug.Log(Debug.ForceGen, "Running battle royale force generation with remaining cost of {0} (while uncovered is {1})", remainingCost, context.state.uncoveredCost);
 
             float initialCost = remainingCost;
 
@@ -23,13 +23,13 @@ namespace RealRuins {
 
             while (remainingCost > 0) {
 
-                IntVec3 mapLocation = rp.rect.RandomCell;
+                IntVec3 mapLocation = context.state.placementRect.RandomCell;
                 if (!mapLocation.InBounds(map)) continue;
 
                 ThingDef raidTriggerDef = ThingDef.Named("RaidTrigger");
                 RaidTrigger trigger = ThingMaker.MakeThing(raidTriggerDef) as RaidTrigger;
 
-                if (options.allowFriendlyRaids) {
+                if (context.options.allowFriendlyRaids) {
                     if (Rand.Chance(0.2f)) {
                         trigger.faction = Find.FactionManager.RandomNonHostileFaction();
                     } else {
@@ -44,13 +44,13 @@ namespace RealRuins {
                 if (raidValue > 10000) raidValue = Rand.Range(8000, 11000); //sanity cap. against some beta-poly bases.
                 remainingCost -= raidValue * ratio;
 
-                trigger.value = ScalePointsToDifficulty(raidValue);
+                trigger.value = ScalePointsToDifficulty(raidValue, context);
 
                 GenSpawn.Spawn(trigger, mapLocation, map);
                 Debug.Log(Debug.ForceGen, "Spawned trigger at {0}, {1} for {2} points, ticks left: {3}", mapLocation.x, mapLocation.z, trigger.value, trigger.TicksLeft());
                 addedTriggers++;
 
-                options.uncoveredCost = Math.Abs(remainingCost);
+                context.state.uncoveredCost = Math.Abs(remainingCost);
 
                 if (addedTriggers > triggersAbsoluteMaximum) {
                     if (remainingCost < initialCost * 0.2f) {
@@ -65,23 +65,23 @@ namespace RealRuins {
             }
         }
 
-        public override void GenerateStartingParty(Map map, ResolveParams rp, ScatterOptions currentOptions) {
-            float uncoveredCost = currentOptions.uncoveredCost;
+        public override void GenerateStartingParty(Map map, ResolveParams rp, ScatterContext context) {
+            float uncoveredCost = context.state.uncoveredCost;
 
-            if (uncoveredCost > 0 || currentOptions.startingPartyPoints > 0) {
+            if (uncoveredCost > 0 || context.options.startingPartyPoints > 0) {
                 float pointsCost = 0;
-                if (currentOptions.startingPartyPoints > 0) {
-                    pointsCost = currentOptions.startingPartyPoints;
+                if (context.options.startingPartyPoints > 0) {
+                    pointsCost = context.options.startingPartyPoints;
                 } else {
                     pointsCost = uncoveredCost / 10.0f;
                     FloatRange defaultPoints = new FloatRange(pointsCost * 0.7f,
                         Math.Min(12000.0f, pointsCost * 2.0f));
                     Debug.Log(Debug.ForceGen, "Adding starting party. Remaining points: {0}. Used points range: {1}",
-                        currentOptions.uncoveredCost, defaultPoints);
+                        context.state.uncoveredCost, defaultPoints);
 
                 }
-                pointsCost = ScalePointsToDifficulty(pointsCost);
-                ScatterStartingParties((int)pointsCost, currentOptions.allowFriendlyRaids, map);
+                pointsCost = ScalePointsToDifficulty(pointsCost, context);
+                ScatterStartingParties((int)pointsCost, context.options.allowFriendlyRaids, map);
             }
 
         }

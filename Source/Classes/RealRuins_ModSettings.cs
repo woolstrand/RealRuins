@@ -31,7 +31,7 @@ namespace RealRuins
         public static string materialBlacklist = ""; // newline-separated list of materials to exclude from spawning
         public static string fallbackMaterial = "Wood"; // material to use when blacklisted material is encountered
 
-        public static ScatterOptions defaultScatterOptions = ScatterOptions.Default;
+        public static ScatterOptions defaultScatterOptions = new ScatterOptions();
         public static PlanetaryRuinsOptions planetaryRuinsOptions = new PlanetaryRuinsOptions();
 
         public override void ExposeData()
@@ -69,7 +69,7 @@ namespace RealRuins
                 }
                 if (defaultScatterOptions == null)
                 {
-                    defaultScatterOptions = ScatterOptions.Default;
+                    defaultScatterOptions = new ScatterOptions();
                 }
                 if (planetaryRuinsOptions == null)
                 {

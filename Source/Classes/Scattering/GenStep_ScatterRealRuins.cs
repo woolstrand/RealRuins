@@ -25,8 +25,6 @@ namespace RealRuins
             }
         }
 
-        private ScatterOptions currentOptions = RealRuins_ModSettings.defaultScatterOptions;
-
         public float CalculateDistanceToNearestSettlement(Map map)
         {
             PlanetTile rootTile = map.Tile;
@@ -101,13 +99,11 @@ namespace RealRuins
                 float densityMultiplier = 1.0f;
                 float scaleMultiplier = 1.0f;
                 float distanceToSettlement = 0.0f;
-                float totalDensity = RealRuins_ModSettings.defaultScatterOptions.densityMultiplier;
-                currentOptions = RealRuins_ModSettings.defaultScatterOptions.Copy(); //store as instance variable to keep accessible on subsequent ScatterAt calls
-                currentOptions.doorOwnershipProbability = 0.05f;
-                currentOptions.allowFriendlyRaids = !RealRuins_ModSettings.disableFriendlyRaids;
-                currentOptions.avoidUsedRects = true;
+                ScatterOptions options = ScatterOptionsFactory.ForGenericRuins();
+                PipelineSettings settings = PipelineSettings.FromModSettings();
+                float totalDensity = options.densityMultiplier;
 
-                if (RealRuins_ModSettings.defaultScatterOptions.enableProximity) {
+                if (options.enableProximity) {
                         
                     distanceToSettlement = CalculateDistanceToNearestSettlement(map);
                     if (distanceToSettlement >= 16 && Rand.Chance(0.5f)) {
@@ -121,15 +117,15 @@ namespace RealRuins
                         densityMultiplier = 0.0f;
                     }
 
-                    currentOptions.densityMultiplier *= densityMultiplier;
-                    currentOptions.minRadius = Math.Min(60, Math.Max(6, (int)(currentOptions.minRadius * scaleMultiplier))); //keep between 6 and 60
-                    currentOptions.maxRadius = Math.Min(60, Math.Max(6, (int)(currentOptions.maxRadius * scaleMultiplier))); //keep between 6 and 60
-                    currentOptions.scavengingMultiplier *= scaleMultiplier * densityMultiplier;
-                    currentOptions.deteriorationMultiplier += Math.Min(0.2f, (1.0f / (scaleMultiplier * densityMultiplier * 3)));
+                    options.densityMultiplier *= densityMultiplier;
+                    options.minRadius = Math.Min(60, Math.Max(6, (int)(options.minRadius * scaleMultiplier))); //keep between 6 and 60
+                    options.maxRadius = Math.Min(60, Math.Max(6, (int)(options.maxRadius * scaleMultiplier))); //keep between 6 and 60
+                    options.scavengingMultiplier *= scaleMultiplier * densityMultiplier;
+                    options.deteriorationMultiplier += Math.Min(0.2f, (1.0f / (scaleMultiplier * densityMultiplier * 3)));
 
 
                     if (densityMultiplier > 20.0f) densityMultiplier = 20.0f;
-                    while (densityMultiplier * currentOptions.maxRadius > 800) {
+                    while (densityMultiplier * options.maxRadius > 800) {
                         densityMultiplier *= 0.9f; //WHAT? Why not 800/radius?
                     }
 
@@ -138,7 +134,7 @@ namespace RealRuins
                 //number of ruins based on density settings
                 var num = (int)((float)map.Area / 10000.0f) * Rand.Range(1 * totalDensity, 2 * totalDensity);
 
-                Debug.Log(Debug.Scatter, "dist {0}, dens {1} (x{2}), scale x{3} ({4}-{5}), scav {6}, deter {7}", distanceToSettlement, currentOptions.densityMultiplier, densityMultiplier, scaleMultiplier, currentOptions.minRadius, currentOptions.maxRadius, currentOptions.scavengingMultiplier, currentOptions.deteriorationMultiplier);
+                Debug.Log(Debug.Scatter, "dist {0}, dens {1} (x{2}), scale x{3} ({4}-{5}), scav {6}, deter {7}", distanceToSettlement, options.densityMultiplier, densityMultiplier, scaleMultiplier, options.minRadius, options.maxRadius, options.scavengingMultiplier, options.deteriorationMultiplier);
                 Debug.Log(Debug.Scatter, "Spawning {0} ruin chunks", num);
                 BaseGen.globalSettings.map = map;
 
@@ -153,12 +149,11 @@ namespace RealRuins
 
                 for (int i = 0; i < num; i++) {
                     try {
-                        //We use copy of scatteroptions because each scatteroptions represents separate chunk with separate location, size, maps, etc.
-                        //should use struct instead? is it compatible with IExposable?
+                        //Each chunk gets its own context (with its own options copy and state) because each chunk has separate location, size, maps, etc.
                         ResolveParams rp = default(ResolveParams);
 
                         List<AbstractDefenderForcesGenerator> generators = new List<AbstractDefenderForcesGenerator>();
-                        if (Rand.Chance(currentOptions.hostileChance)) {
+                        if (Rand.Chance(options.hostileChance)) {
                             if (Rand.Chance(0.8f)) {
                                 generators = new List<AbstractDefenderForcesGenerator> { new AnimalInhabitantsForcesGenerator() };
                             } else {
@@ -168,7 +163,7 @@ namespace RealRuins
                         rp.faction = Find.FactionManager.OfAncientsHostile;
                         var center = CellFinder.RandomNotEdgeCell(10, map);
                         rp.rect = new CellRect(center.x, center.z, 1, 1); //after generation will be extended to a real size
-                        RuinsScatterer.Scatter(rp, currentOptions.Copy(), coverageMap, generators);
+                        RuinsScatterer.Scatter(rp, new ScatterContext(options, settings), coverageMap, generators);
                     } catch {
                         Debug.Warning(Debug.Scatter, "Could not scatter a single ruins chunk.");
                     }
@@ -186,8 +181,6 @@ namespace RealRuins
 
     class GenStep_ScatterLargeRealRuins : GenStep {
 
-        private ScatterOptions currentOptions;
-        
         public override int SeedPart {
             get {
                 return 74293947;
@@ -199,38 +192,15 @@ namespace RealRuins
             Find.TickManager.Pause();
             //Debug.Message("Overridden LARGE generate");
 
-            string filename = map.Parent.GetComponent<RuinedBaseComp>()?.blueprintFileName;
+            RuinedBaseComp ruinedBaseComp = map.Parent.GetComponent<RuinedBaseComp>();
+            string filename = ruinedBaseComp?.blueprintFileName;
             Debug.Log(Debug.Scatter, "Large Ruins - Preselected file name is {0}", filename);
 
-            currentOptions = RealRuins_ModSettings.defaultScatterOptions.Copy(); //store as instance variable to keep accessible on subsequent ScatterAt calls
+            ScatterOptions options = ScatterOptionsFactory.ForAbandonedBase(filename, ruinedBaseComp?.currentCapCost ?? -1, ruinedBaseComp?.raidersActivity ?? -1);
+            PipelineSettings settings = PipelineSettings.FromModSettings();
+            ScatterContext context = new ScatterContext(options, settings);
 
-            currentOptions.minRadius = 200;
-            currentOptions.maxRadius = 200;
-            currentOptions.scavengingMultiplier = 0.1f;
-            currentOptions.deteriorationMultiplier = 0.0f;
-            currentOptions.hostileChance = 1.0f;
-            currentOptions.doorOwnershipProbability = 0.05f;
-
-
-            currentOptions.blueprintFileName = filename;
-            currentOptions.costCap = map.Parent.GetComponent<RuinedBaseComp>()?.currentCapCost ?? -1;
-            currentOptions.startingPartyPoints = (int)(map.Parent.GetComponent<RuinedBaseComp>()?.raidersActivity ?? -1);
-            currentOptions.minimumCostRequired = (int)Math.Min(100000.0f, RealRuins_ModSettings.ruinsCostCap);
-            currentOptions.minimumDensityRequired = 0.015f;
-            currentOptions.minimumAreaRequired = 6400;
-            currentOptions.deleteLowQuality = false; //do not delete since we have much higher requirements for base ruins
-            currentOptions.shouldKeepDefencesAndPower = true;
-            currentOptions.shouldLoadPartOnly = false;
-            currentOptions.shouldAddRaidTriggers = Find.Storyteller.difficulty.allowBigThreats;
-            currentOptions.claimableBlocks = false;
-            currentOptions.enableDeterioration = false;
-
-            var skipForcesGeneration = false;
-            if (RealRuins_ModSettings.forceMultiplier == 0) {
-                currentOptions.shouldAddRaidTriggers = false;
-                skipForcesGeneration = true;
-            }
-
+            var skipForcesGeneration = settings.forceMultiplier == 0;
 
             ResolveParams resolveParams = default(ResolveParams);
             BaseGen.globalSettings.map = map;
@@ -246,17 +216,8 @@ namespace RealRuins
 
             BaseGen.globalSettings.mainRect = resolveParams.rect;
 
-            float uncoveredCost = currentOptions.uncoveredCost;
-            currentOptions.allowFriendlyRaids = !RealRuins_ModSettings.disableFriendlyRaids;
-            if (uncoveredCost < 0) {
-                if (Rand.Chance(0.5f)) {
-                    uncoveredCost = -uncoveredCost; //adding really small party
-                }
-            }
-
-
             if (generators != null) {
-                RuinsScatterer.Scatter(resolveParams, currentOptions, null, generators);
+                RuinsScatterer.Scatter(resolveParams, context, null, generators);
             }
             BaseGen.symbolStack.Push("chargeBatteries", resolveParams);
             BaseGen.symbolStack.Push("ensureCanHoldRoof", resolveParams);
@@ -269,7 +230,7 @@ namespace RealRuins
             //don't doing it via basegen because of uh oh i don't remember, something with pawn location control
             if (generators != null) {
                 foreach (AbstractDefenderForcesGenerator generator in generators) {
-                    generator.GenerateStartingParty(map, resolveParams, currentOptions);
+                    generator.GenerateStartingParty(map, resolveParams, context);
                 }
             }
         }
@@ -279,8 +240,6 @@ namespace RealRuins
     
     class GenStep_ScatterMediumRealRuins : GenStep {
 
-        private ScatterOptions currentOptions;
-        
         public override int SeedPart {
             get {
                 return 74293948;
@@ -291,57 +250,41 @@ namespace RealRuins
         public override void Generate(Map map, GenStepParams parms) {
 
             Debug.Log(Debug.Scatter, "Medium generate");
-                Find.TickManager.Pause();
+            Find.TickManager.Pause();
 
-                currentOptions = RealRuins_ModSettings.defaultScatterOptions.Copy(); //store as instance variable to keep accessible on subsequent ScatterAt calls
+            ScatterContext context = new ScatterContext(ScatterOptionsFactory.ForCaravanSmallRuins(), PipelineSettings.FromModSettings());
 
-                currentOptions.minRadius = 24;
-                currentOptions.maxRadius = 50;   
-                currentOptions.scavengingMultiplier = 0.1f;
-                currentOptions.deteriorationMultiplier = 0.1f;
-                currentOptions.hostileChance = 0.8f;
-                currentOptions.itemCostLimit = 800;
+            ResolveParams rp = default(ResolveParams);
+            BaseGen.globalSettings.map = map;
+            rp.rect = new CellRect(0, 0, map.Size.x, map.Size.z);
+            rp.faction = Find.FactionManager.OfAncientsHostile;
 
-                currentOptions.minimumCostRequired = 25000;
-                currentOptions.minimumDensityRequired = 0.01f;
-                currentOptions.minimumAreaRequired = 4000;
-                currentOptions.deleteLowQuality = false; //do not delete since we have much higher requirements for base ruins
-                currentOptions.shouldKeepDefencesAndPower = true;
+            RuinsScatterer.Scatter(rp, context, null, null);
 
-                ResolveParams rp = default(ResolveParams);
-                BaseGen.globalSettings.map = map;
-                rp.rect = new CellRect(0, 0, map.Size.x, map.Size.z);
-                rp.SetCustom<ScatterOptions>(Constants.ScatterOptions, currentOptions);
-                rp.faction = Find.FactionManager.OfAncientsHostile;
-                BaseGen.symbolStack.Push("chargeBatteries", rp);
-                BaseGen.symbolStack.Push("refuel", rp);
-                BaseGen.symbolStack.Push("scatterRuins", rp);
+            BaseGen.symbolStack.Push("chargeBatteries", rp);
+            BaseGen.symbolStack.Push("refuel", rp);
 
-
-                if (Rand.Chance(0.5f * Find.Storyteller.difficulty.threatScale)) {
-                    float pointsCost = Math.Abs(Rand.Gaussian()) * 500 * Find.Storyteller.difficulty.threatScale;
+            if (Rand.Chance(0.5f * Find.Storyteller.difficulty.threatScale)) {
+                float pointsCost = Math.Abs(Rand.Gaussian()) * 500 * Find.Storyteller.difficulty.threatScale;
 
                 rp.faction = Find.FactionManager.RandomEnemyFaction();
                 rp.singlePawnLord = LordMaker.MakeNewLord(rp.faction,
-                        new LordJob_AssaultColony(rp.faction, false, false, true, true), map, null);
+                    new LordJob_AssaultColony(rp.faction, false, false, true, true), map, null);
 
                 rp.pawnGroupKindDef = (rp.pawnGroupKindDef ?? PawnGroupKindDefOf.Settlement);
 
-                    if (rp.pawnGroupMakerParams == null) {
+                if (rp.pawnGroupMakerParams == null) {
                     rp.pawnGroupMakerParams = new PawnGroupMakerParms();
                     rp.pawnGroupMakerParams.tile = map.Tile;
                     rp.pawnGroupMakerParams.faction = rp.faction;
-                        PawnGroupMakerParms pawnGroupMakerParams = rp.pawnGroupMakerParams;
-                        pawnGroupMakerParams.points = pointsCost;
-                    }
-
-                    BaseGen.symbolStack.Push("pawnGroup", rp);
-
+                    PawnGroupMakerParms pawnGroupMakerParams = rp.pawnGroupMakerParams;
+                    pawnGroupMakerParams.points = pointsCost;
                 }
 
-                    
-                BaseGen.Generate();
-          
+                BaseGen.symbolStack.Push("pawnGroup", rp);
+            }
+
+            BaseGen.Generate();
         }
 
     }

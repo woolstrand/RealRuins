@@ -26,12 +26,8 @@ namespace RealRuins {
         public float trapChance = 0.001f; //probability PER CELL
         public float hostileChance = 0.1f; //probability PER CHUNK
 
-        // Those settings are either internal settings not accessible for user, or internal blueprint trasferring/processing state representation
-
-        public float uncoveredCost = 0; //Cost uncovered by any raid triggers
-        public int[,] roomMap; // Room traversal map.
-        public IntVec3 bottomLeft = new IntVec3(-1000,0,-1000);
-        public CellRect blueprintRect = new CellRect();
+        // Those settings are internal settings not accessible for user, set by ScatterOptionsFactory per scatterer.
+        // Runtime state of a scattering run lives in ScatterState.
 
         public int minimumAreaRequired = 0;
         public float minimumDensityRequired = 0.1f;
@@ -41,7 +37,6 @@ namespace RealRuins {
         public bool shouldKeepDefencesAndPower = false;
         public bool shouldLoadPartOnly = true; //indicates if the loader should load only a part of the blueprint or the whole one
         public bool shouldAddRaidTriggers = false;
-        public bool enableInstantCaravanReform = false; //only for large events
         public bool allowFriendlyRaids = true; // friendly factions hostile to environment, but friendly to you
         public bool enableDeterioration = true; //enables BLOCK REMOVING due to deterioration. HP control is the next option
         public bool forceFullHitPoints = false; //forces all HP to be maxed
@@ -58,8 +53,6 @@ namespace RealRuins {
 
         
         public bool deleteLowQuality = true;
-
-        public static readonly ScatterOptions Default = new ScatterOptions();
 
 
         public void ExposeData() {
@@ -80,7 +73,6 @@ namespace RealRuins {
             Scribe_Values.Look(ref decorationChance, "decorationChance", 0.0001f, false);
             Scribe_Values.Look(ref trapChance, "trapChance", 0.001f, false);
             Scribe_Values.Look(ref hostileChance, "hostileChance", 0.1f, false);
-            Scribe_Values.Look(ref enableInstantCaravanReform, "enableInstantCaravanReform", false, false);
 
         }
 
@@ -108,12 +100,7 @@ namespace RealRuins {
                 shouldKeepDefencesAndPower = shouldKeepDefencesAndPower,
                 shouldLoadPartOnly = shouldLoadPartOnly,
                 shouldAddRaidTriggers = shouldAddRaidTriggers,
-                uncoveredCost = uncoveredCost,
-                enableInstantCaravanReform = enableInstantCaravanReform,
                 shouldAddFilth = shouldAddFilth,
-                roomMap = roomMap,
-                bottomLeft = bottomLeft,
-                blueprintRect = blueprintRect,
                 allowFriendlyRaids = allowFriendlyRaids,
                 enableDeterioration = enableDeterioration,
                 forceFullHitPoints = forceFullHitPoints,
@@ -126,27 +113,6 @@ namespace RealRuins {
                 doorOwnershipProbability = doorOwnershipProbability,
             };
             return copy;
-        }
-
-
-        public static ScatterOptions asIs() {
-            var options = Default.Copy();
-            options.overwritesEverything = true;
-            options.canHaveFood = true;
-            options.scavengingMultiplier = 0.0f;
-            options.decorationChance = 0.0f;
-            options.enableDeterioration = false;
-            options.forceFullHitPoints = true;
-            options.shouldAddFilth = false;
-            options.trapChance = 0.0f;
-
-            options.startingPartyPoints = -1;
-            options.minimumCostRequired = 0;
-            options.minimumDensityRequired = 0.0f;
-            options.minimumAreaRequired = 0;
-
-
-            return options;
         }
 
     }

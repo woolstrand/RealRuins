@@ -12,12 +12,16 @@ namespace RealRuins {
 
         //ResolveParams's GetCustom/SetCustom is broken now, and it is a sealed (WHY??!) struct (WHY??!?!?) so I neither can fix it, nor make a dirty hack.
         //Seems like I have to abandon this approach and make direct calls.
-        static public void Scatter(ResolveParams rp, ScatterOptions options, CoverageMap coverage, List<AbstractDefenderForcesGenerator> generators) {
+        //rp is treated as input only: placement hint and faction. Everything produced by the run goes to context.state.
+        static public void Scatter(ResolveParams rp, ScatterContext context, CoverageMap coverage, List<AbstractDefenderForcesGenerator> generators) {
             Debug.Log(Debug.Scatter, "Running stand-alone scatterer");
-            if (options == null) {
+            if (context?.options == null) {
                 Debug.Warning(Debug.Scatter, "Scatter options are null, aborting");
                 return;
             }
+
+            ScatterOptions options = context.options;
+            context.state.placementRect = rp.rect; //fallback until the blueprint is actually placed
 
             DateTime start = DateTime.UtcNow;
             Debug.Log(Debug.Scatter, "[0 s]: Loading blueprint of size {0} - {1} to deploy at {2}, {3}", options.minRadius, options.maxRadius, rp.rect.minX, rp.rect.minZ);
@@ -61,12 +65,12 @@ namespace RealRuins {
             // Here we have our blueprint loaded and ready to action. Doing stuff:
             BlueprintPreprocessor.ProcessBlueprint(bp, options); //Preprocess: remove missing and unnecessary items according to options
             bp.FindRooms(); //Traverse blueprint and construct rooms map
-            options.roomMap = bp.wallMap;
+            context.state.roomMap = bp.wallMap;
 
             //Debug.PrintIntMap(bp.wallMap, delta: 1);
             Debug.Extra(Debug.Scatter, "Rooms traversed, initializing transfer utility");
 
-            BlueprintTransferUtility btu = new BlueprintTransferUtility(bp, map, rp, options); //prepare blueprint transferrer
+            BlueprintTransferUtility btu = new BlueprintTransferUtility(bp, map, rp, context); //prepare blueprint transferrer
             Debug.Extra(Debug.Scatter, "Initialized, removing incompatible items...");
 
             btu?.RemoveIncompatibleItems(); //remove incompatible items 
@@ -92,7 +96,7 @@ namespace RealRuins {
             if (generators != null) {
                 foreach (AbstractDefenderForcesGenerator generator in generators) {
                     try {
-                        generator.GenerateForces(map, rp, options);
+                        generator.GenerateForces(map, rp, context);
                         Debug.Log(Debug.Scatter, "[{0} s] Generated forces for a generator.", DateTime.UtcNow.Subtract(start).TotalSeconds);
                     } catch (Exception e) {
                         Debug.Error(Debug.BlueprintTransfer, "Failed to generate forces: {0}", e);
