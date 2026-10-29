@@ -4,18 +4,9 @@ This document lists potential improvements (optimizations, refactors, fixes) and
 
 ---
 
-## BUG FIXES (High-Priority, From WEAK_POINTS_REPORT)
+## BUG FIXES
 
-These are not new features but must be addressed first since they affect correctness:
-
-| # | Fix | Effort |
-|---|-----|--------|
-| 1 | Seed AdvancedSettingsPage text buffers from saved settings on init | S |
-| 2 | Assign `extraGenStepDefs.Concat(...)` result back | S |
-| 3 | Lock `snapshotsToLoad` access in SnapshotManager | S |
-| 4 | Fix `SnapshotStoreManager.StoreBinaryData()` delimiter mismatch | S |
-| 5 | Fix `ScatterOptions.asIs()` to copy Default before mutating | S |
-| 6 | Fix `chronologicalAge` to write `AgeChronologicalTicks` | S |
+Bugs and weak points are tracked in [FIXES_QUEUE.md](FIXES_QUEUE.md). They are not new features but should be addressed first since they affect correctness.
 
 ---
 
