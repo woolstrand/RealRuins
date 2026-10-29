@@ -202,11 +202,16 @@ namespace RealRuins {
                 return POIType.Ruins;
             }
 
+            //no enclosed rooms at all (e.g. roofed or walled area without closed rooms): the calculations below divide by internal area
+            if (result.internalArea <= 0) {
+                return POIType.Ruins;
+            }
+
             if (result.internalArea / result.wallLength < 2 && result.roomsCount < 6) {
                 return POIType.Ruins;
             }
 
-            //internal area here is definitely > 0, so occupiedTilesCount too
+            //internal area is > 0 here, so occupiedTilesCount is too
             if (result.totalItemsCost / result.occupiedTilesCount < 10) {
                 return POIType.Ruins;
             }

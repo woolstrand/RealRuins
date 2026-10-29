@@ -60,13 +60,7 @@ Single list of known bugs, code smells and design weaknesses. Entries are groupe
 
 ---
 
-### H8. Division by Zero in `BlueprintAnalyzer`
-**File**: `Source/Classes/DynamicMapObjects/BlueprintAnalyzer.cs`
-**What**:
-- In `supposedType()`, branch `militaryFeatures < 3 && prodScore <= 50`: when `occupiedTilesCount == wallLength`, `(occupiedTilesCount - wallLength) / haulableStacksCount` divides by zero if `haulableStacksCount == 0`.
-- The `prodScore` line (`result.haulableStacksCount * 5 / result.internalArea`) is integer division and throws `DivideByZeroException` when `internalArea` is 0.
-**Impact**: `DivideByZeroException` when analyzing a blueprint with only wall tiles or with no internal area.
-**Fix**: Guard both divisions.
+### H8. Fixed
 
 ---
 
