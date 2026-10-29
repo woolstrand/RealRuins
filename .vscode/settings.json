@@ -16,5 +16,9 @@
         "**/obj": true,
         ".vs": true
     },
-    "dotnet.preferCSharpExtension": true
+    "dotnet.preferCSharpExtension": true,
+    "chat.tools.terminal.autoApprove": {
+        "git add": true,
+        "git commit": true
+    }
 }
