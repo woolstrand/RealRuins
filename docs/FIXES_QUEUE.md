@@ -56,11 +56,7 @@ Single list of known bugs, code smells and design weaknesses. Entries are groupe
 
 ---
 
-### H7. `Compressor.ZipFile()` Deletes Original Before Successful Write
-**File**: `Source/Classes/Utility/Compressor.cs`
-**What**: `ZipFile()` reads the file, deletes the original, then writes compressed data. A comment already says "Dangerous zipping."
-**Impact**: If the write fails, the original XML is lost.
-**Decision**: No fix needed. The process runs occasionally and silently, and the database already holds more than 4M blueprints, so losing one now and then does not matter. Only improve the comment to say this.
+### H7. Fixed
 
 ---
 
