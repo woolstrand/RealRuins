@@ -36,10 +36,7 @@ Single list of known bugs, code smells and design weaknesses. Entries are groupe
 
 ---
 
-### H2. `LoadSomeSnapshots` Retries Forever
-**File**: `Source/Classes/Utility/SnapshotManager.cs`, `LoadSomeSnapshots(concurrent, retries)`
-**What**: `retries` is decremented on failure but never checked. The comment says a 10 s delay while the code uses 20 s.
-**Fix**: Stop when `retries <= 0`.
+### H2. Fixed
 
 ---
 

@@ -133,6 +133,10 @@ namespace RealRuins {
 
             service.LoadRandomMapsList(delegate (bool success, List<string> files) {
                 if (!success) {
+                    if (retries <= 0) {
+                        Debug.Log(Debug.Store, "Failed loading list of random maps, giving up");
+                        return;
+                    }
                     Debug.Log(Debug.Store, "Failed loading list of random maps");
                     ExecuteAfter(delegate () {
                         LoadSomeSnapshots(concurrent, retries - 1);
