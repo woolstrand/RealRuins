@@ -48,11 +48,7 @@ Single list of known bugs, code smells and design weaknesses. Entries are groupe
 
 ---
 
-### H5. `BakedTaleReference.ExposeData` Uses `new` Instead of `override`
-**File**: `Source/Classes/Snapshotting/BakedTaleReference.cs`
-**What**: `ExposeData()` is declared with `new` (hiding the base method). The Harmony patch on `TaleReference.ExposeData` compensates for this, but if the patch silently fails, art description strings will not be saved or loaded for `BakedTaleReference` objects.
-**Impact**: Art descriptions on ruins' art objects may be lost silently. Correctness depends on a Harmony patch rather than normal virtual dispatch.
-**Fix**: If `TaleReference.ExposeData` is virtual, use `override`. If not, the Harmony workaround is necessary but should be documented more prominently.
+### H5. Fixed
 
 ---
 

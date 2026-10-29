@@ -56,7 +56,7 @@ A subclass of `TaleReference` that stores a pre-generated art description string
 
 **Construction:** Created from a raw string (from the blueprint XML). Default constructor produces a "DeterioratedArtDescription" localized string.
 
-**Critical note:** `ExposeData()` is declared with `new` (hides base) rather than `override`. A Harmony patch on `TaleReference.ExposeData` intercepts calls when the instance is a `BakedTaleReference` and calls the subclass method. If that patch ever fails silently, art descriptions will not be saved/loaded.
+**Critical note:** `TaleReference.ExposeData()` is not virtual, so `BakedTaleReference` cannot override it. A Harmony postfix on `TaleReference.ExposeData` (`TaleReference_ExposeData_Patch` in `RealRuins.cs`) saves and loads `bakedTale` when the instance is a `BakedTaleReference`. If that patch ever fails silently, art descriptions will not be saved/loaded.
 
 **Art_Extensions (in `RealRuins.cs`):** Sets private fields on `CompArt` (`taleRef`, `titleInt`, `authorNameInt`) via reflection to inject `BakedTaleReference` instances into spawned art objects.
 
