@@ -33,6 +33,20 @@ searching to figure out. Keep entries short; no screen coordinates (they change 
 - Window size/position differed between launches - always screenshot before clicking.
 - Launch `RimWorld.app`. The csproj `StartProgram` points at `RimWorldMac.app/...`, which has no binary.
 - `Player.log` is recreated each launch (old → `Player-prev.log`).
+- RimWorld 1.7 is a new engine (Waylith/.NET, not Unity): Windows exe is `RimWorld.exe` (1.6 was
+  `RimWorldWin64.exe`), log moved to `Logs/Player.log`, and **every** log line is followed by a stack
+  trace - logs grow by tens of thousands of lines. Always filter (`logsince`, `errors`); never dump.
+- First 1.7 launch can rewrite `ModsConfig.xml`. If a mod throws while loading play data the game logs
+  "Resetting mods config and trying again" and drops to Core - then RealRuins is gone from the list.
+- **Harmony must be active.** Without `brrainz.harmony` the only `0Harmony` is the ancient 1.2 copy in the
+  mod's root `Assemblies/` (loaded for every version via `LoadFolders.xml` `""`), and loading fails with
+  `Could not load type 'HarmonyLib.HarmonyPatch' from assembly '0Harmony, Version=1.2.0.1'`.
+- The game may **restart itself** shortly after `launch` returns (new pid, fresh log, mod list changed
+  back to the full user list). Check `status`/pid before clicking; a click during the reload is lost.
+- Two copies of RealRuins can be installed (`Mods/RealRuins` and the Workshop one); the local `Mods`
+  copy is the one the build deploys to. The log's "Adding Woolstrand.RealRuins(<path>)" lines show both.
+- Windows: the driver must detach the game's stdio on launch, or anything piping driver output hangs
+  until the game exits (fixed in `platform/win.sh`; keep it that way).
 - Once the game exited cleanly ("Log closed", no crash report) ~1 min after a quicktest click that
   left no log trace; cause unknown. Check `logsince` before assuming a crash.
 
@@ -48,9 +62,25 @@ searching to figure out. Keep entries short; no screen coordinates (they change 
 - `[Event]: Major event entering.` … `[ForceGen]: Spawned trigger ...` … `[Generic]: Generated map.
   Cap cost X, actual cost Y` → `[Event]: Map generated` - ruins site map built, defenders placed.
 - `[BlueprintTransfer]: Failed to spawn item <Def> because of ...` - caught per-item failure; the map
-  still generates. Seen: `CleaningStation` NRE in `MakeThingFromItemTile` (2026-10-29, unfixed).
+  still generates. Seen: `CleaningStation` NRE in `MakeThingFromItemTile` (2026-10-29, unfixed);
+  `PortableReactor` NRE (2026-10-29, Windows/1.7, unfixed).
+- `[BlueprintPawnDecoder]: Pawn decoding failed: NullReferenceException` + `[BlueprintTransfer]: Failed to
+  spawn item corpse` - corpses from blueprints made with modded races. Came with ~1.4k
+  `Could not load reference to Verse.BodyDef named Android4Tier` (Android mod not loaded) and
+  `Tried to restore null body part`. ~100 per ruins map; map still generates (unfixed).
+- `[Scatter]: dist 16+, dens 0 ... Spawning 0 ruin chunks` - **not a bug**: beyond 16 tiles from the
+  nearest settlement scatter is skipped with 50% chance (`GenStep_ScatterRealRuins`). Retry another map.
+- `[BlueprintTransfer]: [2] Failed to load, recovering...` → `[2.1] Recovered!` - loader's normal
+  fallback for slightly broken blueprint XML. `errors` counts these; ignore if followed by Recovered.
+- Entering a ruins site: `[Event]: Major event entering.` → `Will generate map now` → `[ForceGen]` lines
+  → `[Generic]: Generated map. Cap cost ...` → `[Event]: Map generated`. Wait for the last one.
 
 ## Session log
 
 - 2026-10-29: quicktest scatter (25/25 chunks), Quest_PristineRuins, random caravan, instant enter -
   all worked. Only error: CleaningStation NRE above.
+- 2026-10-29 (Windows 11, RimWorld 1.7.4990, first Windows run): build via VS 2022 Build Tools,
+  launch, quicktest (scatter ran, coin flip gave 0 chunks), Quest_PristineRuins (letter sent, site on
+  world map), random caravan, instant enter → ruins map generated. Errors: modded-corpse NREs and
+  PortableReactor NRE above. Found and fixed driver `waitlog` never returning on big logs (grep -q +
+  pipefail SIGPIPE) - affected macOS too.
