@@ -253,7 +253,7 @@ Reconstructs a `Pawn` from raw XML saved in the snapshot.
 
 **`ValidateAndFixHediffNode()`**: Validates HediffDef, Class type, BodyPartDef, and pawn body part existence before deserializing each hediff. Removes invalid references.
 
-**Critical**: Temporarily sets `Scribe.mode = LoadingVars` for hediff deserialization — a global state mutation. Must be reset. An unhandled exception mid-loop could leave `Scribe.mode` dirty, destabilizing the save system.
+**Critical**: Temporarily sets `Scribe.mode = LoadingVars` for hediff deserialization — a global state mutation. It is reset to `Inactive` in a `finally` block, so an exception mid-loop cannot leave the save system in the wrong mode.
 
 ---
 

@@ -52,11 +52,7 @@ Single list of known bugs, code smells and design weaknesses. Entries are groupe
 
 ---
 
-### H6. Global `Scribe.mode` Mutation in `PawnRestoreUtility`
-**File**: `Source/Classes/Scattering/Internal/PawnRestoreUtility.cs`
-**What**: `Scribe.mode` is temporarily set to `LoadSaveMode.LoadingVars` for hediff deserialization. This is global state.
-**Impact**: An unhandled exception between the set and the reset leaves RimWorld's save system in the wrong mode for the rest of the session.
-**Fix**: Wrap in `try/finally`: `try { Scribe.mode = LoadingVars; ... } finally { Scribe.mode = Inactive; }`.
+### H6. Fixed
 
 ---
 

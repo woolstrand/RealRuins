@@ -181,52 +181,58 @@ namespace RealRuins
                 if (hediffsList != null)
                 {
                     Scribe.mode = LoadSaveMode.LoadingVars;
-                    p.health?.hediffSet?.hediffs?.RemoveAll(_ => true);
-
-                    foreach (XmlNode hediffNode in hediffsList)
+                    try
                     {
-                        try
+                        p.health?.hediffSet?.hediffs?.RemoveAll(_ => true);
+
+                        foreach (XmlNode hediffNode in hediffsList)
                         {
-                            if (!ValidateAndFixHediffNode(hediffNode, p))
+                            try
                             {
-                                Debug.Extra(Debug.BlueprintPawnDecoder, "Skipping hediff due to validation failure: {0}", hediffNode.SelectSingleNode("def")?.InnerText ?? "unknown");
-                                continue;
-                            }
-
-                            // Extract combat log message if present before deserialization
-                            string combatLogMessage = hediffNode.SelectSingleNode("combatLogText")?.InnerText;
-
-                            Hediff hediff = ScribeExtractor.SaveableFromNode<Hediff>(hediffNode, null);
-                            if (hediff != null)
-                            {
-                                // If the hediff targets a specific body part, verify the part is still
-                                // present and not missing (PartIsMissing can use a stale cache after
-                                // a MissingPart hediff was added earlier in the same loop).
-                                bool partOk = hediff.Part == null
-                                    || p.health.hediffSet.GetNotMissingParts().Contains(hediff.Part);
-                                if (partOk)
+                                if (!ValidateAndFixHediffNode(hediffNode, p))
                                 {
-                                    p.health.AddHediff(hediff);
+                                    Debug.Extra(Debug.BlueprintPawnDecoder, "Skipping hediff due to validation failure: {0}", hediffNode.SelectSingleNode("def")?.InnerText ?? "unknown");
+                                    continue;
                                 }
-                                else
-                                {
-                                    Debug.Extra(Debug.BlueprintPawnDecoder, "Skipping hediff {0}: part {1} is missing or not present", hediff.def?.defName ?? "unknown", hediff.Part);
-                                }
-                            }
 
-                            // Add the combat log message to the pawn's combat log if present. even for missing parts.
-                            if (!string.IsNullOrEmpty(combatLogMessage))
-                            {
-                                Debug.Extra(Debug.BlueprintPawnDecoder, "Trying to add combat log message: {0}", combatLogMessage);
-                                AddCombatLogMessage(p, combatLogMessage, hediff);
+                                // Extract combat log message if present before deserialization
+                                string combatLogMessage = hediffNode.SelectSingleNode("combatLogText")?.InnerText;
+
+                                Hediff hediff = ScribeExtractor.SaveableFromNode<Hediff>(hediffNode, null);
+                                if (hediff != null)
+                                {
+                                    // If the hediff targets a specific body part, verify the part is still
+                                    // present and not missing (PartIsMissing can use a stale cache after
+                                    // a MissingPart hediff was added earlier in the same loop).
+                                    bool partOk = hediff.Part == null
+                                        || p.health.hediffSet.GetNotMissingParts().Contains(hediff.Part);
+                                    if (partOk)
+                                    {
+                                        p.health.AddHediff(hediff);
+                                    }
+                                    else
+                                    {
+                                        Debug.Extra(Debug.BlueprintPawnDecoder, "Skipping hediff {0}: part {1} is missing or not present", hediff.def?.defName ?? "unknown", hediff.Part);
+                                    }
+                                }
+
+                                // Add the combat log message to the pawn's combat log if present. even for missing parts.
+                                if (!string.IsNullOrEmpty(combatLogMessage))
+                                {
+                                    Debug.Extra(Debug.BlueprintPawnDecoder, "Trying to add combat log message: {0}", combatLogMessage);
+                                    AddCombatLogMessage(p, combatLogMessage, hediff);
+                                }
                             }
-                        }
-                        catch (Exception ex)
-                        {
-                            Debug.Extra(Debug.BlueprintPawnDecoder, "Failed to restore hediff {0}: {1}", hediffNode.SelectSingleNode("def")?.InnerText ?? "unknown", ex.Message);
+                            catch (Exception ex)
+                            {
+                                Debug.Extra(Debug.BlueprintPawnDecoder, "Failed to restore hediff {0}: {1}", hediffNode.SelectSingleNode("def")?.InnerText ?? "unknown", ex.Message);
+                            }
                         }
                     }
-                    Scribe.mode = LoadSaveMode.Inactive;
+                    finally
+                    {
+                        Scribe.mode = LoadSaveMode.Inactive;
+                    }
                 }
             }
             catch (Exception ex)
