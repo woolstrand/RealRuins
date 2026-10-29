@@ -293,6 +293,7 @@ namespace RealRuins
         }
 
         public void CheckCacheSizeLimits() {
+            if (RealRuins_ModSettings.diskCacheLimit < 0) return; // -1 means "No limit"
 
             var files = Directory.GetFiles(GetSnapshotsFolderPath());
             List<string> filesList = files.ToList();

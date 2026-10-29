@@ -19,11 +19,7 @@ Single list of known bugs, code smells and design weaknesses. Entries are groupe
 
 ---
 
-### C2. "No limit" Cache Setting Deletes Every Cached Blueprint
-**File**: `Source/Classes/Utility/SnapshotStoreManager.cs`, `CheckCacheSizeLimits()`
-**What**: `NetworkCacheSettingsPage` stores `diskCacheLimit = -1` for "No limit"; the check compares `totalSize > diskCacheLimit * 1024 * 1024`, which is always true for a negative limit.
-**Impact**: The whole local blueprint cache is deleted on the next check.
-**Fix**: Skip trimming when `diskCacheLimit < 0`.
+### C2. Fixed
 
 ---
 
