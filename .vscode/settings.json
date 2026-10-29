@@ -15,5 +15,6 @@
         "**/bin": true,
         "**/obj": true,
         ".vs": true
-    }
+    },
+    "dotnet.preferCSharpExtension": true
 }

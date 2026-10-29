@@ -250,15 +250,53 @@ Multiple dead code instances across the codebase:
 
 ---
 
+## Added After Test-Coverage Audit
+
+### 35. "No limit" Cache Setting Deletes Every Cached Blueprint
+**File**: `Source/Classes/Utility/SnapshotStoreManager.cs`, `CheckCacheSizeLimits()`
+**What**: `NetworkCacheSettingsPage` stores `diskCacheLimit = -1` for "No limit"; the check compares `totalSize > diskCacheLimit * 1024 * 1024`, which is always true for a negative limit.
+**Fix**: Skip trimming when `diskCacheLimit < 0`.
+
+### 36. `SnapshotManager` Remaining Thread-Safety Gaps and Infinite Retries
+**File**: `Source/Classes/Utility/SnapshotManager.cs`
+**What**: `Pop()` is locked, but `Add`, `Reset()` and the loaded/failed counters are not. `LoadSomeSnapshots` decrements `retries` but never checks it.
+**Fix**: Use the existing lock for all list access, `Interlocked` for counters, and stop when `retries <= 0`.
+
+### 37. `ScatterOptions.Copy()` Omits Fields
+**File**: `Source/Classes/Scattering/ScatterOptions.cs`
+**What**: `costCap`, `startingPartyPoints` and `overridePosition` are not copied.
+**Fix**: Copy them; add a reflection test that fails on any uncopied field.
+
+### 38. `RealRuins_ModSettings.Reset()` Incomplete
+**File**: `Source/Classes/RealRuins_ModSettings.cs`
+**What**: `diskCacheLimit` is not reset; `defaultScatterOptions` becomes `new ScatterOptions()` rather than the `Default` singleton.
+
+### 39. Double `.bp` Extension
+**File**: `Source/Classes/Utility/SnapshotStoreManager.cs`, `Source/Classes/Utility/SnapshotManager.cs`
+**What**: `StoreBinaryData` appends `.bp`; `SnapshotManager` passes names already ending in `.bp` (`local-<id>.bp.bp`). Download-path names (`next`) were not checked.
+
+### 40. `BlueprintRecoveryService` Throws Without `</cell>`
+**File**: `Source/Classes/Utility/BlueprintRecoveryService.cs`
+**What**: `LastIndexOf("</cell>")` returns -1 and `Substring(0, -1)` throws.
+
+### 41. `BlueprintAnalyzer` Integer Division by `internalArea`
+**File**: `Source/Classes/DynamicMapObjects/BlueprintAnalyzer.cs`
+**What**: `haulableStacksCount * 5 / internalArea` throws `DivideByZeroException` when `internalArea` is 0.
+
+### Unverified Findings
+Settings export may be culture-sensitive and `TryImport` can half-apply on failure; `APIService` may format `coverage` culture-sensitively; `Blueprint.Part` may drop the last row/column; some `Rand.Range` calls can have min > max; raid trigger loops may spin when `InBounds` keeps failing; `AdvancedSettingsPage` buffers may go stale after import or `Reset()`.
+
+---
+
 ## Summary Table
 
 | # | Severity | File | Description |
 |---|----------|------|-------------|
-| 1 | CRITICAL | AdvancedSettingsPage | Text buffers erase saved blacklists |
-| 2 | CRITICAL | RealRuins.cs | Concat result discarded, POI gen steps never applied |
-| 3 | CRITICAL | SnapshotManager | Race condition on snapshotsToLoad.Pop() |
-| 4 | CRITICAL | SnapshotStoreManager | Version dedup split delimiter mismatch |
-| 5 | CRITICAL | ScatterOptions | asIs() mutates shared Default singleton |
+| 1 | Fixed | AdvancedSettingsPage | Text buffers erase saved blacklists |
+| 2 | Fixed | RealRuins.cs | Concat result discarded, POI gen steps never applied |
+| 3 | Fixed (partly, see 36) | SnapshotManager | Race condition on snapshotsToLoad.Pop() |
+| 4 | Fixed | SnapshotStoreManager | Version dedup split delimiter mismatch |
+| 5 | Fixed | ScatterOptions | asIs() mutates shared Default singleton |
 | 6 | CRITICAL | SnapshotGenerator | chronologicalAge writes biological age |
 | 7 | HIGH | BakedTaleReference | ExposeData uses `new` not `override` |
 | 8 | HIGH | PawnRestoreUtility | Scribe.mode not in try/finally |
@@ -287,3 +325,10 @@ Multiple dead code instances across the codebase:
 | 32 | LOW | RealRuins.cs | Reflection on private fields (fragile) |
 | 33 | LOW | RealRuinsPOIComp | POIType enum at global scope |
 | 34 | LOW | RealRuins.cs | Window_Close_Patch too broad |
+| 35 | CRITICAL | SnapshotStoreManager | diskCacheLimit = -1 deletes the whole cache |
+| 36 | HIGH | SnapshotManager | Unsynchronized Add/Reset/counters; infinite retries |
+| 37 | HIGH | ScatterOptions | Copy() omits costCap, startingPartyPoints, overridePosition |
+| 38 | MEDIUM | RealRuins_ModSettings | Reset() omits diskCacheLimit, replaces Default singleton |
+| 39 | MEDIUM | SnapshotStoreManager / SnapshotManager | Double .bp extension |
+| 40 | MEDIUM | BlueprintRecoveryService | Throws when file has no </cell> |
+| 41 | MEDIUM | BlueprintAnalyzer | Integer division by internalArea |

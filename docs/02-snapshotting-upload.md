@@ -82,9 +82,11 @@ Singleton (`Instance` property). Orchestrates all download and upload operations
 Uses `System.Threading.Timer`. Timers are kept in a static `HashSet<Timer>` (with lock) to prevent GC collection before they fire.
 
 ### Thread Safety Issues
-- `snapshotsToLoad` (a `List<string>`) is accessed via `.Pop()` from multiple concurrent download callbacks **without a lock** — race condition
+- `snapshotsToLoad` (a `List<string>`): `Pop()` in `LoadNextSnapshot` is guarded by `snapshotsToLoadLock`, but `Add` in `AggressiveLoadSnapshots`/`LoadSomeSnapshots` and the list replacement in `Reset()` are not
 - `snapshotTimestamps` dictionary is read/written without synchronization
-- Download completion check (`loaded + failed == total`) is not atomic
+- `loadedSnapshotsCount++` / `failedSnapshotsCount++` and the completion check (`loaded + failed == total`) are not atomic
+- **Known bug**: `LoadSomeSnapshots(concurrent, retries)` decrements `retries` on failure but never checks it, so retries are infinite
+- **Known bug**: local uploads call `StoreBinaryData(..., "local-<id>.bp")`, and `StoreBinaryData` appends `.bp` again (`local-<id>.bp.bp`)
 
 ---
 
@@ -102,8 +104,10 @@ Singleton. Manages all local file system operations for blueprint storage.
 
 ### Key Operations
 - `StoreBinaryData(byte[], snapshotId, gameName)` — runs in background `Thread`; checks for existing files by pattern matching, skips if newer exists, deletes older versions, writes file
-  - **Known bug**: compares dates by splitting the new filename on `'='` but the existing filename on `'-'` — the version deduplication logic almost never works correctly
+  - Both filenames are split on `'='`. Remaining hazards: a date prefix failing `int.TryParse` skips dedup silently, and exceptions on the raw thread are unhandled
+  - **Known bug**: always appends `.bp` to the given name, even if it already ends in `.bp`
 - `CheckCacheSizeLimits()` — sorts files alphabetically (newest first by date prefix), accumulates sizes, deletes oldest files beyond `diskCacheLimit`
+  - **Known bug**: with `diskCacheLimit = -1` ("No limit" in settings) every file is deleted, because the byte threshold becomes negative
 - `RandomSnapshotFilename()` — only searches the root folder, not game-specific subdirectories
 - `CanFireMediumEvent()` / `CanFireLargeEvent()` — gate methods requiring 30 / 250 stored snapshots (any count in offline mode)
 - `TotalSize()` / `StoredSnapshotsCount()` — called every UI frame from the settings page; if these hit disk I/O they will cause per-frame stutter

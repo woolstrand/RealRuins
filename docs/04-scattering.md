@@ -49,9 +49,11 @@ The central configuration object passed through the entire blueprint pipeline. I
 
 ### Important: `ScatterOptions.Default` and `asIs()`
 
-`ScatterOptions.Default` is a **shared mutable singleton instance**. The `asIs()` factory method **directly mutates `Default`** before returning it — this is a correctness bug if `asIs()` is ever called more than once or concurrently. Always create a copy via `Copy()` before modifying options.
+`ScatterOptions.Default` is a **shared mutable singleton instance**. `asIs()` is safe: it starts from `Default.Copy()`. Always create a copy via `Copy()` before modifying options; settings pages and `SettingsSerializer.TryImport` write into `RealRuins_ModSettings.defaultScatterOptions`, which aliases `Default` unless `Reset()` has replaced it.
 
 The `Copy()` method performs a **shallow copy**. `roomMap` (2D array) and rect fields are copied by reference.
+
+**Known bug**: `Copy()` does not copy `costCap`, `startingPartyPoints` or `overridePosition`.
 
 ---
 

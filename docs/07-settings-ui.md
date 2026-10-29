@@ -107,15 +107,9 @@ Shows live cache stats, cache limit slider, offline/download/upload toggles, "Do
 ### AdvancedSettingsPage
 Sliders for: `forceMultiplier` (0–2 linear), `ruinsCostCap` (logarithmic 1000–1e9 via `Math.Log`/`Math.Exp`). `caravanReformType` FloatMenu dropdown. Text fields for `spawnBlacklist`, `materialBlacklist`, `fallbackMaterial`. Export/Import buttons.
 
-**CRITICAL BUG — Text Field Buffers**:
-```csharp
-private string spawnBlacklistBuffer = "";  // never seeded from settings
-```
-On the **first render frame**, `spawnBlacklistBuffer = ""`. `Widgets.TextField` returns `""`. The comparison `if (spawnBlacklistBuffer != RealRuins_ModSettings.spawnBlacklist)` is `true` whenever any saved blacklist is non-empty. This **immediately overwrites the saved setting with an empty string**. Any configured blacklist is silently erased the moment the Advanced tab is first opened.
+**Text field buffers**: `spawnBlacklistBuffer`, `materialBlacklistBuffer` and `fallbackMaterialBuffer` are seeded from `RealRuins_ModSettings` in the constructor (the earlier first-open erasure bug is fixed). Unverified: `RealRuins_Mod` keeps the window and pages alive, so after `TryImport` or `RealRuins_ModSettings.Reset()` the buffers may be stale and overwrite the new values on the next draw.
 
-The same bug affects `materialBlacklistBuffer` and `fallbackMaterialBuffer`.
-
-**Fix approach**: Seed buffers from settings in a lazy-init or `Initialize()` method called before first draw.
+**Known bug**: `RealRuins_ModSettings.Reset()` does not reset `diskCacheLimit` and replaces `defaultScatterOptions` with `new ScatterOptions()` instead of `ScatterOptions.Default`.
 
 ---
 

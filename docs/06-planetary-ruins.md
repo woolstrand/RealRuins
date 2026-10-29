@@ -56,7 +56,7 @@ Page_SelectStartingSite.DoNext [prefix]
 MapGenerator.GenerateMap [prefix]
   → if shared.startingPOI is set:
      replace mapGenerator with POI's generator def
-     (NOTE: extraGenStepDefs.Concat() result is discarded — extra gen steps never applied; BUG)
+     append POI's extra gen steps
 ```
 
 ---
