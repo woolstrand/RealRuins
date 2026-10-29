@@ -10,7 +10,7 @@ namespace RealRuins.Settings
     {
         public override string TabLabel => "RealRuins.DebugSettings.Caption".Translate();
 
-        public override float ContentHeight => 430f;
+        public override float ContentHeight => 470f;
 
         public override void Draw(Rect rect)
         {
@@ -44,6 +44,13 @@ namespace RealRuins.Settings
                 "RealRuins.DebugSettings.KeepSnapshotsAfterUpload".Translate(),
                 ref RealRuins_ModSettings.debugKeepSnapshotsAfterUpload,
                 "RealRuins.DebugSettings.KeepSnapshotsAfterUploadTooltip".Translate());
+
+            listing.Gap(15f);
+
+            listing.CheckboxLabeled(
+                "RealRuins.DebugSettings.UseStagingEnvironment".Translate(),
+                ref RealRuins_ModSettings.useStagingEnvironment,
+                "RealRuins.DebugSettings.UseStagingEnvironmentTooltip".Translate());
 
             listing.Gap(15f);
 

@@ -274,6 +274,8 @@
   <RealRuins.DebugSettings.ResetSettingsConfirm>Are you sure you want to reset all settings to their default values?</RealRuins.DebugSettings.ResetSettingsConfirm>
   <RealRuins.DebugSettings.KeepSnapshotsAfterUpload>Keep snapshot files after upload</RealRuins.DebugSettings.KeepSnapshotsAfterUpload>
   <RealRuins.DebugSettings.KeepSnapshotsAfterUploadTooltip>When enabled, snapshot files will be kept in the temp directory after uploading instead of being deleted. Useful for debugging upload issues.</RealRuins.DebugSettings.KeepSnapshotsAfterUploadTooltip>
+  <RealRuins.DebugSettings.UseStagingEnvironment>Use staging environment</RealRuins.DebugSettings.UseStagingEnvironment>
+  <RealRuins.DebugSettings.UseStagingEnvironmentTooltip>When enabled, all API requests go to staging.woolstrand.art and blueprints are stored in the staging bucket (realruins-staging, sfo3). Disable for normal play.</RealRuins.DebugSettings.UseStagingEnvironmentTooltip>
   <RealRuins.DebugSettings.ManualUpload>Manually trigger blueprint capture</RealRuins.DebugSettings.ManualUpload>
   <RealRuins.DebugSettings.ManualUploadTooltip>Manually trigger a blueprint capture and upload of the current map. Useful for testing upload functionality.</RealRuins.DebugSettings.ManualUploadTooltip>
   <RealRuins.DebugSettings.UploadTriggered>Blueprint capture triggered. Check logs for details.</RealRuins.DebugSettings.UploadTriggered>

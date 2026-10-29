@@ -18,9 +18,13 @@ namespace RealRuins
     class APIService
     {
 
-        private const string APIRoot = "https://woolstrand.art/";
+        private static string APIRoot => RealRuins_ModSettings.useStagingEnvironment
+            ? "https://staging.woolstrand.art/"
+            : "https://api.woolstrand.art/";
         //private const string APIRoot = "http://173.23.44.32/"; //for testing unresponsive host
-        private const string BucketRoot = "https://realruinsv2.sfo2.digitaloceanspaces.com/";
+        private static string BucketRoot => RealRuins_ModSettings.useStagingEnvironment
+            ? "https://realruins-staging.sfo3.digitaloceanspaces.com/"
+            : "https://realruinsv2.sfo2.digitaloceanspaces.com/";
 
         private const string MapsRandomListPath = "maps/random";
         private const string MapsBySeedListPath = "maps/seed/";

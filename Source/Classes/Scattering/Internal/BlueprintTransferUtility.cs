@@ -644,6 +644,18 @@ namespace RealRuins
                                         }
                                     }
 
+                                    // Wall attachments (lamps, vents, coolers) require a supporting wall.
+                                    // If deterioration or scavenging removed the wall but left the attachment,
+                                    // PowerConnectionMaker.TryConnectToAnyPowerNet will call
+                                    // GenConstruct.GetWallAttachedTo(...).Position on a null return value
+                                    // during Map.FinalizeInit(), causing a NullReferenceException hang.
+                                    if (thing.def.building?.isAttachment == true &&
+                                        GenConstruct.GetWallAttachedTo(mapLocation, rotation, map) == null)
+                                    {
+                                        Debug.Warning(Debug.BlueprintTransfer, "Skipping wall attachment {0} at ({1}, {2}): no supporting wall present", thing.def.defName, mapLocation.x, mapLocation.z);
+                                        continue;
+                                    }
+
                                     GenSpawn.Spawn(thing, mapLocation, map, rotation);
                                     Debug.Extra(Debug.BlueprintTransfer, "Spawned");
                                     try

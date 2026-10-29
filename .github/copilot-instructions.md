@@ -46,9 +46,9 @@ Never build unless explicitly asked. Build target: `Source/RealRuins.csproj` →
 
 ## Important Rules
 
+- `DecompiledSources/` is your reference for game source code. You can read and use it, but never change. Changes can be added via harmony patches and only after explicit user approval.
 - All settings fields in `RealRuins_ModSettings` are `public static` — no instance needed
 - `ScatterOptions.Default` is a mutable singleton — use `Copy()` before modifying
 - `PlanetaryRuinsInitData.shared` is valid only during new-game initialization flow
 - Harmony patches live in `RealRuins.cs` as nested inner classes — one class per patch
 - When adding a new source file, add it to `Source/RealRuins.csproj` (the csproj uses `<Compile Include="Classes\**\*.cs" />` glob — new files in subdirectories are picked up automatically)
-- Never use `DecompiledSources/` — read-only reference only; use Harmony patches to modify behavior
