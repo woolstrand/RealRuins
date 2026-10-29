@@ -40,10 +40,7 @@ Single list of known bugs, code smells and design weaknesses. Entries are groupe
 
 ---
 
-### H3. `StoreBinaryData` Dedup Hazards
-**File**: `Source/Classes/Utility/SnapshotStoreManager.cs`, `StoreBinaryData()`
-**What**: A date prefix that fails `int.TryParse` silently skips dedup. Nothing guards the raw background `Thread`: an exception in `GetFiles` or `File.Delete` is unhandled.
-**Fix**: Wrap the thread body in `try/catch` with logging. Decide what to do with non-numeric prefixes.
+### H3. Fixed
 
 ---
 
