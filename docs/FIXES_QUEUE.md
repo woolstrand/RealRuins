@@ -44,10 +44,7 @@ Single list of known bugs, code smells and design weaknesses. Entries are groupe
 
 ---
 
-### H4. `ScatterOptions.Copy()` Omits Fields
-**File**: `Source/Classes/Scattering/ScatterOptions.cs`
-**What**: `costCap`, `startingPartyPoints` and `overridePosition` are not copied. Every `options.Copy()` handed downstream loses them.
-**Fix**: Copy them. Add a reflection test that fails on any uncopied field.
+### H4. Fixed
 
 ---
 
