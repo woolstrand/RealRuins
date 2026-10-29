@@ -21,15 +21,7 @@ This report documents bugs, code smells, design weaknesses, and architectural co
 ### 5. Fixed
 ---
 
-### 6. `MapRuinsStore.remoteMapIds` Uses `LookMode.Undefined`
-**File**: `Source/Classes/DynamicMapObjects/MapRuinsStore.cs`
-**What**: `Scribe_Collections.Look(ref remoteMapIds, "remoteMapIds", LookMode.Undefined)`.
-**Impact**: `LookMode.Undefined` tells Scribe it doesn't know how to serialize the list elements. On load, `remoteMapIds` will be empty or unpopulated, losing all stored remote map IDs across saves.
-**Fix**: Change to `LookMode.Value`.
-
----
-
-### 7. `chronologicalAge` Writes Biological Age
+### 6. `chronologicalAge` Writes Biological Age
 **File**: `Source/Classes/Snapshotting/SnapshotGenerator.cs`, `EncodePawn()`
 **What**: `xmlWriter.WriteAttributeString("chronologicalAge", pawn.ageTracker.AgeBiologicalTicks.ToString())` — should be `AgeChronologicalTicks`.
 **Impact**: For pawns with slow aging (Royalty trait) or long-lived xenotypes, the chronological age is saved as the biological age. When the pawn is restored in another player's game, their lifespan/appearance may be subtly wrong.
@@ -39,7 +31,7 @@ This report documents bugs, code smells, design weaknesses, and architectural co
 
 ## HIGH — Logic Errors and Stability Risks
 
-### 8. `BakedTaleReference.ExposeData` Uses `new` Instead of `override`
+### 7. `BakedTaleReference.ExposeData` Uses `new` Instead of `override`
 **File**: `Source/Classes/Snapshotting/BakedTaleReference.cs`
 **What**: `ExposeData()` is declared with `new` (hiding base method) rather than `override`. The Harmony patch on `TaleReference.ExposeData` compensates for this, but if the patch silently fails, art description strings will not be saved/loaded for BakedTaleReference objects.
 **Impact**: Art descriptions on ruins' art objects may be lost silently on save/load failures. Correctness depends on a Harmony patch rather than the normal virtual dispatch chain.
@@ -47,7 +39,7 @@ This report documents bugs, code smells, design weaknesses, and architectural co
 
 ---
 
-### 9. Global `Scribe.mode` Mutation in `PawnRestoreUtility`
+### 8. Global `Scribe.mode` Mutation in `PawnRestoreUtility`
 **File**: `Source/Classes/Scattering/Internal/PawnRestoreUtility.cs`
 **What**: `Scribe.mode` is temporarily set to `LoadSaveMode.LoadingVars` for hediff deserialization. This is global state. An unhandled exception mid-loop could leave `Scribe.mode` dirty.
 **Impact**: If any unhandled exception fires between the mode set and the reset, RimWorld's entire save system will behave incorrectly for the remainder of the session.
@@ -267,27 +259,26 @@ Multiple dead code instances across the codebase:
 | 3 | CRITICAL | SnapshotManager | Race condition on snapshotsToLoad.Pop() |
 | 4 | CRITICAL | SnapshotStoreManager | Version dedup split delimiter mismatch |
 | 5 | CRITICAL | ScatterOptions | asIs() mutates shared Default singleton |
-| 6 | CRITICAL | MapRuinsStore | LookMode.Undefined breaks remoteMapIds serialization |
-| 7 | CRITICAL | SnapshotGenerator | chronologicalAge writes biological age |
-| 8 | HIGH | BakedTaleReference | ExposeData uses `new` not `override` |
-| 9 | HIGH | PawnRestoreUtility | Scribe.mode not in try/finally |
-| 10 | HIGH | Compressor | ZipFile deletes original before write succeeds |
-| 11 | HIGH | BlueprintRecoveryService | Reads compressed files as plain text |
-| 12 | HIGH | BlueprintAnalyzer | Division by zero on wall-only blueprints |
-| 13 | HIGH | Page_PlanetaryRuinsLoader | Background thread writes unsynchronized shared state |
-| 14 | MEDIUM | BlueprintAnalyzer | Non-deterministic type classification |
-| 15 | MEDIUM | RuinedBaseComp | V1/V2 forces conflict |
-| 16 | MEDIUM | POI/AbandonedBase | Inconsistent wealth calculation |
-| 17 | MEDIUM | CaravanArrivalAction_POI | Hostile goodwill set silently on arrival |
-| 18 | MEDIUM | RealRuins.cs | Static forceCallOriginal flag |
-| 19 | MEDIUM | SnapshotManager | snapshotTimestamps dict lacks thread safety |
-| 20 | MEDIUM | FormCaravanFromRuinsComp | `new` not `override` for CanForm property |
-| 21 | LOW | Blueprint + Processors | RemoveWall() O(w×h) inside O(w×h) loops |
-| 22 | LOW | Pipeline stages | Multiple DefDatabase lookups per def |
-| 23 | LOW | SnapshotGenerator | Per-item reflection for SaM mod integration |
-| 24 | LOW | ForceGenerators | GenerateForces() code duplication |
-| 25 | LOW | Arrival actions | ~70% code duplication between arrival action pairs |
-| 26 | LOW | NetworkCacheSettingsPage | Disk methods called every render frame |
+| 6 | CRITICAL | SnapshotGenerator | chronologicalAge writes biological age |
+| 7 | HIGH | BakedTaleReference | ExposeData uses `new` not `override` |
+| 8 | HIGH | PawnRestoreUtility | Scribe.mode not in try/finally |
+| 9 | HIGH | Compressor | ZipFile deletes original before write succeeds |
+| 10 | HIGH | BlueprintRecoveryService | Reads compressed files as plain text |
+| 11 | HIGH | BlueprintAnalyzer | Division by zero on wall-only blueprints |
+| 12 | HIGH | Page_PlanetaryRuinsLoader | Background thread writes unsynchronized shared state |
+| 13 | MEDIUM | BlueprintAnalyzer | Non-deterministic type classification |
+| 14 | MEDIUM | RuinedBaseComp | V1/V2 forces conflict |
+| 15 | MEDIUM | POI/AbandonedBase | Inconsistent wealth calculation |
+| 16 | MEDIUM | CaravanArrivalAction_POI | Hostile goodwill set silently on arrival |
+| 17 | MEDIUM | RealRuins.cs | Static forceCallOriginal flag |
+| 18 | MEDIUM | SnapshotManager | snapshotTimestamps dict lacks thread safety |
+| 19 | MEDIUM | FormCaravanFromRuinsComp | `new` not `override` for CanForm property |
+| 20 | LOW | Blueprint + Processors | RemoveWall() O(w×h) inside O(w×h) loops |
+| 21 | LOW | Pipeline stages | Multiple DefDatabase lookups per def |
+| 22 | LOW | SnapshotGenerator | Per-item reflection for SaM mod integration |
+| 23 | LOW | ForceGenerators | GenerateForces() code duplication |
+| 24 | LOW | Arrival actions | ~70% code duplication between arrival action pairs |
+| 25 | LOW | NetworkCacheSettingsPage | Disk methods called every render frame |
 | 27 | LOW | Various | Dead code throughout codebase |
 | 28 | LOW | RaidTrigger | Redundant 250-tick gating in Tick() |
 | 29 | LOW | TrippingTrigger | Tick() runs every tick unnecessarily |

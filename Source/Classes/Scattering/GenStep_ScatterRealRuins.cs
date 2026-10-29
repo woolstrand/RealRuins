@@ -105,6 +105,7 @@ namespace RealRuins
                 currentOptions = RealRuins_ModSettings.defaultScatterOptions.Copy(); //store as instance variable to keep accessible on subsequent ScatterAt calls
                 currentOptions.doorOwnershipProbability = 0.05f;
                 currentOptions.allowFriendlyRaids = !RealRuins_ModSettings.disableFriendlyRaids;
+                currentOptions.avoidUsedRects = true;
 
                 if (RealRuins_ModSettings.defaultScatterOptions.enableProximity) {
                         

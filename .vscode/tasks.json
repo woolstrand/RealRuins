@@ -2,7 +2,7 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "Build Debug (1.6)",
+            "label": "Build Debug (1.7)",
             "type": "shell",
             "command": "msbuild",
             "args": [
@@ -33,7 +33,7 @@
             }
         },
         {
-            "label": "Build Release (1.6)",
+            "label": "Build Release (1.7)",
             "type": "shell",
             "command": "msbuild",
             "args": [
@@ -64,7 +64,7 @@
         },
         {
             "label": "Build and Copy to RimWorld (Debug)",
-            "dependsOn": "Build Debug (1.6)",
+            "dependsOn": "Build Debug (1.7)",
             "type": "shell",
             "command": "zsh postbuild.sh",
             "problemMatcher": [],
@@ -134,7 +134,7 @@
             "command": "open",
             "args": [
                 "-a",
-                "${env:HOME}/Library/Application Support/Steam/steamapps/common/RimWorld/RimWorldMac.app"
+                "${env:HOME}/Library/Application Support/Steam/steamapps/common/RimWorld/RimWorld.app"
             ],
             "problemMatcher": [],
             "presentation": {

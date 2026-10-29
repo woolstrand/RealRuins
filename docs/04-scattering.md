@@ -82,7 +82,7 @@ Static class with a single `Scatter(ScatterOptions options)` static method. Orch
 
 ## GenStep_ScatterRealRuins
 
-Placed in XML map generators (see `1.6/Defs/MapGeneratorDefs/`). Drives standard multi-chunk scatter.
+Placed in XML map generators (see `1.7/Defs/MapGeneratorDefs/`). Drives standard multi-chunk scatter.
 
 ### `Generate(Map map, GenStepParams parms)`
 
@@ -167,7 +167,7 @@ Defines three string keys for `ResolveParams.GetCustom/SetCustom`:
 ## XML Def Registration
 
 Scatter gen steps are registered in XML defs:
-- `1.6/Defs/MapGeneratorDefs/MapGenerators_RealRuins.xml` — defines the custom map generator defs
-- `1.6/Defs/MapGeneratorDefs/Ruins_EncounterMapGenerator.xml` — encounter map generator
-- `1.6/Defs/MapGeneratorDefs/Rules.xml` — symbol resolution rules for BaseGen
-- `1.6/Patches/MapGenerator_Patch.xml` — patches vanilla map generators to include scatter gen steps
+- `1.7/Defs/MapGeneratorDefs/MapGenerators_RealRuins.xml` — defines the custom map generator defs
+- `1.7/Defs/MapGeneratorDefs/Ruins_EncounterMapGenerator.xml` — encounter map generator
+- `1.7/Defs/MapGeneratorDefs/Rules.xml` — symbol resolution rules for BaseGen
+- `1.7/Patches/MapGenerator_Patch.xml` — patches vanilla map generators to include scatter gen steps

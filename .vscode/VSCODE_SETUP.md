@@ -47,7 +47,7 @@ Should output version 7.0 or higher.
 
 ### Option 1: Build Only
 1. Press `Ctrl+Shift+B` (or go to **Terminal → Run Build Task**)
-2. Select **"Build Debug (1.6)"** or **"Build Release (1.5)"**
+2. Select **"Build Debug (1.7)"** or **"Build Release (1.7)"**
 
 ### Option 2: Build and Copy to RimWorld
 1. Open the Command Palette (`Ctrl+Shift+P`)
@@ -83,7 +83,7 @@ cd ..
 - **Source/** - C# source code
   - **Classes/** - Main code classes
   - **Properties/** - Assembly info
-- **1.1/, 1.3/, 1.4/, 1.5/, 1.6/** - Version-specific assemblies and definitions
+- **1.1/, 1.3/, 1.4/, 1.5/, 1.6/, 1.7/** - Version-specific assemblies and definitions
 - **About/** - Mod metadata (About.xml, Preview.png)
 - **Defs/** - Game definitions (MapGenerators, Storyteller, etc.)
 - **Languages/** - Localization files
@@ -141,8 +141,8 @@ If you were previously using Visual Studio:
 
 ## Notes
 
-- The post-build script copies compiled DLLs to version-specific folders (1.3, 1.4, 1.5, 1.6)
+- The post-build script copies compiled DLLs to version-specific folders (1.3, 1.4, 1.5, 1.6, 1.7)
 - Different build configurations output to different version folders:
-  - Debug → 1.6/Assemblies/
-  - Release → 1.5/Assemblies/
+  - Debug → 1.7/Assemblies/
+  - Release → 1.7/Assemblies/
 - The `.vscode` folder contains workspace-specific settings that are automatically applied

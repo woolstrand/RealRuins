@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Mod base folder - uses $HOME for cross-user compatibility
-MOD_BASE_FOLDER="$HOME/Library/Application Support/Steam/steamapps/common/RimWorld/RimWorldMac.app/Mods/RealRuins"
+MOD_BASE_FOLDER="$HOME/Library/Application Support/Steam/steamapps/common/RimWorld/Mods/RealRuins"
 
 # Get the directory where this script is located
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -30,5 +30,6 @@ cp -R 1.3 "$MOD_BASE_FOLDER"
 cp -R 1.4 "$MOD_BASE_FOLDER"
 cp -R 1.5 "$MOD_BASE_FOLDER"
 cp -R 1.6 "$MOD_BASE_FOLDER"
+cp -R 1.7 "$MOD_BASE_FOLDER"
 
 echo "Post-build copy completed successfully!"

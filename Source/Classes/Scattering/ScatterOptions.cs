@@ -50,6 +50,7 @@ namespace RealRuins {
         public IntVec3 overridePosition = new IntVec3(0, 0, 0);
         public bool overwritesEverything = false; //if true, each item, terrain and even empty cell inside a room removes everything from that tile
         public bool centerIfExceedsBounds = false;
+        public bool avoidUsedRects = false; //if true, cells inside MapGenerator.UsedRects (quest-critical areas) are left untouched
         public string blueprintFileName = null;
 
         public float doorOwnershipProbability = 0.0f;
@@ -117,6 +118,7 @@ namespace RealRuins {
                 canHaveFood = canHaveFood,
                 blueprintFileName = blueprintFileName,
                 centerIfExceedsBounds = centerIfExceedsBounds,
+                avoidUsedRects = avoidUsedRects,
                 overwritesEverything = overwritesEverything,
                 doorOwnershipProbability = doorOwnershipProbability,
             };

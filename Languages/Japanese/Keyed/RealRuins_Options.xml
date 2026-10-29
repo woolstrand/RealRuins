@@ -49,16 +49,32 @@
   <RealRuins_MapOptions_StartWithoutRuinsTT>ゲームスタートした時のマップに廃墟は生成されません.ゲーム開始後に生成されるマップでは,設定に応じて遺跡や廃墟が通常に生成されます.</RealRuins_MapOptions_StartWithoutRuinsTT>
 
   <!-- Captions -->
-  <RealRuins.PlanetaryRuinsSettings.Caption>惑星の遺跡とロケーション</RealRuins.PlanetaryRuinsSettings.Caption>
-  <RealRuins.CacheSettings.Caption>キャッシュ設定</RealRuins.CacheSettings.Caption>
+  <RealRuins.CacheSettings.TabCaption>一般、ネットワーク、キャッシュ</RealRuins.CacheSettings.TabCaption>
+  <RealRuins.CacheSettings.Caption>一般、ネットワーク、キャッシュ設定</RealRuins.CacheSettings.Caption>
+  <RealRuins.CacheSettings.Description>スナップショットキャッシュ設定を管理します。ストレージ制限をダウンロード設定を調整します。</RealRuins.CacheSettings.Description>
+  <RealRuins_ModOptions_NoLimit>無制限</RealRuins_ModOptions_NoLimit>
+  <RealRuins_ModOptions_ClearCacheConfirm>キャッシュされたすべてのスナップショットをクリアしてもよろしいですか？このアクションは取り消せません。</RealRuins_ModOptions_ClearCacheConfirm>
+  <RealRuins_ModOptions_DownloadMoreTooltip>サーバーから追加の設計図をダウンロードします。</RealRuins_ModOptions_DownloadMoreTooltip>
+
+  <RealRuins.SpawnSettings.TabCaption>生成設定</RealRuins.SpawnSettings.TabCaption>
   <RealRuins.SpawnSettings.Caption>生成設定</RealRuins.SpawnSettings.Caption>
+  <RealRuins.SpawnSettings.Description>遺跡がどのように生成されるか、サイズ、密度、内容を設定します。</RealRuins.SpawnSettings.Description>
+  <RealRuins.KeepVanillaRuins>バニラ遺跡を保持</RealRuins.KeepVanillaRuins>
+  <RealRuins.KeepVanillaRuinsTT>有効にすると、RimWorldのバニラ遺跡がReal Ruinsの横に保持されます。</RealRuins.KeepVanillaRuinsTT>
 
   <!-- Planetary ruins section -->
+  <RealRuins.PlanetaryRuinsSettings.Caption>惑星の遺跡とロケーション</RealRuins.PlanetaryRuinsSettings.Caption>
   <RealRuins.PlanetarySettings.Enable>ゲーム開始時の遺跡生成を有効化</RealRuins.PlanetarySettings.Enable>
   <RealRuins.PlanetarySettings.DownloadLimit>ダウンロードする設計図の最大数</RealRuins.PlanetarySettings.DownloadLimit>
   <RealRuins.PlanetarySettings.TransferLimit>生成するロケーションの最大数</RealRuins.PlanetarySettings.TransferLimit>
   <RealRuins.PlanetarySettings.ExcludePlain>未分類のロケーション(プレーンな遺跡)を破棄</RealRuins.PlanetarySettings.ExcludePlain>
   <RealRuins.PlanetarySettings.AbandonedPercentage>放棄されたロケーションの割合</RealRuins.PlanetarySettings.AbandonedPercentage>
+  <RealRuins.PlanetarySettings.DisableFriendly>友好的なロケーションを生成しない</RealRuins.PlanetarySettings.DisableFriendly>
+  <RealRuins.PlanetarySettings.DisableFriendlyTT>有効にすると、ワールドロケーションは敵対派閥によってのみ占有されます。</RealRuins.PlanetarySettings.DisableFriendlyTT>
+  <RealRuins.PlanetarySettings.RemoveAll>すべてのロケーションを削除</RealRuins.PlanetarySettings.RemoveAll>
+  <RealRuins.PlanetarySettings.RemoveAllConfirm>Real Ruinsで生成されたすべてのロケーションを削除してもよろしいですか？</RealRuins.PlanetarySettings.RemoveAllConfirm>
+  <RealRuins.DisableFriendlyLocations>友好的なロケーションを生成しない</RealRuins.DisableFriendlyLocations>
+  <RealRuins.DisableFriendlyLocationsTT>有効にすると、ワールドロケーションは敵対派閥によってのみ占有されます。</RealRuins.DisableFriendlyLocationsTT>
 
   <!-- Caravan entered map -->
   <LetterLabelCaravanEnteredRuins>キャラバンは遺跡に到着した</LetterLabelCaravanEnteredRuins>
@@ -97,48 +113,7 @@
   <!-- POI captions and descriptions -->
   <RealRuins.CaptionPOI0>小さな軍事基地</RealRuins.CaptionPOI0>
   <RealRuins.CaptionPOI1>前哨基地</RealRuins.CaptionPOI1>
-  <RealRuins.CacheSettings.TabCaption>一般、ネットワーク、キャッシュ</RealRuins.CacheSettings.TabCaption>
-  <RealRuins.CacheSettings.Caption>一般、ネットワーク、キャッシュ設定</RealRuins.CacheSettings.Caption>
-  <RealRuins.CacheSettings.Description>スナップショットキャッシュ設定を管理します。ストレージ制限をダウンロード設定を調整します。</RealRuins.CacheSettings.Description>
-  <RealRuins_ModOptions_NoLimit>無制限</RealRuins_ModOptions_NoLimit>
-  <RealRuins_ModOptions_ClearCacheConfirm>キャッシュされたすべてのスナップショットをクリアしてもよろしいですか？このアクションは取り消せません。</RealRuins_ModOptions_ClearCacheConfirm>
-  <RealRuins_ModOptions_DownloadMoreTooltip>サーバーから追加の設計図をダウンロードします。</RealRuins_ModOptions_DownloadMoreTooltip>
-
-  <RealRuins.SpawnSettings.TabCaption>生成設定</RealRuins.SpawnSettings.TabCaption>
-  <RealRuins.SpawnSettings.Caption>生成設定</RealRuins.SpawnSettings.Caption>
-  <RealRuins.SpawnSettings.Description>遺跡がどのように生成されるか、サイズ、密度、内容を設定します。</RealRuins.SpawnSettings.Description>
-  <RealRuins.KeepVanillaRuins>バニラ遺跡を保持</RealRuins.KeepVanillaRuins>
-  <RealRuins.KeepVanillaRuinsTT>有効にすると、RimWorldのバニラ遺跡がReal Ruinsの横に保持されます。</RealRuins.KeepVanillaRuinsTT>
-
-  <RealRuins.PlanetarySettings.DisableFriendly>友好的なロケーションを生成しない</RealRuins.PlanetarySettings.DisableFriendly>
-  <RealRuins.PlanetarySettings.DisableFriendlyTT>有効にすると、ワールドロケーションは敵対派閥によってのみ占有されます。</RealRuins.PlanetarySettings.DisableFriendlyTT>
-  <RealRuins.DisableFriendlyLocations>友好的なロケーションを生成しない</RealRuins.DisableFriendlyLocations>
-  <RealRuins.DisableFriendlyLocationsTT>有効にすると、ワールドロケーションは敵対派閥によってのみ占有されます。</RealRuins.DisableFriendlyLocationsTT>
-  <RealRuins.PlanetarySettings.RemoveAll>すべてのロケーションを削除</RealRuins.PlanetarySettings.RemoveAll>
-  <RealRuins.PlanetarySettings.RemoveAllConfirm>Real Ruinsで生成されたすべてのロケーションを削除してもよろしいですか？</RealRuins.PlanetarySettings.RemoveAllConfirm>
-
-  <RealRuins.DisableFriendlyRaids>友好的な襲撃を無効にする</RealRuins.DisableFriendlyRaids>
-  <RealRuins.DisableFriendlyRaidsTT>有効にすると、遺跡イベント中は敵対派閥からの襲撃のみが発生します。</RealRuins.DisableFriendlyRaidsTT>
-
-  <RealRuins.SpawnBlacklist>アイテムスポーン黒リスト</RealRuins.SpawnBlacklist>
-  <RealRuins.SpawnBlacklistTT>スポーンから除外するアイテム定義のコンマ区切りリスト。</RealRuins.SpawnBlacklistTT>
-
-  <RealRuins.MaterialBlacklist>材料黒リスト</RealRuins.MaterialBlacklist>
-  <RealRuins.MaterialBlacklistTT>スポーンから除外する材料のコンマ区切りリスト。ブラックリスト材料で作られたものが見つかった場合、フォールバック材料に置き換えられます。</RealRuins.MaterialBlacklistTT>
-
-  <RealRuins.FallbackMaterial>フォールバック材料</RealRuins.FallbackMaterial>
-  <RealRuins.FallbackMaterialTT>ブラックリスト材料が見つかった場合に使用する材料。デフォルトは木です。</RealRuins.FallbackMaterialTT>
-
-  <RealRuins.Unlimited>無制限</RealRuins.Unlimited>
-  <RealRuins.AdvancedSettings>高度なイベント設定</RealRuins.AdvancedSettings>
-
-  <RealRuins.DebugSettings.LogLevel>ログレベル</RealRuins.DebugSettings.LogLevel>
-  <RealRuins.DebugSettings.LogLevelAll>すべてのメッセージ</RealRuins.DebugSettings.LogLevelAll>
-  <RealRuins.DebugSettings.LogLevelWarnings>警告とエラー</RealRuins.DebugSettings.LogLevelWarnings>
-  <RealRuins.DebugSettings.LogLevelErrors>エラーのみ</RealRuins.DebugSettings.LogLevelErrors>
-  <RealRuins.DebugSettings.DebugCategories>デバッグカテゴリ</RealRuins.DebugSettings.DebugCategories>
-  <RealRuins.DebugSettings.ResetSettings>すべての設定をリセット</RealRuins.DebugSettings.ResetSettings>
-  <RealRuins.DebugSettings.ResetSettingsConfirm>すべての設定をデフォルト値にリセットしてもよろしいですか？</RealRuins.DebugSettings.ResetSettingsConfirm>
+  <RealRuins.CaptionPOI2>仮設キャンプ</RealRuins.CaptionPOI2>
   <RealRuins.CaptionPOI3>都市</RealRuins.CaptionPOI3>
   <RealRuins.CaptionPOI4>工場</RealRuins.CaptionPOI4>
   <RealRuins.CaptionPOI5>研究所</RealRuins.CaptionPOI5>
@@ -228,6 +203,7 @@
   <RealRuins.TooManyBlueprints.ShowOptions>詳細設定を表示して自分で決定します</RealRuins.TooManyBlueprints.ShowOptions>
   <RealRuins.TooManyBlueprints.Get500>500個の設計図のみ取得します</RealRuins.TooManyBlueprints.Get500>
 
+  <!-- Duplicate <RealRuins.TransferringOptions>転送オプション</RealRuins.TransferringOptions> -->
   <RealRuins.BiomeFiltering>気候フィルタリング</RealRuins.BiomeFiltering>
   <RealRuins.BiomeFilteringTT>気候が存在しないか一致しないマップを排除します</RealRuins.BiomeFilteringTT>
   <RealRuins.CostFiltering>価値フィルタリング</RealRuins.CostFiltering>
@@ -260,6 +236,21 @@
   <RealRuins.UseForcesGenerationV2>イベントに新しい襲撃システムを使用する</RealRuins.UseForcesGenerationV2>
   <RealRuins.UseForcesGenerationV2TT>以前のバージョンでは,遺跡発見イベント中に数回の大きな襲撃がありました.現在はそれらに加え,プレイヤーに小さく継続的な圧力をかけるため,敵の小規模なグループが絶えずマップに流入します.以前の方法を好む場合は,これを無効にできます.</RealRuins.UseForcesGenerationV2TT>
 
+  <RealRuins.DisableFriendlyRaids>友好的な襲撃を無効にする</RealRuins.DisableFriendlyRaids>
+  <RealRuins.DisableFriendlyRaidsTT>有効にすると、遺跡イベント中は敵対派閥からの襲撃のみが発生します。</RealRuins.DisableFriendlyRaidsTT>
+
+  <RealRuins.SpawnBlacklist>アイテムスポーン黒リスト</RealRuins.SpawnBlacklist>
+  <RealRuins.SpawnBlacklistTT>スポーンから除外するアイテム定義のコンマ区切りリスト。</RealRuins.SpawnBlacklistTT>
+
+  <RealRuins.MaterialBlacklist>材料黒リスト</RealRuins.MaterialBlacklist>
+  <RealRuins.MaterialBlacklistTT>スポーンから除外する材料のコンマ区切りリスト。ブラックリスト材料で作られたものが見つかった場合、フォールバック材料に置き換えられます。</RealRuins.MaterialBlacklistTT>
+
+  <RealRuins.FallbackMaterial>フォールバック材料</RealRuins.FallbackMaterial>
+  <RealRuins.FallbackMaterialTT>ブラックリスト材料が見つかった場合に使用する材料。デフォルトは木です。</RealRuins.FallbackMaterialTT>
+
+  <RealRuins.Unlimited>無制限</RealRuins.Unlimited>
+  <RealRuins.AdvancedSettings>高度なイベント設定</RealRuins.AdvancedSettings>
+
   <RealRuins.FactionOwnedStartTile>タイルが占有されています</RealRuins.FactionOwnedStartTile>
   <RealRuins.FactionOwnedStartTileDesc>入植しようとしているタイルには拠点があり,この拠点は他派閥に属しています.ここを放棄させて遺跡に入植するか,自分のものにするか,あるいは初期の仲間で攻撃するかを選択できます.</RealRuins.FactionOwnedStartTileDesc>
   <RealRuins.FactionOwnedStartTile.MakeAbandoned>放棄させて入植する</RealRuins.FactionOwnedStartTile.MakeAbandoned>
@@ -274,10 +265,34 @@
 
   <!-- Debug settings (dev mode only) -->
   <RealRuins.DebugSettings.Caption>デバッグ設定</RealRuins.DebugSettings.Caption>
+  <RealRuins.DebugSettings.LogLevel>ログレベル</RealRuins.DebugSettings.LogLevel>
+  <RealRuins.DebugSettings.LogLevelAll>すべてのメッセージ</RealRuins.DebugSettings.LogLevelAll>
+  <RealRuins.DebugSettings.LogLevelWarnings>警告とエラー</RealRuins.DebugSettings.LogLevelWarnings>
+  <RealRuins.DebugSettings.LogLevelErrors>エラーのみ</RealRuins.DebugSettings.LogLevelErrors>
+  <RealRuins.DebugSettings.DebugCategories>デバッグカテゴリ</RealRuins.DebugSettings.DebugCategories>
+  <RealRuins.DebugSettings.ResetSettings>すべての設定をリセット</RealRuins.DebugSettings.ResetSettings>
+  <RealRuins.DebugSettings.ResetSettingsConfirm>すべての設定をデフォルト値にリセットしてもよろしいですか？</RealRuins.DebugSettings.ResetSettingsConfirm>
   <RealRuins.DebugSettings.KeepSnapshotsAfterUpload>アップロード後にスナップショットを保持する</RealRuins.DebugSettings.KeepSnapshotsAfterUpload>
   <RealRuins.DebugSettings.KeepSnapshotsAfterUploadTooltip>有効にすると,アップロード後にスナップショットファイルが削除されず,一時ディレクトリに保持されます.アップロードに関する問題のデバッグに役立ちます.</RealRuins.DebugSettings.KeepSnapshotsAfterUploadTooltip>
   <RealRuins.DebugSettings.ManualUpload>設計図のキャプチャを手動でトリガーする</RealRuins.DebugSettings.ManualUpload>
   <RealRuins.DebugSettings.ManualUploadTooltip>現在のマップの設計図キャプチャとアップロードを手動で実行します.アップロード機能のテストに役立ちます.</RealRuins.DebugSettings.ManualUploadTooltip>
   <RealRuins.DebugSettings.UploadTriggered>設計図のキャプチャが実行されました.詳細はログを確認してください.</RealRuins.DebugSettings.UploadTriggered>
   <RealRuins.DebugSettings.NoMap>マップが利用できません.先にゲームをロードしてください.</RealRuins.DebugSettings.NoMap>
+
+  <!-- Event toggles -->
+  <RealRuins.EnableAbandonedRuinsFoundEvent>「見捨てられた遺跡を発見」イベントを有効</RealRuins.EnableAbandonedRuinsFoundEvent>
+  <RealRuins.EnableAbandonedRuinsFoundEventTT>有効にすると,ワールドマップ上にかなり大きな遺跡が存在する場所に印を付けて,大規模な「見捨てられた遺跡を発見」ワールドイベントが発生するようになります.</RealRuins.EnableAbandonedRuinsFoundEventTT>
+  <RealRuins.EnableCaravanFoundRuinsEvent>「キャラバンが小さな遺跡を発見」イベントを有効</RealRuins.EnableCaravanFoundRuinsEvent>
+  <RealRuins.EnableCaravanFoundRuinsEventTT>有効にすると,移動中のキャラバンが近くに小さな遺跡を発見し,そこを調査するかどうかの選択肢が表示されるようになります.</RealRuins.EnableCaravanFoundRuinsEventTT>
+
+  <!-- Import/Export settings -->
+  <RealRuins.Settings.ExportSettings>設定のエクスポート</RealRuins.Settings.ExportSettings>
+  <RealRuins.Settings.ImportSettings>設定のインポート</RealRuins.Settings.ImportSettings>
+  <RealRuins.Settings.ExportTitle>設定のエクスポート</RealRuins.Settings.ExportTitle>
+  <RealRuins.Settings.ImportTitle>設定のインポート</RealRuins.Settings.ImportTitle>
+  <RealRuins.Settings.CopyToClipboard>クリップボードにコピー</RealRuins.Settings.CopyToClipboard>
+  <RealRuins.Settings.CopiedToClipboard>設定文字列をクリップボードにコピーしました.</RealRuins.Settings.CopiedToClipboard>
+  <RealRuins.Settings.ImportApply>インポート</RealRuins.Settings.ImportApply>
+  <RealRuins.Settings.ImportSuccess>設定のインポートに成功しました.</RealRuins.Settings.ImportSuccess>
+  <RealRuins.Settings.ImportFailed>設定のインポートに失敗しました.文字列が無効か破損している可能性があります.</RealRuins.Settings.ImportFailed>
 </LanguageData>

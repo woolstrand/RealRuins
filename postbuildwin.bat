@@ -29,6 +29,7 @@ xcopy /E /I /Y "1.3" "!MOD_BASE_FOLDER!\1.3"
 xcopy /E /I /Y "1.4" "!MOD_BASE_FOLDER!\1.4"
 xcopy /E /I /Y "1.5" "!MOD_BASE_FOLDER!\1.5"
 xcopy /E /I /Y "1.6" "!MOD_BASE_FOLDER!\1.6"
+xcopy /E /I /Y "1.7" "!MOD_BASE_FOLDER!\1.7"
 
 echo.
 echo Post-build copy completed successfully!

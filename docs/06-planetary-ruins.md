@@ -11,9 +11,9 @@ The Planetary Ruins feature populates a new game's planet with Points of Interes
 - `Source/Classes/RealRuinsPlanetary_Mod.cs` — shared init state + enums
 - `Source/Classes/DynamicMapObjects/RealRuinsPOIFactory.cs` — blueprint → world object
 - `Source/Classes/DynamicMapObjects/BlueprintAnalyzer.cs` — blueprint classification
-- `Source/Classes/DynamicMapObjects/MapRuinsStore.cs` — world component (persists remote IDs)
 - `Source/Classes/DynamicMapObjects/PlanetTileInfo.cs` — server tile DTO
 - `Source/Classes/Utility/PlanetaryRuinsOptions.cs` — per-game planetary settings
+- `Source/Classes/Utility/SnapshotStoreManager.cs` — blueprint pool management (filesystem scanning)
 
 ---
 
@@ -170,18 +170,6 @@ Maps POI type to minimum faction tech level (e.g., Military requires Industrial+
 
 ---
 
-## MapRuinsStore
-
-`WorldComponent` persisting remote map IDs and a per-world folder GUID.
-
-**Fields:**
-- `remoteMapIds`: list of map ID strings from the server
-- `blueprintsFolder`: per-world GUID for blueprint subdirectory
-
-**Known bug**: `Scribe_Collections.Look(ref remoteMapIds, "remoteMapIds", LookMode.Undefined)` — `LookMode.Undefined` will not serialize list elements correctly. Should be `LookMode.Value`.
-
----
-
 ## PlanetTileInfo
 
 Lightweight DTO for tile metadata returned by `APIService.LoadAllMapsForSeed()`. Not persisted (transient).
@@ -206,5 +194,5 @@ Lightweight DTO for tile metadata returned by `APIService.LoadAllMapsForSeed()`.
 ## POI World Object Defs
 
 Registered in XML:
-- `1.6/Patches/WorldObjects_Patch.xml` — patches world object defs to add POI components
+- `1.7/Patches/WorldObjects_Patch.xml` — patches world object defs to add POI components
 - POI world objects use def names `RealRuinsPOI` and `RealRuinsPOI_Unlisted`

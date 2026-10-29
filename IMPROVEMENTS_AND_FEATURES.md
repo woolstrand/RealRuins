@@ -15,8 +15,7 @@ These are not new features but must be addressed first since they affect correct
 | 3 | Lock `snapshotsToLoad` access in SnapshotManager | S |
 | 4 | Fix `SnapshotStoreManager.StoreBinaryData()` delimiter mismatch | S |
 | 5 | Fix `ScatterOptions.asIs()` to copy Default before mutating | S |
-| 6 | Change `MapRuinsStore.remoteMapIds` to `LookMode.Value` | S |
-| 7 | Fix `chronologicalAge` to write `AgeChronologicalTicks` | S |
+| 6 | Fix `chronologicalAge` to write `AgeChronologicalTicks` | S |
 
 ---
 
