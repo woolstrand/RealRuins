@@ -475,6 +475,20 @@ namespace RealRuins
         // * "Reform" shows all items including items which are currently in colonists' inventories, BUT reformed caravan leaves instantly.
         // * "Form" makes colonists go through the map and pick up all items, but it shows only items which are stored in home area.
         // I need this dialog to show all items, but without instant caravan reforming. Unfortunately, it can be done either with extensive copy-pasting of original code or via method swizzlilng via reflections.
+        //Manual caravan reform mode: no reforming on a pristine ruins map until the raids are over. Vanilla turns ExitMapGrid on
+        //whenever reforming is not possible, so the player can still leave by walking off the map edge with what pawns carry.
+        [HarmonyPatch(typeof(FormCaravanComp), nameof(FormCaravanComp.CanFormOrReformCaravanNow), MethodType.Getter)]
+        class FormCaravanComp_CanFormOrReform_Patch
+        {
+            static void Postfix(FormCaravanComp __instance, ref bool __result)
+            {
+                if (__result && RealRuins_ModSettings.caravanReformType == 2 && (__instance.parent.GetComponent<RuinedBaseComp>()?.mapExitLocked ?? false))
+                {
+                    __result = false;
+                }
+            }
+        }
+
         [HarmonyPatch(typeof(Dialog_FormCaravan), "TryReformCaravan")]
         class DialogFormCaravan_Patch
         {

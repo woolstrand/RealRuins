@@ -92,7 +92,8 @@
   <RealRuins.RuinsActivity.4>экстремальное</RealRuins.RuinsActivity.4>
   
   <!-- Ruins messages -->
-  <RealRuins.NoMoreEnemies>Кажется, сюда больше никто не придет. Можно спокойно собрать караван и отправиться дальше (доступно моментальное формирование каравана)</RealRuins.NoMoreEnemies>
+  <RealRuins.NoMoreEnemies>Кажется, сюда больше никто не придет. Можно спокойно собрать караван и отправиться дальше.</RealRuins.NoMoreEnemies>
+  <RealRuins.ReformLockedManual>Сюда ещё могут прийти рейдеры. Заберите то, что могут унести поселенцы, и уходите через край карты, или дождитесь, пока всё утихнет.</RealRuins.ReformLockedManual>
 
   <!-- POI captions and descriptions -->
   <RealRuins.CaptionPOI0>Маленькая военная база</RealRuins.CaptionPOI0>

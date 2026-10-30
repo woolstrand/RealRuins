@@ -46,7 +46,7 @@ All settings are `public static` fields — accessible from anywhere.
 | `forceMultiplier` | float | 1.0 | Scale enemy forces |
 | `logLevel` | int | 2 | 0=all, 1=warnings, 2=errors |
 | `preserveStandardRuins` | bool | false | Keep vanilla ruins alongside mod ruins |
-| `caravanReformType` | int | 0 | 0=normal, 1=instant, 2=delayed |
+| `caravanReformType` | int | 0 | 0=automatic, 1=instant, 2=manual (exit lock until raids are over) |
 | `spawnBlacklist` | string | "" | Comma-separated def names to never spawn |
 | `materialBlacklist` | string | "" | Comma-separated stuff def names to replace |
 | `fallbackMaterial` | string | "" | Replacement for blacklisted materials |

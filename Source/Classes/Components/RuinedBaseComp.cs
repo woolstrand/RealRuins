@@ -41,13 +41,20 @@ namespace RealRuins {
 
         private float destructionLevel = 0.0f; // 1.0 = intact, 0.0 = total destruction
 
+        // True while raids may still come. In manual reform mode this blocks reforming (see FormCaravanComp_CanFormOrReform_Patch),
+        // so the only way out is the map edge.
         public bool mapExitLocked {
             get {
-                return state != RuinedBaseState.InformedWaitingForLeaving;
+                return state == RuinedBaseState.FightingWaves
+                    || state == RuinedBaseState.WaitingForEnemiesToBeDefeated
+                    || state == RuinedBaseState.WaitingTimeoutAfterEnemiesDefeat
+                    || state == RuinedBaseState.WaitingToBeInformed;
             }
         }
 
-        private int unlockHysteresisTimeout = 1000; //there is a gap between firing the last raid trigger and hostile presence detection (i.e. while drop pods are opening). So we have to wait a bit after switching the component into the other mode.
+        //there is a gap between firing the last raid trigger and hostile presence detection (i.e. while drop pods are opening). So we have to wait a bit after switching the component into the other mode.
+        private const int UnlockHysteresisTicks = 1000;
+        private int allTriggersFiredTick = -1;
 
         //list of all triggers on the map. don't know if it does really influence performance, but it definitely does not make it worse.
         List<RaidTrigger> triggersCache;
@@ -78,11 +85,11 @@ namespace RealRuins {
 
             //we got here only when all triggers have fired.
             if (state == RuinedBaseState.FightingWaves) {
-                if (unlockHysteresisTimeout == 0) {
+                if (allTriggersFiredTick < 0) {
+                    allTriggersFiredTick = Find.TickManager.TicksGame;
+                } else if (Find.TickManager.TicksGame - allTriggersFiredTick >= UnlockHysteresisTicks) {
                     state = RuinedBaseState.WaitingForEnemiesToBeDefeated;
                     //Debug.Message("All triggers fired and expired, and we've wait safety margin => can wait before hostiled defeating and map unlocking");
-                } else {
-                    unlockHysteresisTimeout--;
                 }
             }
 
@@ -120,6 +127,9 @@ namespace RealRuins {
             Scribe_Values.Look(ref state, "state", RuinedBaseState.Inactive);
             Scribe_Values.Look(ref expireSignal, "expireSignal", "");
             Scribe_Values.Look(ref successSignal, "successSignal", "");
+            Scribe_Values.Look(ref allTriggersFiredTick, "allTriggersFiredTick", -1);
+            Scribe_Values.Look(ref destructionLevel, "destructionLevel", 0.0f);
+            Scribe_Values.Look(ref baseSmallRaidChance, "baseSmallRaidChance", 0.05f);
         }
 
         public override void CompTick() {
@@ -153,17 +163,6 @@ namespace RealRuins {
                 }
             }
 
-            //Do not remember if faction of pristine ruins does matter somehow. It actually shouldn't.
-            //This should be removed, but just in case it is needed for some reason, I'll leave it, but add check fro reformingType = 1 (instant reforing), because for other modes this yields caravan items unloading.
-            if (ParentHasMap && parent.Faction != Faction.OfPlayer && RealRuins_ModSettings.caravanReformType == 1) {
-                if (!GenHostility.AnyHostileActiveThreatToPlayer((parent as MapParent).Map)) {
-                    //show letter about enemies defeated
-                    Debug.Log(Debug.Generic, "pristine ruins was cleared, changing faction.");
-                    parent.SetFaction(Faction.OfPlayer);
-                   // parent as MapParent
-                }
-            }
-
             if (Find.TickManager.TicksGame % 60 == 12) {
                 DoRareTask();
             }
@@ -174,6 +173,10 @@ namespace RealRuins {
             if (state == RuinedBaseState.FightingWaves) {
                 if (RealRuins_ModSettings.useRuinsForcesGenerationV2) {
                     var map = (parent as MapParent)?.Map;
+                    if (destructionLevel <= 0 && currentCapCost > 0) {
+                        //saves made before destructionLevel was saved load it as 0, which would stop the raids for good
+                        destructionLevel = GetTotalMapWealth(map) / currentCapCost;
+                    }
                     int hostileCount = map.mapPawns.AllPawnsSpawned.Count(p => p.HostileTo(Faction.OfPlayer));
                     if (hostileCount < 15 * destructionLevel * RealRuins_ModSettings.forceMultiplier && map.mapPawns.AllPawnsSpawned.Count < 90) {
                         if (Rand.Chance(baseSmallRaidChance)) {
@@ -189,12 +192,11 @@ namespace RealRuins {
                 }
             }
 
-            if (RealRuins_ModSettings.caravanReformType == 2 && ParentHasMap) {
+            //The waves lifecycle is the same for every caravan reform mode. Only manual mode uses it to lock the exit (see mapExitLocked).
+            if (ParentHasMap) {
                 if (state == RuinedBaseState.FightingWaves) {
                     CheckTriggers();
                 } else if (state == RuinedBaseState.WaitingForEnemiesToBeDefeated) {
-                    //AnyHostileActiveThreatToPlayer is a proxy call to AnyHostileActiveThreatTo, but it is postfixed with additional check by this mod.
-                    //Here I want to do original check, without my postfix, so I call directly the checking method. So-so solution, but cant think of anything better AND worthwhile
                     if (!GenHostility.AnyHostileActiveThreatTo((parent as MapParent).Map, Faction.OfPlayer)) {
                         unlockTargetTime = Find.TickManager.TicksGame + Rand.Range(45000, 60000 + currentCapCost);
                         state = RuinedBaseState.WaitingTimeoutAfterEnemiesDefeat;

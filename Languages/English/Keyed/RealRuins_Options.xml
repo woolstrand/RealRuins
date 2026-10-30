@@ -108,7 +108,8 @@
   <RealRuins.RuinsActivity.4>extreme</RealRuins.RuinsActivity.4>
   
   <!-- Ruins messages -->
-  <RealRuins.NoMoreEnemies>Looks like no one's gonna show up anymore. You can safely pack up and leave. (Instant caravan reform allowed)</RealRuins.NoMoreEnemies>
+  <RealRuins.NoMoreEnemies>Looks like no one's gonna show up anymore. You can safely pack up and leave.</RealRuins.NoMoreEnemies>
+  <RealRuins.ReformLockedManual>Raiders may still show up. Pick up what your pawns can carry and leave via the map edge, or wait until things calm down.</RealRuins.ReformLockedManual>
 
   <!-- POI captions and descriptions -->
   <RealRuins.CaptionPOI0>Small military base</RealRuins.CaptionPOI0>
@@ -224,7 +225,7 @@
   <RealRuins.Reform.Automatic>Automatic</RealRuins.Reform.Automatic>
   <RealRuins.Reform.Instant>Instant</RealRuins.Reform.Instant>
   <RealRuins.Reform.Manual>Manual</RealRuins.Reform.Manual>
-  <RealRuins.CaravanReformTooltip>Way of caravan reforming in Real Ruins events. "Automatic" is the same way as caravan is formed on your home map. "Instant" allows instant reform via button on the world map. "Manual" is for manual items pickup and leaving via map edge.</RealRuins.CaravanReformTooltip>
+  <RealRuins.CaravanReformTooltip>Way of caravan reforming in Real Ruins events. "Automatic" is the same way as caravan is formed on your home map. "Instant" allows instant reform via button on the world map. "Manual" is for manual items pickup and leaving via map edge until the raids are over.</RealRuins.CaravanReformTooltip>
 
   <RealRuins.ForceMultiplier>Events threat scale</RealRuins.ForceMultiplier>
   <RealRuins.AbsoluteWealthCap>Absolute wealth cap for events</RealRuins.AbsoluteWealthCap>

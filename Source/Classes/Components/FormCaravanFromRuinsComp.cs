@@ -7,9 +7,10 @@ using RimWorld;
 using RimWorld.Planet;
 
 namespace RealRuins {
-    // Only the gizmo is customized. FormCaravanComp.CanFormOrReformCaravanNow is not virtual and must stay vanilla:
+    // Only the gizmo is customized here. FormCaravanComp.CanFormOrReformCaravanNow is not virtual and stays vanilla, except for the
+    // manual mode lock in FormCaravanComp_CanFormOrReform_Patch:
     // * in instant mode vanilla already blocks reforming while hostiles are around (CanReformNow also requires a free colonist);
-    // * in the other modes the reform button below is available under fire, because DialogFormCaravan_Patch turns it into
+    // * in automatic mode the reform button below is available under fire, because DialogFormCaravan_Patch turns it into
     //   regular caravan forming. Making the property return true there would also turn off ExitMapGrid (it is used only when
     //   the caravan can't be reformed), so pawns could not leave the map by walking off the edge during a fight.
     class FormCaravanFromRuinsComp: FormCaravanComp {
@@ -32,6 +33,10 @@ namespace RealRuins {
                 //Disable caravan reforming due to hostiles only in instant mode
                 if (GenHostility.AnyHostileActiveThreatToPlayer(mapParent.Map) && RealRuins_ModSettings.caravanReformType == 1) {
                     reformCaravan.Disable("CommandReformCaravanFailHostilePawns".Translate());
+                }
+                //Manual mode: no reforming until the raids are over, leave via the map edge instead
+                if (RealRuins_ModSettings.caravanReformType == 2 && (parent.GetComponent<RuinedBaseComp>()?.mapExitLocked ?? false)) {
+                    reformCaravan.Disable("RealRuins.ReformLockedManual".Translate());
                 }
                 yield return reformCaravan;
             }

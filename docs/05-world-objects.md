@@ -181,11 +181,11 @@ Inactive → WaitingForArrival → FightingWaves → WaitingForEnemiesToBeDefeat
 Overrides `currentCapCost` with `max(actual_map_wealth, 150000)` to prevent underscaled forces. Sets `destructionLevel = actualCost / capCost`.
 
 ### `DoRareTask()` (every 60 ticks)
-- V2 forces: if hostile count < `15 × destructionLevel × forceMultiplier` AND total < 90: triggers small patrol raid (500–2500 pts)
-- Reform type 2: drives state machine through `FightingWaves → ... → InformedWaitingForLeaving`
+- V2 forces (only in `FightingWaves`): if hostile count < `15 × destructionLevel × forceMultiplier` AND total < 90: triggers small patrol raid (500–2500 pts). `destructionLevel` is recomputed if a pre-fix save loaded it as 0.
+- Drives the state machine through `FightingWaves → ... → InformedWaitingForLeaving` in every reform mode. After the last enemy is gone it waits `45000 .. 60000 + currentCapCost` ticks, then shows `RealRuins.NoMoreEnemies`.
 
 ### `CheckTriggers()`
-Iterates `triggersCache` (pre-built list of `RaidTrigger` things). When all triggers have fired, transitions to `WaitingForEnemiesToBeDefeated` after `unlockHysteresisTimeout` (1000 ticks) safety delay.
+Iterates `triggersCache` (pre-built list of `RaidTrigger` things). When all triggers have fired, transitions to `WaitingForEnemiesToBeDefeated` after a 1000-tick safety delay (`allTriggersFiredTick`, saved).
 
 ### `TriggerRaid()`
 Fires `RaidEnemy` incident directly via `IncidentDef.Worker.TryExecute()` with `FactionSelector.GetRandomFaction()`.
@@ -194,11 +194,10 @@ Fires `RaidEnemy` incident directly via `IncidentDef.Worker.TryExecute()` with `
 Wealth and activity described in 5 tiers each (threshold arrays). Only shown when `WaitingForArrival`.
 
 ### Wealth Calculation
-`GetTotalMapWealth()` counts only `CountAsResource` things — differs from `RealRuinsPOIWorldObject.CurrentMapWealth()` which counts all things with market cost. The two systems produce different numeric values for the same map.
+`GetTotalMapWealth()` counts only `CountAsResource` things — differs from `RealRuinsPOIWorldObject.CurrentMapWealth()` which counts all things with market cost. The two systems never compare their numbers, so this is fine.
 
-### Known Issues
-- V1 faction-transfer code (`caravanReformType == 1` path) runs every tick alongside V2 system — redundant/conflicting ownership logic
-- `mapExitLocked` property exposed but never called from within this class (external use only)
+### Exit Lock
+`mapExitLocked` is true from `FightingWaves` until `InformedWaitingForLeaving`. Used only in manual reform mode (`caravanReformType == 2`): `FormCaravanComp_CanFormOrReform_Patch` (in `RealRuins.cs`) makes `CanFormOrReformCaravanNow` false, which hides reforming and turns on vanilla `ExitMapGrid`, and the reform gizmo is disabled with `RealRuins.ReformLockedManual`.
 
 ---
 
@@ -214,11 +213,7 @@ Wealth and activity described in 5 tiers each (threshold arrays). Only shown whe
 
 ## FormCaravanFromRuinsComp
 
-Extends vanilla `FormCaravanComp`. Overrides `CanFormOrReformCaravanNow`:
-- `caravanReformType == 1` (instant reform): blocks if there are active hostiles or no free colonists
-- Other modes: always `true`
-
-**`new` shadow**: Uses `new` keyword (not `override`) to hide the base property. Callers with a `FormCaravanComp` reference would call the base. Correctness depends on concrete type usage.
+Extends vanilla `FormCaravanComp`. Overrides only `GetGizmos()`: the reform button is always shown when free colonists are on the map. It is disabled while hostiles are around in instant mode, and while `RuinedBaseComp.mapExitLocked` in manual mode. In non-instant modes `DialogFormCaravan_Patch` turns the reform into regular caravan forming (pawns walk out).
 
 ---
 
