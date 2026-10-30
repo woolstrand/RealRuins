@@ -68,6 +68,16 @@ searching to figure out. Keep entries short; no screen coordinates (they change 
   main thread) is fixed (H9); if it shows up again, it's a regression.
 - POI map generation: `GenStep_ScatterPOIRuins.Finish` clears `PlanetaryRuinsInitData` (incl. `startingPOI`) **before**
   later gensteps such as the regular scatter run - later steps can't use it to recognize the starting POI map.
+- **Reaching the site of a fired ruins event:** open its letter and use **Jump to location** before closing it - closing
+  dismisses the letter and the event is not in the Quests tab, so the site is then hard to find. Small world icons near
+  the colony are easy to mistake for it.
+- `esc` on the world map closes the world view; a debug click made right after can then land on the colony map's menu
+  (different actions). With a caravan selected, "Do incident" targets the caravan, not the World - deselect first.
+- A "T: ..." debug tool (e.g. Spawn Random Caravan) stays active after the first click; the next world click spawns again.
+- **Speed 3 is unavailable while hostiles are on the map** (the click is ignored); use speed 2 or the dev speed.
+- **Log stops at ~420k lines**: `Reached max messages limit. Stopping logging to avoid spam.` - a long fight can trigger it.
+  Mark/check the log before long runs; after it, `logsince` returns nothing and only a relaunch helps.
+- Ctrl+V for paste: `key 86 ctrl` (Windows VK code; `key v ctrl` fails).
 - Once the game exited cleanly ("Log closed", no crash report) ~1 min after a quicktest click that
   left no log trace; cause unknown. Check `logsince` before assuming a crash.
 
@@ -106,6 +116,13 @@ blueprint id) - that file also states the spawn philosophy: spawn what can be sp
   → `[Generic]: Generated map. Cap cost ...` → `[Event]: Map generated`. Wait for the last one.
 
 ## Session log
+
+- 2026-10-31 (Windows, 1.7): settings import/export (L11, M14, numeric buffers), quicktest scatter (25/25), pristine ruins in
+  manual reform mode: reform gizmo disabled with the new reason, thought "Very high wealth ruins" for a 622k site, raid triggers
+  fired within 35 ticks of the logged expectation (L8). Found and fixed: map generation aborted by wall lamps without a wall
+  (`PowerConnectionMaker.TryConnectToAnyPowerNet` NRE in `FinalizeInit`); now "Removed N of M wall attachments without a
+  supporting wall" in the log. Planetary loader with seed `rr test/1#x` got a normal "no maps" answer (L15). Waves/unlock not
+  observed (team kidnapped at speed 1).
 
 - 2026-10-29: quicktest scatter (25/25 chunks), Quest_PristineRuins, random caravan, instant enter -
   all worked. Only error: CleaningStation NRE above.

@@ -97,6 +97,21 @@ condition `Hediff_Injury.PostAdd` uses), or move it to the parent part.
 
 ---
 
+## 6. Rimefeller `OilWellHead` fails in the post-spawn tick
+
+**Seen:** 2026-10-31, Windows, RimWorld 1.7.4990, entering a Pristine Ruins site; blueprint
+`D0D50647-393E-47AB-8C9A-BF4ADA5900E7` (Rimefeller loaded). Same pattern as #4.
+
+**Log:** `Exception while tried to perform tick for OilWellHead of cost 54, retrhrowing...` then `WARN ... Failed to spawn
+item OilWellHead<id> of cost 54 because of exception Object reference not set to an instance of an object.` from
+`BlueprintTransferUtility.Transfer`. The well head is destroyed right after spawning and the rest of the map is fine.
+Likely the well head expects a well/oil deposit or Rimefeller map component state that a ruin doesn't have.
+
+**Fix direction:** same as #4 - log the inner stack first. If post-spawn ticking of buildings regularly fails for modded
+content, consider whether the tick is needed at all for non-item things (it exists to settle items, e.g. rot).
+
+---
+
 ## Related, already noted elsewhere
 
 - `CleaningStation` NRE in `MakeThingFromItemTile` (2026-10-29, macOS) - see the skill's `NOTES.md`; not

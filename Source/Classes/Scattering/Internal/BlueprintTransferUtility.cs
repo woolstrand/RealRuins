@@ -508,6 +508,27 @@ namespace RealRuins
         }
 
 
+        // Wall attachments (wall lamps etc.) whose wall did not make it into the ruins (natural rock is not in snapshots, walls can be
+        // scavenged or fail to spawn). Vanilla expects the wall to exist: PowerConnectionMaker.TryConnectToAnyPowerNet throws on
+        // GetWallAttachedTo(...) == null during Map.FinalizeInit, which aborts the whole map generation.
+        // Checked after all items are spawned, because a wall can be spawned after its attachment.
+        private void RemoveDetachedWallAttachments(List<Thing> attachments)
+        {
+            int removed = 0;
+            foreach (Thing thing in attachments)
+            {
+                if (thing.Spawned && GenConstruct.GetWallAttachedTo(thing) == null)
+                {
+                    thing.Destroy(DestroyMode.Vanish);
+                    removed++;
+                }
+            }
+            if (removed > 0)
+            {
+                Debug.Log(Debug.BlueprintTransfer, "Removed {0} of {1} wall attachments without a supporting wall", removed, attachments.Count);
+            }
+        }
+
         public void Transfer(CoverageMap coverageMap)
         {
             //Planting blueprint
@@ -516,6 +537,7 @@ namespace RealRuins
             int transferredTiles = 0;
             int totalTerrains = 0;
             int totalItems = 0;
+            List<Thing> spawnedAttachments = new List<Thing>();
 
             //report actual placement rect using width and height
             context.state.placementRect = new CellRect(mapOriginX, mapOriginZ, blueprint.width, blueprint.height);
@@ -645,6 +667,7 @@ namespace RealRuins
 
                                     GenSpawn.Spawn(thing, mapLocation, map, rotation);
                                     Debug.Extra(Debug.BlueprintTransfer, "Spawned");
+                                    if (thing.def.building?.isAttachment == true) spawnedAttachments.Add(thing);
                                     try
                                     {
                                         switch (thing.def.tickerType)
@@ -707,6 +730,7 @@ namespace RealRuins
                 }
             }
 
+            RemoveDetachedWallAttachments(spawnedAttachments);
             Debug.Log(Debug.BlueprintTransfer, "Finished transferring");
             if (options.shouldKeepDefencesAndPower)
             {
