@@ -181,7 +181,17 @@ namespace RealRuins
 
                 if (itemTile.defName == "Hive") return null; //Ignore hives, probably should add more comprehensive ignore list here.
 
-                ThingDef thingDef = DefDatabase<ThingDef>.GetNamed(itemTile.defName, false); //here thingDef is definitely not null because it was checked earlier
+                // Top-level items are filtered for missing defs in Transfer, but inner items (minified things,
+                // other containers) reach here through recursion unchecked - e.g. a modded PortableReactor inside a MinifiedThing.
+                ThingDef thingDef = DefDatabase<ThingDef>.GetNamed(itemTile.defName, false);
+                if (thingDef == null)
+                {
+                    if (enableLogging)
+                    {
+                        Debug.Extra(Debug.BlueprintTransfer, "Skipping item with missing def {0}", itemTile.defName);
+                    }
+                    return null;
+                }
                 if (thingDef.category == ThingCategory.Ethereal) return null; //don't spawn ethereals like drop pod landing sites and so on
 
                 ThingDef stuffDef = null; //but stuff can still be null, or can be missing, so we have to check and use default just in case.

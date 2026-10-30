@@ -2,7 +2,11 @@
 
 This file collects **every discovered spawn problem**: things from blueprints that fail to spawn,
 spawn wrong, or spam the log while being restored. Add an entry whenever a test session (see
-`.claude/skills/run-realruins/`) or a user report turns up a new one; mark entries fixed instead of deleting them.
+`.claude/skills/run-realruins/`) or a user report turns up a new one.
+
+**Only open problems live here.** When a problem is fixed (and verified), delete its entry - don't mark
+it fixed. The fix's history belongs in the commit message and git log, not in this file. If a fix covers
+only part of an entry (e.g. one of several sub-problems), delete just that part.
 
 ## Spawn philosophy
 
@@ -30,7 +34,7 @@ universal fix. Include the blueprint id when known - blueprints live in the loca
 
 ## 1. Pawns of missing modded races: `Android4Tier` body / unresolvable pawn kinds
 
-**Status:** open. **Seen:** 2026-10-29, Windows, RimWorld 1.7.4990, entering a Pristine Ruins site;
+**Seen:** 2026-10-29, Windows, RimWorld 1.7.4990, entering a Pristine Ruins site;
 blueprint `EEDE39B6-1AEF-46A0-A306-F6728D0729B3` (216x191, cost ~684k), made with an Androids mod that
 is not loaded in the test game.
 
@@ -109,37 +113,6 @@ The part comes back null; some hediffs then hit `Tried to restore null body part
 generated pawn's body (`pawn.RaceProps.body.defName`): rewrite it to the pawn's body if that body has a
 part with the same `BodyPartDef` (and a valid index), otherwise skip the hediff. This handles every
 modded race that falls back to a vanilla kind, not just androids.
-
----
-
-## 2. Missing modded def inside a container: `PortableReactor` in `MinifiedThing`
-
-**Status:** open. **Seen:** same session and blueprint as #1 (2 occurrences, cells 91,85 and 91,89):
-
-```xml
-<item def="MinifiedThing" rot="0"><item def="PortableReactor" rot="0" /></item>
-```
-
-`PortableReactor` is not defined by any loaded mod in the test game.
-
-**Log:**
-
-```
-[BlueprintTransfer]: Failed to spawn item PortableReactor because of System.NullReferenceException
-  at RealRuins.BlueprintTransferUtility.MakeThingFromItemTile(...)   <- inner item
-  at RealRuins.BlueprintTransferUtility.MakeThingFromItemTile(...)   <- MinifiedThing, inner-items loop
-  at RealRuins.BlueprintTransferUtility.Transfer(CoverageMap coverageMap)
-```
-
-`MakeThingFromItemTile` does `DefDatabase<ThingDef>.GetNamed(itemTile.defName, false)` and dereferences
-`thingDef.category` right away; the comment says the def "is definitely not null because it was checked
-earlier" - true for top-level items (filtered in `Transfer`), **not** for inner items reached through the
-recursion (`MinifiedThing`, other `IThingHolder`s). The exception is caught, the inner thing is null, and the
-outer `MinifiedThing` is then dropped by `if (thing.GetInnerIfMinified() == null) return null;` - so the
-player gets the right result (nothing), via an exception.
-
-**Fix direction:** `if (thingDef == null) return null;` after the lookup (with a `Debug.Extra` line), and
-correct the comment. Applies to every missing def nested in any container.
 
 ---
 

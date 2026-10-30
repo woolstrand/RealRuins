@@ -16,6 +16,12 @@ searching to figure out. Keep entries short; no screen coordinates (they change 
   (`Defs/Storyteller/Incidents.xml`, worker `IncidentWorker_RuinsFound`). It's targetTag `World`:
   go to the **World** tab first, then Debug actions → **Do incident (World)...**. From a map you only
   get "Do incident (Map)", which can't fire it.
+- **Force one blueprint everywhere (debug):** set `RealRuins.SingleFileName` (`Source/Classes/RealRuins.cs`)
+  to a full path of a cached `.bp`; `SnapshotStoreManager` then returns it for every random pick (scatter
+  *and* quests). Mark the edit `// TEMP-TEST` and revert + rebuild after. Cached blueprints are gzipped XML
+  (`gzip -dc < X.bp`) - handy to see what a ruin contains.
+- **Cut pawn/corpse noise:** temporarily `return null` for `pawn`/`corpse` at the top of
+  `BlueprintTransferUtility.MakeThingFromItemTile` (also `// TEMP-TEST`).
 - **Small ruins event:** incident `SmallRuinsFound` (targetTags Caravan / Map_TempIncident) - not tried yet.
 - **Caravan on demand:** world view → Debug actions → **T: Spawn Random Caravan** → click a tile.
 - **Reach a site instantly:** select the caravan, right-click the site → **Enter ruins (Dev: instantly)**.
@@ -66,7 +72,7 @@ blueprint id) - that file also states the spawn philosophy: spawn what can be sp
   Cap cost X, actual cost Y` → `[Event]: Map generated` - ruins site map built, defenders placed.
 - `[BlueprintTransfer]: Failed to spawn item <Def> because of ...` - caught per-item failure; the map
   still generates. Seen: `CleaningStation` NRE in `MakeThingFromItemTile` (2026-10-29, unfixed);
-  `PortableReactor` NRE (2026-10-29, Windows/1.7, unfixed).
+  `PortableReactor` NRE (2026-10-29, Windows/1.7; fixed 2026-10-30 - missing inner defs now skipped).
 - `[BlueprintPawnDecoder]: Pawn decoding failed: NullReferenceException` + `[BlueprintTransfer]: Failed to
   spawn item corpse` - corpses from blueprints made with modded races. Came with ~1.4k
   `Could not load reference to Verse.BodyDef named Android4Tier` (Android mod not loaded) and
@@ -87,3 +93,6 @@ blueprint id) - that file also states the spawn philosophy: spawn what can be sp
   world map), random caravan, instant enter → ruins map generated. Errors: modded-corpse NREs and
   PortableReactor NRE above. Found and fixed driver `waitlog` never returning on big logs (grep -q +
   pipefail SIGPIPE) - affected macOS too.
+- 2026-10-30 (Windows, 1.7): verified the missing-inner-def fix with a forced blueprint (EEDE39B6) and
+  pawns disabled: quicktest scatter 18 chunks, quest → caravan → enter, 0 errors. `waitlog` fix confirmed.
+  No game self-restart this time.
