@@ -153,7 +153,7 @@ namespace RealRuins
 
             void failureHandler(Exception ex)
             {
-                Debug.Error(Debug.Loader, string.Format("Could not load maps list. Try not to alt-tab while waiting for maps loading."), true);
+                Debug.Warning(Debug.Loader, string.Format("Could not load maps list. Try not to alt-tab while waiting for maps loading."), true);
                 completionHandler(false, null);
             }
 

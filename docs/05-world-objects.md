@@ -22,7 +22,6 @@ Ruins appear on the world map as two types of objects:
 - `Source/Classes/Components/RealRuinsPOIComp.cs`
 - `Source/Classes/Components/FormCaravanFromRuinsComp.cs`
 - `Source/Classes/Triggers/RaidTrigger.cs`
-- `Source/Classes/Triggers/TrippingTrigger.cs`
 - `Source/Classes/Thoughts/ThoughtWorker_ScavengingRuins.cs`
 
 ---
@@ -78,8 +77,6 @@ Fires when a caravan discovers small ruins nearby.
 - If target is a `Map`: delegates to vanilla `TravelerGroup` incident
 - For caravans: shows `Dialog_NodeTree` with "Investigate" / "Move On"
 - "Investigate": queues `LongEventHandler` to generate a 120×120 map using `SmallRuinsWorldObject`, then enters caravan at edge
-
-**Dead code**: `TryFindEntryCell()` is defined but never called.
 
 ---
 
@@ -207,7 +204,7 @@ Wealth and activity described in 5 tiers each (threshold arrays). Only shown whe
 
 **Persisted fields**: `blueprintName`, `gameName`, `originX`, `originZ`, `poiType` (as int), `militaryPower`, `approximateSnapshotCost`, `bedsCount`, `mannableCount`.
 
-**Note**: `POIType` enum is declared at global scope (no namespace) in this file — pollutes the global namespace.
+**Note**: `POIType` ordinals are persisted in saves and used in texture and translation keys — append new values only.
 
 ---
 
@@ -231,13 +228,6 @@ A `Thing` placed on the map. After a countdown (`|Rand.Gaussian(0, 100)|` ticks,
 
 ---
 
-## TrippingTrigger
-
-A `Thing` placed on the map. Deals 1–10 blunt damage (70% chance) to any pawn stepping on it, then destroys itself. Runs every tick — potentially expensive at scale (O(triggers × thingListSize) per tick).
-Is it used? Check for usage and report.
-
----
-
 ## ThoughtWorker_ScavengingRuins
 
 Generates mood thoughts based on `RuinedBaseComp.currentCapCost`. Five stages:
@@ -247,13 +237,13 @@ Generates mood thoughts based on `RuinedBaseComp.currentCapCost`. Five stages:
 - Stage 3 (100,000–500,000): strong positive
 - Stage 4 (> 1,000,000): extreme positive
 
-**Gap bug**: Values between 10,000 and 25,000 produce `ThoughtState.Inactive` (neither stage 0 nor stage 1). May be intentional or an off-by-one error.
+**Unreachable stages**: on the map `currentCapCost` is always ≥ 150,000 (floored in `PostMapGenerate`), so only stages 2–4 ever apply (FIXES_QUEUE L10).
 
 ---
 
 ## XML Def Registration
 
-- `1.7/Defs/ThingDefs_Triggers/` — `RaidTrigger` and `TrippingTrigger` ThingDefs
+- `1.7/Defs/ThingDefs_Triggers/` — `RaidTrigger` ThingDef (`TrippingTrigger` was removed; it is still defined in the legacy root and 1.1–1.6 folders)
 - `1.7/Defs/Thoughts/` — `ThoughtDef` for scavenging ruins
 - `1.7/Defs/Storyteller/` — storyteller settings for incident pacing
 - `1.7/Patches/WorldObjects_Patch.xml` — patches vanilla world object defs to add components

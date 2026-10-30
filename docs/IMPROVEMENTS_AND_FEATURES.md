@@ -21,12 +21,10 @@ Cache the resolved `ThingDef` and `TerrainDef` on `ItemTile`/`TerrainTile` after
 `RemoveWall()` performs a full O(w×h) map scan per call. Maintain a dictionary `roomId → List<IntVec2>` so room merges are O(room_size) instead of O(total_area). This converts the O(w²×h²) deterioration+scavenging loops to O(w×h × avg_room_size), which is dramatically faster on large dense blueprints.
 
 ### C. Cache Signs & Memorials Reflection Lookups
-**Effort**: S  
-Move `Type.GetType("SaM.CompText, Signs_and_Memorials")` and its `FieldInfo` lookups to static cached fields in `SnapshotGenerator`. The type existence is fixed at runtime; re-discovering it per item is pure waste.
+Done: Signs & Memorials support removed (FIXES_QUEUE L3).
 
 ### D. Cache `NetworkCacheSettingsPage` Disk Stats
-**Effort**: S  
-Cache `TotalSize()` and `StoredSnapshotsCount()` values with a 5-second TTL or invalidate on cache write operations. Prevents potential per-frame disk access.
+Not needed: the values are already cached (FIXES_QUEUE L6).
 
 ### E. Defer Blueprint Stats Calculation
 **Effort**: S  
@@ -80,19 +78,10 @@ So killing or driving off defenders (pawns removed, corpses added at a different
 **Possible approach**: In `CurrentMapWealth()`, count only things that blueprints can contain: skip `Pawn`, `Corpse`, `Plant`, `Filth`, `Mote`/`Projectile`, and mineable/natural rock (`def.building?.isNaturalRock`, `def.mineable`). Use the same filter on enter and on leave. Then either divide by `wealthOnEnter` instead of `approximateSnapshotCost`, so both sides measure the spawned map, or keep the blueprint cost only as a lower bound. Dividing by `wealthOnEnter` is the smaller and more robust change.
 
 ### N. Move `POIType` Enum into `RealRuins` Namespace
-**Effort**: S  
-One-line fix: add `namespace RealRuins {` wrapper around the enum in `RealRuinsPOIComp.cs`.
+Done (FIXES_QUEUE L13).
 
 ### O. Remove Dead Code
-**Effort**: S  
-Clean up:
-- `TryFindEntryCell()` in `IncidentWorker_CaravanFoundRuins`
-- `Constants.cs` string keys
-- `RestorePawnBodyAndTraits()` stub in `PawnRestoreUtility`
-- `minimalTriggerFiringTimeout` parameter in `MilitaryForcesGenerator`
-- `allowInstantCaravanReform` field in `RealRuins_ModSettings`
-- SRTS commented block in `RealRuins.cs`
-- `POIType.PowerPlant` unreachable path
+Done (FIXES_QUEUE L7, L9).
 
 ---
 

@@ -55,7 +55,6 @@ All settings are `public static` fields — accessible from anywhere.
 
 **`Reset()`**: Hard-codes all defaults — a DRY violation (defaults also declared at field initialization sites).
 
-**Orphaned field**: `allowInstantCaravanReform` (bool) is declared and initialized but **not saved in `ExposeData()`**. The active field is `caravanReformType` (int). The bool is dead legacy state.
 
 **Debug fields in production settings**: `debugKeepSnapshotsAfterUpload`, `debugTileFocusId`, `debugExtras` are persisted to the main settings XML — debug state bleeds into the production settings file.
 
@@ -107,7 +106,7 @@ Shows live cache stats, cache limit slider, offline/download/upload toggles, "Do
 ### AdvancedSettingsPage
 Sliders for: `forceMultiplier` (0–2 linear), `ruinsCostCap` (logarithmic 1000–1e9 via `Math.Log`/`Math.Exp`). `caravanReformType` FloatMenu dropdown. Text fields for `spawnBlacklist`, `materialBlacklist`, `fallbackMaterial`. Export/Import buttons.
 
-**Text field buffers**: `spawnBlacklistBuffer`, `materialBlacklistBuffer` and `fallbackMaterialBuffer` are seeded from `RealRuins_ModSettings` in the constructor (the earlier first-open erasure bug is fixed). Unverified: `RealRuins_Mod` keeps the window and pages alive, so after `TryImport` or `RealRuins_ModSettings.Reset()` the buffers may be stale and overwrite the new values on the next draw.
+**Text field buffers**: `RealRuins_Mod` keeps the window and pages alive, so each text buffer remembers the setting value it was last synced with (`BufferedTextField` here, `ReadableLabeledTextInput(..., ref synced)` for the numeric fields on the Planetary Ruins page). If the setting changed elsewhere (import, reset), the buffer is refilled instead of being written back.
 
 **Known bug**: `RealRuins_ModSettings.Reset()` does not reset `diskCacheLimit` and replaces `defaultScatterOptions` with `new ScatterOptions()` instead of `ScatterOptions.Default`.
 
@@ -149,7 +148,7 @@ Import/export via Base64-encoded `key=value|key=value` strings.
 
 Modal window for copy/pasting the Base64 settings string.
 
-- **Export**: Pre-populated `GUI.TextArea` (technically editable — user can accidentally modify before copying). "Copy to Clipboard" via `GUIUtility.systemCopyBuffer`.
+- **Export**: Pre-populated `GUI.TextArea`; its result is ignored, so the text can be selected and copied but not edited. "Copy to Clipboard" via `GUIUtility.systemCopyBuffer`.
 - **Import**: Editable text area. "Import" calls `SettingsSerializer.TryImport()`, shows success/failure message.
 - `absorbInputAroundWindow = true` (modal). `closeOnClickedOutside = false`.
 - `forcePause = false` — game does not pause while dialog is open (inconsistent with most RimWorld modals).

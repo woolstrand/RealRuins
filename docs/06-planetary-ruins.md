@@ -134,7 +134,7 @@ Uses threshold-based if/else rules (not a scoring system):
 - Classification tree: `Stronghold`, `Military`, `Outpost`, `City`, `Factory`, `Communication` based on feature scores, area, room count
 
 **Known issues:**
-- Uses `Rand.Chance(0.5f)` to decide between `Outpost` and `Communication` — non-deterministic. Same blueprint analyzed twice may yield different types
+- Uses `Rand.Chance(0.5f)` to decide between `Outpost` and `Communication` — non-deterministic on purpose (FIXES_QUEUE M4, won't fix)
 - `POIType.PowerPlant` appears in `chanceOfHavingFaction()` but is never returned by `supposedType()` — dead path
 - Division-by-zero possible when `occupiedTilesCount == wallLength` and `haulableStacksCount == 0`
 

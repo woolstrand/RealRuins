@@ -249,7 +249,6 @@ Reconstructs a `Pawn` from raw XML saved in the snapshot.
 | `RestorePawnApparel` | Apparel items with degraded HP (max 60%) |
 | `RestorePawnStory` | Backstory, body, hair, traits |
 | `RestorePawnSkills` | Skill levels, XP, passion |
-| `RestorePawnBodyAndTraits` | Empty stub — dead code |
 
 **`ValidateAndFixHediffNode()`**: Validates HediffDef, Class type, BodyPartDef, and pawn body part existence before deserializing each hediff. Removes invalid references.
 
@@ -269,7 +268,6 @@ Constructed with `rp` (ResolveParams), `faction`, `uncoveredCost`, `forceMultipl
 ### `MilitaryForcesGenerator`
 - `GenerateStartingParty()`: spawns `Combat` group immediately, then distributes remaining into triggers
 - `GenerateForces()`: near-identical to `CitizenForcesGeneration.GenerateForces()` — code duplication
-- `minimalTriggerFiringTimeout` constructor parameter is stored but never used — dead parameter
 
 ---
 

@@ -86,7 +86,7 @@ namespace RealRuins
         public override void Generate(Map map, GenStepParams parms) {
             //skip generation due to low blueprints count
             if (SnapshotStoreManager.Instance.StoredSnapshotsCount() < 10) {
-                Debug.Error(Debug.Scatter, "Skipping ruins gerenation due to low blueprints count.");
+                Debug.Warning(Debug.Scatter, "Skipping ruins gerenation due to low blueprints count.");
                 return;
             }
 

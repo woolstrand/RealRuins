@@ -41,7 +41,6 @@ Converts the live RimWorld map into a custom XML document for upload.
 - Skips natural rocks
 - Encodes `def`, `stuffDef`, `stackCount`, `rot`, `actsAsWall`, `isDoor`
 - `CompArt`: captures art title, author, description
-- **Signs & Memorials mod**: reads `text` field via reflection (`Type.GetType("SaM.CompText, Signs_and_Memorials")`). Runs per-item — performance cost on large maps
 - Pawn encoding: name, gender, age, story, health, skills, apparel via `Scribe.saver.DebugOutputFor()` (uses RimWorld's save system in read mode — may break on RimWorld updates)
 - **Known bug**: `chronologicalAge` incorrectly writes `AgeBiologicalTicks` for both biological and chronological age fields
 

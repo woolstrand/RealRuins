@@ -11,12 +11,10 @@ namespace RealRuins {
     class MilitaryForcesGenerator : AbstractDefenderForcesGenerator {
 
         float militaryPower = 1;
-        int minTriggerTimeout = 0;
 
-        public MilitaryForcesGenerator(float militaryPower, int minimalTriggerFiringTimeout = 0) {
+        public MilitaryForcesGenerator(float militaryPower) {
             if (militaryPower > 1) {
                 this.militaryPower = militaryPower;
-                minTriggerTimeout = minimalTriggerFiringTimeout;
             }
         }
 

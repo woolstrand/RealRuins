@@ -310,31 +310,6 @@ namespace RealRuins
                         }
                     }
 
-                    if (itemTile.attachedText != null && thing is ThingWithComps)
-                    {
-                        ThingWithComps thingWithComps = thing as ThingWithComps;
-                        Type CompTextClass = Type.GetType("SaM.CompText, Signs_and_Memorials");
-                        if (CompTextClass != null)
-                        {
-                            System.Object textComp = null;
-                            for (int i = 0; i < thingWithComps.AllComps.Count; i++)
-                            {
-                                var val = thingWithComps.AllComps[i];
-                                if (val.GetType() == CompTextClass)
-                                {
-                                    textComp = val;
-                                }
-                            }
-
-                            //var textComp = Activator.CreateInstance(CompTextClass);
-                            if (textComp != null)
-                            {
-                                textComp?.GetType()?.GetField("text").SetValue(textComp, itemTile.attachedText);
-                            }
-                            //thingWithComps.
-                        }
-                    }
-
                     if (thing is UnfinishedThing)
                     {
                         ((UnfinishedThing)thing).workLeft = 10000;

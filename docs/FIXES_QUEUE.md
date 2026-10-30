@@ -118,6 +118,10 @@ Intended: same as vanilla `SettlementUtility.AffectRelationsOnAttacked`, see the
 
 ---
 
+### M14. Fixed
+
+---
+
 ## LOW — Code quality, performance, maintainability
 
 ### L1. `RemoveWall()` O(w×h) Per Call Inside O(w×h) Loops
@@ -135,11 +139,7 @@ Intended: same as vanilla `SettlementUtility.AffectRelationsOnAttacked`, see the
 
 ---
 
-### L3. Signs & Memorials Mod Integration via Per-Item Reflection
-**File**: `Source/Classes/Snapshotting/SnapshotGenerator.cs`, `EncodeThing()`
-**What**: `Type.GetType("SaM.CompText, Signs_and_Memorials")` and the field lookup run for every item during snapshot generation.
-**Impact**: Slow snapshots on large maps.
-**Fix**: Remove Signs & Memorials support (the mod is dead).
+### L3. Fixed
 
 ---
 
@@ -156,99 +156,75 @@ Intended: same as vanilla `SettlementUtility.AffectRelationsOnAttacked`, see the
 
 ---
 
-### L6. `NetworkCacheSettingsPage` Calls Disk Methods Every Render Frame
-**File**: `Source/Classes/Settings/NetworkCacheSettingsPage.cs`
-**What**: `SnapshotStoreManager.Instance.TotalSize()` and `StoredSnapshotsCount()` are called on every `Draw()`.
-**Impact**: Possible per-frame stutter if they touch the disk.
-**Fix**: Cache the values with a timer (e.g. 5 s) or invalidate on cache operations.
+### L6. Fixed
 
 ---
 
-### L7. Dead Code
-- `TryFindEntryCell()` in `IncidentWorker_CaravanFoundRuins` — never called
-- `Constants.cs` string keys — abandoned `ResolveParams` approach
-- `POIType.PowerPlant` — appears in `chanceOfHavingFaction()` but `supposedType()` never returns it
-- `RestorePawnBodyAndTraits()` in `PawnRestoreUtility` — empty stub
-- `minimalTriggerFiringTimeout` parameter in `MilitaryForcesGenerator` — stored, never read
-- `allowInstantCaravanReform` in `RealRuins_ModSettings` — orphaned, not saved
-- Large commented-out SRTS mod integration block in `RealRuins.cs`
-- `ConstructUntouchedIntegrityMap` in `DeteriorationProcessor` — unused
+### L7. Fixed
 
 ---
 
 ### L8. `RaidTrigger.Tick()` Redundant 250-Tick Gating
-**File**: `Source/Classes/Triggers/RaidTrigger.cs`
-**What**: `Tick()` implements manual 250-tick gating before calling `TickRare()`.
-**Fix**: Remove the `Tick()` override and rely on `TickRare()`.
-**Note**: First check that `TickRare` is actually called for this thing class. Some entity types have only `Tick` and need their own `TickRare`.
+**File**: `Source/Classes/Triggers/RaidTrigger.cs`, `Triggers.xml`
+**What**: `Tick()` calls `TickRare()` every 250 ticks by hand. This is needed now: the def has `tickerType` `Normal`, so the engine never calls `TickRare` on its own.
+**Fix**: Set `<tickerType>Rare</tickerType>` on `RaidTrigger` (all version folders) and remove the `Tick()` override. Timing stays the same (`ticksLeft` already counts rare ticks). The engine reads the ticker type from the def, so triggers in existing saves move to the rare list.
 
 ---
 
-### L9. `TrippingTrigger.Tick()` Runs Every Tick
-**File**: `Source/Classes/Triggers/TrippingTrigger.cs`
-**What**: Checks the thing list at `Position` on every game tick.
-**Impact**: O(triggers × thingList) per tick; unlikely to matter at real quantities.
-**Fix**: Override `TickRare()` instead, or gate with `TicksUntilNextUpdateLong`.
-**Note**: First check that the tripping trigger is used at all. If not, remove it.
+### L9. Fixed
 
 ---
 
-### L10. `ThoughtWorker_ScavengingRuins` Has a Gap in Stage Thresholds
+### L10. `ThoughtWorker_ScavengingRuins` Low Stages Are Unreachable
 **File**: `Source/Classes/Thoughts/ThoughtWorker_ScavengingRuins.cs`
-**What**: Stage boundaries leave a gap between 10,000 and 25,000, where the state is `Inactive`.
-**Impact**: Pawns in a moderately valuable ruin get no mood effect, possibly unintended.
-**Fix**: Make the stage boundaries contiguous.
+**What**: The thought reads `RuinedBaseComp.currentCapCost`, but only for pawns on the ruins map. `PostMapGenerate` sets `currentCapCost = max(mapWealth, 150000)`, so on the map it is always ≥ 150,000, and the thought is always "high wealth" or above. Stages 0–1 and the 10,000–25,000 gap reported earlier never apply. The last stage label also says "insanely wealth ruins".
+**Fix**: Base the thought on the real map wealth (the value `PostMapGenerate` computes before the 150k floor, saved separately), or remove the unreachable stages. Fix the label typo.
 
 ---
 
-### L11. `Dialog_ImportExportSettings` Export TextArea is Editable
-**File**: `Source/Classes/Settings/Dialog_ImportExportSettings.cs`
-**What**: `GUI.TextArea` in export mode is editable, so the user can alter the string before copying.
-**Fix**: Use a read-only display such as `GUI.SelectableLabel`, or warn the user.
+### L11. Fixed
 
 ---
 
-### L12. Harmony Reflection on Private RimWorld Fields
-**File**: `Source/Classes/RealRuins.cs`
-**What**: Private member names (`"taleRef"`, `"titleInt"`, `"authorNameInt"`, `"map"`, `"destinationTile"`, `"TryFormAndSendCaravan"`) are hard-coded in reflection calls. A RimWorld update that renames them breaks art descriptions, caravan reform and so on.
-**Decision**: No change needed. If an update renames these members, it is better for the mod to fail loudly than to fail silently. Optionally cover them with a reflection contract test.
+### L12. Won't fix
+Failing loudly on a RimWorld rename is preferred over silent fallbacks.
 
 ---
 
-### L13. `POIType` Enum Declared at Global Scope
-**File**: `Source/Classes/Components/RealRuinsPOIComp.cs`
-**What**: `enum POIType { ... }` is declared outside any namespace and can conflict with other mods or assemblies.
-**Fix**: Move it into `namespace RealRuins`. Keep the ordinals unchanged (they are persisted in saves and used in texture and translation keys).
+### L13. Fixed
 
 ---
 
-### L14. `Window_Close_Patch` Fires on Every Window Close
-**File**: `Source/Classes/RealRuins.cs`
-**What**: The Harmony postfix on `Window.Close` runs for every window in the game.
-**Impact**: Negligible per-close overhead.
-**Fix**: Optionally add an early return when the window is not a `Dialog_AdvancedGameConfig`.
+### L14. Removed
+Not relevant: the postfix already returns right away unless the window is `Dialog_AdvancedGameConfig`.
+
+---
+
+### L15. `APIService` Does Not Escape the World Seed
+**File**: `Source/Classes/Utility/APIService.cs`, `LoadAllMapsForSeed()`
+**What**: `seedString` is user text and is concatenated into the URL path unescaped. A seed containing `/`, `?`, `#`, `%` and so on gives a wrong request, so planetary ruins finds no maps for that world. The `coverage` part of the original report is not a problem: RimWorld forces `en-US` culture on the main thread.
+**Fix**: `Uri.EscapeDataString(seed)`. Check that the server decodes path segments (it should).
+
+---
+
+### L16. `Blueprint.Part` Drops the Last Row and Column
+**File**: `Source/Classes/Scattering/Internal/Blueprint.cs`, `Part()`
+**What**: `maxX`/`maxZ` are clamped to `width - 1`/`height - 1` (inclusive), but the loops and the result size treat them as exclusive. A cut that reaches the blueprint edge loses the last row/column, and odd sizes come out 1 cell smaller than requested.
+**Fix**: Use exclusive bounds: `maxX = Math.Min(width, minX + size.x)`, same for Z.
+
+---
+
+### L17. `BattleRoyaleForcesGenerator.ScatterStartingParties` Can Spin
+**File**: `Source/Classes/Scattering/Internal/DefenderForcesGenerator/BattleRoyaleForcesGenerator.cs`
+**What**: `points` is decremented only when `TryFindRandomSpawnCellForPawnNear` succeeds. On a map with no valid spawn cells the loop never ends and map generation hangs. Very unlikely in practice. The `InBounds` `continue` in the trigger loops reported earlier is harmless: `placementRect` always overlaps the map, so a valid cell comes up quickly. `Rand.Range` with min ≥ max (former U4) returns min and cannot crash.
+**Fix**: Add an attempt limit (e.g. 50 failed tries), then stop.
+
+---
+
+### L18. Fixed
 
 ---
 
 ## UNVERIFIED — Reported but not yet confirmed in code
 
-### U1. Settings Export Culture and Partial Import
-`SettingsSerializer` may write floats with the current culture (`ToString("R")`) while import parses with `InvariantCulture`, so values like `0,5` fail to import and the field keeps its old value. `TryImport` applies fields as it goes, so a late failure can leave settings half-applied while returning false.
-
-### U2. `APIService` Culture-Sensitive `coverage`
-`coverage` may be formatted into the request URL with the current culture. `seed` may be concatenated into the path without escaping.
-
-### U3. `Blueprint.Part` May Drop the Last Row and Column
-`Part` loops over `x < maxX` and `z < maxZ`. Whether this is a bug depends on how `maxX` and `maxZ` are defined.
-
-### U4. `Rand.Range` With min Greater Than max
-Possible in `Blueprint.RandomPartCenteredAtRoom` (`Rand.Range(size.x, width - size.x)`), `BattleRoyaleForcesGenerator.ScatterStartingParties`, and `DeteriorationProcessor` (`Rand.Range(1, Math.Min(stackLimit, stackCount))` with `stackCount == 0`).
-
-### U5. Raid Trigger Loops May Spin Forever
-In the forces generators, a `continue` after a failed `InBounds` check never decrements the budget, and `result.IsValid` may stay false in the battle royale generator.
-
-### U6. `AdvancedSettingsPage` Buffers May Go Stale
-`RealRuins_Mod` keeps the settings window and pages alive. After `TryImport` or `RealRuins_ModSettings.Reset()` the text buffers may still hold the old values and overwrite the new ones on the next draw.
-
-### U7. Debug Logging Reaches Unity on Error
-`Debug.Error` calls `Verse.Log.Message` at the default log level, which touches Unity natives. This matters for unit tests outside the engine.
+No open items. U1–U7 were checked on 2026-10-30: U2, U3, U5 and U7 were moved to L15–L18, U6 to M14, and U1 and U4 were rejected (RimWorld forces `en-US` culture on the main thread and import cannot fail halfway; `Rand.Range` returns min when min ≥ max).

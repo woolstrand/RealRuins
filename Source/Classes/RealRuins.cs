@@ -33,30 +33,8 @@ namespace RealRuins
             DateTime startTime = DateTime.Now;
             Debug.SysLog("RealRuins started patching at {0}", startTime);
 
-
-
-            var method = AccessTools.Method(typeof(Page_SelectStartingSite), "PostOpen", new Type[0]);
-
-            if (method == null)
-                Log.Error("PostOpen method not found.");
-            else if (method.GetMethodBody() == null)
-                Log.Error("PostOpen has no method body and cannot be patched.");
-            else
-                Log.Message("PostOpen is patchable.");
-
-
             var harmony = new Harmony("com.woolstrand.realruins");
             harmony.PatchAll(Assembly.GetExecutingAssembly());
-
-            Debug.SysLog("RealRuins performing manual patching optional mods at {0}", startTime);
-            /*
-                        var srtsExists = LoadedModManager.RunningMods.ToList().Exists(m => m.Name.Contains("SRTS"));
-                        if (srtsExists) {
-                            Debug.SysLog("SRTS found, patching...");
-                            PatchSRTS(harmony);
-                        } else {
-                            Debug.SysLog("SRTS not found, skipping...");
-                        }*/
 
             Debug.SysLog("RealRuins finished patching at {0} ({1} msec)", DateTime.Now, (DateTime.Now - startTime).TotalMilliseconds);
 
@@ -67,91 +45,6 @@ namespace RealRuins
             SnapshotStoreManager.Instance.CheckCacheSizeLimits();
 
         }
-
-        /*
-        static void PatchSRTS(Harmony harmony) {
-            Type classType = Type.GetType("SRTS.SRTSStatic, SRTS");
-            MethodInfo originalMethod = classType.GetMethod("getFM", BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.FlattenHierarchy);
-            if (originalMethod == null) {
-                Debug.SysLog("NO getFM method found!");
-                return;
-            }
-
-            harmony.Patch(
-                original: originalMethod,
-                prefix: null,
-                postfix: new HarmonyMethod(typeof(RealRuins), nameof(SRTS_getFM_Postfix)));
-        }
-
-        public static IEnumerable<FloatMenuOption> SRTS_getFM_Postfix(IEnumerable<FloatMenuOption> options, WorldObject wobj, IEnumerable<IThingHolder> ih, object comp, Caravan car) {
-            // On some reason this method is called TWICE: once with empty collection (as expected), the second time with what I returned just before.
-            // So to avoid doubling I have to skip all code if there already are options. Not sure how it will work in future, but hope everything will be fine.
-            if (options.Count() > 0) {
-                return options;
-            }
-
-            IEnumerable<FloatMenuOption> newOptions = Enumerable.Empty<FloatMenuOption>();
-            newOptions.ConcatIfNotNull(options);
-
-            //Get type, don't forget to specify assembly name
-            Type t = Type.GetType("SRTS.SRTSArrivalActionUtility, SRTS");
-
-            //Get generic method
-            var m = t.GetMethod("GetFloatMenuOptions", BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.FlattenHierarchy);
-
-            //Create a specific method for a specific type from the generic above
-            var mGenericPOI = m.MakeGenericMethod(typeof(TransportPodsArrivalAction_VisitRuinsPOI));
-            var mGenericRuins = m.MakeGenericMethod(typeof(TransportPodsArrivalAction_VisitRuins));
-
-            // Lambdas are not objects, so we can't pass them into object[] array, we have to make them into delegates
-            var accReport = new Func<FloatMenuAcceptanceReport>(() => FloatMenuAcceptanceReport.WasAccepted);
-            var arrivalActionPOICenter = new Func<TransportPodsArrivalAction_VisitRuinsPOI>(() => new TransportPodsArrivalAction_VisitRuinsPOI(wobj as MapParent, PawnsArrivalModeDefOf.CenterDrop));
-            var arrivalActionPOIEdge = new Func<TransportPodsArrivalAction_VisitRuinsPOI>(() => new TransportPodsArrivalAction_VisitRuinsPOI(wobj as MapParent, PawnsArrivalModeDefOf.EdgeDrop));
-            var arrivalActionRuinsCenter = new Func<TransportPodsArrivalAction_VisitRuins>(() => new TransportPodsArrivalAction_VisitRuins(wobj as MapParent, PawnsArrivalModeDefOf.CenterDrop));
-            var arrivalActionRuinsEdge = new Func<TransportPodsArrivalAction_VisitRuins>(() => new TransportPodsArrivalAction_VisitRuins(wobj as MapParent, PawnsArrivalModeDefOf.EdgeDrop));
-
-            if (wobj is RealRuinsPOIWorldObject) {
-                object[] parameters = new object[] {
-                    accReport,
-                    arrivalActionPOIEdge,
-                    wobj.Label + ": " + Translator.Translate("DropAtEdge").RawText,
-                    comp,
-                    wobj.Tile,
-                    car };
-                newOptions = mGenericPOI.Invoke(null, parameters) as IEnumerable<FloatMenuOption>;
-
-                parameters = new object[] {
-                    accReport, 
-                    arrivalActionPOICenter,
-                    wobj.Label + ": " + Translator.Translate("DropInCenter").RawText,
-                    comp,
-                    wobj.Tile,
-                    car };
-                newOptions = newOptions.Concat(mGenericPOI.Invoke(null, parameters) as IEnumerable<FloatMenuOption>);
-
-            } else if (wobj is AbandonedBaseWorldObject) {
-
-                object[] parameters = new object[] {
-                    accReport,
-                    arrivalActionRuinsEdge,
-                    wobj.Label + ": " + Translator.Translate("DropAtEdge").RawText,
-                    comp,
-                    wobj.Tile,
-                    car };
-                newOptions = mGenericRuins.Invoke(null, parameters) as IEnumerable<FloatMenuOption>;
-
-                parameters = new object[] {
-                    accReport,
-                    arrivalActionRuinsCenter,
-                    wobj.Label + ": " + Translator.Translate("DropInCenter").RawText,
-                    comp,
-                    wobj.Tile,
-                    car };
-                newOptions = newOptions.Concat(mGenericRuins.Invoke(null, parameters) as IEnumerable<FloatMenuOption>);
-            }
-
-            return newOptions;
-        }*/
 
         static class SnapshotSaver
         {

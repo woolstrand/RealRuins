@@ -289,6 +289,7 @@ namespace RealRuins
             Directory.Delete(GetSnapshotsFolderPath(), true);
             Directory.CreateDirectory(GetSnapshotsFolderPath());
             totalFilesSize = 0;
+            totalFileCount = 0;
         }
 
         public long TotalSize() {

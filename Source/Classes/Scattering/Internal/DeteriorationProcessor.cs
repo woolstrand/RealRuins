@@ -125,15 +125,6 @@ namespace RealRuins {
             }
         }
 
-        void ConstructUntouchedIntegrityMap() {
-            for (int x = 0; x < blueprint.width; x++) {
-                for (int z = 0; z < blueprint.height; z++) {
-                    terrainIntegrity[x, z] = 1;
-                    itemsIntegrity[x, z] = 1;
-                }
-            }
-        }
-
         void Deteriorate() {
             int itemsCount = 0;
             int removedCount = 0;

@@ -68,7 +68,6 @@ namespace RealRuins
                 RestorePawnApparel(root, p);
                 RestorePawnStory(root, p);
                 RestorePawnSkills(root, p);
-                RestorePawnBodyAndTraits(root, p);
                 return p;
             }
             catch (Exception e)
@@ -553,13 +552,6 @@ namespace RealRuins
             {
                 Debug.Extra(Debug.BlueprintPawnDecoder, "Failed to restore pawn skills: {0}", ex.Message);
             }
-        }
-
-        private void RestorePawnBodyAndTraits(XmlNode root, Pawn p)
-        {
-            // Note: RestorePawnStory() already handles body type, hair, and traits restoration
-            // This method is kept for potential future use if additional body/appearance 
-            // properties need to be restored beyond what RestorePawnStory() handles
         }
 
         /// <summary>
