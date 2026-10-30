@@ -59,9 +59,13 @@ searching to figure out. Keep entries short; no screen coordinates (they change 
   copy is the one the build deploys to. The log's "Adding Woolstrand.RealRuins(<path>)" lines show both.
 - Windows: the driver must detach the game's stdio on launch, or anything piping driver output hangs
   until the game exits (fixed in `platform/win.sh`; keep it that way).
-- "Load automatically" on the planetary loader pops the debug log with a vanilla NRE in
-  `ExpandableLandmarksUtility.get_LandmarksToShow` - POIs are created on a background thread while the world UI
-  draws (FIXES_QUEUE H9). Close the log, wait for "Transferring blueprints: Completed".
+- Planetary loader: with >500 blueprints for the seed (seed `shotgun` has 579) a "whole lot of blueprints" dialog
+  pops up first - pick "Get all" or "Get just 500". The seed list request sometimes fails ("Could not load maps
+  list") - just press Load automatically again. Two `shotgun` blueprints always fail to download; their
+  "not available locally" skips are expected.
+- Planetary loader transfer: ends with `[POI]: Transfer finished, N sites created` and a green Close button. It keeps
+  running if the window is closed. The old vanilla NRE in `ExpandableLandmarksUtility` (POIs created off the
+  main thread) is fixed (H9); if it shows up again, it's a regression.
 - POI map generation: `GenStep_ScatterPOIRuins.Finish` clears `PlanetaryRuinsInitData` (incl. `startingPOI`) **before**
   later gensteps such as the regular scatter run - later steps can't use it to recognize the starting POI map.
 - Once the game exited cleanly ("Log closed", no crash report) ~1 min after a quicktest click that
@@ -132,3 +136,6 @@ blueprint id) - that file also states the spawn philosophy: spawn what can be sp
   M12 (no regular chunks on a starting POI map; first try failed because `startingPOI` is already cleared, now checks the
   map generator for `GenStep_ScatterPOIRuins`). M11 skip path not hit - both starts had ~4.5k points. M10 not checked
   visually (vanilla ruins don't log). Found PROBLEMATIC_ITEMS #3-#5 (bookcase contents, MinifiedThing tick, Waist injury).
+- 2026-10-30 (Windows, 1.7): verified H1 + H9 on the planetary loader, seed `shotgun`: 579 fresh downloads, window closed
+  mid-transfer (173/579) and sites kept appearing → 393 sites, 0 exceptions; only the 2 failed downloads were missing
+  locally (completion now waits for disk writes). Second world, same seed: Close turned green on completion.

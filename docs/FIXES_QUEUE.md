@@ -25,14 +25,7 @@ Single list of known bugs, code smells and design weaknesses. Entries are groupe
 
 ## HIGH — Logic errors and stability risks
 
-### H1. `SnapshotManager` Thread-Safety Gaps
-**File**: `Source/Classes/Utility/SnapshotManager.cs`
-**What**:
-- `Pop()` in `LoadNextSnapshot` is locked (`snapshotsToLoadLock`), but `Add` in `AggressiveLoadSnapshots`/`LoadSomeSnapshots` and the list replacement in `Reset()` are not.
-- `loadedSnapshotsCount++`, `failedSnapshotsCount++` and the completion check (`loaded + failed == total`) are not atomic.
-- `snapshotTimestamps` is read and written without locking from the Unity game thread and callback threads.
-**Impact**: Missed or duplicated completion callbacks, lost counts; a race on `snapshotTimestamps` can throw `ArgumentException` (duplicate key) or make the upload rate limiter see a wrong elapsed time.
-**Fix**: Use the existing lock for all list access, `Interlocked` for counters, and `ConcurrentDictionary` (or a lock) for `snapshotTimestamps`.
+### H1. Fixed
 
 ---
 

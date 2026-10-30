@@ -118,15 +118,21 @@ namespace RealRuins
             StoreBinaryData(Encoding.UTF8.GetBytes(buffer), blueprintName);
         }
 
-        public void StoreBinaryData(byte[] buffer, string blueprintName, string gameName = null) {
+        // Writes on a background thread. onStored (if any) is called on the main thread once the write is over,
+        // with false if it failed. Must be called from the main thread.
+        public void StoreBinaryData(byte[] buffer, string blueprintName, string gameName = null, Action<bool> onStored = null) {
+            CoroutineManager mainThread = onStored != null ? CoroutineManager.Instance : null;
 
             new Thread(() => {
+                bool success = false;
                 try {
                     WriteSnapshotFile(buffer, blueprintName, gameName);
+                    success = true;
                 } catch (Exception ex) {
                     // an unhandled exception on a raw thread would take the whole game down
                     Debug.Error(Debug.Store, "Failed storing blueprint {0}: {1}", blueprintName, ex);
                 }
+                mainThread?.RunOnMainThread(() => onStored(success));
             }).Start();
 
         }
