@@ -239,6 +239,8 @@ namespace RealRuins {
 
             if (militaryFeatures >= 3 && militaryPower < 8 && prodScore < 50) {
                 if (result.internalArea < 2000) {
+                    //Random on purpose (FIXES_QUEUE M4, won't fix): small military sites look the same either way, and the
+                    //type is picked once when the POI is created at game start, so determinism buys nothing here.
                     return ThreadSafeRand.Chance(0.5f)?POIType.Outpost:POIType.Communication;
                 }
                 if (result.internalArea > 2000 && result.internalArea < 6000 && result.roomsCount < 20) {
