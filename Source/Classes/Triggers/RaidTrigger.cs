@@ -31,19 +31,20 @@ namespace RealRuins {
             return ticksLeft;
         }
         
-        protected override void Tick() {
-            if (Find.TickManager.TicksGame % 250 == 0)
-            {
-                TickRare();
-            }
+        // The def uses tickerType Rare, so the engine calls TickRare once per 250 ticks and ticksLeft counts rare ticks.
+        public override void SpawnSetup(Map map, bool respawningAfterLoad) {
+            base.SpawnSetup(map, respawningAfterLoad);
+            int now = Find.TickManager.TicksGame;
+            Debug.Log(Debug.Generic, "Raid trigger {0} spawned at tick {1} (after load: {2}), {3} rare ticks left, expected to fire at about tick {4}",
+                thingIDNumber, now, respawningAfterLoad, ticksLeft, now + (ticksLeft + 1) * GenTicks.TickRareInterval);
         }
-        
+
         public override void TickRare()
         {
             if (Spawned) {
                 ticksLeft--;
                 if (ticksLeft < 0) {
-                    Debug.Log(Debug.Generic, "Raid trigger fired, faction: {0}", faction);
+                    Debug.Log(Debug.Generic, "Raid trigger {0} fired at tick {1}, faction: {2}", thingIDNumber, Find.TickManager.TicksGame, faction);
                     IncidentDef incidentDef = IncidentDefOf.RaidEnemy;
                     IncidentParms parms = new IncidentParms {
                         faction = faction,

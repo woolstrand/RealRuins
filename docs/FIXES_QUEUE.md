@@ -164,10 +164,7 @@ Intended: same as vanilla `SettlementUtility.AffectRelationsOnAttacked`, see the
 
 ---
 
-### L8. `RaidTrigger.Tick()` Redundant 250-Tick Gating
-**File**: `Source/Classes/Triggers/RaidTrigger.cs`, `Triggers.xml`
-**What**: `Tick()` calls `TickRare()` every 250 ticks by hand. This is needed now: the def has `tickerType` `Normal`, so the engine never calls `TickRare` on its own.
-**Fix**: Set `<tickerType>Rare</tickerType>` on `RaidTrigger` (all version folders) and remove the `Tick()` override. Timing stays the same (`ticksLeft` already counts rare ticks). The engine reads the ticker type from the def, so triggers in existing saves move to the rare list.
+### L8. Fixed
 
 ---
 
@@ -175,10 +172,7 @@ Intended: same as vanilla `SettlementUtility.AffectRelationsOnAttacked`, see the
 
 ---
 
-### L10. `ThoughtWorker_ScavengingRuins` Low Stages Are Unreachable
-**File**: `Source/Classes/Thoughts/ThoughtWorker_ScavengingRuins.cs`
-**What**: The thought reads `RuinedBaseComp.currentCapCost`, but only for pawns on the ruins map. `PostMapGenerate` sets `currentCapCost = max(mapWealth, 150000)`, so on the map it is always ≥ 150,000, and the thought is always "high wealth" or above. Stages 0–1 and the 10,000–25,000 gap reported earlier never apply. The last stage label also says "insanely wealth ruins".
-**Fix**: Base the thought on the real map wealth (the value `PostMapGenerate` computes before the 150k floor, saved separately), or remove the unreachable stages. Fix the label typo.
+### L10. Fixed
 
 ---
 
@@ -200,24 +194,15 @@ Not relevant: the postfix already returns right away unless the window is `Dialo
 
 ---
 
-### L15. `APIService` Does Not Escape the World Seed
-**File**: `Source/Classes/Utility/APIService.cs`, `LoadAllMapsForSeed()`
-**What**: `seedString` is user text and is concatenated into the URL path unescaped. A seed containing `/`, `?`, `#`, `%` and so on gives a wrong request, so planetary ruins finds no maps for that world. The `coverage` part of the original report is not a problem: RimWorld forces `en-US` culture on the main thread.
-**Fix**: `Uri.EscapeDataString(seed)`. Check that the server decodes path segments (it should).
+### L15. Fixed
 
 ---
 
-### L16. `Blueprint.Part` Drops the Last Row and Column
-**File**: `Source/Classes/Scattering/Internal/Blueprint.cs`, `Part()`
-**What**: `maxX`/`maxZ` are clamped to `width - 1`/`height - 1` (inclusive), but the loops and the result size treat them as exclusive. A cut that reaches the blueprint edge loses the last row/column, and odd sizes come out 1 cell smaller than requested.
-**Fix**: Use exclusive bounds: `maxX = Math.Min(width, minX + size.x)`, same for Z.
+### L16. Fixed
 
 ---
 
-### L17. `BattleRoyaleForcesGenerator.ScatterStartingParties` Can Spin
-**File**: `Source/Classes/Scattering/Internal/DefenderForcesGenerator/BattleRoyaleForcesGenerator.cs`
-**What**: `points` is decremented only when `TryFindRandomSpawnCellForPawnNear` succeeds. On a map with no valid spawn cells the loop never ends and map generation hangs. Very unlikely in practice. The `InBounds` `continue` in the trigger loops reported earlier is harmless: `placementRect` always overlaps the map, so a valid cell comes up quickly. `Rand.Range` with min ≥ max (former U4) returns min and cannot crash.
-**Fix**: Add an attempt limit (e.g. 50 failed tries), then stop.
+### L17. Fixed
 
 ---
 

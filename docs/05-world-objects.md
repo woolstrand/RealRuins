@@ -175,11 +175,11 @@ Inactive → WaitingForArrival → FightingWaves → WaitingForEnemiesToBeDefeat
 - Creates emergent time pressure: unvisited ruins are eventually looted by NPCs
 
 ### `PostMapGenerate()`
-Overrides `currentCapCost` with `max(actual_map_wealth, 150000)` to prevent underscaled forces. Sets `destructionLevel = actualCost / capCost`.
+Stores `referenceWealth = max(actual_map_wealth, 150000)` (saved) and sets `destructionLevel = actualCost / referenceWealth`. `referenceWealth` is used only for V2 force scaling and the unlock timer; `currentCapCost` keeps the value left by off-map scavenging. Saves from before this change overwrote `currentCapCost` with the reference value, and `ReferenceWealth` falls back to it.
 
 ### `DoRareTask()` (every 60 ticks)
 - V2 forces (only in `FightingWaves`): if hostile count < `15 × destructionLevel × forceMultiplier` AND total < 90: triggers small patrol raid (500–2500 pts). `destructionLevel` is recomputed if a pre-fix save loaded it as 0.
-- Drives the state machine through `FightingWaves → ... → InformedWaitingForLeaving` in every reform mode. After the last enemy is gone it waits `45000 .. 60000 + currentCapCost` ticks, then shows `RealRuins.NoMoreEnemies`.
+- Drives the state machine through `FightingWaves → ... → InformedWaitingForLeaving` in every reform mode. After the last enemy is gone it waits `45000 .. 60000 + referenceWealth` ticks, then shows `RealRuins.NoMoreEnemies`.
 
 ### `CheckTriggers()`
 Iterates `triggersCache` (pre-built list of `RaidTrigger` things). When all triggers have fired, transitions to `WaitingForEnemiesToBeDefeated` after a 1000-tick safety delay (`allTriggersFiredTick`, saved).
@@ -216,11 +216,11 @@ Extends vanilla `FormCaravanComp`. Overrides only `GetGizmos()`: the reform butt
 
 ## RaidTrigger
 
-A `Thing` placed on the map. After a countdown (`|Rand.Gaussian(0, 100)|` ticks, half-normal), fires a `RaidEnemy` incident and destroys itself.
+A `Thing` placed on the map. After a countdown (`|Rand.Gaussian(0, 100)|` rare ticks of 250 game ticks, half-normal), fires a `RaidEnemy` incident and destroys itself.
 
 **`IAttackTarget`** implementation is vestigial — `TargetPriorityFactor = 0` and `ThreatDisabled = true`, so it's invisible to AI targeting. Comment notes the "step-on-trigger" mechanic was abandoned.
 
-**`Tick()` override** calls manual 250-tick gating before delegating to `TickRare()` — redundant (the 250-tick pattern duplicates what `TickRare` does automatically). But is there TickRare for trigger? It's not always available.
+The def uses `tickerType` `Rare`, so the engine calls `TickRare()` directly. Spawn and fire are logged at the Generic level with game ticks (spawn log includes the expected fire tick).
 
 **`ExposeData()`**: Persists `faction`, `value`, `ticksLeft` — allows save/load to resume countdowns.
 
@@ -237,7 +237,7 @@ Generates mood thoughts based on `RuinedBaseComp.currentCapCost`. Five stages:
 - Stage 3 (100,000–500,000): strong positive
 - Stage 4 (> 1,000,000): extreme positive
 
-**Unreachable stages**: on the map `currentCapCost` is always ≥ 150,000 (floored in `PostMapGenerate`), so only stages 2–4 ever apply (FIXES_QUEUE L10).
+Uses `RuinedBaseComp.currentCapCost`, i.e. what off-map scavenging left, so ruins picked clean before arrival give the low stages. 10,000–25,000 gives no thought.
 
 ---
 

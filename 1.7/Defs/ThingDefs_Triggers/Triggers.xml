@@ -3,7 +3,7 @@
     <defName>RaidTrigger</defName>
     <label>rough floor</label>
     <thingClass>RealRuins.RaidTrigger</thingClass>
-    <tickerType>Normal</tickerType>
+    <tickerType>Rare</tickerType>
   </ThingDef>
 
 

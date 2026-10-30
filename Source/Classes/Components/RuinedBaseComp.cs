@@ -28,6 +28,11 @@ namespace RealRuins {
         public float unlockTargetTime = -1; //when all raids are done, the component sets random timeout after which you can exit the map
         public int currentCapCost = -1;
         public float raidersActivity = -1; //battle points amount of starting raiders group
+        // Map resource wealth at arrival, floored at 150k: the reference for V2 forces (destructionLevel) and the unlock timer.
+        // currentCapCost is left as the off-map scavenging simulation made it (blueprint cost units).
+        private float referenceWealth = -1;
+        // Saves made before referenceWealth existed overwrote currentCapCost with this value on arrival.
+        private float ReferenceWealth => referenceWealth > 0 ? referenceWealth : currentCapCost;
         private bool ShouldRemoveWorldObjectNow => state == RuinedBaseState.ScavengedCompletely && !base.ParentHasMap;
         public bool isActive => state != RuinedBaseState.Inactive;
         // Signal tags for quest completion. Can be null/empty in these cases:
@@ -104,12 +109,11 @@ namespace RealRuins {
 
             var map = (parent as MapParent)?.Map;
             var currentCost = GetTotalMapWealth(map);
-            Debug.Log(Debug.Generic, "Generated map. Cap cost: {0}, actual cost: {1}. Overwriting capCost with current.", currentCapCost, currentCost);
-
             // For smaller bases we want to limit upcoming forces, so let's assume that a reference wealth is 150k, and neighbours
             // are not really interested in smaller wealths that much.
-            currentCapCost = Math.Max((int)currentCost, 150000);
-            destructionLevel = currentCost / currentCapCost;
+            referenceWealth = Math.Max(currentCost, 150000);
+            destructionLevel = currentCost / referenceWealth;
+            Debug.Log(Debug.Generic, "Generated map. Cap cost: {0}, actual cost: {1}, reference wealth for forces: {2}.", currentCapCost, currentCost, referenceWealth);
         }
 
         public void StartScavenging(int initialCost) {
@@ -123,6 +127,7 @@ namespace RealRuins {
             Scribe_Values.Look(ref blueprintFileName, "blueprintFileName", "");
             Scribe_Values.Look(ref currentCapCost, "currentCapCost", -1);
             Scribe_Values.Look(ref raidersActivity, "raidersActivity", -1);
+            Scribe_Values.Look(ref referenceWealth, "referenceWealth", -1);
             Scribe_Values.Look(ref unlockTargetTime, "unlockTargetTime", 0);
             Scribe_Values.Look(ref state, "state", RuinedBaseState.Inactive);
             Scribe_Values.Look(ref expireSignal, "expireSignal", "");
@@ -173,9 +178,9 @@ namespace RealRuins {
             if (state == RuinedBaseState.FightingWaves) {
                 if (RealRuins_ModSettings.useRuinsForcesGenerationV2) {
                     var map = (parent as MapParent)?.Map;
-                    if (destructionLevel <= 0 && currentCapCost > 0) {
+                    if (destructionLevel <= 0 && ReferenceWealth > 0) {
                         //saves made before destructionLevel was saved load it as 0, which would stop the raids for good
-                        destructionLevel = GetTotalMapWealth(map) / currentCapCost;
+                        destructionLevel = GetTotalMapWealth(map) / ReferenceWealth;
                     }
                     int hostileCount = map.mapPawns.AllPawnsSpawned.Count(p => p.HostileTo(Faction.OfPlayer));
                     if (hostileCount < 15 * destructionLevel * RealRuins_ModSettings.forceMultiplier && map.mapPawns.AllPawnsSpawned.Count < 90) {
@@ -184,7 +189,7 @@ namespace RealRuins {
                             TriggerRaid((int)(Rand.Range(500, 2500) * destructionLevel * RealRuins_ModSettings.forceMultiplier));
 
                             var currentWealth = GetTotalMapWealth(map);
-                            destructionLevel = currentWealth / currentCapCost;
+                            destructionLevel = currentWealth / ReferenceWealth;
                             baseSmallRaidChance = (float)(0.05f * destructionLevel) * RealRuins_ModSettings.forceMultiplier;
                             Debug.Log(Debug.Generic, "Recalculating raid chance. Destruction level is {0}, new chance is {1}", destructionLevel, baseSmallRaidChance);
                         }
@@ -198,7 +203,7 @@ namespace RealRuins {
                     CheckTriggers();
                 } else if (state == RuinedBaseState.WaitingForEnemiesToBeDefeated) {
                     if (!GenHostility.AnyHostileActiveThreatTo((parent as MapParent).Map, Faction.OfPlayer)) {
-                        unlockTargetTime = Find.TickManager.TicksGame + Rand.Range(45000, 60000 + currentCapCost);
+                        unlockTargetTime = Find.TickManager.TicksGame + Rand.Range(45000, 60000 + (int)ReferenceWealth);
                         state = RuinedBaseState.WaitingTimeoutAfterEnemiesDefeat;
                         //Debug.Message("no more hostiles. time: {0}, unlocktime: {1}", Find.TickManager.TicksGame, unlockTargetTime);
                     }

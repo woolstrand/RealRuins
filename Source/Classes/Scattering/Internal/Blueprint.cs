@@ -280,10 +280,12 @@ namespace RealRuins {
             int centerX = location.x;
             int centerZ = location.z;
 
-            int minX = Math.Max(0, centerX - size.x / 2);
-            int maxX = Math.Min(width - 1, centerX + size.x / 2);
-            int minZ = Math.Max(0, centerZ - size.z / 2);
-            int maxZ = Math.Min(height - 1, centerZ + size.z / 2);
+            //max bounds are exclusive. min bounds are clamped inside the blueprint: the center can be off it when the blueprint is
+            //smaller than the piece in one dimension only (see RandomPartCenteredAtRoom), and that used to give a negative size.
+            int minX = Math.Max(0, Math.Min(centerX - size.x / 2, width - 1));
+            int maxX = Math.Min(width, minX + size.x);
+            int minZ = Math.Max(0, Math.Min(centerZ - size.z / 2, height - 1));
+            int maxZ = Math.Min(height, minZ + size.z);
 
             //Debug.Message("Cutting area of size {0}x{1}. Frame is {2}..{3}, {4}..{5}", size.x, size.z, minX, maxX, minZ, maxZ);
 

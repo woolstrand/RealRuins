@@ -64,7 +64,7 @@ The central object holding all parsed data for one blueprint.
 
 **`RemoveWall(x, z)`**: Updates topology when a wall is removed — O(w×h) full scan to merge room numbers. Called per tile during deterioration and scavenging, making those operations O(w²×h²) in dense blueprints.
 
-**`Part(location, size)`**: Slices a sub-rectangle. **Mutates the original** — `itemsMap` lists are moved by reference, not copied. Do not use the parent blueprint after calling `Part()`.
+**`Part(location, size)`**: Slices a sub-rectangle (exclusive max bounds, clipped to the blueprint). **Mutates the original** — `itemsMap` lists are moved by reference, not copied. Do not use the parent blueprint after calling `Part()`.
 
 **`UpdateBlueprintStats(includeCost)`**: Computes `totalCost`, `itemsCount`, `itemsDensity`. When `includeCost=true`, calls `ThingComponentsMarketCost()` for every item — expensive. Called twice during the pipeline (once in `BlueprintFinder`, once in `RuinsScatterer` post-preprocess).
 

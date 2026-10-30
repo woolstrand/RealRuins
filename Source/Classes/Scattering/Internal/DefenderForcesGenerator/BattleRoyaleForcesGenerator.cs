@@ -88,24 +88,32 @@ namespace RealRuins {
 
         private void ScatterStartingParties(int points, bool allowFriendly, Map map) {
 
+            int failedAttempts = 0;
             while (points > 0) {
                 int pointsUsed = Rand.Range(200, Math.Min(3000, points / 5));
 
                 IntVec3 rootCell = CellFinder.RandomNotEdgeCell(30, map);
                 CellFinder.TryFindRandomSpawnCellForPawnNear(rootCell, map, out IntVec3 result);
-                if (result.IsValid) {
-                    Faction faction = null;
-                    if (allowFriendly) {
-                        Find.FactionManager.TryGetRandomNonColonyHumanlikeFaction(out faction, false);
-                    } else {
-                        faction = Find.FactionManager.RandomEnemyFaction();
+                if (!result.IsValid) {
+                    //points are spent only on success, so a map without spawn cells would loop forever
+                    if (++failedAttempts >= 50) {
+                        Debug.Warning(Debug.ForceGen, "Could not find a spawn cell for starting parties, {0} points left unused", points);
+                        return;
                     }
-
-                    if (faction == null) faction = Find.FactionManager.AllFactions.RandomElement();
-
-                    SpawnGroup(pointsUsed, new CellRect(result.x - 10, result.z - 10, 20, 20), faction, map);
-                    points -= pointsUsed;
+                    continue;
                 }
+
+                Faction faction = null;
+                if (allowFriendly) {
+                    Find.FactionManager.TryGetRandomNonColonyHumanlikeFaction(out faction, false);
+                } else {
+                    faction = Find.FactionManager.RandomEnemyFaction();
+                }
+
+                if (faction == null) faction = Find.FactionManager.AllFactions.RandomElement();
+
+                SpawnGroup(pointsUsed, new CellRect(result.x - 10, result.z - 10, 20, 20), faction, map);
+                points -= pointsUsed;
             }
         }
 
