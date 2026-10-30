@@ -52,6 +52,51 @@ error and picks its default. The wall still spawns (vanilla default material).
 
 ---
 
+## 3. Bookcase contents added before the bookcase is spawned
+
+**Seen:** 2026-10-30, Windows, RimWorld 1.7.4990, new game on a planetary POI (seed `writer`, attack mode).
+
+**Log:** `[BlueprintTransfer]: Failed to spawn item BookcaseSmall because of System.NullReferenceException` at
+`Building_Bookcase.Notify_ItemAdded` ← `ThingOwner.TryAdd` ← `BlueprintTransferUtility.MakeThingFromItemTile`.
+
+**Where:** `MakeThingFromItemTile` puts the blueprint's inner items into the container while the bookcase is not yet
+spawned. `Building_Bookcase.Notify_ItemAdded` uses `MapHeld.listerHaulables`, and `MapHeld` is null for an unspawned
+thing. The whole bookcase is discarded.
+
+**Fix direction (universal):** fill containers after the container is spawned. Or catch a failing inner `TryAdd` per item
+and keep the container, so one bad content item doesn't drop the whole thing.
+
+---
+
+## 4. MinifiedThing fails in the post-spawn tick
+
+**Seen:** 2026-10-30, same session as #3.
+
+**Log:** `[BlueprintTransfer]: Exception while tried to perform tick for MinifiedThing of cost 0, retrhrowing...` followed
+by `Failed to spawn item MinifiedThing5391 of cost 0 because of exception Object reference not set to an instance of an object.`
+from `BlueprintTransferUtility.Transfer`. No inner stack trace is logged, so the failing member is unknown. "Cost 0"
+suggests the minified thing has no (valid) inner thing.
+
+**Fix direction:** log the inner exception's stack, then check minified things with a missing or invalid inner thing before
+spawning them and skip them quietly.
+
+---
+
+## 5. Restored pawn gets an injury on a part that can't be hit
+
+**Seen:** 2026-10-30, Windows, new game on a planetary POI (seed `persecution`, attack mode).
+
+**Log:** `ERROR [Verse] Added injury to Waist but it should be impossible to hit it. pawn=Eminent dinfo=null` from
+`Hediff_Injury.PostAdd` ← `Pawn_HealthTracker.AddHediff` ← `PawnRestoreUtility.RestorePawnHealth`.
+
+**Where:** `RestorePawnHealth` re-adds the blueprint's injuries to whatever part they name. Vanilla flags injuries on parts
+whose body part def can't be hit (Waist is a "virtual" part). The pawn spawns; the error is log noise.
+
+**Fix direction (universal):** before adding an injury, skip it when the target part can't be hit (check the vanilla
+condition `Hediff_Injury.PostAdd` uses), or move it to the parent part.
+
+---
+
 ## Related, already noted elsewhere
 
 - `CleaningStation` NRE in `MakeThingFromItemTile` (2026-10-29, macOS) - see the skill's `NOTES.md`; not

@@ -248,13 +248,12 @@ namespace RealRuins
         }
 
         // This patch asks user how he want to proceed with settling in ruins if the user plans to settle in occupied ruins
-        // It aborts original method in order to wait user's input, and after the choice is made, calls original method again,
-        // falling through this patch on the following iteration.
+        // It aborts original method in order to wait user's input, and after the choice is made, calls original method again.
+        // The chosen POI is removed from the world before that call, so the second pass finds no POI and falls through.
         // It also falls through right away if the user selects regular location or abandoned ruins.
         [HarmonyPatch(typeof(Page_SelectStartingSite), "DoNext")]
         static class Page_SelectStartingSite_DoNext_Patch
         {
-            static private bool forceCallOriginal = false;
             static bool Prefix(Page_SelectStartingSite __instance)
             {
                 Debug.Log("StartGame", "DoNext prefix");
@@ -267,7 +266,7 @@ namespace RealRuins
                     {
                         Debug.Log("StartGame", "Got POI Object");
 
-                        if (selectedObject.Faction != null && selectedObject.Faction != Faction.OfPlayer && !forceCallOriginal)
+                        if (selectedObject.Faction != null && selectedObject.Faction != Faction.OfPlayer)
                         {
                             Debug.Log("StartGame", "Got non-nil faction");
                             //If selected tile contains non-abandoned ruins object we have to ask user what to do
@@ -293,7 +292,6 @@ namespace RealRuins
                                         break;
                                     case 2:
                                         PlanetaryRuinsInitData.shared.settleMode = SettleMode.attack;
-                                        forceCallOriginal = true;
                                         break;
                                     case 3:
                                         PlanetaryRuinsInitData.shared.startingPOI = null;
@@ -324,7 +322,7 @@ namespace RealRuins
                             Debug.Log("StartGame", "Skpping original");
                             return false;
                         }
-                        else if (!forceCallOriginal)
+                        else
                         {
                             Debug.Log("StartGame", "Got nil faction, settling in abandoned ruins");
                             PlanetaryRuinsInitData.shared.startingPOI = selectedObject;
@@ -334,7 +332,6 @@ namespace RealRuins
                         }
                     }
                 }
-                forceCallOriginal = false; // reset the flag in case we're here because of it
                 Debug.Log("StartGame", "Falling through and going to original");
                 return true;
             }
@@ -425,14 +422,15 @@ namespace RealRuins
             }
         }
 
-        // This patch overrides (or alters) ruins scattering step in order to add mod-specific ruins
+        // Real ruins replace vanilla surface ruins unless "preserve standard ruins" is on.
+        // Other ScatterRuinsSimple gensteps (e.g. Underground_ScatterRuinsSimple on cave maps) are left alone.
         [HarmonyPatch(typeof(GenStep_ScatterRuinsSimple), "ScatterAt", typeof(IntVec3), typeof(Map), typeof(GenStepParams), typeof(int))]
         class GenStep_ScatterRuinsSimple_ScatterAt_Patch
         {
             static bool Prefix(GenStep_ScatterRuinsSimple __instance)
             {
                 if (RealRuins_ModSettings.preserveStandardRuins) return true;
-                else return false;
+                return __instance.def?.defName != "ScatterRuinsSimple";
             }
         }
 

@@ -92,6 +92,12 @@ namespace RealRuins{
                 groupKind = faction.def.pawnGroupMakers.RandomElement().kindDef;
             }
 
+            float minPoints = faction.def.MinPointsToGeneratePawnGroup(groupKind);
+            if (points < minPoints) {
+                Debug.Log(Debug.ForceGen, "Skipping starting party: {0} points is below faction minimum {1}", points, minPoints);
+                return;
+            }
+
             PawnGroupMakerParms pawnGroupMakerParms = new PawnGroupMakerParms();
             pawnGroupMakerParms.groupKind = groupKind;
             pawnGroupMakerParms.tile = map.Tile;

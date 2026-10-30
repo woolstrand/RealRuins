@@ -84,6 +84,7 @@ namespace RealRuins
             planetaryRuinsOptions = new PlanetaryRuinsOptions();
 
             offlineMode = false;
+            diskCacheLimit = 256.0f;
             allowDownloads = true;
             allowUploads = true;
             allowInstantCaravanReform = false;

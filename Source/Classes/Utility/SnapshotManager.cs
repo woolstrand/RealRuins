@@ -228,9 +228,9 @@ namespace RealRuins {
                 Compressor.ZipFile(tmpFilename);
 
                 if (RealRuins.SingleFile) {
-                    SnapshotStoreManager.Instance.StoreBinaryData(File.ReadAllBytes(tmpFilename), "jeluder.bp");
+                    SnapshotStoreManager.Instance.StoreBinaryData(File.ReadAllBytes(tmpFilename), "jeluder");
                 } else if (RealRuins_ModSettings.offlineMode) {
-                    SnapshotStoreManager.Instance.StoreBinaryData(File.ReadAllBytes(tmpFilename), "local-" + snapshotId + ".bp");
+                    SnapshotStoreManager.Instance.StoreBinaryData(File.ReadAllBytes(tmpFilename), "local-" + snapshotId);
                 } else {
                     Debug.Log(Debug.Store, "Uploading file {0}", tmpFilename);
                     APIService service = new APIService();

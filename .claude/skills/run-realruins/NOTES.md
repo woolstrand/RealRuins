@@ -22,7 +22,7 @@ searching to figure out. Keep entries short; no screen coordinates (they change 
   (`gzip -dc < X.bp`) - handy to see what a ruin contains.
 - **Cut pawn/corpse noise:** temporarily `return null` for `pawn`/`corpse` at the top of
   `BlueprintTransferUtility.MakeThingFromItemTile` (also `// TEMP-TEST`).
-- **Planetary POI start:** New colony → scenario → storyteller (pick a difficulty) → Generate world → the "Load blueprints
+- **Planetary POI start:** New colony → scenario → storyteller (just press Next, the defaults are fine) → Generate world → the "Load blueprints
   for planet" window opens on site selection → **Load automatically** (downloads by seed, places POIs) → Close → click a
   POI icon (inspector shows Faction) → Next → choose mode (abandoned / own / **attack**) → confirm → Start.
 - **Attack a faction base:** spawn a caravan next to it, select caravan, right-click base → **Attack X (Dev: instantly)**.
@@ -59,6 +59,11 @@ searching to figure out. Keep entries short; no screen coordinates (they change 
   copy is the one the build deploys to. The log's "Adding Woolstrand.RealRuins(<path>)" lines show both.
 - Windows: the driver must detach the game's stdio on launch, or anything piping driver output hangs
   until the game exits (fixed in `platform/win.sh`; keep it that way).
+- "Load automatically" on the planetary loader pops the debug log with a vanilla NRE in
+  `ExpandableLandmarksUtility.get_LandmarksToShow` - POIs are created on a background thread while the world UI
+  draws (FIXES_QUEUE H9). Close the log, wait for "Transferring blueprints: Completed".
+- POI map generation: `GenStep_ScatterPOIRuins.Finish` clears `PlanetaryRuinsInitData` (incl. `startingPOI`) **before**
+  later gensteps such as the regular scatter run - later steps can't use it to recognize the starting POI map.
 - Once the game exited cleanly ("Log closed", no crash report) ~1 min after a quicktest click that
   left no log trace; cause unknown. Check `logsince` before assuming a crash.
 
@@ -123,3 +128,7 @@ blueprint id) - that file also states the spawn philosophy: spawn what can be sp
   (attack): POI blueprint loaded once, citizen defenders + starting party, no new errors (M11 pawn-group error is old).
   Attacking a pirate base: dist 1, count x1. Small ruins: raid party present (red pawns). The settlement "DEV: Generate"
   gizmo gave dist 16 on a base tile - use a caravan attack instead to test on-tile maps. Found M11, M12 (FIXES_QUEUE).
+- 2026-10-30 (Windows, 1.7): verified M8 (DoNext without the static flag: dialog → attack → second pass falls through) and
+  M12 (no regular chunks on a starting POI map; first try failed because `startingPOI` is already cleared, now checks the
+  map generator for `GenStep_ScatterPOIRuins`). M11 skip path not hit - both starts had ~4.5k points. M10 not checked
+  visually (vanilla ruins don't log). Found PROBLEMATIC_ITEMS #3-#5 (bookcase contents, MinifiedThing tick, Waist injury).

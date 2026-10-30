@@ -84,11 +84,6 @@ namespace RealRuins
 
 
         public override void Generate(Map map, GenStepParams parms) {
-            //add standard ruins along with real.
-            if (RealRuins_ModSettings.preserveStandardRuins) {
-                GenStep scatterOriginalRuins = new GenStep_ScatterRuinsSimple();
-                scatterOriginalRuins.Generate(map, parms);
-            }
             //skip generation due to low blueprints count
             if (SnapshotStoreManager.Instance.StoredSnapshotsCount() < 10) {
                 Debug.Error(Debug.Scatter, "Skipping ruins gerenation due to low blueprints count.");
@@ -115,6 +110,9 @@ namespace RealRuins
             {
                 if (wo is RealRuinsPOIWorldObject || wo is AbandonedBaseWorldObject) return;
             }
+            //On game start the starting POI is already removed from the world and replaced by the player's settlement,
+            //so recognize the POI map by its generator instead.
+            if (map.generatorDef?.genSteps?.Any(step => step.genStep is GenStep_ScatterPOIRuins) == true) return;
 
             if (!map.TileInfo.WaterCovered) {
 
