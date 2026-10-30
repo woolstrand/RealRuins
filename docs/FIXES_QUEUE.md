@@ -139,6 +139,30 @@ Single list of known bugs, code smells and design weaknesses. Entries are groupe
 
 ---
 
+### M10. "Preserve Standard Ruins" Doubles Vanilla Ruins
+**File**: `Source/Classes/Scattering/GenStep_ScatterRealRuins.cs` (`Generate`), `Source/Classes/RealRuins.cs` (`GenStep_ScatterRuinsSimple_ScatterAt_Patch`)
+**What**: Vanilla `MapCommonBase` already contains the `ScatterRuinsSimple` genstep. `GenStep_ScatterRealRuins` also runs a `new GenStep_ScatterRuinsSimple()` by hand when `preserveStandardRuins` is on. When the option is off, the Harmony prefix blocks `ScatterAt` for both, so the manual call does nothing either way. The prefix also blocks vanilla `Underground_ScatterRuinsSimple` (cave/underground maps), which is probably not intended.
+**Impact**: With the option on, vanilla ruins spawn twice on every map. With it off, underground maps lose their vanilla ruins too.
+**Fix**: Drop the manual call and let vanilla's own genstep run. Limit the prefix to the surface `ScatterRuinsSimple` genstep (check the instance's `def`), or decide that underground ruins are in scope too.
+
+---
+
+### M11. `CitizenForcesGeneration` Requests Pawn Groups Below the Faction Minimum
+**File**: `Source/Classes/DynamicMapObjects/DefenderForcesGenerator/CitizenForcesGeneration.cs` (`SpawnGroup`, called from `GenerateStartingParty`)
+**What**: Seen 2026-10-30 on a planetary POI start (attack mode): `ERROR Faction Navelonia of def OutlanderCivil has no usable PawnGroupMakers for parms groupKind=Settlement ... points=21`. The leftover uncovered cost becomes a tiny points value, below what any of the faction's group makers can generate.
+**Impact**: Vanilla error in the log; that group is simply empty (no crash).
+**Fix**: Skip the group when `points < faction.def.MinPointsToGeneratePawnGroup(groupKind)` (or raise points to that minimum).
+
+---
+
+### M12. Regular Chunks Are Scattered Over a Starting POI Map
+**File**: `Source/Classes/Scattering/GenStep_ScatterRealRuins.cs` (site guard in `Generate`)
+**What**: Seen 2026-10-30: starting a new game on a planetary POI, the POI map got its blueprint and then `Spawning 6 ruin chunks` from the regular scatter. The guard skips tiles with a `RealRuinsPOIWorldObject`/`AbandonedBaseWorldObject`, but on game start the POI is apparently already replaced by the player's settlement, so the guard doesn't fire. Visiting a POI later (caravan) is skipped correctly.
+**Impact**: Random ruin chunks on top of the POI base on the starting map.
+**Fix**: Also skip when `PlanetaryRuinsInitData.shared.startingPOI` is set for this tile (or when the map generator is `RealRuinsPOI`).
+
+---
+
 ## LOW — Code quality, performance, maintainability
 
 ### L1. `RemoveWall()` O(w×h) Per Call Inside O(w×h) Loops

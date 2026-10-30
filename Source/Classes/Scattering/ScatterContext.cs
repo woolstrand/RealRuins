@@ -17,6 +17,10 @@ namespace RealRuins {
         // Data produced during the run. Some of it is read back by the caller (e.g. uncovered cost for starting parties).
         public readonly ScatterState state = new ScatterState();
 
+        // Optional blueprint already loaded earlier in the same map generation (e.g. a POI genstep needs its size first).
+        // The pipeline modifies it in place, so a blueprint can feed only one run.
+        public Blueprint preloadedBlueprint;
+
         public ScatterContext(ScatterOptions options, PipelineSettings settings) {
             this.options = options.Copy();
             this.settings = settings;

@@ -4,127 +4,122 @@
 
 ## Overview
 
-"Scattering" is how blueprints end up on generated maps. There are two distinct paths:
-1. **Standard scatter** (`GenStep_ScatterRealRuins`) — places multiple small ruin chunks on any newly generated map. There actually are several classes intended for both scattering small ruins and scattering event ruins at a whole map scale.
-2. **POI scatter** (`GenStep_ScatterPOIRuins`) — places one large blueprint when entering a `RealRuinsPOIWorldObject` or `AbandonedBaseWorldObject`
+"Scattering" is how blueprints end up on generated maps. Every path ends in one scatterer, `RuinsScatterer.Scatter`;
+what differs is the genstep around it:
+
+1. **Standard scatter** (`GenStep_ScatterRealRuins`) — several ruin chunks on any map built from vanilla `MapCommonBase`
+   (patched in by `1.7/Patches/MapGenerator_Patch.xml`).
+2. **Site scatter** (`GenStep_RealRuinsSite`, abstract) — one blueprint is the whole map. Subclasses only build a `SitePlan`:
+   - `GenStep_ScatterLargeRealRuins` — `AbandonedBase` (Pristine ruins event and quest)
+   - `GenStep_ScatterMediumRealRuins` — caravan small ruins (`CaravanSmallRuinsWorldObject`)
+   - `GenStep_ScatterPOIRuins` — planetary POIs (`RealRuinsPOIWorldObject`)
 
 **Files:**
-- `Source/Classes/Scattering/Constants.cs`
-- `Source/Classes/Scattering/ScatterOptions.cs`
 - `Source/Classes/Scattering/RuinsScatterer.cs`
-- `Source/Classes/Scattering/GenStep_ScatterRealRuins.cs` (also contains `GenStep_ScatterLargeRealRuins`)
+- `Source/Classes/Scattering/ScatterOptions.cs`, `ScatterOptionsFactory.cs`, `ScatterContext.cs`, `ScatterState.cs`, `PipelineSettings.cs`
+- `Source/Classes/Scattering/GenStep_ScatterRealRuins.cs` (also `GenStep_ScatterLargeRealRuins`, `GenStep_ScatterMediumRealRuins`)
+- `Source/Classes/Scattering/GenStep_RealRuinsSite.cs` (`GenStep_RealRuinsSite`, `SitePlan`)
 - `Source/Classes/DynamicMapObjects/GenStep_ScatterPOIRuins.cs`
 
 ---
 
-## ScatterOptions
+## Options, context, state
 
-The central configuration object passed through the entire blueprint pipeline. Implements `IExposable` so a "settings template" instance can be persisted.
-
-### Field Categories
-
-**User-configured (persisted via `ExposeData()`):**
-- `minRadius`, `maxRadius` — blueprint chunk size range
-- `densityMultiplier` — how many chunks to place
-- `deteriorationMultiplier` — decay intensity (0 = pristine, 1 = heavy decay)
-- `scavengingMultiplier` — looting intensity
-- `itemCostLimit` — per-item market value cap (1000 = no limit; sentinel)
-- `costCap` — total blueprint value cap (used to limit ruin wealth)
-- `hostileChance` — probability of hostile forces being generated
-- `disableSpawnItems` — walls/doors only mode
-- `wallsDoorsOnly` — alias for above
-- `canHaveFood` — whether food items survive
-- `shouldKeepDefencesAndPower` — preserve turrets, power
-- `doorOwnershipProbability` — faction assignment probability for doors/walls
-- `forceFullHitPoints` — spawn things at full HP (for takeover mode)
-- `overwritesEverything` — whether to remove existing map objects first
-
-**Runtime state (set during scatter, not persisted):**
-- `bottomLeft` — map origin of placement
-- `blueprintRect` — actual rect used
-- `roomMap` — copy of `wallMap` after `FindRooms()`
-- `blueprintFileName` — pre-selected file (quests, POIs); if null, random is chosen
-- `overridePosition` — explicit placement position override
-- `useGlobalOrigin` — use blueprint's original world coordinates
-
-### Important: `ScatterOptions.Default` and `asIs()`
-
-`ScatterOptions.Default` is a **shared mutable singleton instance**. `asIs()` is safe: it starts from `Default.Copy()`. Always create a copy via `Copy()` before modifying options; settings pages and `SettingsSerializer.TryImport` write into `RealRuins_ModSettings.defaultScatterOptions`, which aliases `Default` unless `Reset()` has replaced it.
-
-The `Copy()` method performs a **shallow copy**. `roomMap` (2D array) and rect fields are copied by reference.
-
-**Known bug**: `Copy()` does not copy `costCap`, `startingPartyPoints` or `overridePosition`.
+- `ScatterOptions` — what to generate. User-tunable fields are persisted via `ExposeData()` as the settings template
+  (`RealRuins_ModSettings.defaultScatterOptions`); the rest are internal and set per scatterer.
+- `ScatterOptionsFactory` — the only place where a scatterer's options are built (`ForGenericRuins`, `ForCaravanSmallRuins`,
+  `ForAbandonedBase`, `ForPOI`, `ForAnalyzer`). Each call returns a fresh object, never linked to the settings store.
+- `PipelineSettings` — global mod options applied the same way everywhere (blacklists, fallback material, force multiplier).
+- `ScatterContext` — one per `Scatter` call: a private copy of the options, the settings, a fresh `ScatterState`, and an
+  optional `preloadedBlueprint`.
+- `ScatterState` — data produced by the run (`roomMap`, `uncoveredCost`, `placementRect`), read by force generators.
 
 ---
 
 ## RuinsScatterer
 
-Static class with a single `Scatter(ScatterOptions options)` static method. Orchestrates the full processing pipeline for one blueprint placement.
+`Scatter(ResolveParams rp, ScatterContext context, CoverageMap coverage, List<AbstractDefenderForcesGenerator> generators)`.
+`rp` is input only (placement hint and faction).
 
 ### Pipeline (in order)
-1. Blueprint resolution: use `options.blueprintFileName` if set; else `BlueprintFinder.FindRandomBlueprintWithParameters()`
-2. Load: whole blueprint or `RandomPartCenteredAtRoom()` depending on `shouldLoadPartOnly`; radius = `Rand.Range(minRadius, maxRadius)`
-3. `BlueprintPreprocessor.ProcessBlueprint()`
-4. `blueprint.FindRooms()` + store `wallMap` in `options.roomMap`
-5. Create `BlueprintTransferUtility`
-6. `btu.RemoveIncompatibleItems()`
-7. `blueprint.UpdateBlueprintStats(includeCost: false)` (fast, no market cost calc)
-8. `DeteriorationProcessor.Process()`
-9. `ScavengingProcessor.RaidAndScavenge()`
-10. `btu.Transfer(coverageMap)`
-11. `AbstractDefenderForcesGenerator.GenerateStartingParty()` (each generator)
-12. `AbstractDefenderForcesGenerator.GenerateForces()` (each generator)
-13. `btu.AddFilthAndRubble()`
+1. Blueprint: `context.preloadedBlueprint` if set; else `options.blueprintFileName` if loadable; else
+   `BlueprintFinder.FindRandomBlueprintWithParameters()` with the options' minimum area / density / cost, 15 attempts.
+2. Load: whole blueprint or `RandomPartCenteredAtRoom()` depending on `shouldLoadPartOnly`; size = `Rand.Range(minRadius, maxRadius)` square.
+3. `CutIfExceedsBounds`, `BlueprintPreprocessor.ProcessBlueprint()`, `FindRooms()` (→ `state.roomMap`)
+4. `BlueprintTransferUtility`: `RemoveIncompatibleItems()`, `UpdateBlueprintStats(true)`
+5. `DeteriorationProcessor.Process()`, `ScavengingProcessor.RaidAndScavenge()`
+6. `btu.Transfer(coverage)`
+7. `GenerateForces()` for each generator
+8. `btu.AddFilthAndRubble()` if `shouldAddFilth`
 
-**Error handling**: Steps 10–13 are each in independent `try/catch` blocks for partial-success resilience.
+Steps 6–8 are in independent `try/catch` blocks. The pipeline modifies the blueprint in place, so one loaded blueprint feeds one run.
 
-**Timing**: `DateTime.UtcNow` comparisons at each stage; logged at `Debug.Extra` level.
+### Why site blueprints are loaded twice
+A site's blueprint is picked when the site is created (event, quest, POI generation) but the map is generated when the player
+visits it — maybe days later, after a game restart. Only the file name is saved (`RuinedBaseComp.blueprintFileName`, POI comp);
+the blueprint is loaded again during map generation. Saving the blueprint would add megabytes of XML per site to the save,
+and keeping it in memory until the visit costs a lot of RAM for one load behind the loading screen. Within one map generation a
+blueprint is never loaded twice: `SitePlan.blueprint` / `ScatterContext.preloadedBlueprint` pass it on (used by POIs).
 
 ---
 
 ## GenStep_ScatterRealRuins
 
-Placed in XML map generators (see `1.7/Defs/MapGeneratorDefs/`). Drives standard multi-chunk scatter.
+### Guards
+- Stored blueprint count < 10
+- Starting map, if `startWithoutRuins`
+- A `RealRuinsPOIWorldObject` or `AbandonedBaseWorldObject` on the tile (the map is a site itself). Caravan small ruins maps
+  are **not** skipped on purpose: they get regular chunks around the main ruin.
+- Water-covered tile
 
-### `Generate(Map map, GenStepParams parms)`
+### Proximity (`enableProximity`)
+`CalculateDistanceToNearestSettlement()` flood-fills the world grid up to 16 tiles: non-player settlement = its distance,
+site = twice its distance; a settlement or site on the tile itself = 1 (largest chunks); nothing found = 16.
+- Distance ≥ 16: 50% chance of no chunks.
+- Chunk size: `ScaleCurve(d) = exp(1 / (d/5 + 0.5)) - 0.3`, side kept within 6–60.
+- Chunk count: `DensityCurve(max(d, 4)) / countNormalization`, with `DensityCurve(d) = exp(1 / (d/10 + 0.3)) - 0.7`.
+  Distances below 4 count as 4: players can't settle next to a settlement and rarely settle closer than 4 tiles.
+  A settlement or site on the tile itself (faction base attack, quest site) keeps multiplier 1, so it isn't buried in ruins.
+- `countNormalization` (≈2.02) is the average extra coverage (count × chunk area) the curves give over distances 4–16, so the
+  covered area averaged over those distances matches the time proximity affected chunk size only. Default settings, 250x250 map:
+  ≈1.7× chunks at ≤4 tiles, ≈1× at 8, ≈0.5× at 16.
+- Scavenging and deterioration use the raw `DensityCurve(d)` and `ScaleCurve(d)`.
 
-**Guards:**
-- Skip if stored blueprint count < 10
-- Skip starting tile (if applicable)
-- Skip if a `RealRuinsPOIWorldObject` or `AbandonedBaseWorldObject` already exists at this world tile
+### Chunk count
+`(int)(mapArea / 10000) × Rand.Range(1, 2) × user density × count multiplier`, no upper limit: high density settings
+produce dense "cities".
 
-**Proximity system** (`CalculateDistanceToNearestSettlement()`):
-- BFS flood-fill on world grid, limited to 16 tiles
-- Finds minimum distance to nearest enemy settlement or site
-- Settlement distance used as-is; site distance is halved (half the influence)
-- Results in density and scale multipliers via exponential curves:
-  - `densityMultiplier = exp(1 / (dist/10 + 0.3)) - 0.7`
-  - `scaleMultiplier = exp(1 / (dist/5 + 0.5)) - 0.3`
-- 50% chance of zero ruins if distance ≥ 16
-
-**Chunk placement:**
-- Count: proportional to `(mapArea / someBase) × totalDensity × Rand.Range(1,2)`
-- Each chunk: random position via `CellFinder.RandomNotEdgeCell(10, map)`
-- Forces: 80/20 split — `CitizenForcesGeneration` vs `MilitaryForcesGenerator` per `hostileChance`
-- `densityMultiplier` cap: `while (densityMultiplier * maxRadius > 800) densityMultiplier *= 0.9` — developer-acknowledged hack (comment: "WHAT? Why not 800/radius?"); could be a single division
-
-**Tick management:**
-- Pauses game before scatter to prevent the game running during slow generation
-- `shouldUnpause` flag tracks whether game was already paused before scatter
-
-### `GenStep_ScatterLargeRealRuins`
-For `AbandonedBase` maps. Same class file. Places a single large blueprint (no multiple chunks). Sets `minRadius`/`maxRadius` = 400 to load whole blueprint.
+Each chunk gets its own `ScatterContext`, a random `RandomNotEdgeCell(10)` position and, with `hostileChance`, animal (80%)
+or mechanoid (20%) defenders. The game is paused while scattering.
 
 ---
 
-## GenStep_ScatterPOIRuins
+## GenStep_RealRuinsSite
 
-For POI entry maps. The most configuration-rich GenStep.
+Common flow for one-blueprint maps:
+1. Pause, `MakePlan(map)` (subclass). A null plan skips generation.
+2. BaseGen globals (`map`, `mainRect = plan.rect`), `PushExtraSymbols(map, rp, plan)` (virtual, subclass)
+3. `RuinsScatterer.Scatter` — always, even without generators
+4. Push `chargeBatteries`, `ensureCanHoldRoof` (unless disabled), `refuel`; `BaseGen.Generate()` (LIFO: extra symbols resolve last)
+5. `GenerateStartingParty()` for each generator — done outside BaseGen on purpose (pawn placement issues)
+6. `Finish(map)` (subclass), also on failure
 
-### Context Detection
-Checks `PlanetaryRuinsInitData.shared.startingPOI` first (new-game settle flow). Otherwise uses the world object at the current tile.
+### `SitePlan`
+`options`, `faction`, `rect`, optional `blueprint` (preloaded), `generators` (null/empty = no defenders),
+`ensureCanHoldRoof`, `turretOperators` (POI). Data only; behavior lives in the genstep's virtual methods
+(`MakePlan`, `PushExtraSymbols`, `Finish`).
 
-### Settle Mode Behavior
+### `GenStep_ScatterLargeRealRuins` (abandoned base)
+Blueprint name, cost cap and raiders activity from `RuinedBaseComp`; `ForAbandonedBase` options; faction ancients hostile;
+`BattleRoyaleForcesGenerator` unless the force multiplier is 0.
+
+### `GenStep_ScatterMediumRealRuins` (caravan small ruins)
+Random blueprint via `ForCaravanSmallRuins` (min cost 25k, area 4000); no `ensureCanHoldRoof`. In `PushExtraSymbols`, with
+`0.5 × threatScale` chance pushes a `pawnGroup` raid of a random enemy faction (`|gaussian| × 500 × threatScale` points).
+
+### `GenStep_ScatterPOIRuins` (planetary POI)
+Context: `PlanetaryRuinsInitData.shared.startingPOI` (new-game settle flow) or the map parent's `RealRuinsPOIComp`.
+Loads the blueprint itself (options depend on its size/origin) and passes it in the plan.
 
 | Mode | Faction | Deterioration | HP | Filth |
 |------|---------|---------------|-----|-------|
@@ -132,44 +127,18 @@ Checks `PlanetaryRuinsInitData.shared.startingPOI` first (new-game settle flow).
 | `takeover` | player | disabled | full HP | no |
 | `attack` | hostile | disabled | full HP | no |
 
-### Option Configuration
-- `minRadius` = `maxRadius` = 400 (load whole blueprint, no sub-part)
-- Scavenging multiplier = 0 for active faction bases
-- `doorOwnershipProbability = 1.0` for active bases (all doors assigned to faction)
-- Random `costCap` = Gaussian around `width × height` for ruined mode
-- Random `itemCostLimit` = Gaussian around 100 for ruined mode
-
-### Forces Selection (`GeneratorsForBlueprint()`)
-- Ruins / no faction: 20% each for animals, mechanoids, or hostile citizen raiders
-- Military POI: `MilitaryForcesGenerator(militaryPower)` always; also citizen if cost high enough
-- Civilian POI: `CitizenForcesGeneration(bedsCount)` + optional `MilitaryForcesGenerator(3)` for expensive bases
-
-### Turret Manning (`ManTurrets()`)
-Pushes N `"pawn"` symbols onto `BaseGen.symbolStack` with `LordJob_ManTurrets`. Count = `mannableCount × 1.25 + 1`.
-
-### Post-Scatter BaseGen Stack
-Pushes `chargeBatteries`, `ensureCanHoldRoof`, `refuel` symbol resolvers, then calls `BaseGen.Generate()`. Note: BaseGen stack is LIFO, so these run in reverse order of push.
-
-### Cleanup
-Calls `PlanetaryRuinsInitData.shared.Cleanup()` after map generation to clear global init state.
-
----
-
-## Constants.cs
-
-Defines three string keys for `ResolveParams.GetCustom/SetCustom`:
-- `"realruins.scatteroptions"`
-- `"realruins.coveragemap"`
-- `"realruins.forcesgenerators"`
-
-**These are effectively dead code.** `ResolveParams.GetCustom/SetCustom` is broken and the `ResolveParams` struct is sealed — these keys were from an abandoned approach. Options are now passed directly.
+Forces (`GeneratorsForBlueprint()`): ruins / no faction — 20% each for animals, mechanoids or hostile citizens; military POI —
+`MilitaryForcesGenerator(militaryPower)`; civilian POI — `CitizenForcesGeneration(bedsCount)` + `MilitaryForcesGenerator(3)` for
+expensive bases. Hostile factions also get turret operators (`plan.turretOperators = mannableCount × 1.25 + 1`, pushed in `PushExtraSymbols` as
+`pawn` symbols with `LordJob_ManTurrets`).
+`Finish` clears `PlanetaryRuinsInitData.shared`.
 
 ---
 
 ## XML Def Registration
 
-Scatter gen steps are registered in XML defs:
-- `1.7/Defs/MapGeneratorDefs/MapGenerators_RealRuins.xml` — defines the custom map generator defs
-- `1.7/Defs/MapGeneratorDefs/Ruins_EncounterMapGenerator.xml` — encounter map generator
+- `1.7/Defs/MapGeneratorDefs/MapGenerators_RealRuins.xml` — genstep defs (`ScatterRealRuins`, `ScatterMediumRealRuins`,
+  `ScatterBaseRuins`, `ScatterPOIRuins`) and the `RealRuinsPOI` / `RealRuinsAbandonedBase` map generators
+- `1.7/Defs/MapGeneratorDefs/Ruins_EncounterMapGenerator.xml` — `CaravanRuinsMapGenerator`
 - `1.7/Defs/MapGeneratorDefs/Rules.xml` — symbol resolution rules for BaseGen
-- `1.7/Patches/MapGenerator_Patch.xml` — patches vanilla map generators to include scatter gen steps
+- `1.7/Patches/MapGenerator_Patch.xml` — adds `ScatterRealRuins` to vanilla `MapCommonBase`

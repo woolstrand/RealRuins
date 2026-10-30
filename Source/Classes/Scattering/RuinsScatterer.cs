@@ -26,13 +26,20 @@ namespace RealRuins {
             DateTime start = DateTime.UtcNow;
             Debug.Log(Debug.Scatter, "[0 s]: Loading blueprint of size {0} - {1} to deploy at {2}, {3}", options.minRadius, options.maxRadius, rp.rect.minX, rp.rect.minZ);
 
-            Blueprint bp = null;
+            // Sites pick their blueprint long before this runs (an event or quest picks it, the player visits the site days
+            // later, maybe after a game restart) and store only the file name; the blueprint is loaded again here.
+            // Keeping the loaded blueprint instead is not worth it: storing it in the save adds megabytes of XML per site
+            // (the file is already in the local cache), and holding it in memory until the visit costs a lot of RAM for
+            // a one-time load behind the map generation screen. The pipeline also modifies a blueprint in place, so a
+            // kept copy could be used only once anyway. A blueprint loaded earlier in the same map generation is reused
+            // via context.preloadedBlueprint.
+            Blueprint bp = context.preloadedBlueprint;
             Map map = BaseGen.globalSettings.map;
 
             //probably should split scattering options into several distinct objects
             string filename = options.blueprintFileName;
-            if (string.IsNullOrEmpty(filename) || !BlueprintLoader.CanLoadBlueprintAtPath(filename)) {
-                bp = BlueprintFinder.FindRandomBlueprintWithParameters(out filename, options.minimumAreaRequired, options.minimumDensityRequired, 15, removeNonQualified: options.deleteLowQuality);
+            if (bp == null && (string.IsNullOrEmpty(filename) || !BlueprintLoader.CanLoadBlueprintAtPath(filename))) {
+                bp = BlueprintFinder.FindRandomBlueprintWithParameters(out filename, options.minimumAreaRequired, options.minimumDensityRequired, options.minimumCostRequired, maxAttemptsCount: 15, removeNonQualified: options.deleteLowQuality);
                 if (string.IsNullOrEmpty(filename)) {
                     //still null = no suitable blueprints, fail.
                     Debug.Warning(Debug.Scatter, "Blueprint name was null and could not find another suitable blueprint, skipping");

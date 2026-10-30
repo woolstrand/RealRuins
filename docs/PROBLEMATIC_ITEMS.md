@@ -32,6 +32,26 @@ universal fix. Include the blueprint id when known - blueprints live in the loca
 
 ---
 
+## 2. Missing modded wall replaced by `Wall` keeps a non-stuff material
+
+**Seen:** 2026-10-30, Windows, RimWorld 1.7.4990, entering a Pristine Ruins site; blueprint
+`ECC47DFE-044C-4542-91D9-488EF507D622` (250x214), made with Vanilla Factions Expanded - Medieval, not loaded in the test game.
+
+**Blueprint content:** 11 `<item def="VFEM_CobblestoneWall" stuffDef="ChunkGranite" actsAsWall="1" />`.
+
+**Log, per ruins map:** 11x `ERROR [Verse] MakeThing error: Tried to make Wall from ChunkGranite which is not a stuff. Assigning default.`
+from `ThingMaker.MakeThing` ← `BlueprintTransferUtility.MakeThingFromItemTile`.
+
+**Where:** `BlueprintLoader` replaces an unavailable wall-like item with vanilla `Wall` but keeps its `stuffDef`.
+`MakeThingFromItemTile` only checks that the stuff def exists, not that it is a valid stuff for the thing, so vanilla logs an
+error and picks its default. The wall still spawns (vanilla default material).
+
+**Fix direction (universal):** in `MakeThingFromItemTile`, treat a stuff the thing can't be made of
+(`!stuff.IsStuff || !stuff.stuffProps.CanMake(thing)`) like a missing one: walls → `BlocksGranite`, others →
+`GenStuff.DefaultStuffFor`. Fix applied 2026-10-30, not verified in-game yet.
+
+---
+
 ## Related, already noted elsewhere
 
 - `CleaningStation` NRE in `MakeThingFromItemTile` (2026-10-29, macOS) - see the skill's `NOTES.md`; not

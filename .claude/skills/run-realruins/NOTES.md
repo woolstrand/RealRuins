@@ -22,7 +22,13 @@ searching to figure out. Keep entries short; no screen coordinates (they change 
   (`gzip -dc < X.bp`) - handy to see what a ruin contains.
 - **Cut pawn/corpse noise:** temporarily `return null` for `pawn`/`corpse` at the top of
   `BlueprintTransferUtility.MakeThingFromItemTile` (also `// TEMP-TEST`).
-- **Small ruins event:** incident `SmallRuinsFound` (targetTags Caravan / Map_TempIncident) - not tried yet.
+- **Planetary POI start:** New colony → scenario → storyteller (pick a difficulty) → Generate world → the "Load blueprints
+  for planet" window opens on site selection → **Load automatically** (downloads by seed, places POIs) → Close → click a
+  POI icon (inspector shows Faction) → Next → choose mode (abandoned / own / **attack**) → confirm → Start.
+- **Attack a faction base:** spawn a caravan next to it, select caravan, right-click base → **Attack X (Dev: instantly)**.
+  Some planetary POIs look like vanilla settlements (e.g. "Temporary camp") - check the inspector before attacking.
+- **Small ruins event:** select a caravan on the world map → Debug actions → **Do incident (<caravan>)...** →
+  `SmallRuinsFound` → **Investigate** in the dialog. Generates a 120x120 map and moves the caravan onto it.
 - **Caravan on demand:** world view → Debug actions → **T: Spawn Random Caravan** → click a tile.
 - **Reach a site instantly:** select the caravan, right-click the site → **Enter ruins (Dev: instantly)**.
   The camera stays on the world; open the "Caravan arrived at ruins" letter → **Jump to location**.
@@ -78,6 +84,11 @@ blueprint id) - that file also states the spawn philosophy: spawn what can be sp
   Fixed 2026-10-30 (unknown single-name kinds discarded, hediff parts remapped to the pawn's body or
   skipped); if they reappear, it's a regression. The decoder's skip reasons are `Debug.Extra` - not in
   the log by default.
+- `[Scatter]: dist D, dens X (count xM), scale xS ...` + `Spawning N ruin chunks` - M is the proximity count multiplier
+  (≈1.7 at ≤4 tiles from a settlement, ≈0.5 at 16+); no cap, N follows the density setting. Distance 1 = a settlement or
+  site on/next to the tile.
+- POI map generation logs `Spawning POI: Preselected file name`, `Selected N for POIs`, `Generating N starting parties` -
+  there is **no** `Generated map` line for POIs (that one is the abandoned base's `RuinedBaseComp`), don't `waitlog` for it.
 - `[Scatter]: dist 16+, dens 0 ... Spawning 0 ruin chunks` - **not a bug**: beyond 16 tiles from the
   nearest settlement scatter is skipped with 50% chance (`GenStep_ScatterRealRuins`). Retry another map.
 - `[BlueprintTransfer]: [2] Failed to load, recovering...` → `[2.1] Recovered!` - loader's normal
@@ -101,3 +112,14 @@ blueprint id) - that file also states the spawn philosophy: spawn what can be sp
   quest → random caravan → instant enter: 177 corpses instantiated, 0 errors (was ~1.6k). Scatter coin flip
   gave 0 chunks again. Clicking the dev toolbar right after closing a window can reopen Debug actions on the
   *Settings* tab, so a click meant for an action toggles a setting - screenshot before each click there.
+- 2026-10-30 (Windows, 1.7): verified the site genstep refactor (`GenStep_RealRuinsSite`). forceMultiplier set to 0 in
+  `Config/Mod_RealRuins_RealRuins_Mod.xml` (backed up and restored): Pristine ruins quest → ruins spawned, no defenders.
+  SmallRuinsFound on a caravan next to a settlement: medium blueprint met min cost 25k, regular chunks dist 1 (35 chunks by the curve at the time; since
+  then the coverage cap was replaced by a normalized count multiplier, see docs/04-scattering.md).
+  POI path not tested in-game. Quicktest scatter coin flip gave 0 chunks twice; the first quicktest click was lost because
+  the mod was still loading snapshots - wait for the `[Store]: Loading snapshot` lines to stop.
+  Found `VFEM_CobblestoneWall` stuff error (PROBLEMATIC_ITEMS #2).
+- 2026-10-30 (Windows, 1.7): verified site-step virtual methods, on-tile count limit, planetary POI. New game on a POI
+  (attack): POI blueprint loaded once, citizen defenders + starting party, no new errors (M11 pawn-group error is old).
+  Attacking a pirate base: dist 1, count x1. Small ruins: raid party present (red pawns). The settlement "DEV: Generate"
+  gizmo gave dist 16 on a base tile - use a caravan attack instead to test on-tile maps. Found M11, M12 (FIXES_QUEUE).

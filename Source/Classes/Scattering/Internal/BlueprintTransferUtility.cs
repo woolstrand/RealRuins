@@ -116,7 +116,6 @@ namespace RealRuins
 
             return cachedFallbackMaterial;
         }
-
         private Thing MakeThingFromItemTile(ItemTile itemTile, bool enableLogging = false, int? x = null, int? z = null)
         {
             try
@@ -214,6 +213,13 @@ namespace RealRuins
                             return null;
                         }
                     }
+                }
+
+                // The stuff may exist but be invalid for this thing (e.g. a missing modded wall was replaced with a vanilla Wall
+                // but kept its original stuff). Treat it as missing so the default below is used instead of a vanilla error.
+                if (stuffDef != null && !(stuffDef.IsStuff && stuffDef.stuffProps.CanMake(thingDef)))
+                {
+                    stuffDef = null;
                 }
 
                 if (stuffDef == null)

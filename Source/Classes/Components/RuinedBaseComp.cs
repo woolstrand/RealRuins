@@ -22,7 +22,7 @@ namespace RealRuins {
 
     public class RuinedBaseComp : WorldObjectComp {
 
-        public string blueprintFileName = "";
+        public string blueprintFileName = ""; //only the name is saved, the blueprint is loaded again on map generation (see RuinsScatterer.Scatter)
 
         private RuinedBaseState state = RuinedBaseState.Inactive;
         public float unlockTargetTime = -1; //when all raids are done, the component sets random timeout after which you can exit the map

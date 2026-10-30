@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,7 +11,8 @@ using Verse.AI.Group;
 using Verse;
 
 namespace RealRuins {
-    class GenStep_ScatterPOIRuins : GenStep {
+    // Planetary POI: a blueprint placed at its original position, either intact (faction base) or as ruins.
+    class GenStep_ScatterPOIRuins : GenStep_RealRuinsSite {
 
         public override int SeedPart {
             get {
@@ -20,9 +21,7 @@ namespace RealRuins {
         }
 
 
-        public override void Generate(Map map, GenStepParams parms) {
-            Find.TickManager.Pause();
-            
+        protected override SitePlan MakePlan(Map map) {
             RealRuinsPOIComp poiComp;
             bool skipForcesGeneration = false;
             bool overrideSpawnAsRuins = false;
@@ -68,15 +67,18 @@ namespace RealRuins {
             Debug.Log("Spawning POI: Preselected file name is {0}", filename);
             Debug.Log("Location is {0} {1}", poiComp.originX, poiComp.originZ);
 
+            //Loaded here because the options depend on its size and position; the scatterer reuses it instead of loading again.
             var bp = BlueprintLoader.LoadWholeBlueprintAtPath(filename);
+            if (bp == null) {
+                Debug.Warning(Debug.Scatter, "Could not load POI blueprint {0}", filename);
+                return null;
+            }
 
-            PipelineSettings settings = PipelineSettings.FromModSettings();
-            if (settings.forceMultiplier == 0.0f) {
+            if (RealRuins_ModSettings.forceMultiplier == 0.0f) {
                 skipForcesGeneration = true;
             }
 
             ScatterOptions options = ScatterOptionsFactory.ForPOI(filename, bp, (POIType)poiComp.poiType, faction != null, overrideSpawnAsRuins);
-            ScatterContext context = new ScatterContext(options, settings);
 
             Debug.Log(Debug.BlueprintTransfer, "Trying to place POI map at tile {0}, at {1},{2} to {3},{4} ({5}x{6})",
                 map.Parent.Tile,
@@ -84,48 +86,30 @@ namespace RealRuins {
                 bp.originX + bp.width, bp.originZ + bp.height,
                 bp.width, bp.height);
 
-            List<AbstractDefenderForcesGenerator> generators = null;
+            SitePlan plan = new SitePlan {
+                options = options,
+                faction = faction,
+                rect = new CellRect(options.overridePosition.x, options.overridePosition.z, map.Size.x - options.overridePosition.x, map.Size.z - options.overridePosition.z),
+                blueprint = bp,
+            };
+
             if (!skipForcesGeneration && faction != null && faction != Faction.OfPlayer) {
-                generators = GeneratorsForBlueprint(bp, poiComp, faction);
+                plan.generators = GeneratorsForBlueprint(bp, poiComp, faction);
             }
 
-            ResolveParams resolveParams = default(ResolveParams);
-            BaseGen.globalSettings.map = map;
-            resolveParams.faction = faction;
-            resolveParams.rect = new CellRect(options.overridePosition.x, options.overridePosition.z, map.Size.x - options.overridePosition.x, map.Size.z - options.overridePosition.z);
-
-
-            BaseGen.globalSettings.mainRect = resolveParams.rect;
-
-            if (resolveParams.faction != null && resolveParams.faction != Faction.OfPlayer) {
-                ManTurrets((int)(poiComp.mannableCount * 1.25f + 1), resolveParams, map);
+            if (faction != null && faction != Faction.OfPlayer) {
+                plan.turretOperators = (int)(poiComp.mannableCount * 1.25f + 1);
             }
+            return plan;
+        }
 
-
-            RuinsScatterer.Scatter(resolveParams, context, null, generators);
-
-            //ok, but why LIFO? Queue looks more suitable for map generation.
-            //Looks like it was done for nested symbols resolving, but looks strange anyway.
-
-            BaseGen.symbolStack.Push("chargeBatteries", resolveParams);
-            BaseGen.symbolStack.Push("ensureCanHoldRoof", resolveParams);
-            BaseGen.symbolStack.Push("refuel", resolveParams);
-
-            BaseGen.Generate();
-
-            if (generators != null) {
-                Debug.Log(Debug.BlueprintTransfer, "Found forces generators, generating {0} starting parties", generators.Count());
-                foreach (AbstractDefenderForcesGenerator generator in generators) {
-                    generator.GenerateStartingParty(map, resolveParams, context);
-                }
-            }
-
+        protected override void Finish(Map map) {
             // Cleanup init data to ensure it won't interefere in future
             PlanetaryRuinsInitData.shared.Cleanup();
         }
 
-        private void ManTurrets(int count, ResolveParams rp, Map map) {
-            for (int i = 0; i < count; i++) {
+        protected override void PushExtraSymbols(Map map, ResolveParams rp, SitePlan plan) {
+            for (int i = 0; i < plan.turretOperators; i++) {
                 Lord singlePawnLord = LordMaker.MakeNewLord(rp.faction, new LordJob_ManTurrets(), map);
                 PawnKindDef kind = rp.faction.RandomPawnKind();
                 int tile = map.Tile;
