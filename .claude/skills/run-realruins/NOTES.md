@@ -73,10 +73,11 @@ blueprint id) - that file also states the spawn philosophy: spawn what can be sp
 - `[BlueprintTransfer]: Failed to spawn item <Def> because of ...` - caught per-item failure; the map
   still generates. Seen: `CleaningStation` NRE in `MakeThingFromItemTile` (2026-10-29, unfixed);
   `PortableReactor` NRE (2026-10-29, Windows/1.7; fixed 2026-10-30 - missing inner defs now skipped).
-- `[BlueprintPawnDecoder]: Pawn decoding failed: NullReferenceException` + `[BlueprintTransfer]: Failed to
-  spawn item corpse` - corpses from blueprints made with modded races. Came with ~1.4k
-  `Could not load reference to Verse.BodyDef named Android4Tier` (Android mod not loaded) and
-  `Tried to restore null body part`. ~100 per ruins map; map still generates (unfixed).
+- `[BlueprintPawnDecoder]: Pawn decoding failed` / `Failed to spawn item corpse` / `Could not load reference
+  to Verse.BodyDef named X` / `Tried to restore null body part` - modded-race pawns (unknown kind or body).
+  Fixed 2026-10-30 (unknown single-name kinds discarded, hediff parts remapped to the pawn's body or
+  skipped); if they reappear, it's a regression. The decoder's skip reasons are `Debug.Extra` - not in
+  the log by default.
 - `[Scatter]: dist 16+, dens 0 ... Spawning 0 ruin chunks` - **not a bug**: beyond 16 tiles from the
   nearest settlement scatter is skipped with 50% chance (`GenStep_ScatterRealRuins`). Retry another map.
 - `[BlueprintTransfer]: [2] Failed to load, recovering...` → `[2.1] Recovered!` - loader's normal
@@ -96,3 +97,7 @@ blueprint id) - that file also states the spawn philosophy: spawn what can be sp
 - 2026-10-30 (Windows, 1.7): verified the missing-inner-def fix with a forced blueprint (EEDE39B6) and
   pawns disabled: quicktest scatter 18 chunks, quest → caravan → enter, 0 errors. `waitlog` fix confirmed.
   No game self-restart this time.
+- 2026-10-30 (Windows, 1.7): verified the modded-race pawn fix with forced blueprint EEDE39B6 via
+  quest → random caravan → instant enter: 177 corpses instantiated, 0 errors (was ~1.6k). Scatter coin flip
+  gave 0 chunks again. Clicking the dev toolbar right after closing a window can reopen Debug actions on the
+  *Settings* tab, so a click meant for an action toggles a setting - screenshot before each click there.

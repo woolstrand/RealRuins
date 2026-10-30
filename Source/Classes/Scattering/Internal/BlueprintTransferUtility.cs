@@ -148,7 +148,8 @@ namespace RealRuins
                     if (itemTile.innerItems != null)
                     {
                         Debug.Log(Debug.BlueprintTransfer, "Now need to instantiate corpse at {0}, {1}", x, z);
-                        Pawn p = (Pawn)MakeThingFromItemTile(itemTile.innerItems.First(), x: x, z: z, enableLogging: true);
+                        Pawn p = MakeThingFromItemTile(itemTile.innerItems.First(), x: x, z: z, enableLogging: true) as Pawn;
+                        if (p == null) return null;
                         Find.WorldPawns.PassToWorld(p);
                         Corpse corpse = null;
                         if (p.Corpse != null)

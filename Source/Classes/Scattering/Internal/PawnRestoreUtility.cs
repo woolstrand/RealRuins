@@ -52,6 +52,11 @@ namespace RealRuins
                         kindDef = PawnKindDefOf.Villager;
                         Debug.Extra(Debug.BlueprintPawnDecoder, "PawnKindDef not found: {0}, using Villager as fallback", pawnKind);
                     }
+                    else
+                    {
+                        Debug.Extra(Debug.BlueprintPawnDecoder, "PawnKindDef not found: {0}, discarding pawn", pawnKind);
+                        return null;
+                    }
                 }
 
                 Pawn p = PawnGenerator.GeneratePawn(kindDef, faction);
@@ -594,6 +599,10 @@ namespace RealRuins
 
                 // Validate and fix body part reference
                 var partNode = hediffNode.SelectSingleNode("part");
+                if (partNode != null && !ValidateAndFixPartBody(partNode, hediffDefName, pawn))
+                {
+                    return false;
+                }
                 if (partNode != null)
                 {
                     string partDefName = partNode.SelectSingleNode("def")?.InnerText;
@@ -660,6 +669,61 @@ namespace RealRuins
                 Debug.Extra(Debug.BlueprintPawnDecoder, "Exception during hediff validation: {0}", ex.Message);
                 return false;
             }
+        }
+
+        /// <summary>
+        /// Validates a saved body part reference (<body>X</body><index>N</index>) against the generated pawn's body.
+        /// Vanilla resolves it as BodyDef X, part AllParts[N] - and logs an error if X doesn't exist. Pawns of
+        /// modded races may be generated with a different (fallback) race, so the reference is remapped to the
+        /// pawn's body by part def when possible. Returns false if the hediff should be skipped.
+        /// </summary>
+        private bool ValidateAndFixPartBody(XmlNode partNode, string hediffDefName, Pawn pawn)
+        {
+            XmlNode bodyNode = partNode.SelectSingleNode("body");
+            XmlNode indexNode = partNode.SelectSingleNode("index");
+            if (bodyNode == null || string.IsNullOrEmpty(bodyNode.InnerText)) return true;
+
+            BodyDef pawnBody = pawn?.RaceProps?.body;
+            if (pawnBody == null) return false;
+
+            if (indexNode == null || !int.TryParse(indexNode.InnerText, out int index) || index < 0)
+            {
+                Debug.Extra(Debug.BlueprintPawnDecoder, "Hediff {0} has invalid part index, skipping", hediffDefName);
+                return false;
+            }
+
+            if (bodyNode.InnerText == pawnBody.defName)
+            {
+                if (index < pawnBody.AllParts.Count) return true;
+                Debug.Extra(Debug.BlueprintPawnDecoder, "Hediff {0} part index {1} is out of range for body {2}, skipping", hediffDefName, index, pawnBody.defName);
+                return false;
+            }
+
+            BodyDef originalBody = DefDatabase<BodyDef>.GetNamedSilentFail(bodyNode.InnerText);
+            if (originalBody == null || index >= originalBody.AllParts.Count)
+            {
+                Debug.Extra(Debug.BlueprintPawnDecoder, "Hediff {0} references missing body {1}, skipping", hediffDefName, bodyNode.InnerText);
+                return false;
+            }
+
+            // Map to the same part def in the pawn's body, keeping the occurrence number (left/right etc.) when possible
+            BodyPartDef partDef = originalBody.AllParts[index].def;
+            int occurrence = originalBody.AllParts.Take(index).Count(p => p.def == partDef);
+            List<int> candidates = new List<int>();
+            for (int i = 0; i < pawnBody.AllParts.Count; i++)
+            {
+                if (pawnBody.AllParts[i].def == partDef) candidates.Add(i);
+            }
+            if (candidates.Count == 0)
+            {
+                Debug.Extra(Debug.BlueprintPawnDecoder, "Hediff {0} references part {1} which body {2} doesn't have, skipping", hediffDefName, partDef.defName, pawnBody.defName);
+                return false;
+            }
+
+            int newIndex = candidates[Math.Min(occurrence, candidates.Count - 1)];
+            bodyNode.InnerText = pawnBody.defName;
+            indexNode.InnerText = newIndex.ToString();
+            return true;
         }
 
         /// <summary>
