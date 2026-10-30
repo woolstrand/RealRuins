@@ -64,11 +64,7 @@ Single list of known bugs, code smells and design weaknesses. Entries are groupe
 
 ---
 
-### H9. `Page_PlanetaryRuinsLoader` Background Thread Without Synchronization
-**File**: `Source/Classes/Page_PlanetaryRuinsLoader.cs`
-**What**: `CreateSitesInt()` runs on a background thread and writes `blueprintsProcessedCount`, `blueprintsUsed`, `pageState`, `forceStopLoading`, `forceStopTransfer`, all read from the UI thread, without synchronization. It also calls engine APIs off the main thread.
-**Impact**: Data races. In practice the fields are simple integers and enums, so torn reads are unlikely on x86 but not guaranteed. No cleanup if the window is closed mid-transfer.
-**Fix**: Mark shared fields `volatile`, use `Interlocked` for counters, and check the window-close state in the background loop.
+### H9. Fixed
 
 ---
 

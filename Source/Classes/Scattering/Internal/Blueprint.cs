@@ -37,7 +37,7 @@ namespace RealRuins {
             get => snapshotYearInt;
             set {
                 snapshotYearInt = value;
-                dateShift = -(value - 5500) - Rand.Range(5, 500);
+                dateShift = -(value - 5500) - ThreadSafeRand.Range(5, 500);
             }
         }
         public int dateShift { get; private set; }

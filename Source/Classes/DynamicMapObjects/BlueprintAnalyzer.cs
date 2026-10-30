@@ -239,7 +239,7 @@ namespace RealRuins {
 
             if (militaryFeatures >= 3 && militaryPower < 8 && prodScore < 50) {
                 if (result.internalArea < 2000) {
-                    return Rand.Chance(0.5f)?POIType.Outpost:POIType.Communication;
+                    return ThreadSafeRand.Chance(0.5f)?POIType.Outpost:POIType.Communication;
                 }
                 if (result.internalArea > 2000 && result.internalArea < 6000 && result.roomsCount < 20) {
                     return POIType.MilitaryBaseSmall;
