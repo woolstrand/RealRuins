@@ -19,51 +19,7 @@ namespace RealRuins{
         }
 
         public override void GenerateForces(Map map, ResolveParams rp, ScatterContext context) {
-            if (context == null) return;
-
-            int addedTriggers = 0;
-            float ratio = 10;
-            float remainingCost = context.state.uncoveredCost * (Rand.Value + 0.5f); //cost estimation as seen by other factions
-            Debug.Log(Debug.ForceGen, "Running citizen force generation with remaining cost of {0} (while uncovered is {1})", remainingCost, context.state.uncoveredCost);
-
-            float initialCost = remainingCost;
-
-            int triggersAbsoluteMaximum = 100;
-
-            while (remainingCost > 0) {
-
-                IntVec3 mapLocation = context.state.placementRect.RandomCell;
-                if (!mapLocation.InBounds(map)) continue;
-
-                ThingDef raidTriggerDef = ThingDef.Named("RaidTrigger");
-                RaidTrigger trigger = ThingMaker.MakeThing(raidTriggerDef) as RaidTrigger;
-
-                trigger.faction = rp.faction;
-
-                int raidMaxPoints = (int)(remainingCost / ratio);
-                float raidValue = Math.Abs(Rand.Gaussian()) * raidMaxPoints + Rand.Value * raidMaxPoints + 250.0f;
-                if (raidValue > 10000) raidValue = Rand.Range(8000, 11000); //sanity cap. against some beta-poly bases.
-                remainingCost -= raidValue * ratio;
-
-                trigger.value = ScalePointsToDifficulty(raidValue, context);
-
-                GenSpawn.Spawn(trigger, mapLocation, map);
-                Debug.Log(Debug.ForceGen, "Spawned trigger at {0}, {1} for {2} points, ticks left: {3}, faction: {4}", mapLocation.x, mapLocation.z, trigger.value, trigger.TicksLeft(), trigger.faction);
-                addedTriggers++;
-
-                context.state.uncoveredCost = Math.Abs(remainingCost);
-
-                if (addedTriggers > triggersAbsoluteMaximum) {
-                    if (remainingCost < initialCost * 0.2f) {
-                        if (Rand.Chance(0.1f)) {
-                            if (remainingCost > 100000) {
-                                remainingCost = Rand.Range(80000, 110000);
-                            }
-                            return;
-                        }
-                    }
-                }
-            }
+            SpawnRaidTriggers(map, rp, context, "citizen");
         }
 
         public override void GenerateStartingParty(Map map, ResolveParams rp, ScatterContext context) {

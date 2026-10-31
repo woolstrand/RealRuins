@@ -141,10 +141,7 @@ Intended: same as vanilla `SettlementUtility.AffectRelationsOnAttacked`, see the
 
 ---
 
-### L4. `GenerateForces()` Code Duplication in Defender Generators
-**File**: `CitizenForcesGeneration.cs` and `MilitaryForcesGenerator.cs`
-**What**: `GenerateForces()` is near-identical in both classes; only `GenerateStartingParty()` differs. `BattleRoyaleForcesGenerator` has a similar trigger budget loop.
-**Fix**: Move the common loop into `AbstractDefenderForcesGenerator`, with customizable parameters as virtual properties.
+### L4. Fixed
 
 ---
 
