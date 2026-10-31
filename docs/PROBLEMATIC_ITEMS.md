@@ -68,47 +68,111 @@ and keep the container, so one bad content item doesn't drop the whole thing.
 
 ---
 
-## 4. MinifiedThing fails in the post-spawn tick
+## 4. Minified moisture pump ticks while unspawned
 
-**Seen:** 2026-10-30, same session as #3.
+**Seen:** 2026-10-30, same session as #3 (as a failed post-spawn tick); 2026-10-31, Windows, RimWorld 1.7.4990 with ~50 mods,
+blueprint `E43CD04F-2A28-4E83-A0CF-D099C03D7D3C` (as an error while the ruin is being played).
 
-**Log:** `[BlueprintTransfer]: Exception while tried to perform tick for MinifiedThing of cost 0, retrhrowing...` followed
-by `Failed to spawn item MinifiedThing5391 of cost 0 because of exception Object reference not set to an instance of an object.`
-from `BlueprintTransferUtility.Transfer`. No inner stack trace is logged, so the failing member is unknown. "Cost 0"
-suggests the minified thing has no (valid) inner thing.
+**Log:** `[BlueprintTransfer]: Exception while tried to perform tick for MinifiedThing of cost 0, retrhrowing...` during
+transfer, and during play `ERROR [Verse] Exception ticking MinifiedThing<id> (at ...): NullReferenceException` from
+`CompTerrainPumpDry.AffectCell` ← `CompTerrainPump.CompTickRare` ← `ThingWithComps.TickRare` ← `Thing.DoTick` (x11 in 45 s).
 
-**Fix direction:** log the inner exception's stack, then check minified things with a missing or invalid inner thing before
-spawning them and skip them quietly.
+**Where:** a minified building made straight from the blueprint was never spawned, so comps that are set up in
+`PostSpawnSetup` stay empty. `CompTerrainPump.Working` treats a null `powerComp` as "working", so the inner pump ticks inside
+its crate and touches a null map. A pump the player minified was spawned once, so vanilla never hits this.
 
----
-
-## 5. Restored pawn gets an injury on a part that can't be hit
-
-**Seen:** 2026-10-30, Windows, new game on a planetary POI (seed `persecution`, attack mode).
-
-**Log:** `ERROR [Verse] Added injury to Waist but it should be impossible to hit it. pawn=Eminent dinfo=null` from
-`Hediff_Injury.PostAdd` ← `Pawn_HealthTracker.AddHediff` ← `PawnRestoreUtility.RestorePawnHealth`.
-
-**Where:** `RestorePawnHealth` re-adds the blueprint's injuries to whatever part they name. Vanilla flags injuries on parts
-whose body part def can't be hit (Waist is a "virtual" part). The pawn spawns; the error is log noise.
-
-**Fix direction (universal):** before adding an injury, skip it when the target part can't be hit (check the vanilla
-condition `Hediff_Injury.PostAdd` uses), or move it to the parent part.
+**Fix direction (universal):** don't let the inner thing of a minified thing tick, or initialise its comps the way a spawn
+would. The error repeats on every rare tick while the crate exists, so it is more than a single line of noise.
 
 ---
 
-## 6. Rimefeller `OilWellHead` fails in the post-spawn tick
+## 6. Rimefeller well heads fail in the post-spawn tick
 
-**Seen:** 2026-10-31, Windows, RimWorld 1.7.4990, entering a Pristine Ruins site; blueprint
-`D0D50647-393E-47AB-8C9A-BF4ADA5900E7` (Rimefeller loaded). Same pattern as #4.
+**Seen:** 2026-10-31, Windows, RimWorld 1.7.4990, entering Pristine Ruins sites with Rimefeller loaded; 7 of 30 random ruins.
+Blueprints `D0D50647-393E-47AB-8C9A-BF4ADA5900E7`, `F40ABA1D-624C-4335-AD5E-38328BCC022F`, `D277BC13-A088-42BD-9FAD-84BDF563C9FB`
+(`OilWellHead`), `E10CD2B6-D508-4949-9DA3-E733914CFE7F`, `F7808E0B-A7FC-496C-B50A-0401B9740838`,
+`E43CD04F-2A28-4E83-A0CF-D099C03D7D3C` (`DeepOilWellHead`).
 
-**Log:** `Exception while tried to perform tick for OilWellHead of cost 54, retrhrowing...` then `WARN ... Failed to spawn
-item OilWellHead<id> of cost 54 because of exception Object reference not set to an instance of an object.` from
-`BlueprintTransferUtility.Transfer`. The well head is destroyed right after spawning and the rest of the map is fine.
-Likely the well head expects a well/oil deposit or Rimefeller map component state that a ruin doesn't have.
+**Log:** `Exception while tried to perform tick for DeepOilWellHead of cost 54, retrhrowing...` then `WARN ... Failed to spawn
+item DeepOilWellHead<id> of cost 54 because of exception System.NullReferenceException` with
+`Rimefeller.Building_WellHead.TickRare()` ← `BlueprintTransferUtility.Transfer`. The well head is destroyed right after
+spawning; the rest of the map is fine.
 
-**Fix direction:** same as #4 - log the inner stack first. If post-spawn ticking of buildings regularly fails for modded
-content, consider whether the tick is needed at all for non-item things (it exists to settle items, e.g. rot).
+**Where:** `Transfer` runs one `DoTick`/`TickLong`/`TickRare` on every spawned thing during map generation. The well head's
+`TickRare` needs Rimefeller map state (oil grid / deposits) that isn't there yet, or at all, in a ruin.
+
+**Fix direction:** the tick exists to settle items (rot etc.). Restrict it to items, or on a tick exception keep the building
+instead of destroying it - it may tick fine once the map is finalized. Both change behaviour, so decide first.
+
+---
+
+## 7. Rimatomics reactor core fails in `SpawnSetup`
+
+**Seen:** 2026-10-31, Windows, RimWorld 1.7.4990, Rimatomics loaded; blueprints `E6F75BFA-5362-4433-A8D8-3AE39B2AB63C`
+(`ReactorCoreA`), `F7808E0B-A7FC-496C-B50A-0401B9740838` and `E43CD04F-2A28-4E83-A0CF-D099C03D7D3C` (`ReactorCoreC`).
+
+**Log:** `WARN ... Failed to spawn item ReactorCoreC<id> of cost 4268 because of exception System.ArgumentOutOfRangeException:
+Index was out of range` from `List.get_Item` ← `Rimatomics.Item_NuclearFuel.UpdateFuelRefs(reactorCore)` <-
+`reactorCore.RefreshFuelGrid` ← `reactorCore.SpawnSetup` ← `GenSpawn.Spawn` ← `BlueprintTransferUtility.Transfer`.
+
+**Where:** the core is spawned with the fuel restored from the blueprint as its contents; on spawn Rimatomics indexes its
+fuel slot list with values the restored fuel carries, and they don't match. The whole core (cost ~4k) is lost.
+
+**Fix direction (universal):** the same as #3 - when spawning a container with restored contents fails, retry it empty
+(contents dropped or placed next to it), so the container itself survives.
+
+---
+
+## 8. Dubs Bad Hygiene pipe overlaps a DBH building's pipe cell
+
+**Seen:** 2026-10-31, Windows, RimWorld 1.7.4990, Dubs Bad Hygiene loaded; blueprint `E4790701-7001-4170-B68A-FAA50C7D60DB`
+(reproduced in single-file mode, always the same map cell).
+
+**Log:** `ERROR [Verse] More than 1 pipe comp in the same cell at (107, 0, 87), things with pipes cannot overlap!` from
+`DubsBadHygiene.HygienePipeMapComp.RegisterPipe` ← `CompPipe.PostSpawnSetup` ← `Building_Pipe.SpawnSetup` <-
+`GenSpawn.Spawn` ← `BlueprintTransferUtility.Transfer`.
+
+**Where:** not a duplicate pipe: the blueprint has no cell with two pipes, and skipping a building when the same def already
+stands in the cell did not help (tried, reverted). The other pipe comp belongs to a (multi-cell) DBH building whose footprint
+covers a pipe cell - allowed by the DBH version the blueprint was made with, rejected by the current one. Both things spawn;
+it's log noise.
+
+**Fix direction:** none generic and cheap found. If it matters: before spawning, check the occupied cells for a thing with a
+comp of the same type (generic over comp types, not over DBH) and skip.
+
+---
+
+## 9. DBH fixtures are skipped by the "would destroy a DBH item" guard
+
+**Seen:** 2026-10-31, Windows, RimWorld 1.7.4990, Dubs Bad Hygiene + Vanilla Furniture Expanded loaded; 5 of 30 random ruins.
+Blueprints `CD858D3E-7829-4A99-B4FD-7D2D55F3B4B6`, `F40ABA1D-624C-4335-AD5E-38328BCC022F`, `E10CD2B6-D508-4949-9DA3-E733914CFE7F`,
+`F7808E0B-A7FC-496C-B50A-0401B9740838`, `C6768B21-4724-4517-9512-2BA1BEED6512`.
+
+**Log:** `WARN ... Failed to spawn item ToiletStuff<id> ... because of exception System.Exception: Can't spawn item because it
+will destroy Dubs Bad Hygiene Item and it will lead to app freeze.` - also `WashingMachine`, `ShowerStuff`, `BathtubStuff`,
+`BasinStuff`, `KitchenSink`, `HotTub`, `ToiletAdvStuff`, `ShowerAdvStuff`, `VFE_KitchenSinkCabinet`.
+
+**Where:** `BlueprintTransferUtility.Transfer`, the wipe loop before `GenSpawn.Spawn` (added 2020, commit 442441b). The comment
+says DBH items freeze the game when *removed* during mapgen, but the check tests the class of the **new** thing
+(`thing.def.thingClass`), not of `existingItem`. So every DBH fixture that would wipe anything (a plant, a chunk, filth) is
+dropped, while a non-DBH thing that wipes a DBH item is not stopped. It is also a mod-specific special case.
+
+**Fix direction:** check `existingItem` instead (matches the comment), then re-test whether the old freeze comes back. Not
+changed during the compatibility run because the original intent can't be confirmed from the code.
+
+---
+
+## 10. Name-based wall detection turns modded items into walls
+
+**Seen:** 2026-10-31, blueprint `E43CD04F-2A28-4E83-A0CF-D099C03D7D3C`: `<item def="SpellOf_ArcaneWallC" stackCount="4" />`
+(an item from a magic mod that wasn't loaded) is spawned as a vanilla `Wall`. The stack count error this caused is fixed
+(wall/door replacements now reset the stack count); the item still becomes a wall.
+
+**Where:** `Tiles.cs` marks any def whose name contains "wall" as `isWall`; `BlueprintLoader` then replaces it with `Wall`
+when the def is missing.
+
+**Fix direction:** trust the blueprint's `actsAsWall` attribute and fall back to the name only for old blueprints without it,
+or ignore the name for items that carry a `stackCount` (a real wall never does).
 
 ---
 

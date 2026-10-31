@@ -59,6 +59,21 @@ searching to figure out. Keep entries short; no screen coordinates (they change 
   copy is the one the build deploys to. The log's "Adding Woolstrand.RealRuins(<path>)" lines show both.
 - Windows: the driver must detach the game's stdio on launch, or anything piping driver output hangs
   until the game exits (fixed in `platform/win.sh`; keep it that way).
+- **Debug log "Auto-open" resets to ON every launch.** The first logged error after launch (even a harmless one) pops the
+  log over the screen and swallows the next clicks. Toggle "Auto-open is ON" off once per launch.
+- **The site of a fresh ruins event is selected** right after firing it; its own "Jump to location" gizmo (bottom bar)
+  centres it reliably. The newest letter is the bottom one, but an unrelated letter arriving at the same time shifts the
+  stack and the letter's jump can take you home instead.
+- **Clicking World while already on the world map switches to the home map.** After ticking a ruin, check whether the
+  caravan was lost (then you're already on the world, the site is gone) before clicking World.
+- **Pristine ruins blueprints get evicted from the cache** soon after use (only the `.bp.xml` meta stays). Copy a `.bp` you
+  want to re-test in single-file mode out of the cache right away; `SingleFileName` accepts any path.
+- **Single-file mode stores every download into `RealRuins/jeluder.bp`** (`SnapshotStoreManager`, debug leftover): parallel
+  downloads then log `Failed storing blueprint ... jeluder.bp ... used by another process`. Harmless; the file can be
+  deleted afterwards.
+- Subscribing to workshop mods works from outside the game: `cmd //c start "" steam://url/CommunityFilePage/<id>` opens the
+  page in the Steam client; the driver's input helper takes any pid, so `input.exe ss|click <steamwebhelper pid> ...`
+  screenshots and clicks the Steam window. Steam downloads while the game is closed; activate via `Config/ModsConfig.xml`.
 - Planetary loader: with >500 blueprints for the seed (seed `shotgun` has 579) a "whole lot of blueprints" dialog
   pops up first - pick "Get all" or "Get just 500". The seed list request sometimes fails ("Could not load maps
   list") - just press Load automatically again. Two `shotgun` blueprints always fail to download; their
@@ -117,6 +132,12 @@ blueprint id) - that file also states the spawn philosophy: spawn what can be sp
 
 ## Session log
 
+- 2026-10-31 (Windows, 1.7): mod compatibility run. Subscribed 24 popular 1.7 content mods (Vanilla Expanded furniture/
+  weapons/armour/cooking/brewing/books/plants/fishing/settlers/memes etc.) and activated them plus the already installed Dubs
+  Bad Hygiene and Rimatomics (~57 active mods). 30 random Pristine Ruins (quest → caravan → instant enter → 45 s at speed 1 →
+  T: Destroy Site) plus 5 single-file re-runs. Load and scatter clean. Fixed and verified: missing modded `sourceHediffDef`
+  on injuries, injuries on unhittable parts (Waist), minified things whose graphic throws (VFE Security bear trap),
+  stack count on wall/door replacements; spawn failures now log the full stack. Open: PROBLEMATIC_ITEMS #4, #6-#10.
 - 2026-10-31 (Windows, 1.7): settings import/export (L11, M14, numeric buffers), quicktest scatter (25/25), pristine ruins in
   manual reform mode: reform gizmo disabled with the new reason, thought "Very high wealth ruins" for a 622k site, raid triggers
   fired within 35 ticks of the logged expectation (L8). Found and fixed: map generation aborted by wall lamps without a wall
