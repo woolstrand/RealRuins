@@ -253,6 +253,20 @@ namespace RealRuins
                         if (thing.GetInnerIfMinified() == null) return null;
                     }
 
+                    //a minified thing is drawn with its inner thing's graphic; some modded buildings can't make one while unspawned
+                    if (thing is MinifiedThing minified)
+                    {
+                        try
+                        {
+                            Graphic innerGraphic = minified.InnerThing.Graphic;
+                        }
+                        catch (Exception e)
+                        {
+                            Debug.Extra(Debug.BlueprintTransfer, "Skipping minified {0}: its graphic fails: {1}", minified.InnerThing.def.defName, e.Message);
+                            return null;
+                        }
+                    }
+
                     if (thingDef.CanHaveFaction)
                     {
                         if (thingDef.IsDoor || thingDef.IsWall)
@@ -687,11 +701,11 @@ namespace RealRuins
                                         //Debug.Message("Ticked");
 
                                     }
-                                    catch (Exception e)
+                                    catch (Exception)
                                     {
                                         Debug.Log(Debug.BlueprintTransfer, "Exception while tried to perform tick for {0} of cost {1}, retrhrowing...", thing.def.defName, itemTile.cost);
                                         thing.Destroy();
-                                        throw e;
+                                        throw;
                                     }
 
                                     //Debug.Message("Setting up props");
@@ -721,7 +735,7 @@ namespace RealRuins
                                 }
                                 catch (Exception e)
                                 {
-                                    Debug.Warning(Debug.BlueprintTransfer, "Failed to spawn item {0} of cost {1} because of exception {2}", thing, itemTile.cost, e.Message);
+                                    Debug.Warning(Debug.BlueprintTransfer, "Failed to spawn item {0} of cost {1} because of exception {2}", thing, itemTile.cost, e);
                                     //ignore
                                 }
                             }
