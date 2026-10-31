@@ -315,8 +315,7 @@ namespace RealRuins
                 string childhoodDefName = storyNode.SelectSingleNode("childhood")?.InnerText;
                 if (!string.IsNullOrEmpty(childhoodDefName))
                 {
-                    BackstoryDef childhoodDef = DefDatabase<BackstoryDef>.AllDefs
-                        .FirstOrDefault(b => b.defName == childhoodDefName);
+                    BackstoryDef childhoodDef = DefDatabase<BackstoryDef>.GetNamedSilentFail(childhoodDefName);
                     if (childhoodDef != null)
                     {
                         p.story.Childhood = childhoodDef;
@@ -331,8 +330,7 @@ namespace RealRuins
                 string adulthoodDefName = storyNode.SelectSingleNode("adulthood")?.InnerText;
                 if (!string.IsNullOrEmpty(adulthoodDefName))
                 {
-                    BackstoryDef adulthoodDef = DefDatabase<BackstoryDef>.AllDefs
-                        .FirstOrDefault(b => b.defName == adulthoodDefName);
+                    BackstoryDef adulthoodDef = DefDatabase<BackstoryDef>.GetNamedSilentFail(adulthoodDefName);
                     if (adulthoodDef != null)
                     {
                         p.story.Adulthood = adulthoodDef;

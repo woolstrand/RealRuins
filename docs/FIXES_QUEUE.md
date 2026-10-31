@@ -7,7 +7,8 @@ Single list of known bugs, code smells and design weaknesses. Entries are groupe
 - Each section has its own numbering that starts from 1 and a severity prefix: **C** critical, **H** high, **M** medium, **L** low, **U** unverified.
 - IDs are never reused or renumbered. Add new items at the end of the matching section with the next free number.
 - When an item is fixed, delete its description and leave only the heading, e.g. `### H3. Fixed`. This keeps the other IDs stable and the file short.
-- Remove the `Fixed` stubs only when the user explicitly asks for a cleanup.
+- When an item turns out not to be a real issue, do the same: delete its description and leave only the heading, e.g. `### L2. Not an issue`. Put the explanation in a short code comment at the place that triggered the report, not in this file and not at every related call site. The comment stops future reviews from reporting the same false positive.
+- Remove the `Fixed` and `Not an issue` stubs only when the user explicitly asks for a cleanup.
 - An unverified item (U) should be confirmed or rejected against the code before work starts. Once confirmed, move it to the right severity section with a new ID.
 - Items marked **Note** need developer input or extra analysis before changing code.
 
@@ -132,10 +133,7 @@ Intended: same as vanilla `SettlementUtility.AffectRelationsOnAttacked`, see the
 
 ---
 
-### L2. Multiple `DefDatabase` Lookups for the Same Def Across Pipeline Stages
-**What**: The same `defName` is resolved independently in `BlueprintLoader`, `BlueprintPreprocessor` and `BlueprintTransferUtility`.
-**Impact**: Triple or more lookup overhead per item per run.
-**Fix**: Cache the resolved `ThingDef` on `ItemTile` after the first lookup in `BlueprintLoader`.
+### L2. Not an issue
 
 ---
 

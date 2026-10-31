@@ -132,6 +132,7 @@ namespace RealRuins {
                             }
 
                             //Trying to load corresponding definition to check if the object is accessible
+                            //Not cached on ItemTile on purpose: GetNamed is a dictionary lookup, so later stages resolving it again is cheap
                             ThingDef thingDef = DefDatabase<ThingDef>.GetNamed(tile.defName, false);
                             if (thingDef != null) {
                                 if (thingDef.fillPercent == 1.0f || tile.isWall || tile.isDoor) {
