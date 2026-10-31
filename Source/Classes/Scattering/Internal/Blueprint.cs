@@ -133,12 +133,14 @@ namespace RealRuins {
 
             for (int x = 0; x < width; x++) {
                 for (int z = 0; z < height; z++) {
-                    if (wallMap[x, z] == value) wallMap[x, z] = -1;
+                    if (wallMap[x, z] == value) wallMap[x, z] = 1;
                 }
             }
         }
 
-        //This method affects wall map only, it does not actually remove a wall
+        //This method affects wall map only, it does not actually remove a wall.
+        //Not an issue (FIXES_QUEUE L1): the full map scan below runs only when the removal merges different rooms, and each merge
+        //retires at least one room number, so all calls together do at most (rooms count + rooms created here - 1) scans.
         public void RemoveWall(int posX, int posZ) {
             if (posX < 0 || posZ < 0 || posX >= width || posZ >= height) return;
             if (wallMap[posX, posZ] != -1) return; //alerady no wall there
@@ -165,6 +167,14 @@ namespace RealRuins {
                     newValue = distinct.Pop();
                 }
             }
+
+            //cell surrounded by walls becomes a new room, so destroying the rest of a thick wall later still connects it
+            if (newValue == null) {
+                newValue = roomsCount;
+                roomsCount++;
+                roomAreas?.Add(1);
+            }
+            wallMap[posX, posZ] = newValue.Value;
 
             if (distinct.Count > 0) {
                 for (int x = 0; x < width; x++) {

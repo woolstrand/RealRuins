@@ -91,7 +91,7 @@ Not a bug: this is how POI wealth tracking works now, and it needs a rework. See
 ---
 
 ### M7. Won't fix
-Intended: same as vanilla `SettlementUtility.AffectRelationsOnAttacked`, see the comment in `CaravanArrivalAction_VisitRealRuinsPOI`.
+Intended: same as vanilla `SettlementUtility.AffectRelationsOnAttacked`, see the comment in `POIArrivalUtility`.
 
 ---
 
@@ -125,11 +125,7 @@ Intended: same as vanilla `SettlementUtility.AffectRelationsOnAttacked`, see the
 
 ## LOW — Code quality, performance, maintainability
 
-### L1. `RemoveWall()` O(w×h) Per Call Inside O(w×h) Loops
-**File**: `Source/Classes/Scattering/Internal/Blueprint.cs`, used by `DeteriorationProcessor` and `ScavengingProcessor`
-**What**: `RemoveWall()` scans the whole map to merge room numbers and is called for every removed wall tile inside loops that iterate all cells.
-**Impact**: O(w²×h²) worst case for dense ruins; about 8.1 billion iterations on a 300×300 blueprint with heavy deterioration.
-**Fix**: Keep a reverse index (room ID to list of cells) for O(room_size) merges, or defer room renumbering until after the full pass.
+### L1. Not an issue
 
 ---
 
