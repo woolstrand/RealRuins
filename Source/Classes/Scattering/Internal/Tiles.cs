@@ -34,7 +34,6 @@ namespace RealRuins {
         public bool isDoor = false;
 
         public ItemArt art = null;
-        public string attachedText = null;
 
         public List<ItemTile> innerItems;
 
@@ -115,11 +114,6 @@ namespace RealRuins {
             XmlAttribute doorAttribute = node.Attributes["isDoor"];
             if (doorAttribute != null || defName.ToLower().Contains("door")) {
                 isDoor = true;
-            }
-
-            XmlAttribute textAttribute = node.Attributes["text"];
-            if (textAttribute != null) {
-                attachedText = textAttribute.Value;
             }
 
             XmlAttribute wallAttribute = node.Attributes["actsAsWall"];

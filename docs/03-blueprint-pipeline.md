@@ -64,7 +64,7 @@ The central object holding all parsed data for one blueprint.
 
 **`RemoveWall(x, z)`**: Updates topology when a wall is removed — O(w×h) full scan to merge room numbers. Called per tile during deterioration and scavenging, making those operations O(w²×h²) in dense blueprints.
 
-**`Part(location, size)`**: Slices a sub-rectangle. **Mutates the original** — `itemsMap` lists are moved by reference, not copied. Do not use the parent blueprint after calling `Part()`.
+**`Part(location, size)`**: Slices a sub-rectangle (exclusive max bounds, clipped to the blueprint). **Mutates the original** — `itemsMap` lists are moved by reference, not copied. Do not use the parent blueprint after calling `Part()`.
 
 **`UpdateBlueprintStats(includeCost)`**: Computes `totalCost`, `itemsCount`, `itemsDensity`. When `includeCost=true`, calls `ThingComponentsMarketCost()` for every item — expensive. Called twice during the pipeline (once in `BlueprintFinder`, once in `RuinsScatterer` post-preprocess).
 
@@ -249,11 +249,10 @@ Reconstructs a `Pawn` from raw XML saved in the snapshot.
 | `RestorePawnApparel` | Apparel items with degraded HP (max 60%) |
 | `RestorePawnStory` | Backstory, body, hair, traits |
 | `RestorePawnSkills` | Skill levels, XP, passion |
-| `RestorePawnBodyAndTraits` | Empty stub — dead code |
 
 **`ValidateAndFixHediffNode()`**: Validates HediffDef, Class type, BodyPartDef, and pawn body part existence before deserializing each hediff. Removes invalid references.
 
-**Critical**: Temporarily sets `Scribe.mode = LoadingVars` for hediff deserialization — a global state mutation. Must be reset. An unhandled exception mid-loop could leave `Scribe.mode` dirty, destabilizing the save system.
+**Critical**: Temporarily sets `Scribe.mode = LoadingVars` for hediff deserialization — a global state mutation. It is reset to `Inactive` in a `finally` block, so an exception mid-loop cannot leave the save system in the wrong mode.
 
 ---
 
@@ -269,7 +268,6 @@ Constructed with `rp` (ResolveParams), `faction`, `uncoveredCost`, `forceMultipl
 ### `MilitaryForcesGenerator`
 - `GenerateStartingParty()`: spawns `Combat` group immediately, then distributes remaining into triggers
 - `GenerateForces()`: near-identical to `CitizenForcesGeneration.GenerateForces()` — code duplication
-- `minimalTriggerFiringTimeout` constructor parameter is stored but never used — dead parameter
 
 ---
 

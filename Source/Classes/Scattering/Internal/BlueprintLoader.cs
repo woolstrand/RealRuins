@@ -132,6 +132,7 @@ namespace RealRuins {
                             }
 
                             //Trying to load corresponding definition to check if the object is accessible
+                            //Not cached on ItemTile on purpose: GetNamed is a dictionary lookup, so later stages resolving it again is cheap
                             ThingDef thingDef = DefDatabase<ThingDef>.GetNamed(tile.defName, false);
                             if (thingDef != null) {
                                 if (thingDef.fillPercent == 1.0f || tile.isWall || tile.isDoor) {
@@ -143,10 +144,12 @@ namespace RealRuins {
                             } else {
                                 if (tile.isDoor) { //replacing unavailable door with abstract default door
                                     tile.defName = ThingDefOf.Door.defName;
+                                    tile.stackCount = 1; //replacements are buildings, they don't stack
                                     tile.location = new IntVec3(x, 0, z);
                                     blueprint.itemsMap[x, z].Add(tile); //replacement door is ok
                                 } else if (tile.isWall || tile.defName.ToLower().Contains("wall")) { //replacing unavailable impassable 100% filling block (which was likely a wall) with a wall
                                     tile.defName = ThingDefOf.Wall.defName;
+                                    tile.stackCount = 1;
                                     tile.location = new IntVec3(x, 0, z);
                                     blueprint.itemsMap[x, z].Add(tile); //now it's a wall
                                 } else if (tile.defName.ToLower() == "corpse") {

@@ -12,7 +12,6 @@ namespace RealRuins
         public static bool offlineMode = false;
         public static bool allowDownloads = true;
         public static bool allowUploads = true;
-        public static bool allowInstantCaravanReform = false;
         public static int caravanReformType = 0; //0 - regular, 1 - instant, 2 - manual
         public static bool startWithoutRuins = false;
         public static bool preserveStandardRuins = false; //preservers standard ruins and adds real ruinson top of that.
@@ -32,7 +31,7 @@ namespace RealRuins
         public static string materialBlacklist = ""; // newline-separated list of materials to exclude from spawning
         public static string fallbackMaterial = "Wood"; // material to use when blacklisted material is encountered
 
-        public static ScatterOptions defaultScatterOptions = ScatterOptions.Default;
+        public static ScatterOptions defaultScatterOptions = new ScatterOptions();
         public static PlanetaryRuinsOptions planetaryRuinsOptions = new PlanetaryRuinsOptions();
 
         public override void ExposeData()
@@ -42,7 +41,6 @@ namespace RealRuins
             Scribe_Values.Look(ref allowDownloads, "allowDownloads", true, false);
             Scribe_Values.Look(ref allowUploads, "allowUploads", true, false);
             Scribe_Values.Look(ref diskCacheLimit, "diskCacheLimit", 256.0f, false);
-            Scribe_Values.Look(ref allowInstantCaravanReform, "allowInstantCaravanReform", false, false);
             Scribe_Values.Look(ref caravanReformType, "caravanReformType", 0, false);
             Scribe_Values.Look(ref preserveStandardRuins, "preserveStandardRuins", false, false);
             Scribe_Values.Look(ref forceMultiplier, "forceMultiplier", 1.0f, false);
@@ -71,7 +69,7 @@ namespace RealRuins
                 }
                 if (defaultScatterOptions == null)
                 {
-                    defaultScatterOptions = ScatterOptions.Default;
+                    defaultScatterOptions = new ScatterOptions();
                 }
                 if (planetaryRuinsOptions == null)
                 {
@@ -86,9 +84,9 @@ namespace RealRuins
             planetaryRuinsOptions = new PlanetaryRuinsOptions();
 
             offlineMode = false;
+            diskCacheLimit = 256.0f;
             allowDownloads = true;
             allowUploads = true;
-            allowInstantCaravanReform = false;
             caravanReformType = 0;
             startWithoutRuins = false;
             preserveStandardRuins = false;

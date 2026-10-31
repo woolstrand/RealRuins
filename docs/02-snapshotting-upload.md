@@ -41,7 +41,6 @@ Converts the live RimWorld map into a custom XML document for upload.
 - Skips natural rocks
 - Encodes `def`, `stuffDef`, `stackCount`, `rot`, `actsAsWall`, `isDoor`
 - `CompArt`: captures art title, author, description
-- **Signs & Memorials mod**: reads `text` field via reflection (`Type.GetType("SaM.CompText, Signs_and_Memorials")`). Runs per-item — performance cost on large maps
 - Pawn encoding: name, gender, age, story, health, skills, apparel via `Scribe.saver.DebugOutputFor()` (uses RimWorld's save system in read mode — may break on RimWorld updates)
 - **Known bug**: `chronologicalAge` incorrectly writes `AgeBiologicalTicks` for both biological and chronological age fields
 
@@ -56,7 +55,7 @@ A subclass of `TaleReference` that stores a pre-generated art description string
 
 **Construction:** Created from a raw string (from the blueprint XML). Default constructor produces a "DeterioratedArtDescription" localized string.
 
-**Critical note:** `ExposeData()` is declared with `new` (hides base) rather than `override`. A Harmony patch on `TaleReference.ExposeData` intercepts calls when the instance is a `BakedTaleReference` and calls the subclass method. If that patch ever fails silently, art descriptions will not be saved/loaded.
+**Critical note:** `TaleReference.ExposeData()` is not virtual, so `BakedTaleReference` cannot override it. A Harmony postfix on `TaleReference.ExposeData` (`TaleReference_ExposeData_Patch` in `RealRuins.cs`) saves and loads `bakedTale` when the instance is a `BakedTaleReference`. If that patch ever fails silently, art descriptions will not be saved/loaded.
 
 **Art_Extensions (in `RealRuins.cs`):** Sets private fields on `CompArt` (`taleRef`, `titleInt`, `authorNameInt`) via reflection to inject `BakedTaleReference` instances into spawned art objects.
 
@@ -82,9 +81,11 @@ Singleton (`Instance` property). Orchestrates all download and upload operations
 Uses `System.Threading.Timer`. Timers are kept in a static `HashSet<Timer>` (with lock) to prevent GC collection before they fire.
 
 ### Thread Safety Issues
-- `snapshotsToLoad` (a `List<string>`) is accessed via `.Pop()` from multiple concurrent download callbacks **without a lock** — race condition
+- `snapshotsToLoad` (a `List<string>`): `Pop()` in `LoadNextSnapshot` is guarded by `snapshotsToLoadLock`, but `Add` in `AggressiveLoadSnapshots`/`LoadSomeSnapshots` and the list replacement in `Reset()` are not
 - `snapshotTimestamps` dictionary is read/written without synchronization
-- Download completion check (`loaded + failed == total`) is not atomic
+- `loadedSnapshotsCount++` / `failedSnapshotsCount++` and the completion check (`loaded + failed == total`) are not atomic
+- **Known bug**: `LoadSomeSnapshots(concurrent, retries)` decrements `retries` on failure but never checks it, so retries are infinite
+- **Known bug**: local uploads call `StoreBinaryData(..., "local-<id>.bp")`, and `StoreBinaryData` appends `.bp` again (`local-<id>.bp.bp`)
 
 ---
 
@@ -102,8 +103,10 @@ Singleton. Manages all local file system operations for blueprint storage.
 
 ### Key Operations
 - `StoreBinaryData(byte[], snapshotId, gameName)` — runs in background `Thread`; checks for existing files by pattern matching, skips if newer exists, deletes older versions, writes file
-  - **Known bug**: compares dates by splitting the new filename on `'='` but the existing filename on `'-'` — the version deduplication logic almost never works correctly
+  - Both filenames are split on `'='`. Remaining hazards: a date prefix failing `int.TryParse` skips dedup silently, and exceptions on the raw thread are unhandled
+  - **Known bug**: always appends `.bp` to the given name, even if it already ends in `.bp`
 - `CheckCacheSizeLimits()` — sorts files alphabetically (newest first by date prefix), accumulates sizes, deletes oldest files beyond `diskCacheLimit`
+  - **Known bug**: with `diskCacheLimit = -1` ("No limit" in settings) every file is deleted, because the byte threshold becomes negative
 - `RandomSnapshotFilename()` — only searches the root folder, not game-specific subdirectories
 - `CanFireMediumEvent()` / `CanFireLargeEvent()` — gate methods requiring 30 / 250 stored snapshots (any count in offline mode)
 - `TotalSize()` / `StoredSnapshotsCount()` — called every UI frame from the settings page; if these hit disk I/O they will cause per-frame stutter

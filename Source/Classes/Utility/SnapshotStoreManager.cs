@@ -118,56 +118,71 @@ namespace RealRuins
             StoreBinaryData(Encoding.UTF8.GetBytes(buffer), blueprintName);
         }
 
-        public void StoreBinaryData(byte[] buffer, string blueprintName, string gameName = null) {
+        // Writes on a background thread. onStored (if any) is called on the main thread once the write is over,
+        // with false if it failed. Must be called from the main thread.
+        public void StoreBinaryData(byte[] buffer, string blueprintName, string gameName = null, Action<bool> onStored = null) {
+            CoroutineManager mainThread = onStored != null ? CoroutineManager.Instance : null;
 
             new Thread(() => {
-                string filename = blueprintName + ".bp";
-                string path = GetSnapshotsFolderPath();
-                if (gameName != null) {
-                    path = Path.Combine(path, gameName);
+                bool success = false;
+                try {
+                    WriteSnapshotFile(buffer, blueprintName, gameName);
+                    success = true;
+                } catch (Exception ex) {
+                    // an unhandled exception on a raw thread would take the whole game down
+                    Debug.Error(Debug.Store, "Failed storing blueprint {0}: {1}", blueprintName, ex);
                 }
-                if (RealRuins.SingleFile) {
-                    filename = "jeluder.bp";
-                }
+                mainThread?.RunOnMainThread(() => onStored(success));
+            }).Start();
 
-                DirectoryInfo directoryInfo = new DirectoryInfo(path);
-                if (!directoryInfo.Exists) {
-                    try {
-                        directoryInfo.Create();
-                    } catch {
-                        Debug.Error(Debug.Store, "Can't access store path");
-                    }
-                }
+        }
 
-                //when storing a file you need to remove older version of snapshots of the same game
-                string[] parts = filename.Split('=');
-                if (parts.Count() > 1) {
-                    int date = 0;
-                    if (int.TryParse(parts[0], out date)) {
-                        parts[0] = "*";
-                        string mask = string.Join("=", parts);
-                        string[] files = Directory.GetFiles(path, mask);
-                        foreach (string existingFile in files) {
-                            int existingFileDate = 0;
-                            string[] existingFileParts = Path.GetFileName(existingFile).Split('=');
-                            if (int.TryParse(existingFileParts[0], out existingFileDate)) {
-                                if (existingFileDate > date) {
-                                    //there is more fresh file. no need to save this one.
-                                    return;
-                                } else {
-                                    //remove older files
-                                    File.Delete(existingFile);
-                                }
+        private void WriteSnapshotFile(byte[] buffer, string blueprintName, string gameName) {
+            string filename = blueprintName + ".bp";
+            string path = GetSnapshotsFolderPath();
+            if (gameName != null) {
+                path = Path.Combine(path, gameName);
+            }
+            if (RealRuins.SingleFile) {
+                filename = "jeluder.bp";
+            }
+
+            DirectoryInfo directoryInfo = new DirectoryInfo(path);
+            if (!directoryInfo.Exists) {
+                try {
+                    directoryInfo.Create();
+                } catch {
+                    Debug.Error(Debug.Store, "Can't access store path");
+                }
+            }
+
+            //when storing a file you need to remove older version of snapshots of the same game
+            //names without a numeric date prefix are not versioned and are simply overwritten
+            string[] parts = filename.Split('=');
+            if (parts.Count() > 1) {
+                int date = 0;
+                if (int.TryParse(parts[0], out date)) {
+                    parts[0] = "*";
+                    string mask = string.Join("=", parts);
+                    string[] files = Directory.GetFiles(path, mask);
+                    foreach (string existingFile in files) {
+                        int existingFileDate = 0;
+                        string[] existingFileParts = Path.GetFileName(existingFile).Split('=');
+                        if (int.TryParse(existingFileParts[0], out existingFileDate)) {
+                            if (existingFileDate > date) {
+                                //there is more fresh file. no need to save this one.
+                                return;
+                            } else {
+                                //remove older files
+                                File.Delete(existingFile);
                             }
                         }
                     }
                 }
-                //writing file in all cases except "newer version available"
-                File.WriteAllBytes(Path.Combine(path, filename), buffer);
-                RecalculateFilesSize();
-
-            }).Start();
-
+            }
+            //writing file in all cases except "newer version available"
+            File.WriteAllBytes(Path.Combine(path, filename), buffer);
+            RecalculateFilesSize();
         }
 
         private string DoGetRandomFilenameFromRootFolder() {
@@ -274,6 +289,7 @@ namespace RealRuins
             Directory.Delete(GetSnapshotsFolderPath(), true);
             Directory.CreateDirectory(GetSnapshotsFolderPath());
             totalFilesSize = 0;
+            totalFileCount = 0;
         }
 
         public long TotalSize() {
@@ -293,6 +309,7 @@ namespace RealRuins
         }
 
         public void CheckCacheSizeLimits() {
+            if (RealRuins_ModSettings.diskCacheLimit < 0) return; // -1 means "No limit"
 
             var files = Directory.GetFiles(GetSnapshotsFolderPath());
             List<string> filesList = files.ToList();

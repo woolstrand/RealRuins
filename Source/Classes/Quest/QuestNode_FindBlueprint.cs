@@ -91,7 +91,7 @@ namespace RealRuins
                     Debug.Log(Debug.QuestNode_FindBlueprintNode, "RunInt: Successfully set slate[{0}]={1}, verified={2}", 
                         storeAsKey, filename, verifyValue ?? "NULL");
                 } else {
-                    Debug.Error(Debug.QuestNode_FindBlueprintNode, "RunInt: No blueprint found! filename={0}, storeAsKey={1}. Quest will fail.", 
+                    Debug.Warning(Debug.QuestNode_FindBlueprintNode, "RunInt: No blueprint found! filename={0}, storeAsKey={1}. Quest will fail.", 
                         filename ?? "NULL", storeAsKey ?? "NULL");
                 }
             } catch (Exception ex) {

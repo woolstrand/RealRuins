@@ -4,18 +4,9 @@ This document lists potential improvements (optimizations, refactors, fixes) and
 
 ---
 
-## BUG FIXES (High-Priority, From WEAK_POINTS_REPORT)
+## BUG FIXES
 
-These are not new features but must be addressed first since they affect correctness:
-
-| # | Fix | Effort |
-|---|-----|--------|
-| 1 | Seed AdvancedSettingsPage text buffers from saved settings on init | S |
-| 2 | Assign `extraGenStepDefs.Concat(...)` result back | S |
-| 3 | Lock `snapshotsToLoad` access in SnapshotManager | S |
-| 4 | Fix `SnapshotStoreManager.StoreBinaryData()` delimiter mismatch | S |
-| 5 | Fix `ScatterOptions.asIs()` to copy Default before mutating | S |
-| 6 | Fix `chronologicalAge` to write `AgeChronologicalTicks` | S |
+Bugs and weak points are tracked in [FIXES_QUEUE.md](FIXES_QUEUE.md). They are not new features but should be addressed first since they affect correctness.
 
 ---
 
@@ -30,12 +21,10 @@ Cache the resolved `ThingDef` and `TerrainDef` on `ItemTile`/`TerrainTile` after
 `RemoveWall()` performs a full O(w×h) map scan per call. Maintain a dictionary `roomId → List<IntVec2>` so room merges are O(room_size) instead of O(total_area). This converts the O(w²×h²) deterioration+scavenging loops to O(w×h × avg_room_size), which is dramatically faster on large dense blueprints.
 
 ### C. Cache Signs & Memorials Reflection Lookups
-**Effort**: S  
-Move `Type.GetType("SaM.CompText, Signs_and_Memorials")` and its `FieldInfo` lookups to static cached fields in `SnapshotGenerator`. The type existence is fixed at runtime; re-discovering it per item is pure waste.
+Done: Signs & Memorials support removed (FIXES_QUEUE L3).
 
 ### D. Cache `NetworkCacheSettingsPage` Disk Stats
-**Effort**: S  
-Cache `TotalSize()` and `StoredSnapshotsCount()` values with a 5-second TTL or invalidate on cache write operations. Prevents potential per-frame disk access.
+Not needed: the values are already cached (FIXES_QUEUE L6).
 
 ### E. Defer Blueprint Stats Calculation
 **Effort**: S  
@@ -77,24 +66,22 @@ Add null checks on all `AccessTools.Field()`/`AccessTools.Method()` results in `
 **Effort**: S  
 `CitizenForcesGeneration.GenerateForces()` and `MilitaryForcesGenerator.GenerateForces()` are near-identical. Move the common loop to `AbstractDefenderForcesGenerator` with virtual properties for customizable parameters.
 
-### M. Standardize Wealth Calculation
-**Effort**: S  
-Pick one wealth calculation method (either `CountAsResource` things only, or all things with market cost) and use it in both `RuinedBaseComp.GetTotalMapWealth()` and `RealRuinsPOIWorldObject.CurrentMapWealth()`. Document the choice. The inconsistency makes the destroy/restore ratio thresholds incomparable between systems.
+### M. Rework POI Destruction Ratio
+**Effort**: S–M  
+**File**: `Source/Classes/DynamicMapObjects/RealRuinsPOIWorldObject.cs`, `ShouldRemoveMapNow()` / `CurrentMapWealth()`
+POI and pristine-ruins wealth formulas differ, but that is fine: the two systems never compare against each other's numbers, and each is consistent with itself. `RuinedBaseComp` uses `GetTotalMapWealth` on both sides, and the inspect-string thresholds in both systems are applied to blueprint costs. The weak spot is inside the POI: `ratio = (wealthOnEnter - CurrentMapWealth()) / approximateSnapshotCost`.
+- The numerator counts every thing on the map: pawns, corpses, plants, rocks, chunks and filth, priced with `ThingComponentsMarketCost`. For things without a cost list that is `BaseMarketValue`.
+- The denominator is `BlueprintAnalyzer.totalItemsCost`: only blueprint items, measured on the full snapshot before deterioration.
+So killing or driving off defenders (pawns removed, corpses added at a different price), chopping plants and mining all count as "stolen". Deterioration makes the denominator larger than what actually spawned.
+**Current effect**: The outcome on leaving (owner restores, may abandon, or POI destroyed, at the 0.1/0.3 thresholds) is noisy. A fight-heavy visit with little looting can destroy a POI. A heavily deteriorated POI is hard to destroy by looting. The enter cooldown (`difference / 2000` days) is affected the same way. The effect is on balance only.
+**Effect of the rework**: POI fate tracks what the player actually took. This changes how often POIs get destroyed, so balance changes; check the 0.1/0.3 thresholds again afterwards. There is no save impact if `wealthOnEnter` keeps its meaning. Old saves store the old value, which mixes slightly for maps that are open when the update is loaded.
+**Possible approach**: In `CurrentMapWealth()`, count only things that blueprints can contain: skip `Pawn`, `Corpse`, `Plant`, `Filth`, `Mote`/`Projectile`, and mineable/natural rock (`def.building?.isNaturalRock`, `def.mineable`). Use the same filter on enter and on leave. Then either divide by `wealthOnEnter` instead of `approximateSnapshotCost`, so both sides measure the spawned map, or keep the blueprint cost only as a lower bound. Dividing by `wealthOnEnter` is the smaller and more robust change.
 
 ### N. Move `POIType` Enum into `RealRuins` Namespace
-**Effort**: S  
-One-line fix: add `namespace RealRuins {` wrapper around the enum in `RealRuinsPOIComp.cs`.
+Done (FIXES_QUEUE L13).
 
 ### O. Remove Dead Code
-**Effort**: S  
-Clean up:
-- `TryFindEntryCell()` in `IncidentWorker_CaravanFoundRuins`
-- `Constants.cs` string keys
-- `RestorePawnBodyAndTraits()` stub in `PawnRestoreUtility`
-- `minimalTriggerFiringTimeout` parameter in `MilitaryForcesGenerator`
-- `allowInstantCaravanReform` field in `RealRuins_ModSettings`
-- SRTS commented block in `RealRuins.cs`
-- `POIType.PowerPlant` unreachable path
+Done (FIXES_QUEUE L7, L9).
 
 ---
 

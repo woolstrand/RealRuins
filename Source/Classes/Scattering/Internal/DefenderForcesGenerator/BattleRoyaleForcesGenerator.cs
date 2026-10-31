@@ -9,103 +9,66 @@ using Verse.AI.Group;
 
 namespace RealRuins {
     class BattleRoyaleForcesGenerator : AbstractDefenderForcesGenerator {
-        public override void GenerateForces(Map map, ResolveParams rp, ScatterOptions options) {
-            if (options == null) return;
-
-            int addedTriggers = 0;
-            float ratio = 10;
-            float remainingCost = options.uncoveredCost * (Rand.Value + 0.5f); //cost estimation as seen by other factions
-            Debug.Log(Debug.ForceGen, "Running battle royale force generation with remaining cost of {0} (while uncovered is {1})", remainingCost, options.uncoveredCost);
-
-            float initialCost = remainingCost;
-
-            int triggersAbsoluteMaximum = 100;
-
-            while (remainingCost > 0) {
-
-                IntVec3 mapLocation = rp.rect.RandomCell;
-                if (!mapLocation.InBounds(map)) continue;
-
-                ThingDef raidTriggerDef = ThingDef.Named("RaidTrigger");
-                RaidTrigger trigger = ThingMaker.MakeThing(raidTriggerDef) as RaidTrigger;
-
-                if (options.allowFriendlyRaids) {
-                    if (Rand.Chance(0.2f)) {
-                        trigger.faction = Find.FactionManager.RandomNonHostileFaction();
-                    } else {
-                        trigger.faction = Find.FactionManager.RandomEnemyFaction();
-                    }
-                } else {
-                    trigger.faction = Find.FactionManager.RandomEnemyFaction();
-                }
-
-                int raidMaxPoints = (int)(remainingCost / ratio);
-                float raidValue = Math.Abs(Rand.Gaussian()) * raidMaxPoints + Rand.Value * raidMaxPoints + 250.0f;
-                if (raidValue > 10000) raidValue = Rand.Range(8000, 11000); //sanity cap. against some beta-poly bases.
-                remainingCost -= raidValue * ratio;
-
-                trigger.value = ScalePointsToDifficulty(raidValue);
-
-                GenSpawn.Spawn(trigger, mapLocation, map);
-                Debug.Log(Debug.ForceGen, "Spawned trigger at {0}, {1} for {2} points, ticks left: {3}", mapLocation.x, mapLocation.z, trigger.value, trigger.TicksLeft());
-                addedTriggers++;
-
-                options.uncoveredCost = Math.Abs(remainingCost);
-
-                if (addedTriggers > triggersAbsoluteMaximum) {
-                    if (remainingCost < initialCost * 0.2f) {
-                        if (Rand.Chance(0.1f)) {
-                            if (remainingCost > 100000) {
-                                remainingCost = Rand.Range(80000, 110000);
-                            }
-                            return;
-                        }
-                    }
-                }
-            }
+        public override void GenerateForces(Map map, ResolveParams rp, ScatterContext context) {
+            SpawnRaidTriggers(map, rp, context, "battle royale");
         }
 
-        public override void GenerateStartingParty(Map map, ResolveParams rp, ScatterOptions currentOptions) {
-            float uncoveredCost = currentOptions.uncoveredCost;
+        protected override Faction PickTriggerFaction(ResolveParams rp, ScatterContext context) {
+            if (context.options.allowFriendlyRaids && Rand.Chance(0.2f)) {
+                return Find.FactionManager.RandomNonHostileFaction();
+            }
+            return Find.FactionManager.RandomEnemyFaction();
+        }
 
-            if (uncoveredCost > 0 || currentOptions.startingPartyPoints > 0) {
+        public override void GenerateStartingParty(Map map, ResolveParams rp, ScatterContext context) {
+            float uncoveredCost = context.state.uncoveredCost;
+
+            if (uncoveredCost > 0 || context.options.startingPartyPoints > 0) {
                 float pointsCost = 0;
-                if (currentOptions.startingPartyPoints > 0) {
-                    pointsCost = currentOptions.startingPartyPoints;
+                if (context.options.startingPartyPoints > 0) {
+                    pointsCost = context.options.startingPartyPoints;
                 } else {
                     pointsCost = uncoveredCost / 10.0f;
                     FloatRange defaultPoints = new FloatRange(pointsCost * 0.7f,
                         Math.Min(12000.0f, pointsCost * 2.0f));
                     Debug.Log(Debug.ForceGen, "Adding starting party. Remaining points: {0}. Used points range: {1}",
-                        currentOptions.uncoveredCost, defaultPoints);
+                        context.state.uncoveredCost, defaultPoints);
 
                 }
-                pointsCost = ScalePointsToDifficulty(pointsCost);
-                ScatterStartingParties((int)pointsCost, currentOptions.allowFriendlyRaids, map);
+                pointsCost = ScalePointsToDifficulty(pointsCost, context);
+                ScatterStartingParties((int)pointsCost, context.options.allowFriendlyRaids, map);
             }
 
         }
 
         private void ScatterStartingParties(int points, bool allowFriendly, Map map) {
 
+            int failedAttempts = 0;
             while (points > 0) {
                 int pointsUsed = Rand.Range(200, Math.Min(3000, points / 5));
 
                 IntVec3 rootCell = CellFinder.RandomNotEdgeCell(30, map);
                 CellFinder.TryFindRandomSpawnCellForPawnNear(rootCell, map, out IntVec3 result);
-                if (result.IsValid) {
-                    Faction faction = null;
-                    if (allowFriendly) {
-                        Find.FactionManager.TryGetRandomNonColonyHumanlikeFaction(out faction, false);
-                    } else {
-                        faction = Find.FactionManager.RandomEnemyFaction();
+                if (!result.IsValid) {
+                    //points are spent only on success, so a map without spawn cells would loop forever
+                    if (++failedAttempts >= 50) {
+                        Debug.Warning(Debug.ForceGen, "Could not find a spawn cell for starting parties, {0} points left unused", points);
+                        return;
                     }
-
-                    if (faction == null) faction = Find.FactionManager.AllFactions.RandomElement();
-
-                    SpawnGroup(pointsUsed, new CellRect(result.x - 10, result.z - 10, 20, 20), faction, map);
-                    points -= pointsUsed;
+                    continue;
                 }
+
+                Faction faction = null;
+                if (allowFriendly) {
+                    Find.FactionManager.TryGetRandomNonColonyHumanlikeFaction(out faction, false);
+                } else {
+                    faction = Find.FactionManager.RandomEnemyFaction();
+                }
+
+                if (faction == null) faction = Find.FactionManager.AllFactions.RandomElement();
+
+                SpawnGroup(pointsUsed, new CellRect(result.x - 10, result.z - 10, 20, 20), faction, map);
+                points -= pointsUsed;
             }
         }
 

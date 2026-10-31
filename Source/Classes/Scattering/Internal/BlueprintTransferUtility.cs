@@ -35,6 +35,7 @@ namespace RealRuins
         Blueprint blueprint;
         ResolveParams rp;
         ScatterOptions options;
+        ScatterContext context;
         Map map;
 
         int mapOriginX;
@@ -115,7 +116,6 @@ namespace RealRuins
 
             return cachedFallbackMaterial;
         }
-
         private Thing MakeThingFromItemTile(ItemTile itemTile, bool enableLogging = false, int? x = null, int? z = null)
         {
             try
@@ -147,7 +147,8 @@ namespace RealRuins
                     if (itemTile.innerItems != null)
                     {
                         Debug.Log(Debug.BlueprintTransfer, "Now need to instantiate corpse at {0}, {1}", x, z);
-                        Pawn p = (Pawn)MakeThingFromItemTile(itemTile.innerItems.First(), x: x, z: z, enableLogging: true);
+                        Pawn p = MakeThingFromItemTile(itemTile.innerItems.First(), x: x, z: z, enableLogging: true) as Pawn;
+                        if (p == null) return null;
                         Find.WorldPawns.PassToWorld(p);
                         Corpse corpse = null;
                         if (p.Corpse != null)
@@ -180,7 +181,17 @@ namespace RealRuins
 
                 if (itemTile.defName == "Hive") return null; //Ignore hives, probably should add more comprehensive ignore list here.
 
-                ThingDef thingDef = DefDatabase<ThingDef>.GetNamed(itemTile.defName, false); //here thingDef is definitely not null because it was checked earlier
+                // Top-level items are filtered for missing defs in Transfer, but inner items (minified things,
+                // other containers) reach here through recursion unchecked - e.g. a modded PortableReactor inside a MinifiedThing.
+                ThingDef thingDef = DefDatabase<ThingDef>.GetNamed(itemTile.defName, false);
+                if (thingDef == null)
+                {
+                    if (enableLogging)
+                    {
+                        Debug.Extra(Debug.BlueprintTransfer, "Skipping item with missing def {0}", itemTile.defName);
+                    }
+                    return null;
+                }
                 if (thingDef.category == ThingCategory.Ethereal) return null; //don't spawn ethereals like drop pod landing sites and so on
 
                 ThingDef stuffDef = null; //but stuff can still be null, or can be missing, so we have to check and use default just in case.
@@ -202,6 +213,13 @@ namespace RealRuins
                             return null;
                         }
                     }
+                }
+
+                // The stuff may exist but be invalid for this thing (e.g. a missing modded wall was replaced with a vanilla Wall
+                // but kept its original stuff). Treat it as missing so the default below is used instead of a vanilla error.
+                if (stuffDef != null && !(stuffDef.IsStuff && stuffDef.stuffProps.CanMake(thingDef)))
+                {
+                    stuffDef = null;
                 }
 
                 if (stuffDef == null)
@@ -233,6 +251,20 @@ namespace RealRuins
                             }
                         }
                         if (thing.GetInnerIfMinified() == null) return null;
+                    }
+
+                    //a minified thing is drawn with its inner thing's graphic; some modded buildings can't make one while unspawned
+                    if (thing is MinifiedThing minified)
+                    {
+                        try
+                        {
+                            Graphic innerGraphic = minified.InnerThing.Graphic;
+                        }
+                        catch (Exception e)
+                        {
+                            Debug.Extra(Debug.BlueprintTransfer, "Skipping minified {0}: its graphic fails: {1}", minified.InnerThing.def.defName, e.Message);
+                            return null;
+                        }
                     }
 
                     if (thingDef.CanHaveFaction)
@@ -292,31 +324,6 @@ namespace RealRuins
                         }
                     }
 
-                    if (itemTile.attachedText != null && thing is ThingWithComps)
-                    {
-                        ThingWithComps thingWithComps = thing as ThingWithComps;
-                        Type CompTextClass = Type.GetType("SaM.CompText, Signs_and_Memorials");
-                        if (CompTextClass != null)
-                        {
-                            System.Object textComp = null;
-                            for (int i = 0; i < thingWithComps.AllComps.Count; i++)
-                            {
-                                var val = thingWithComps.AllComps[i];
-                                if (val.GetType() == CompTextClass)
-                                {
-                                    textComp = val;
-                                }
-                            }
-
-                            //var textComp = Activator.CreateInstance(CompTextClass);
-                            if (textComp != null)
-                            {
-                                textComp?.GetType()?.GetField("text").SetValue(textComp, itemTile.attachedText);
-                            }
-                            //thingWithComps.
-                        }
-                    }
-
                     if (thing is UnfinishedThing)
                     {
                         ((UnfinishedThing)thing).workLeft = 10000;
@@ -352,41 +359,17 @@ namespace RealRuins
         }
 
 
-        public BlueprintTransferUtility(Blueprint blueprint, Map map, ResolveParams rp, ScatterOptions options)
+        public BlueprintTransferUtility(Blueprint blueprint, Map map, ResolveParams rp, ScatterContext context)
         {
             this.blueprint = blueprint;
             this.map = map;
             this.rp = rp;
-            this.options = options;
+            this.context = context;
+            this.options = context?.options;
 
-            // Parse and cache blacklists for efficient O(1) lookup
-            spawnBlacklistCache = new HashSet<string>();
-            if (!string.IsNullOrEmpty(RealRuins_ModSettings.spawnBlacklist))
-            {
-                foreach (string line in RealRuins_ModSettings.spawnBlacklist.Split(new[] { "\r\n", "\r", "\n", "," }, StringSplitOptions.RemoveEmptyEntries))
-                {
-                    string trimmed = line.Trim();
-                    if (!string.IsNullOrEmpty(trimmed))
-                    {
-                        spawnBlacklistCache.Add(trimmed);
-                    }
-                }
-            }
-
-            materialBlacklistCache = new HashSet<string>();
-            if (!string.IsNullOrEmpty(RealRuins_ModSettings.materialBlacklist))
-            {
-                foreach (string line in RealRuins_ModSettings.materialBlacklist.Split(new[] { "\r\n", "\r", "\n", "," }, StringSplitOptions.RemoveEmptyEntries))
-                {
-                    string trimmed = line.Trim();
-                    if (!string.IsNullOrEmpty(trimmed))
-                    {
-                        materialBlacklistCache.Add(trimmed);
-                    }
-                }
-            }
-
-            fallbackMaterialName = RealRuins_ModSettings.fallbackMaterial;
+            spawnBlacklistCache = context?.settings?.spawnBlacklist ?? new HashSet<string>();
+            materialBlacklistCache = context?.settings?.materialBlacklist ?? new HashSet<string>();
+            fallbackMaterialName = context?.settings?.fallbackMaterialName;
             cachedFallbackMaterial = null; // Will be resolved lazily
 
             Debug.Log("Transferring blueprint of faction {0}", rp.faction?.Name ?? "none");
@@ -539,6 +522,27 @@ namespace RealRuins
         }
 
 
+        // Wall attachments (wall lamps etc.) whose wall did not make it into the ruins (natural rock is not in snapshots, walls can be
+        // scavenged or fail to spawn). Vanilla expects the wall to exist: PowerConnectionMaker.TryConnectToAnyPowerNet throws on
+        // GetWallAttachedTo(...) == null during Map.FinalizeInit, which aborts the whole map generation.
+        // Checked after all items are spawned, because a wall can be spawned after its attachment.
+        private void RemoveDetachedWallAttachments(List<Thing> attachments)
+        {
+            int removed = 0;
+            foreach (Thing thing in attachments)
+            {
+                if (thing.Spawned && GenConstruct.GetWallAttachedTo(thing) == null)
+                {
+                    thing.Destroy(DestroyMode.Vanish);
+                    removed++;
+                }
+            }
+            if (removed > 0)
+            {
+                Debug.Log(Debug.BlueprintTransfer, "Removed {0} of {1} wall attachments without a supporting wall", removed, attachments.Count);
+            }
+        }
+
         public void Transfer(CoverageMap coverageMap)
         {
             //Planting blueprint
@@ -547,9 +551,10 @@ namespace RealRuins
             int transferredTiles = 0;
             int totalTerrains = 0;
             int totalItems = 0;
+            List<Thing> spawnedAttachments = new List<Thing>();
 
-            //update rect to actual placement rect using width and height
-            rp.rect = new CellRect(mapOriginX, mapOriginZ, blueprint.width, blueprint.height);
+            //report actual placement rect using width and height
+            context.state.placementRect = new CellRect(mapOriginX, mapOriginZ, blueprint.width, blueprint.height);
 
             Debug.Extra(Debug.BlueprintTransfer, "Clearing map...");
 
@@ -688,6 +693,7 @@ namespace RealRuins
 
                                     GenSpawn.Spawn(thing, mapLocation, map, rotation);
                                     Debug.Extra(Debug.BlueprintTransfer, "Spawned");
+                                    if (thing.def.building?.isAttachment == true) spawnedAttachments.Add(thing);
                                     try
                                     {
                                         switch (thing.def.tickerType)
@@ -707,11 +713,11 @@ namespace RealRuins
                                         //Debug.Message("Ticked");
 
                                     }
-                                    catch (Exception e)
+                                    catch (Exception)
                                     {
                                         Debug.Log(Debug.BlueprintTransfer, "Exception while tried to perform tick for {0} of cost {1}, retrhrowing...", thing.def.defName, itemTile.cost);
                                         thing.Destroy();
-                                        throw e;
+                                        throw;
                                     }
 
                                     //Debug.Message("Setting up props");
@@ -741,7 +747,7 @@ namespace RealRuins
                                 }
                                 catch (Exception e)
                                 {
-                                    Debug.Warning(Debug.BlueprintTransfer, "Failed to spawn item {0} of cost {1} because of exception {2}", thing, itemTile.cost, e.Message);
+                                    Debug.Warning(Debug.BlueprintTransfer, "Failed to spawn item {0} of cost {1} because of exception {2}", thing, itemTile.cost, e);
                                     //ignore
                                 }
                             }
@@ -750,12 +756,13 @@ namespace RealRuins
                 }
             }
 
+            RemoveDetachedWallAttachments(spawnedAttachments);
             Debug.Log(Debug.BlueprintTransfer, "Finished transferring");
             if (options.shouldKeepDefencesAndPower)
             {
                 RestoreDefencesAndPower();
             }
-            options.uncoveredCost = totalCost;
+            context.state.uncoveredCost = totalCost;
             Debug.Log(Debug.BlueprintTransfer, "Transferred blueprint of size {0}x{1}, age {2}, total cost of approximately {3}. Items: {4}/{5}, terrains: {6}/{7}", blueprint.width, blueprint.height, -blueprint.dateShift, totalCost, transferredTiles, totalItems, transferredTerrains, totalTerrains);
         }
 

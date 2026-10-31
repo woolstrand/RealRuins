@@ -20,7 +20,7 @@ namespace RealRuins {
                 
 
                 if (bp == null) {
-                    Debug.Error(Debug.Store, "Corrupted XML at path {0}, removing", filename);
+                    Debug.Warning(Debug.Store, "Corrupted XML at path {0}, removing", filename);
                     SnapshotStoreManager.Instance.RemoveBlueprintWithName(filename);
                     continue;
                 }

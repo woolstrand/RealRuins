@@ -46,7 +46,7 @@ All settings are `public static` fields — accessible from anywhere.
 | `forceMultiplier` | float | 1.0 | Scale enemy forces |
 | `logLevel` | int | 2 | 0=all, 1=warnings, 2=errors |
 | `preserveStandardRuins` | bool | false | Keep vanilla ruins alongside mod ruins |
-| `caravanReformType` | int | 0 | 0=normal, 1=instant, 2=delayed |
+| `caravanReformType` | int | 0 | 0=automatic, 1=instant, 2=manual (exit lock until raids are over) |
 | `spawnBlacklist` | string | "" | Comma-separated def names to never spawn |
 | `materialBlacklist` | string | "" | Comma-separated stuff def names to replace |
 | `fallbackMaterial` | string | "" | Replacement for blacklisted materials |
@@ -55,7 +55,6 @@ All settings are `public static` fields — accessible from anywhere.
 
 **`Reset()`**: Hard-codes all defaults — a DRY violation (defaults also declared at field initialization sites).
 
-**Orphaned field**: `allowInstantCaravanReform` (bool) is declared and initialized but **not saved in `ExposeData()`**. The active field is `caravanReformType` (int). The bool is dead legacy state.
 
 **Debug fields in production settings**: `debugKeepSnapshotsAfterUpload`, `debugTileFocusId`, `debugExtras` are persisted to the main settings XML — debug state bleeds into the production settings file.
 
@@ -107,15 +106,9 @@ Shows live cache stats, cache limit slider, offline/download/upload toggles, "Do
 ### AdvancedSettingsPage
 Sliders for: `forceMultiplier` (0–2 linear), `ruinsCostCap` (logarithmic 1000–1e9 via `Math.Log`/`Math.Exp`). `caravanReformType` FloatMenu dropdown. Text fields for `spawnBlacklist`, `materialBlacklist`, `fallbackMaterial`. Export/Import buttons.
 
-**CRITICAL BUG — Text Field Buffers**:
-```csharp
-private string spawnBlacklistBuffer = "";  // never seeded from settings
-```
-On the **first render frame**, `spawnBlacklistBuffer = ""`. `Widgets.TextField` returns `""`. The comparison `if (spawnBlacklistBuffer != RealRuins_ModSettings.spawnBlacklist)` is `true` whenever any saved blacklist is non-empty. This **immediately overwrites the saved setting with an empty string**. Any configured blacklist is silently erased the moment the Advanced tab is first opened.
+**Text field buffers**: `RealRuins_Mod` keeps the window and pages alive, so each text buffer remembers the setting value it was last synced with (`BufferedTextField` here, `ReadableLabeledTextInput(..., ref synced)` for the numeric fields on the Planetary Ruins page). If the setting changed elsewhere (import, reset), the buffer is refilled instead of being written back.
 
-The same bug affects `materialBlacklistBuffer` and `fallbackMaterialBuffer`.
-
-**Fix approach**: Seed buffers from settings in a lazy-init or `Initialize()` method called before first draw.
+**Known bug**: `RealRuins_ModSettings.Reset()` does not reset `diskCacheLimit` and replaces `defaultScatterOptions` with `new ScatterOptions()` instead of `ScatterOptions.Default`.
 
 ---
 
@@ -155,7 +148,7 @@ Import/export via Base64-encoded `key=value|key=value` strings.
 
 Modal window for copy/pasting the Base64 settings string.
 
-- **Export**: Pre-populated `GUI.TextArea` (technically editable — user can accidentally modify before copying). "Copy to Clipboard" via `GUIUtility.systemCopyBuffer`.
+- **Export**: Pre-populated `GUI.TextArea`; its result is ignored, so the text can be selected and copied but not edited. "Copy to Clipboard" via `GUIUtility.systemCopyBuffer`.
 - **Import**: Editable text area. "Import" calls `SettingsSerializer.TryImport()`, shows success/failure message.
 - `absorbInputAroundWindow = true` (modal). `closeOnClickedOutside = false`.
 - `forcePause = false` — game does not pause while dialog is open (inconsistent with most RimWorld modals).

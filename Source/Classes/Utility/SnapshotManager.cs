@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading;
 
 using System.IO;
 
@@ -12,20 +11,12 @@ using UnityEngine;
 namespace RealRuins {
 
 
+    // Main thread only: public methods are called from the UI / game thread, and all API callbacks arrive
+    // on the main thread too (CoroutineManager). That's what keeps the unlocked state below consistent.
     class SnapshotManager {
 
-        private static HashSet<Timer> timers = new HashSet<Timer>();
         private static void ExecuteAfter(Action action, TimeSpan delay) {
-            Timer timer = null;
-            timer = new Timer(s =>
-            {
-                action();
-                timer.Dispose();
-                lock (timers)
-                    timers.Remove(timer);
-            }, null, (long)delay.TotalMilliseconds, Timeout.Infinite);
-            lock (timers)
-                timers.Add(timer);
+            CoroutineManager.Instance.RunAfter(action, (float)delay.TotalSeconds);
         }
 
 
@@ -48,11 +39,11 @@ namespace RealRuins {
         static Dictionary<string, DateTime> snapshotTimestamps = new Dictionary<string, DateTime>();
 
         private List<string> snapshotsToLoad = new List<string>();
-        private readonly object snapshotsToLoadLock = new object();
 
         private int snapshotsToLoadCount = 0;
         private int loadedSnapshotsCount = 0;
         private int failedSnapshotsCount = 0;
+        private bool completionReported = false;
         private bool loadIfExists = true;
 
         private Action<int, int> progress;
@@ -65,6 +56,7 @@ namespace RealRuins {
             snapshotsToLoadCount = 0;
             loadedSnapshotsCount = 0;
             failedSnapshotsCount = 0;
+            completionReported = false;
             snapshotsToLoad = new List<string>();
         }
 
@@ -110,6 +102,9 @@ namespace RealRuins {
             }
 
             snapshotsToLoadCount = this.snapshotsToLoad.Count;
+            loadedSnapshotsCount = 0;
+            failedSnapshotsCount = 0;
+            completionReported = false;
             var concurrentLoaders = Math.Min(10, snapshotsToLoadCount);
 
             if (snapshotsToLoadCount > 0) {
@@ -133,6 +128,10 @@ namespace RealRuins {
 
             service.LoadRandomMapsList(delegate (bool success, List<string> files) {
                 if (!success) {
+                    if (retries <= 0) {
+                        Debug.Log(Debug.Store, "Failed loading list of random maps, giving up");
+                        return;
+                    }
                     Debug.Log(Debug.Store, "Failed loading list of random maps");
                     ExecuteAfter(delegate () {
                         LoadSomeSnapshots(concurrent, retries - 1);
@@ -162,41 +161,42 @@ namespace RealRuins {
                 return;
             }
 
-            string next;
-            lock (snapshotsToLoadLock) {
-                if (snapshotsToLoad.Count == 0) return;
-                next = snapshotsToLoad.Pop();
-            }
+            if (snapshotsToLoad.Count == 0) return;
+            string next = snapshotsToLoad.Pop();
 
             Debug.Log(Debug.Store, "Loading snapshot {0}", next);
 
             APIService service = new APIService();
             service.LoadMap(next, delegate (bool success, byte[] data) {
                 if (success) {
-                    loadedSnapshotsCount++;
-                    storeManager.StoreBinaryData(data, next, gamePath);
+                    // A snapshot counts as loaded only once it's on disk: completion consumers read the store right away.
+                    storeManager.StoreBinaryData(data, next, gamePath, delegate (bool stored) {
+                        if (stored) {
+                            loadedSnapshotsCount++;
+                        } else {
+                            failedSnapshotsCount++;
+                        }
+                        SnapshotFinished();
+                    });
                 } else {
                     failedSnapshotsCount++;
                     Debug.Warning(Debug.Store, "Failed loading snapshot {0}", next);
+                    SnapshotFinished();
                 }
 
-                progress?.Invoke(loadedSnapshotsCount, snapshotsToLoadCount);
-
-                bool hasMore;
-                lock (snapshotsToLoadLock) {
-                    hasMore = snapshotsToLoad.Count > 0;
-                }
-
-                if (hasMore) {
-                    //Debug.Message("Snapshots to load: {0}", snapshotsToLoad);
+                if (snapshotsToLoad.Count > 0) {
                     LoadNextSnapshot(gamePath);
-                } else {
-                    //Debug.Message("Loaded: {0}, failed: {1}, should be: {2}", loadedSnapshotsCount, failedSnapshotsCount, snapshotsToLoadCount);
-                    if (loadedSnapshotsCount + failedSnapshotsCount == snapshotsToLoadCount) {
-                        completion?.Invoke(true);
-                    }
                 }
             });
+        }
+
+        private void SnapshotFinished() {
+            progress?.Invoke(loadedSnapshotsCount, snapshotsToLoadCount);
+
+            if (!completionReported && loadedSnapshotsCount + failedSnapshotsCount == snapshotsToLoadCount) {
+                completionReported = true;
+                completion?.Invoke(true);
+            }
         }
 
         public void UploadCurrentMapSnapshot() {
@@ -224,9 +224,9 @@ namespace RealRuins {
                 Compressor.ZipFile(tmpFilename);
 
                 if (RealRuins.SingleFile) {
-                    SnapshotStoreManager.Instance.StoreBinaryData(File.ReadAllBytes(tmpFilename), "jeluder.bp");
+                    SnapshotStoreManager.Instance.StoreBinaryData(File.ReadAllBytes(tmpFilename), "jeluder");
                 } else if (RealRuins_ModSettings.offlineMode) {
-                    SnapshotStoreManager.Instance.StoreBinaryData(File.ReadAllBytes(tmpFilename), "local-" + snapshotId + ".bp");
+                    SnapshotStoreManager.Instance.StoreBinaryData(File.ReadAllBytes(tmpFilename), "local-" + snapshotId);
                 } else {
                     Debug.Log(Debug.Store, "Uploading file {0}", tmpFilename);
                     APIService service = new APIService();

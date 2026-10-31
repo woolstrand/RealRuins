@@ -12,23 +12,34 @@ namespace RealRuins {
 
         //ResolveParams's GetCustom/SetCustom is broken now, and it is a sealed (WHY??!) struct (WHY??!?!?) so I neither can fix it, nor make a dirty hack.
         //Seems like I have to abandon this approach and make direct calls.
-        static public void Scatter(ResolveParams rp, ScatterOptions options, CoverageMap coverage, List<AbstractDefenderForcesGenerator> generators) {
+        //rp is treated as input only: placement hint and faction. Everything produced by the run goes to context.state.
+        static public void Scatter(ResolveParams rp, ScatterContext context, CoverageMap coverage, List<AbstractDefenderForcesGenerator> generators) {
             Debug.Log(Debug.Scatter, "Running stand-alone scatterer");
-            if (options == null) {
+            if (context?.options == null) {
                 Debug.Warning(Debug.Scatter, "Scatter options are null, aborting");
                 return;
             }
 
+            ScatterOptions options = context.options;
+            context.state.placementRect = rp.rect; //fallback until the blueprint is actually placed
+
             DateTime start = DateTime.UtcNow;
             Debug.Log(Debug.Scatter, "[0 s]: Loading blueprint of size {0} - {1} to deploy at {2}, {3}", options.minRadius, options.maxRadius, rp.rect.minX, rp.rect.minZ);
 
-            Blueprint bp = null;
+            // Sites pick their blueprint long before this runs (an event or quest picks it, the player visits the site days
+            // later, maybe after a game restart) and store only the file name; the blueprint is loaded again here.
+            // Keeping the loaded blueprint instead is not worth it: storing it in the save adds megabytes of XML per site
+            // (the file is already in the local cache), and holding it in memory until the visit costs a lot of RAM for
+            // a one-time load behind the map generation screen. The pipeline also modifies a blueprint in place, so a
+            // kept copy could be used only once anyway. A blueprint loaded earlier in the same map generation is reused
+            // via context.preloadedBlueprint.
+            Blueprint bp = context.preloadedBlueprint;
             Map map = BaseGen.globalSettings.map;
 
             //probably should split scattering options into several distinct objects
             string filename = options.blueprintFileName;
-            if (string.IsNullOrEmpty(filename) || !BlueprintLoader.CanLoadBlueprintAtPath(filename)) {
-                bp = BlueprintFinder.FindRandomBlueprintWithParameters(out filename, options.minimumAreaRequired, options.minimumDensityRequired, 15, removeNonQualified: options.deleteLowQuality);
+            if (bp == null && (string.IsNullOrEmpty(filename) || !BlueprintLoader.CanLoadBlueprintAtPath(filename))) {
+                bp = BlueprintFinder.FindRandomBlueprintWithParameters(out filename, options.minimumAreaRequired, options.minimumDensityRequired, options.minimumCostRequired, maxAttemptsCount: 15, removeNonQualified: options.deleteLowQuality);
                 if (string.IsNullOrEmpty(filename)) {
                     //still null = no suitable blueprints, fail.
                     Debug.Warning(Debug.Scatter, "Blueprint name was null and could not find another suitable blueprint, skipping");
@@ -61,12 +72,12 @@ namespace RealRuins {
             // Here we have our blueprint loaded and ready to action. Doing stuff:
             BlueprintPreprocessor.ProcessBlueprint(bp, options); //Preprocess: remove missing and unnecessary items according to options
             bp.FindRooms(); //Traverse blueprint and construct rooms map
-            options.roomMap = bp.wallMap;
+            context.state.roomMap = bp.wallMap;
 
             //Debug.PrintIntMap(bp.wallMap, delta: 1);
             Debug.Extra(Debug.Scatter, "Rooms traversed, initializing transfer utility");
 
-            BlueprintTransferUtility btu = new BlueprintTransferUtility(bp, map, rp, options); //prepare blueprint transferrer
+            BlueprintTransferUtility btu = new BlueprintTransferUtility(bp, map, rp, context); //prepare blueprint transferrer
             Debug.Extra(Debug.Scatter, "Initialized, removing incompatible items...");
 
             btu?.RemoveIncompatibleItems(); //remove incompatible items 
@@ -92,7 +103,7 @@ namespace RealRuins {
             if (generators != null) {
                 foreach (AbstractDefenderForcesGenerator generator in generators) {
                     try {
-                        generator.GenerateForces(map, rp, options);
+                        generator.GenerateForces(map, rp, context);
                         Debug.Log(Debug.Scatter, "[{0} s] Generated forces for a generator.", DateTime.UtcNow.Subtract(start).TotalSeconds);
                     } catch (Exception e) {
                         Debug.Error(Debug.BlueprintTransfer, "Failed to generate forces: {0}", e);

@@ -117,7 +117,7 @@ namespace RealRuins
 
         public void LoadAllMapsForSeed(string seed, int mapSize, float coverage, Action<bool, List<PlanetTileInfo>> completionHandler)
         {
-            var path = APIRoot + MapsBySeedListPath + seed;
+            var path = APIRoot + MapsBySeedListPath + Uri.EscapeDataString(seed); //seed is user text and may contain '/', '?', '#' etc.
 
             string requestLink = path + "?limit=9999&coverage=" + coverage + "&mapSize=" + mapSize;
             Debug.Log(Debug.Loader, "Loading all compatible blueprings by link {0}", requestLink);
@@ -157,7 +157,7 @@ namespace RealRuins
 
             void failureHandler(Exception ex)
             {
-                Debug.Error(Debug.Loader, string.Format("Could not load maps list. Try not to alt-tab while waiting for maps loading."), true);
+                Debug.Warning(Debug.Loader, string.Format("Could not load maps list. Try not to alt-tab while waiting for maps loading."), true);
                 completionHandler(false, null);
             }
 

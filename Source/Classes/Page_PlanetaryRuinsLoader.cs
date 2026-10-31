@@ -9,6 +9,7 @@ using RimWorld;
 using RimWorld.Planet;
 using System.Threading;
 using System.Collections;
+using System.Collections.Concurrent;
 
 namespace RealRuins {
     enum RuinsPageState {
@@ -35,7 +36,8 @@ namespace RealRuins {
         private int blueprintsTotalCount = 0;
         private int blueprintsToLoadCount = 0;
         private int blueprintsLoadedCount = 0;
-        private int blueprintsProcessedCount = 0;
+        private int blueprintsToProcessCount = 0;
+        private int blueprintsProcessedCount = 0; // also incremented from the transfer thread, use Interlocked
         private int blueprintsUsed = 0;
 
         private int abandonedPercentage = (int)RealRuins_ModSettings.planetaryRuinsOptions.abandonedLocations;
@@ -46,7 +48,7 @@ namespace RealRuins {
         private bool disableFriendlyLocations = RealRuins_ModSettings.planetaryRuinsOptions.disableSpawnFriendlyLocations;
 
         private bool forceStopLoading = false;
-        private bool forceStopTransfer = false;
+        private volatile bool forceStopTransfer = false;
 
         private bool showLoaderOptions = false;
         private bool showTranferrerOptions = false;
@@ -114,7 +116,7 @@ namespace RealRuins {
             }
 
             if (standalone) {
-                GUI.color = new Color(1f, 0.3f, 0.35f);
+                GUI.color = pageState == RuinsPageState.Completed ? new Color(0.3f, 1f, 0.3f) : new Color(1f, 0.3f, 0.35f);
                 if (bottomButtons.ButtonText("RealRuins.Close".Translate())) {
                     Find.WindowStack.TryRemove(this);
                 }
@@ -244,7 +246,7 @@ namespace RealRuins {
 
                     break;
                 case RuinsPageState.ProcessingBlueprints:
-                    blueprintStats = "RealRuins.Processing".Translate() + blueprintsProcessedCount + " / " + filteredList.Count;
+                    blueprintStats = "RealRuins.Processing".Translate() + blueprintsProcessedCount + " / " + blueprintsToProcessCount;
                     skipped = "RealRuins.DroppedMaps".Translate() + (blueprintsProcessedCount - blueprintsUsed);
                     used = "RealRuins.UsedMaps".Translate() + blueprintsUsed;
                     list.Label(blueprintStats);
@@ -418,6 +420,10 @@ namespace RealRuins {
 
         // Checks how many blueprints were loaded, check if any alert should be displayed, proceed with transferring if needed
         private void LoadingCompleted() {
+            // Stopping the loader and the final responses of in-flight downloads can each report completion.
+            if (pageState != RuinsPageState.LoadingBlueprints) {
+                return;
+            }
             pageState = RuinsPageState.LoadedBlueprints;
             if (mode == RuinsPageMode.FullAuto || mode == RuinsPageMode.Default) {
                 CreateSites();
@@ -442,58 +448,127 @@ namespace RealRuins {
             pageState = RuinsPageState.Idle;
         }
 
-        private void CreateSites() {
-            Debug.Log(Debug.POI, "Completed loading, creating sites.");
-            new Thread(() => {
-                pageState = RuinsPageState.ProcessingBlueprints;
-                if (CreateSitesInt()) {
-                    pageState = RuinsPageState.Completed;
-                } else {
-                    pageState = RuinsPageState.Idle;
-                }
-            }).Start();
+        // Blueprints are loaded and analyzed on a background thread, world objects are created on the main thread
+        // (CoroutineManager). Neither depends on this window: closing it does not stop the transfer.
+        private class TransferJob {
+            public readonly ConcurrentQueue<RealRuinsPOIFactory.PreparedPOI> prepared = new ConcurrentQueue<RealRuinsPOIFactory.PreparedPOI>();
+            public volatile bool preparing = true;
+            public volatile bool stop = false;
         }
 
-        private bool CreateSitesInt() {
-            // Get all blueprints available on disk for this game (previous sessions + current)
-            HashSet<string> availableBlueprints = new HashSet<string>(
-                SnapshotStoreManager.Instance.GetAvailableBlueprintsForGamePath(SnapshotStoreManager.CurrentGamePath())
-            );
-            
-            foreach (PlanetTileInfo t in mapTiles) {
-                if (forceStopTransfer) {
-                    return false;
-                }
+        private void CreateSites() {
+            if (pageState == RuinsPageState.ProcessingBlueprints || pageState == RuinsPageState.Completed) {
+                return;
+            }
 
-                blueprintsProcessedCount++;
-                
-                // Only create POIs for blueprints that exist locally
+            Debug.Log(Debug.POI, "Completed loading, creating sites.");
+            pageState = RuinsPageState.ProcessingBlueprints;
+
+            string gamePath = SnapshotStoreManager.CurrentGamePath();
+            IntVec3 initialMapSize = Find.World.info.initialMapSize;
+
+            // Get all blueprints available on disk for this game (previous sessions + current)
+            HashSet<string> availableBlueprints = new HashSet<string>(SnapshotStoreManager.Instance.GetAvailableBlueprintsForGamePath(gamePath));
+
+            blueprintsToProcessCount = mapTiles.Count;
+            blueprintsProcessedCount = 0;
+            List<PlanetTileInfo> candidates = new List<PlanetTileInfo>();
+            foreach (PlanetTileInfo t in mapTiles) {
                 if (!availableBlueprints.Contains(t.mapId)) {
                     Debug.Log(Debug.POI, "Skipped: Blueprint {0} is not available locally", t.mapId);
+                    blueprintsProcessedCount++;
                     continue;
                 }
 
-                if (biomeStrict) {
-                    if (t.originX == 0 && t.originZ == 0 || t.biomeName == null) {
-                        Debug.Log(Debug.POI, "Skipped: Biome filtering is on, but blueprint does not contain biome or location information");
-                        continue;
-                    }
+                if (biomeStrict && (t.originX == 0 && t.originZ == 0 || t.biomeName == null)) {
+                    Debug.Log(Debug.POI, "Skipped: Biome filtering is on, but blueprint does not contain biome or location information");
+                    blueprintsProcessedCount++;
+                    continue;
                 }
-                try {
-                    if (RealRuinsPOIFactory.CreatePOI(t, SnapshotStoreManager.CurrentGamePath(), biomeStrict, costStrict, areaStrict, abandonedPercentage, aggressiveDiscard, disableFriendlyLocations)) {
-                        blueprintsUsed++;
-                        if (blueprintsUsed >= transferLimit && transferLimit != 0) {
-                            Debug.Log(Debug.POI, "Reached limit of {0} blueprints", transferLimit);
-                            return true;
-                        }
-                    } else {
-                        Debug.Log(Debug.POI, "CreatePOI returned false.");
-                    }
-                } catch (Exception e) {
-                    Debug.Log(Debug.POI, $"CreatePOI failed with exception {e}");
+
+                if (!RealRuinsPOIFactory.IsSuitableTile(t, biomeStrict)) {
+                    blueprintsProcessedCount++;
+                    continue;
                 }
+
+                candidates.Add(t);
             }
-            return true;
+
+            TransferJob job = new TransferJob();
+            new Thread(() => PrepareSites(job, candidates, gamePath, initialMapSize)) { IsBackground = true }.Start();
+            CoroutineManager.Instance.RunCoroutine(CommitSites(job, gamePath));
+        }
+
+        // Background thread: no engine state access here.
+        private void PrepareSites(TransferJob job, List<PlanetTileInfo> candidates, string gamePath, IntVec3 initialMapSize) {
+            try {
+                foreach (PlanetTileInfo t in candidates) {
+                    if (job.stop || forceStopTransfer) {
+                        break;
+                    }
+
+                    RealRuinsPOIFactory.PreparedPOI prepared = null;
+                    try {
+                        prepared = RealRuinsPOIFactory.PreparePOI(t, gamePath, initialMapSize, costStrict, aggressiveDiscard);
+                    } catch (Exception e) {
+                        Debug.Log(Debug.POI, $"PreparePOI failed with exception {e}");
+                    }
+
+                    if (prepared != null) {
+                        job.prepared.Enqueue(prepared);
+                    } else {
+                        Interlocked.Increment(ref blueprintsProcessedCount);
+                    }
+                }
+            } finally {
+                job.preparing = false;
+            }
+        }
+
+        // Main thread: creates world objects from prepared blueprints, a few milliseconds per frame.
+        private IEnumerator CommitSites(TransferJob job, string gamePath) {
+            const long frameBudgetMs = 5;
+            World world = Find.World;
+            System.Diagnostics.Stopwatch frameTimer = new System.Diagnostics.Stopwatch();
+
+            while (true) {
+                // Read before draining: if preparation was already over, the queue is final once drained.
+                bool preparationFinished = !job.preparing;
+
+                if (forceStopTransfer || Find.World != world) {
+                    job.stop = true;
+                    pageState = RuinsPageState.Idle;
+                    yield break;
+                }
+
+                frameTimer.Restart();
+                while (frameTimer.ElapsedMilliseconds < frameBudgetMs && job.prepared.TryDequeue(out RealRuinsPOIFactory.PreparedPOI prepared)) {
+                    Interlocked.Increment(ref blueprintsProcessedCount);
+                    try {
+                        if (RealRuinsPOIFactory.CommitPOI(prepared, gamePath, biomeStrict, abandonedPercentage, disableFriendlyLocations)) {
+                            blueprintsUsed++;
+                            if (blueprintsUsed >= transferLimit && transferLimit != 0) {
+                                Debug.Log(Debug.POI, "Reached limit of {0} blueprints", transferLimit);
+                                job.stop = true;
+                                pageState = RuinsPageState.Completed;
+                                yield break;
+                            }
+                        } else {
+                            Debug.Log(Debug.POI, "CommitPOI returned false.");
+                        }
+                    } catch (Exception e) {
+                        Debug.Log(Debug.POI, $"CommitPOI failed with exception {e}");
+                    }
+                }
+
+                if (preparationFinished && job.prepared.IsEmpty) {
+                    break;
+                }
+                yield return null;
+            }
+
+            Debug.Log(Debug.POI, "Transfer finished, {0} sites created", blueprintsUsed);
+            pageState = RuinsPageState.Completed;
         }
 
         public override void PreOpen() {

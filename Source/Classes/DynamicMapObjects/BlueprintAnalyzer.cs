@@ -62,9 +62,9 @@ namespace RealRuins {
         private Dictionary<string, ItemStatRecord> itemStats;
         private ScatterOptions options;
 
-        public BlueprintAnalyzer(Blueprint blueprint, ScatterOptions options = null) {
+        public BlueprintAnalyzer(Blueprint blueprint) {
             this.blueprint = blueprint;
-            this.options = options ?? ScatterOptions.asIs();
+            this.options = ScatterOptionsFactory.ForAnalyzer();
             itemStats = new Dictionary<string, ItemStatRecord>();
         }
 
@@ -202,11 +202,16 @@ namespace RealRuins {
                 return POIType.Ruins;
             }
 
+            //no enclosed rooms at all (e.g. roofed or walled area without closed rooms): the calculations below divide by internal area
+            if (result.internalArea <= 0) {
+                return POIType.Ruins;
+            }
+
             if (result.internalArea / result.wallLength < 2 && result.roomsCount < 6) {
                 return POIType.Ruins;
             }
 
-            //internal area here is definitely > 0, so occupiedTilesCount too
+            //internal area is > 0 here, so occupiedTilesCount is too
             if (result.totalItemsCost / result.occupiedTilesCount < 10) {
                 return POIType.Ruins;
             }
@@ -234,7 +239,9 @@ namespace RealRuins {
 
             if (militaryFeatures >= 3 && militaryPower < 8 && prodScore < 50) {
                 if (result.internalArea < 2000) {
-                    return Rand.Chance(0.5f)?POIType.Outpost:POIType.Communication;
+                    //Random on purpose (FIXES_QUEUE M4, won't fix): small military sites look the same either way, and the
+                    //type is picked once when the POI is created at game start, so determinism buys nothing here.
+                    return ThreadSafeRand.Chance(0.5f)?POIType.Outpost:POIType.Communication;
                 }
                 if (result.internalArea > 2000 && result.internalArea < 6000 && result.roomsCount < 20) {
                     return POIType.MilitaryBaseSmall;
