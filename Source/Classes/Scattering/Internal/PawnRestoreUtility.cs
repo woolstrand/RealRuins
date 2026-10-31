@@ -210,7 +210,13 @@ namespace RealRuins
                                     // a MissingPart hediff was added earlier in the same loop).
                                     bool partOk = hediff.Part == null
                                         || p.health.hediffSet.GetNotMissingParts().Contains(hediff.Part);
-                                    if (partOk)
+                                    // Vanilla rejects injuries on parts that can't be hit (zero coverage, e.g. Waist).
+                                    bool hittable = !(hediff is Hediff_Injury) || hediff.Part == null || hediff.Part.coverageAbs > 0f;
+                                    if (partOk && !hittable)
+                                    {
+                                        Debug.Extra(Debug.BlueprintPawnDecoder, "Skipping injury {0}: part {1} can't be hit", hediff.def?.defName ?? "unknown", hediff.Part);
+                                    }
+                                    else if (partOk)
                                     {
                                         p.health.AddHediff(hediff);
                                     }
@@ -629,6 +635,18 @@ namespace RealRuins
                     {
                         Debug.Extra(Debug.BlueprintPawnDecoder, "Hediff {0} has missing source {1}, removing source reference", hediffDefName, sourceNode.InnerText);
                         hediffNode.RemoveChild(sourceNode);
+                    }
+                }
+
+                // Validate and fix source hediff reference (HediffDef that caused the injury, e.g. a modded body part attack)
+                var sourceHediffNode = hediffNode.SelectSingleNode("sourceHediffDef");
+                if (sourceHediffNode != null && !string.IsNullOrEmpty(sourceHediffNode.InnerText))
+                {
+                    HediffDef sourceHediffDef = DefDatabase<HediffDef>.GetNamedSilentFail(sourceHediffNode.InnerText);
+                    if (sourceHediffDef == null)
+                    {
+                        Debug.Extra(Debug.BlueprintPawnDecoder, "Hediff {0} has missing sourceHediffDef {1}, removing reference", hediffDefName, sourceHediffNode.InnerText);
+                        hediffNode.RemoveChild(sourceHediffNode);
                     }
                 }
 
