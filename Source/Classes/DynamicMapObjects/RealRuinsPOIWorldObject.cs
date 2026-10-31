@@ -81,6 +81,16 @@ namespace RealRuins {
             }
         }
 
+        //Shuttles ask for their own options, without this only "form caravan" is offered on the ruins tile
+        public override IEnumerable<FloatMenuOption> GetShuttleFloatMenuOptions(IEnumerable<IThingHolder> pods, Action<PlanetTile, TransportersArrivalAction> launchAction) {
+            foreach (FloatMenuOption shuttleFloatMenuOption in base.GetShuttleFloatMenuOptions(pods, launchAction)) {
+                yield return shuttleFloatMenuOption;
+            }
+            foreach (FloatMenuOption floatMenuOption in TransportPodsArrivalAction_VisitRuinsPOI.GetFloatMenuOptions(launchAction, pods, this)) {
+                yield return floatMenuOption;
+            }
+        }
+
         public override void ExposeData() {
             base.ExposeData();
             Scribe_Values.Look(ref wealthOnEnter, "wealthOnEnter");

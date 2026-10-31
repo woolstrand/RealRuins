@@ -7,9 +7,7 @@ using RimWorld.Planet;
 using Verse;
 
 namespace RealRuins {
-    class CaravanArrivalAction_VisitRealRuinsPOI : CaravanArrivalAction {
-
-        private MapParent mapParent;
+    class CaravanArrivalAction_VisitRealRuinsPOI : CaravanArrivalAction_VisitRuinsBase {
 
         public override string Label {
             get {
@@ -25,23 +23,13 @@ namespace RealRuins {
 
         public override string ReportString => "RealRuins.CaravanEnteringPOI".Translate(mapParent.Label);
 
-        public CaravanArrivalAction_VisitRealRuinsPOI(MapParent mapParent) {
-            this.mapParent = mapParent;
+        public CaravanArrivalAction_VisitRealRuinsPOI() {
         }
 
-        public override void Arrived(Caravan caravan) {
-
-            if (!mapParent.HasMap) {
-                LongEventHandler.QueueLongEvent(delegate
-                {
-                    DoArrivalAction(caravan);
-                }, "GeneratingMapForNewEncounter", doAsynchronously: false, exceptionHandler: null);
-            } else {
-                DoArrivalAction(caravan);
-            }
+        public CaravanArrivalAction_VisitRealRuinsPOI(MapParent mapParent) : base(mapParent) {
         }
 
-        private void DoArrivalAction(Caravan caravan) {
+        protected override void DoEnter(Caravan caravan) {
             bool flag = !mapParent.HasMap;
 
             Map orGenerateMap = GetOrGenerateMapUtility.GetOrGenerateMap(mapParent.Tile, null);
@@ -62,7 +50,7 @@ namespace RealRuins {
                 }
             }
 
-            AffectRelationsIfNeeded(ref letterText);
+            POIArrivalUtility.AffectRelationsIfNeeded(mapParent, ref letterText);
             Find.LetterStack.ReceiveLetter(letterCaption, letterText, letterDef, t, null, null);
 
             Map map = orGenerateMap;
@@ -80,21 +68,6 @@ namespace RealRuins {
 
         public static IEnumerable<FloatMenuOption> GetFloatMenuOptions(Caravan caravan, MapParent mapParent) {
             return CaravanArrivalActionUtility.GetFloatMenuOptions(() => CanEnter(caravan, mapParent), () => new CaravanArrivalAction_VisitRealRuinsPOI(mapParent), "EnterMap".Translate(mapParent.Label), caravan, mapParent.Tile, mapParent);
-        }
-
-        //Intended (FIXES_QUEUE M7, won't fix): entering a POI that belongs to a faction is an attack on their property,
-        //its defenders are hostile on arrival. This is a copy of vanilla SettlementUtility.AffectRelationsOnAttacked,
-        //and the relation change is appended to the arrival letter the same way.
-        private void AffectRelationsIfNeeded(ref TaggedString letterText) {
-            if (mapParent.Faction == null || mapParent.Faction == Faction.OfPlayer) {
-                return;
-            }
-
-            FactionRelationKind playerRelationKind = mapParent.Faction.PlayerRelationKind;
-            Faction.OfPlayer.TryAffectGoodwillWith(mapParent.Faction, Faction.OfPlayer.GoodwillToMakeHostile(mapParent.Faction),
-                canSendMessage: false, canSendHostilityLetter: false, HistoryEventDefOf.AttackedSettlement);
-//            letterText = letterText + "RelationsWith".Translate(mapParent.Faction.Name) + ": " + (-50).ToStringWithSign();
-            mapParent.Faction.TryAppendRelationKindChangedInfo(ref letterText, playerRelationKind, mapParent.Faction.PlayerRelationKind);
         }
     }
 }

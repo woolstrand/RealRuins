@@ -145,9 +145,7 @@ Intended: same as vanilla `SettlementUtility.AffectRelationsOnAttacked`, see the
 
 ---
 
-### L5. Code Duplication Across Arrival Actions
-**What**: `TransportPodsArrivalAction_VisitRuins` / `_VisitRuinsPOI` and `CaravanArrivalAction_VisitAbandonedBase` / `_VisitRealRuinsPOI` share about 60–70% of their code.
-**Fix**: Extract a shared base class or utility for the common arrival logic.
+### L5. Fixed
 
 ---
 
