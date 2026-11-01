@@ -71,26 +71,6 @@ comp of the same type (generic over comp types, not over DBH) and skip.
 
 ---
 
-## 9. DBH fixtures are skipped by the "would destroy a DBH item" guard
-
-**Seen:** 2026-10-31, Windows, RimWorld 1.7.4990, Dubs Bad Hygiene + Vanilla Furniture Expanded loaded; 5 of 30 random ruins.
-Blueprints `CD858D3E-7829-4A99-B4FD-7D2D55F3B4B6`, `F40ABA1D-624C-4335-AD5E-38328BCC022F`, `E10CD2B6-D508-4949-9DA3-E733914CFE7F`,
-`F7808E0B-A7FC-496C-B50A-0401B9740838`, `C6768B21-4724-4517-9512-2BA1BEED6512`.
-
-**Log:** `WARN ... Failed to spawn item ToiletStuff<id> ... because of exception System.Exception: Can't spawn item because it
-will destroy Dubs Bad Hygiene Item and it will lead to app freeze.` - also `WashingMachine`, `ShowerStuff`, `BathtubStuff`,
-`BasinStuff`, `KitchenSink`, `HotTub`, `ToiletAdvStuff`, `ShowerAdvStuff`, `VFE_KitchenSinkCabinet`.
-
-**Where:** `BlueprintTransferUtility.Transfer`, the wipe loop before `GenSpawn.Spawn` (added 2020, commit 442441b). The comment
-says DBH items freeze the game when *removed* during mapgen, but the check tests the class of the **new** thing
-(`thing.def.thingClass`), not of `existingItem`. So every DBH fixture that would wipe anything (a plant, a chunk, filth) is
-dropped, while a non-DBH thing that wipes a DBH item is not stopped. It is also a mod-specific special case.
-
-**Fix direction:** check `existingItem` instead (matches the comment), then re-test whether the old freeze comes back. Not
-changed during the compatibility run because the original intent can't be confirmed from the code.
-
----
-
 ## Related, already noted elsewhere
 
 - `CleaningStation` NRE in `MakeThingFromItemTile` (2026-10-29, macOS) - see the skill's `NOTES.md`; not
