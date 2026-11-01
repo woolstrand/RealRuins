@@ -288,10 +288,14 @@ namespace RealRuins
                         }
                         Apparel apparel = (Apparel)ThingMaker.MakeThing(thingDef, resolvedStuff);
                         apparel.HitPoints = Rand.Range(1, (int)(apparel.MaxHitPoints * 0.6));
-                        if (apparel is Apparel)
+                        //the restored pawn can be of another race or body than the original (alien race mods, fallback kinds):
+                        //check what Wear checks, so unwearable apparel is skipped quietly instead of with a vanilla warning
+                        if (!ApparelUtility.HasPartsToWear(p, thingDef) || !apparel.PawnCanWear(p, ignoreGender: true))
                         {
-                            p.apparel.Wear(apparel, false);
+                            Debug.Extra(Debug.BlueprintPawnDecoder, "Apparel {0} can't be worn by {1}, skipping", thingDef.defName, p.def.defName);
+                            continue;
                         }
+                        p.apparel.Wear(apparel, false);
                     }
                 }
             }
