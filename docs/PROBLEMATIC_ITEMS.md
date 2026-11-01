@@ -144,20 +144,6 @@ changed during the compatibility run because the original intent can't be confir
 
 ---
 
-## 10. Name-based wall detection turns modded items into walls
-
-**Seen:** 2026-10-31, blueprint `E43CD04F-2A28-4E83-A0CF-D099C03D7D3C`: `<item def="SpellOf_ArcaneWallC" stackCount="4" />`
-(an item from a magic mod that wasn't loaded) is spawned as a vanilla `Wall`. The stack count error this caused is fixed
-(wall/door replacements now reset the stack count); the item still becomes a wall.
-
-**Where:** `Tiles.cs` marks any def whose name contains "wall" as `isWall`; `BlueprintLoader` then replaces it with `Wall`
-when the def is missing.
-
-**Fix direction:** trust the blueprint's `actsAsWall` attribute and fall back to the name only for old blueprints without it,
-or ignore the name for items that carry a `stackCount` (a real wall never does).
-
----
-
 ## Related, already noted elsewhere
 
 - `CleaningStation` NRE in `MakeThingFromItemTile` (2026-10-29, macOS) - see the skill's `NOTES.md`; not
