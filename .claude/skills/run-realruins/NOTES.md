@@ -92,6 +92,8 @@ searching to figure out. Keep entries short; no screen coordinates (they change 
 - **Speed 3 is unavailable while hostiles are on the map** (the click is ignored); use speed 2 or the dev speed.
 - **Log stops at ~420k lines**: `Reached max messages limit. Stopping logging to avoid spam.` - a long fight can trigger it.
   Mark/check the log before long runs; after it, `logsince` returns nothing and only a relaunch helps.
+- Mod settings window is small and scrolls: move the mouse over it and `scroll -10 3` to reach the bottom of a page (planetary cache table).
+- A settings page that draws past its `Listing_Standard` rect silently loses the overflow (it wraps into an off-screen second column) - set `maxOneColumn`.
 - Ctrl+V for paste: `key 86 ctrl` (Windows VK code; `key v ctrl` fails).
 - Once the game exited cleanly ("Log closed", no crash report) ~1 min after a quicktest click that
   left no log trace; cause unknown. Check `logsince` before assuming a crash.
@@ -177,3 +179,5 @@ blueprint id) - that file also states the spawn philosophy: spawn what can be sp
 - 2026-10-30 (Windows, 1.7): verified H1 + H9 on the planetary loader, seed `shotgun`: 579 fresh downloads, window closed
   mid-transfer (173/579) and sites kept appearing → 393 sites, 0 exceptions; only the 2 failed downloads were missing
   locally (completion now waits for disk writes). Second world, same seed: Close turned green on completion.
+- 2026-11-01 (Windows, 1.7): planetary cache table in General/Network/Cache settings: 13 real seed folders listed with correct
+  coverage/size/count; test folders (dashed seed, folder added from outside) cleared via Clear + confirmation, table refreshed, 0 errors.

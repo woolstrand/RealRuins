@@ -95,6 +95,8 @@ Sliders for: density multiplier, min/max radius, deterioration, scavenging multi
 ### NetworkCacheSettingsPage
 Shows live cache stats, cache limit slider, offline/download/upload toggles, "Download 50" / "Download 500" buttons, "Clear Cache" button (red, with confirmation), "Upload Now" button.
 
+Below them, a **Planetary ruins cache** table: one row per planetary ruins subfolder (`<seed>-<mapSize>-<coverage %>`, see `SnapshotStoreManager.GamePath`) with seed, coverage, map size, blueprint count, total folder size (bold) and a "Clear" button with confirmation (`ClearPlanetaryCacheFolder`). The folders are scanned by `SnapshotStoreManager.GetPlanetaryCacheFolders()` only when `SnapshotStoreManager.CacheVersion` changes (bumped from any thread by every write, delete or clear in the cache), at most once a second so background downloads don't rescan every frame, and again whenever the page is shown after not being drawn (to catch changes made outside the game). The page height follows the drawn content (`listing.maxOneColumn`, otherwise `Listing_Standard` wraps overflow into an invisible second column). The main "Clear Cache" button still deletes everything, planetary folders included.
+
 **"Download 50" button**: Calls `SnapshotManager.Instance.LoadSomeSnapshots(5)`. The argument `5` is a batch count; display label "50" assumes batch size = 10. Relationship is undocumented.
 
 **Performance**: `SnapshotStoreManager.Instance.TotalSize()` and `StoredSnapshotsCount()` called every render frame — potential stutter if these involve disk I/O.

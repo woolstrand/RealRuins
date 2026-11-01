@@ -34,6 +34,20 @@ namespace RealRuins
         private long totalFilesSize = 0;
         private int totalFileCount = 0;
 
+        // Bumped (from any thread) whenever something in the cache folder changes, so the UI can rescan only when needed.
+        private static int cacheVersion = 0;
+        public static int CacheVersion => Volatile.Read(ref cacheVersion);
+        public static void NotifyCacheChanged() => Interlocked.Increment(ref cacheVersion);
+
+        public class PlanetaryCacheFolder {
+            public string folderName;
+            public string seed;
+            public int mapSize;
+            public int coveragePercent;
+            public int blueprintCount;
+            public long totalSize;
+        }
+
 
         public static bool HasPlanetaryBlueprintForCurrentGame(string blueprintName) {
             string gameName = CurrentGamePath();
@@ -229,6 +243,7 @@ namespace RealRuins
             } catch (Exception) { 
                 //can't do anything useful really, just ignore
             }
+            NotifyCacheChanged();
         }
 
         public List<string> FilterOutExistingItems(List<string> source, string gamePath = null) {
@@ -290,6 +305,52 @@ namespace RealRuins
             Directory.CreateDirectory(GetSnapshotsFolderPath());
             totalFilesSize = 0;
             totalFileCount = 0;
+            NotifyCacheChanged();
+        }
+
+        // Planetary ruins blueprints live in per-world subfolders named by GamePath(): "<seed>-<mapSize>-<coverage %>".
+        // The seed itself may contain dashes, so the numbers are taken from the end.
+        public List<PlanetaryCacheFolder> GetPlanetaryCacheFolders() {
+            List<PlanetaryCacheFolder> result = new List<PlanetaryCacheFolder>();
+            try {
+                foreach (string dir in Directory.GetDirectories(GetSnapshotsFolderPath())) {
+                    string folderName = Path.GetFileName(dir);
+                    PlanetaryCacheFolder folder = new PlanetaryCacheFolder { folderName = folderName, seed = folderName, mapSize = -1, coveragePercent = -1 };
+
+                    int lastDash = folderName.LastIndexOf('-');
+                    int prevDash = lastDash > 0 ? folderName.LastIndexOf('-', lastDash - 1) : -1;
+                    if (prevDash > 0 &&
+                        int.TryParse(folderName.Substring(prevDash + 1, lastDash - prevDash - 1), out int mapSize) &&
+                        int.TryParse(folderName.Substring(lastDash + 1), out int coverage)) {
+                        folder.seed = folderName.Substring(0, prevDash);
+                        folder.mapSize = mapSize;
+                        folder.coveragePercent = coverage;
+                    }
+
+                    foreach (FileInfo file in new DirectoryInfo(dir).GetFiles("*", SearchOption.AllDirectories)) {
+                        folder.totalSize += file.Length;
+                        if (file.Extension == ".bp") {
+                            folder.blueprintCount++;
+                        }
+                    }
+                    result.Add(folder);
+                }
+            } catch (Exception e) {
+                Debug.Error(Debug.Store, "Error scanning planetary cache folders: {0}", e);
+            }
+            return result;
+        }
+
+        public void ClearPlanetaryCacheFolder(string folderName) {
+            try {
+                string path = Path.Combine(GetSnapshotsFolderPath(), folderName);
+                if (Directory.Exists(path)) {
+                    Directory.Delete(path, true);
+                }
+            } catch (Exception e) {
+                Debug.Error(Debug.Store, "Failed to remove planetary cache folder {0}: {1}", folderName, e);
+            }
+            NotifyCacheChanged();
         }
 
         public long TotalSize() {
@@ -306,6 +367,7 @@ namespace RealRuins
 
             totalFilesSize = totalSize;
             totalFileCount = filesList.Length;
+            NotifyCacheChanged();
         }
 
         public void CheckCacheSizeLimits() {
