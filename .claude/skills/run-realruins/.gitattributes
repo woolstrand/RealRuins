@@ -1,0 +1,4 @@
+# Scripts run under bash (macOS and Git Bash on Windows) - CRLF breaks them.
+*.sh text eol=lf
+*.swift text eol=lf
+*.cs text eol=lf
