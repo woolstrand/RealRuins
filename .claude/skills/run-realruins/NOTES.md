@@ -93,6 +93,19 @@ searching to figure out. Keep entries short; no screen coordinates (they change 
 - **Log stops at ~420k lines**: `Reached max messages limit. Stopping logging to avoid spam.` - a long fight can trigger it.
   Mark/check the log before long runs; after it, `logsince` returns nothing and only a relaunch helps.
 - Ctrl+V for paste: `key 86 ctrl` (Windows VK code; `key v ctrl` fails).
+- Game speed keys on Windows: `key 50` (VK of "2") - `key 2` sends raw VK 2 and does nothing. Check the clock on the
+  screenshot: with several ruin maps loaded an in-game hour takes 30-60 s at speed 2.
+- **`logVerbose` in `Prefs.xml` fills the log with DeepProfiler "--- Main thread ---" dumps** (thousands per raid) and hits
+  the ~420k line cap within minutes. Turn it off for a test session, restore after.
+- The Debug actions window has a different layout on the world map than on a colony map; if the incident list shows map
+  incidents you are on the colony map. Mods add incidents and shift positions (Quest_PristineRuins moved when Ratkin was
+  added) - screenshot the list once per mod set.
+- Clicking the Actions/tools tab sometimes only highlights it without switching the content, and a game message drawn over
+  the tab swallows the click. Pause the game, move the mouse away, click the tab and screenshot before clicking an action:
+  a stray click on the Settings tab toggles a debug setting.
+- `T: Spawn Random Caravan` fails silently on water tiles; pick a land hex next to the site.
+- A blueprint rejected by the quest (`Unacceptable blueprint ... density`) is deleted from the store - even a forced one
+  outside the cache dir. Keep a copy.
 - Once the game exited cleanly ("Log closed", no crash report) ~1 min after a quicktest click that
   left no log trace; cause unknown. Check `logsince` before assuming a crash.
 
@@ -177,3 +190,10 @@ blueprint id) - that file also states the spawn philosophy: spawn what can be sp
 - 2026-10-30 (Windows, 1.7): verified H1 + H9 on the planetary loader, seed `shotgun`: 579 fresh downloads, window closed
   mid-transfer (173/579) and sites kept appearing → 393 sites, 0 exceptions; only the 2 failed downloads were missing
   locally (completion now waits for disk writes). Second world, same seed: Close turned green on completion.
+- 2026-11-01 (Windows, 1.7.4995): compatibility rolling run (branch `chores/compatibility_rolling`), ~59 mods incl. DBH,
+  Rimefeller, Rimatomics, plus newly added Vanilla Races Expanded - Android and NewRatkinPlus (HAR). Targeted pristine ruins on
+  DBH-heaviest blueprints (E26958BD, CA1DCCA3), DBH pipe overlap (E4790701), pump/reactor/spell (E43CD04F), android pawns
+  (D4D76B3C) - all clean. Found and fixed during the run: wall attachments dropped before their wall spawned, hediff restore
+  in Scribe loading mode (unique-id warnings), unwearable apparel on restored pawns (race mods), MechDropBeacon waking up
+  in ruins (error popup). Then 5 consecutive random pristine ruins on the final build: 0 errors. Remaining harmless warnings:
+  vanilla "Used only X / Y points generating for <faction>" and Ratkin "tried to wear RK_*" from pawn-group generation.

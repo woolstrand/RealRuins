@@ -184,64 +184,66 @@ namespace RealRuins
                 XmlNodeList hediffsList = healthNode.SelectNodes("hediffSet/hediffs/li");
                 if (hediffsList != null)
                 {
-                    Scribe.mode = LoadSaveMode.LoadingVars;
-                    try
+                    p.health?.hediffSet?.hediffs?.RemoveAll(_ => true);
+                    foreach (XmlNode hediffNode in hediffsList)
                     {
-                        p.health?.hediffSet?.hediffs?.RemoveAll(_ => true);
-
-                        foreach (XmlNode hediffNode in hediffsList)
+                        try
                         {
+                            if (!ValidateAndFixHediffNode(hediffNode, p))
+                            {
+                                Debug.Extra(Debug.BlueprintPawnDecoder, "Skipping hediff due to validation failure: {0}", hediffNode.SelectSingleNode("def")?.InnerText ?? "unknown");
+                                continue;
+                            }
+
+                            // Extract combat log message if present before deserialization
+                            string combatLogMessage = hediffNode.SelectSingleNode("combatLogText")?.InnerText;
+
+                            //only deserializing needs the loading mode. Adding the hediff and its log entry makes new things, and
+                            //ids handed out while loading are random (vanilla warns about each one)
+                            Hediff hediff;
+                            Scribe.mode = LoadSaveMode.LoadingVars;
                             try
                             {
-                                if (!ValidateAndFixHediffNode(hediffNode, p))
+                                hediff = ScribeExtractor.SaveableFromNode<Hediff>(hediffNode, null);
+                            }
+                            finally
+                            {
+                                Scribe.mode = LoadSaveMode.Inactive;
+                            }
+                            if (hediff != null)
+                            {
+                                // If the hediff targets a specific body part, verify the part is still
+                                // present and not missing (PartIsMissing can use a stale cache after
+                                // a MissingPart hediff was added earlier in the same loop).
+                                bool partOk = hediff.Part == null
+                                    || p.health.hediffSet.GetNotMissingParts().Contains(hediff.Part);
+                                // Vanilla rejects injuries on parts that can't be hit (zero coverage, e.g. Waist).
+                                bool hittable = !(hediff is Hediff_Injury) || hediff.Part == null || hediff.Part.coverageAbs > 0f;
+                                if (partOk && !hittable)
                                 {
-                                    Debug.Extra(Debug.BlueprintPawnDecoder, "Skipping hediff due to validation failure: {0}", hediffNode.SelectSingleNode("def")?.InnerText ?? "unknown");
-                                    continue;
+                                    Debug.Extra(Debug.BlueprintPawnDecoder, "Skipping injury {0}: part {1} can't be hit", hediff.def?.defName ?? "unknown", hediff.Part);
                                 }
-
-                                // Extract combat log message if present before deserialization
-                                string combatLogMessage = hediffNode.SelectSingleNode("combatLogText")?.InnerText;
-
-                                Hediff hediff = ScribeExtractor.SaveableFromNode<Hediff>(hediffNode, null);
-                                if (hediff != null)
+                                else if (partOk)
                                 {
-                                    // If the hediff targets a specific body part, verify the part is still
-                                    // present and not missing (PartIsMissing can use a stale cache after
-                                    // a MissingPart hediff was added earlier in the same loop).
-                                    bool partOk = hediff.Part == null
-                                        || p.health.hediffSet.GetNotMissingParts().Contains(hediff.Part);
-                                    // Vanilla rejects injuries on parts that can't be hit (zero coverage, e.g. Waist).
-                                    bool hittable = !(hediff is Hediff_Injury) || hediff.Part == null || hediff.Part.coverageAbs > 0f;
-                                    if (partOk && !hittable)
-                                    {
-                                        Debug.Extra(Debug.BlueprintPawnDecoder, "Skipping injury {0}: part {1} can't be hit", hediff.def?.defName ?? "unknown", hediff.Part);
-                                    }
-                                    else if (partOk)
-                                    {
-                                        p.health.AddHediff(hediff);
-                                    }
-                                    else
-                                    {
-                                        Debug.Extra(Debug.BlueprintPawnDecoder, "Skipping hediff {0}: part {1} is missing or not present", hediff.def?.defName ?? "unknown", hediff.Part);
-                                    }
+                                    p.health.AddHediff(hediff);
                                 }
-
-                                // Add the combat log message to the pawn's combat log if present. even for missing parts.
-                                if (!string.IsNullOrEmpty(combatLogMessage))
+                                else
                                 {
-                                    Debug.Extra(Debug.BlueprintPawnDecoder, "Trying to add combat log message: {0}", combatLogMessage);
-                                    AddCombatLogMessage(p, combatLogMessage, hediff);
+                                    Debug.Extra(Debug.BlueprintPawnDecoder, "Skipping hediff {0}: part {1} is missing or not present", hediff.def?.defName ?? "unknown", hediff.Part);
                                 }
                             }
-                            catch (Exception ex)
+
+                            // Add the combat log message to the pawn's combat log if present. even for missing parts.
+                            if (!string.IsNullOrEmpty(combatLogMessage))
                             {
-                                Debug.Extra(Debug.BlueprintPawnDecoder, "Failed to restore hediff {0}: {1}", hediffNode.SelectSingleNode("def")?.InnerText ?? "unknown", ex.Message);
+                                Debug.Extra(Debug.BlueprintPawnDecoder, "Trying to add combat log message: {0}", combatLogMessage);
+                                AddCombatLogMessage(p, combatLogMessage, hediff);
                             }
                         }
-                    }
-                    finally
-                    {
-                        Scribe.mode = LoadSaveMode.Inactive;
+                        catch (Exception ex)
+                        {
+                            Debug.Extra(Debug.BlueprintPawnDecoder, "Failed to restore hediff {0}: {1}", hediffNode.SelectSingleNode("def")?.InnerText ?? "unknown", ex.Message);
+                        }
                     }
                 }
             }
@@ -286,10 +288,14 @@ namespace RealRuins
                         }
                         Apparel apparel = (Apparel)ThingMaker.MakeThing(thingDef, resolvedStuff);
                         apparel.HitPoints = Rand.Range(1, (int)(apparel.MaxHitPoints * 0.6));
-                        if (apparel is Apparel)
+                        //the restored pawn can be of another race or body than the original (alien race mods, fallback kinds):
+                        //check what Wear checks, so unwearable apparel is skipped quietly instead of with a vanilla warning
+                        if (!ApparelUtility.HasPartsToWear(p, thingDef) || !apparel.PawnCanWear(p, ignoreGender: true))
                         {
-                            p.apparel.Wear(apparel, false);
+                            Debug.Extra(Debug.BlueprintPawnDecoder, "Apparel {0} can't be worn by {1}, skipping", thingDef.defName, p.def.defName);
+                            continue;
                         }
+                        p.apparel.Wear(apparel, false);
                     }
                 }
             }

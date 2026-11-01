@@ -147,7 +147,7 @@ namespace RealRuins {
                                     tile.stackCount = 1; //replacements are buildings, they don't stack
                                     tile.location = new IntVec3(x, 0, z);
                                     blueprint.itemsMap[x, z].Add(tile); //replacement door is ok
-                                } else if (tile.isWall || tile.defName.ToLower().Contains("wall")) { //replacing unavailable impassable 100% filling block (which was likely a wall) with a wall
+                                } else if (tile.isWall) { //replacing unavailable impassable 100% filling block (which was likely a wall) with a wall
                                     tile.defName = ThingDefOf.Wall.defName;
                                     tile.stackCount = 1;
                                     tile.location = new IntVec3(x, 0, z);

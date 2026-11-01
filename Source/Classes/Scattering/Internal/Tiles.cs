@@ -117,7 +117,9 @@ namespace RealRuins {
             }
 
             XmlAttribute wallAttribute = node.Attributes["actsAsWall"];
-            if (wallAttribute != null || defName.ToLower().Contains("wall") || defName.Equals("Cooler") || defName.Equals("Vent")) { //compatibility
+            //name check is for blueprints older than actsAsWall; a stacked item is never a wall (e.g. a "SpellOf_ArcaneWall" scroll)
+            bool namedLikeWall = stackCount <= 1 && defName.ToLower().Contains("wall");
+            if (wallAttribute != null || namedLikeWall || defName.Equals("Cooler") || defName.Equals("Vent")) { //compatibility
                 isWall = true;
             }
 
