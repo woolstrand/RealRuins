@@ -123,6 +123,21 @@ Intended: same as vanilla `SettlementUtility.AffectRelationsOnAttacked`, see the
 
 ---
 
+### M15. Snapshot cache size scan races with file deletion
+**File:** `Utility/SnapshotStoreManager.cs` — `RecalculateFilesSize()`, `CheckCacheSizeLimits()`
+
+`RecalculateFilesSize()` lists the cache root and then reads each file's `FileInfo.Length`. It runs on the download thread after every `WriteSnapshotFile`. At the same time the main thread can delete root files: `CheckCacheSizeLimits()` (startup, startup hook, settings save), `BlueprintFinder` removing bad blueprints, `CheckCacheContents()` and `ClearCache()`. If a file is deleted between the listing and the size read, the call throws `FileNotFoundException`.
+
+User report on the 1.7 release (`1eb38f4`): the game crashed on load with `FileNotFoundException` at `FileInfo.get_Length()` <- `RecalculateFilesSize()` <- `StoreBinaryData` thread. The race is older than the port. 1.7 runs on .NET 10, where an unhandled exception on any thread ends the process, while 1.6's Mono only logged it.
+
+The H3 guard stops the crash, but two problems remain:
+- The file is already written, yet the exception makes `onStored(false)` fire, so `SnapshotManager` counts a good download as failed and the progress/completion counts are off.
+- `CheckCacheSizeLimits()` has the same list-then-stat loop (plus `File.Delete`) and no guard.
+
+**Fix:** in both loops, skip a file that disappears (catch `FileNotFoundException` for each file). Move `RecalculateFilesSize()` out of the write's success path so that a failed size count cannot mark a good write as failed.
+
+---
+
 ## LOW — Code quality, performance, maintainability
 
 ### L1. Not an issue
