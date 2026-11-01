@@ -238,6 +238,16 @@
   <RealRuins.CacheSettings.Description>Управление настройками кэша. Отрегулируйте лимит хранилища и опции загрузки.</RealRuins.CacheSettings.Description>
   <RealRuins_ModOptions_NoLimit>Без ограничений</RealRuins_ModOptions_NoLimit>
   <RealRuins_ModOptions_ClearCacheConfirm>Вы уверены, что хотите очистить весь кэш? Это действие невозможно отменить.</RealRuins_ModOptions_ClearCacheConfirm>
+  <RealRuins.CacheSettings.PlanetaryCaption>Кэш планетарных руин</RealRuins.CacheSettings.PlanetaryCaption>
+  <RealRuins.CacheSettings.PlanetaryDescription>Чертежи, загруженные для планетарных руин, хранятся отдельно для каждого зерна мира, покрытия и размера карты.</RealRuins.CacheSettings.PlanetaryDescription>
+  <RealRuins.CacheSettings.PlanetaryEmpty>Сохранённых чертежей планетарных руин нет.</RealRuins.CacheSettings.PlanetaryEmpty>
+  <RealRuins.CacheSettings.Seed>Зерно</RealRuins.CacheSettings.Seed>
+  <RealRuins.CacheSettings.Coverage>Покрытие</RealRuins.CacheSettings.Coverage>
+  <RealRuins.CacheSettings.MapSize>Размер карты</RealRuins.CacheSettings.MapSize>
+  <RealRuins.CacheSettings.Blueprints>Чертежи</RealRuins.CacheSettings.Blueprints>
+  <RealRuins.CacheSettings.FolderSize>Размер</RealRuins.CacheSettings.FolderSize>
+  <RealRuins.CacheSettings.ClearFolder>Очистить</RealRuins.CacheSettings.ClearFolder>
+  <RealRuins.CacheSettings.ClearFolderConfirm>Удалить все чертежи планетарных руин ({1} шт., {2}) для зерна «{0}»? Миры с этим зерном загрузят их заново при необходимости.</RealRuins.CacheSettings.ClearFolderConfirm>
   <RealRuins_ModOptions_DownloadMoreTooltip>Загрузить дополнительные планы из базы данных.</RealRuins_ModOptions_DownloadMoreTooltip>
 
   <RealRuins.SpawnSettings.TabCaption>Настройки генерации</RealRuins.SpawnSettings.TabCaption>

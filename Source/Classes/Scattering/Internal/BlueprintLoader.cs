@@ -67,6 +67,7 @@ namespace RealRuins {
                 if (!File.Exists(deflatedName)) {
                     string data = Compressor.UnzipFile(snapshotName);
                     File.WriteAllText(deflatedName, data);
+                    SnapshotStoreManager.NotifyCacheChanged();
                 }
             }
 

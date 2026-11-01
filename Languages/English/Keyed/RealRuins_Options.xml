@@ -53,7 +53,17 @@
   <RealRuins.CacheSettings.Caption>General, Network and Cache settings</RealRuins.CacheSettings.Caption>
   <RealRuins.CacheSettings.Description>Manage your snapshot cache settings. Adjust the storage limit and download options. You can find more options on the other tabs.</RealRuins.CacheSettings.Description>
   <RealRuins_ModOptions_NoLimit>No limit</RealRuins_ModOptions_NoLimit>
-  <RealRuins_ModOptions_ClearCacheConfirm>Are you sure you want to clear all cached snapshots? This action cannot be undone.</RealRuins_ModOptions_ClearCacheConfirm>
+  <RealRuins_ModOptions_ClearCacheConfirm>Are you sure you want to clear all cached snapshots, including planetary ruins blueprints? This action cannot be undone.</RealRuins_ModOptions_ClearCacheConfirm>
+  <RealRuins.CacheSettings.PlanetaryCaption>Planetary ruins cache</RealRuins.CacheSettings.PlanetaryCaption>
+  <RealRuins.CacheSettings.PlanetaryDescription>Blueprints downloaded for planetary ruins are stored separately for every world seed, coverage and map size.</RealRuins.CacheSettings.PlanetaryDescription>
+  <RealRuins.CacheSettings.PlanetaryEmpty>No planetary ruins blueprints are stored.</RealRuins.CacheSettings.PlanetaryEmpty>
+  <RealRuins.CacheSettings.Seed>Seed</RealRuins.CacheSettings.Seed>
+  <RealRuins.CacheSettings.Coverage>Coverage</RealRuins.CacheSettings.Coverage>
+  <RealRuins.CacheSettings.MapSize>Map size</RealRuins.CacheSettings.MapSize>
+  <RealRuins.CacheSettings.Blueprints>Blueprints</RealRuins.CacheSettings.Blueprints>
+  <RealRuins.CacheSettings.FolderSize>Size</RealRuins.CacheSettings.FolderSize>
+  <RealRuins.CacheSettings.ClearFolder>Clear</RealRuins.CacheSettings.ClearFolder>
+  <RealRuins.CacheSettings.ClearFolderConfirm>Remove all {1} planetary ruins blueprints ({2}) stored for seed "{0}"? Worlds with this seed will download them again when needed.</RealRuins.CacheSettings.ClearFolderConfirm>
   <RealRuins_ModOptions_DownloadMoreTooltip>Download additional blueprints from the server.</RealRuins_ModOptions_DownloadMoreTooltip>
 
   <RealRuins.SpawnSettings.TabCaption>Spawn Settings</RealRuins.SpawnSettings.TabCaption>

@@ -92,6 +92,8 @@ searching to figure out. Keep entries short; no screen coordinates (they change 
 - **Speed 3 is unavailable while hostiles are on the map** (the click is ignored); use speed 2 or the dev speed.
 - **Log stops at ~420k lines**: `Reached max messages limit. Stopping logging to avoid spam.` - a long fight can trigger it.
   Mark/check the log before long runs; after it, `logsince` returns nothing and only a relaunch helps.
+- Mod settings window is small and scrolls: move the mouse over it and `scroll -10 3` to reach the bottom of a page (planetary cache table).
+- A settings page that draws past its `Listing_Standard` rect silently loses the overflow (it wraps into an off-screen second column) - set `maxOneColumn`.
 - Ctrl+V for paste: `key 86 ctrl` (Windows VK code; `key v ctrl` fails).
 - Game speed keys on Windows: `key 50` (VK of "2") - `key 2` sends raw VK 2 and does nothing. Check the clock on the
   screenshot: with several ruin maps loaded an in-game hour takes 30-60 s at speed 2.
@@ -197,3 +199,5 @@ blueprint id) - that file also states the spawn philosophy: spawn what can be sp
   in Scribe loading mode (unique-id warnings), unwearable apparel on restored pawns (race mods), MechDropBeacon waking up
   in ruins (error popup). Then 5 consecutive random pristine ruins on the final build: 0 errors. Remaining harmless warnings:
   vanilla "Used only X / Y points generating for <faction>" and Ratkin "tried to wear RK_*" from pawn-group generation.
+- 2026-11-01 (Windows, 1.7): planetary cache table in General/Network/Cache settings: 13 real seed folders listed with correct
+  coverage/size/count; test folders (dashed seed, folder added from outside) cleared via Clear + confirmation, table refreshed, 0 errors.

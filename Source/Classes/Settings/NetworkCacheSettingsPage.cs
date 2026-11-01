@@ -1,4 +1,5 @@
-using System;
+﻿using System;
+using System.Collections.Generic;
 using Verse;
 using RimWorld;
 using UnityEngine;
@@ -9,7 +10,22 @@ namespace RealRuins.Settings
     {
         public override string TabLabel => "RealRuins.CacheSettings.TabCaption".Translate();
 
-        public override float ContentHeight => 525f;
+        public override float ContentHeight => contentHeight;
+
+        private float contentHeight = 525f;
+
+        // Planetary folders are scanned on disk only when the cache has changed since the last scan (at most once per
+        // RescanInterval, so downloads running in the background don't cause a rescan every frame), and whenever the page
+        // is shown again after not being drawn for a while (the files could have been touched from outside the game).
+        private const float RescanInterval = 1f;
+        private List<SnapshotStoreManager.PlanetaryCacheFolder> planetaryFolders;
+        private int scannedCacheVersion;
+        private float lastScanTime;
+        private float lastDrawTime = -1000f;
+
+        private const float RowHeight = 28f;
+        private const float ColumnWidth = 95f;
+        private const float ClearButtonWidth = 80f;
 
         public override void Draw(Rect rect)
         {
@@ -19,6 +35,8 @@ namespace RealRuins.Settings
             Rect contentRect = rect;
             contentRect.width = contentWidth;
             
+            // the planetary table grows the page, so it must not wrap into a second (invisible) column
+            listing.maxOneColumn = true;
             listing.Begin(contentRect);
 
             GameFont font = Text.Font;
@@ -163,7 +181,118 @@ namespace RealRuins.Settings
                 Find.WindowStack.Add(new Dialog_ImportExportSettings(false));
             }
 
+            listing.Gap(15f);
+            listing.GapLine();
+
+            DrawPlanetaryCache(listing);
+
+            contentHeight = listing.CurHeight;
             listing.End();
+        }
+
+        private void RefreshPlanetaryFoldersIfNeeded()
+        {
+            float now = Time.realtimeSinceStartup;
+            int version = SnapshotStoreManager.CacheVersion;
+            bool reopened = now - lastDrawTime > RescanInterval;
+            bool changed = version != scannedCacheVersion && now - lastScanTime >= RescanInterval;
+            lastDrawTime = now;
+
+            if (planetaryFolders == null || reopened || changed)
+            {
+                planetaryFolders = SnapshotStoreManager.Instance.GetPlanetaryCacheFolders();
+                planetaryFolders.SortBy(f => f.seed, f => f.mapSize);
+                scannedCacheVersion = version;
+                lastScanTime = now;
+            }
+        }
+
+        private void DrawPlanetaryCache(Listing_Standard listing)
+        {
+            RefreshPlanetaryFoldersIfNeeded();
+
+            GameFont font = Text.Font;
+            Text.Font = GameFont.Medium;
+            listing.Label("RealRuins.CacheSettings.PlanetaryCaption".Translate());
+            Text.Font = font;
+            listing.Label("RealRuins.CacheSettings.PlanetaryDescription".Translate());
+            listing.Gap(5f);
+
+            if (planetaryFolders.Count == 0)
+            {
+                GUI.color = Color.gray;
+                listing.Label("RealRuins.CacheSettings.PlanetaryEmpty".Translate());
+                GUI.color = Color.white;
+                return;
+            }
+
+            TextAnchor anchor = Text.Anchor;
+            Text.Anchor = TextAnchor.MiddleLeft;
+
+            GUI.color = Color.gray;
+            DrawPlanetaryRow(listing.GetRect(RowHeight),
+                "RealRuins.CacheSettings.Seed".Translate(),
+                "RealRuins.CacheSettings.Coverage".Translate(),
+                "RealRuins.CacheSettings.MapSize".Translate(),
+                "RealRuins.CacheSettings.Blueprints".Translate(),
+                "RealRuins.CacheSettings.FolderSize".Translate());
+            GUI.color = Color.white;
+
+            for (int i = 0; i < planetaryFolders.Count; i++)
+            {
+                SnapshotStoreManager.PlanetaryCacheFolder folder = planetaryFolders[i];
+                Rect row = listing.GetRect(RowHeight);
+                if (i % 2 == 0)
+                {
+                    Widgets.DrawLightHighlight(row);
+                }
+                Widgets.DrawHighlightIfMouseover(row);
+
+                bool parsed = folder.mapSize >= 0;
+                Rect clearRect = DrawPlanetaryRow(row,
+                    folder.seed,
+                    parsed ? folder.coveragePercent + "%" : "?",
+                    parsed ? folder.mapSize + "x" + folder.mapSize : "?",
+                    folder.blueprintCount.ToString(),
+                    "<b>" + FormatSize(folder.totalSize) + "</b>");
+
+                if (Widgets.ButtonText(clearRect.ContractedBy(2f), "RealRuins.CacheSettings.ClearFolder".Translate()))
+                {
+                    string folderName = folder.folderName;
+                    Find.WindowStack.Add(Dialog_MessageBox.CreateConfirmation(
+                        "RealRuins.CacheSettings.ClearFolderConfirm".Translate(folder.seed, folder.blueprintCount, FormatSize(folder.totalSize)),
+                        () => SnapshotStoreManager.Instance.ClearPlanetaryCacheFolder(folderName),
+                        true,
+                        null));
+                }
+            }
+
+            Text.Anchor = anchor;
+        }
+
+        // Lays out one table line and returns the rect left for the clear button.
+        private Rect DrawPlanetaryRow(Rect row, string seed, string coverage, string mapSize, string blueprints, string size)
+        {
+            float x = row.xMax - ClearButtonWidth;
+            Rect clearRect = new Rect(x, row.y, ClearButtonWidth, row.height);
+            string[] columns = { size, blueprints, mapSize, coverage };
+            foreach (string column in columns)
+            {
+                x -= ColumnWidth;
+                Widgets.Label(new Rect(x, row.y, ColumnWidth, row.height), column);
+            }
+            Rect seedRect = new Rect(row.x + 5f, row.y, x - row.x - 10f, row.height);
+            Widgets.Label(seedRect, seed.Truncate(seedRect.width));
+            return clearRect;
+        }
+
+        private static string FormatSize(long bytes)
+        {
+            if (bytes < 1024 * 1024)
+            {
+                return (bytes / 1024f).ToString("0.#") + " KB";
+            }
+            return (bytes / (1024f * 1024f)).ToString("0.#") + " MB";
         }
     }
 }
