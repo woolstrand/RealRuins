@@ -232,8 +232,6 @@ namespace RealRuins
                     if ((!itemTile.innerItems?.Any()) ?? true) return null;
                 }
 
-                if (itemTile.defName == "Hive") return null; //Ignore hives, probably should add more comprehensive ignore list here.
-
                 // Top-level items are filtered for missing defs in Transfer, but inner items (minified things,
                 // other containers) reach here through recursion unchecked - e.g. a modded PortableReactor inside a MinifiedThing.
                 ThingDef thingDef = DefDatabase<ThingDef>.GetNamed(itemTile.defName, false);
@@ -246,6 +244,9 @@ namespace RealRuins
                     return null;
                 }
                 if (thingDef.category == ThingCategory.Ethereal) return null; //don't spawn ethereals like drop pod landing sites and so on
+                //things that spawn pawns (hives, mech cluster buildings) would wake up in the ruins with no faction and often no room to
+                //place the pawns (vanilla logs an error then); they are threats of the original map, not part of the base
+                if (thingDef.HasComp<CompSpawnerPawn>() || thingDef.HasComp<CompPawnSpawnOnWakeup>()) return null;
 
                 ThingDef stuffDef = null; //but stuff can still be null, or can be missing, so we have to check and use default just in case.
                 if (itemTile.stuffDef != null && thingDef.MadeFromStuff)
