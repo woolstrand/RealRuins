@@ -68,24 +68,6 @@ and keep the container, so one bad content item doesn't drop the whole thing.
 
 ---
 
-## 4. Minified moisture pump ticks while unspawned
-
-**Seen:** 2026-10-30, same session as #3 (as a failed post-spawn tick); 2026-10-31, Windows, RimWorld 1.7.4990 with ~50 mods,
-blueprint `E43CD04F-2A28-4E83-A0CF-D099C03D7D3C` (as an error while the ruin is being played).
-
-**Log:** `[BlueprintTransfer]: Exception while tried to perform tick for MinifiedThing of cost 0, retrhrowing...` during
-transfer, and during play `ERROR [Verse] Exception ticking MinifiedThing<id> (at ...): NullReferenceException` from
-`CompTerrainPumpDry.AffectCell` ← `CompTerrainPump.CompTickRare` ← `ThingWithComps.TickRare` ← `Thing.DoTick` (x11 in 45 s).
-
-**Where:** a minified building made straight from the blueprint was never spawned, so comps that are set up in
-`PostSpawnSetup` stay empty. `CompTerrainPump.Working` treats a null `powerComp` as "working", so the inner pump ticks inside
-its crate and touches a null map. A pump the player minified was spawned once, so vanilla never hits this.
-
-**Fix direction (universal):** don't let the inner thing of a minified thing tick, or initialise its comps the way a spawn
-would. The error repeats on every rare tick while the crate exists, so it is more than a single line of noise.
-
----
-
 ## 6. Rimefeller well heads fail in the post-spawn tick
 
 **Seen:** 2026-10-31, Windows, RimWorld 1.7.4990, entering Pristine Ruins sites with Rimefeller loaded; 7 of 30 random ruins.

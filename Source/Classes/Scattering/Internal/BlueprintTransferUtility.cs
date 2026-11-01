@@ -256,6 +256,9 @@ namespace RealRuins
                     //a minified thing is drawn with its inner thing's graphic; some modded buildings can't make one while unspawned
                     if (thing is MinifiedThing minified)
                     {
+                        //the inner thing was never spawned, so comps set up in PostSpawnSetup are empty (e.g. a moisture pump's power comp,
+                        //and then it works on a null map). A crate's contents are inert anyway; installing it spawns the inner thing normally.
+                        minified.GetDirectlyHeldThings().dontTickContents = true;
                         try
                         {
                             Graphic innerGraphic = minified.InnerThing.Graphic;
