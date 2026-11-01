@@ -52,26 +52,6 @@ error and picks its default. The wall still spawns (vanilla default material).
 
 ---
 
-## 6. Rimefeller well heads fail in the post-spawn tick
-
-**Seen:** 2026-10-31, Windows, RimWorld 1.7.4990, entering Pristine Ruins sites with Rimefeller loaded; 7 of 30 random ruins.
-Blueprints `D0D50647-393E-47AB-8C9A-BF4ADA5900E7`, `F40ABA1D-624C-4335-AD5E-38328BCC022F`, `D277BC13-A088-42BD-9FAD-84BDF563C9FB`
-(`OilWellHead`), `E10CD2B6-D508-4949-9DA3-E733914CFE7F`, `F7808E0B-A7FC-496C-B50A-0401B9740838`,
-`E43CD04F-2A28-4E83-A0CF-D099C03D7D3C` (`DeepOilWellHead`).
-
-**Log:** `Exception while tried to perform tick for DeepOilWellHead of cost 54, retrhrowing...` then `WARN ... Failed to spawn
-item DeepOilWellHead<id> of cost 54 because of exception System.NullReferenceException` with
-`Rimefeller.Building_WellHead.TickRare()` ← `BlueprintTransferUtility.Transfer`. The well head is destroyed right after
-spawning; the rest of the map is fine.
-
-**Where:** `Transfer` runs one `DoTick`/`TickLong`/`TickRare` on every spawned thing during map generation. The well head's
-`TickRare` needs Rimefeller map state (oil grid / deposits) that isn't there yet, or at all, in a ruin.
-
-**Fix direction:** the tick exists to settle items (rot etc.). Restrict it to items, or on a tick exception keep the building
-instead of destroying it - it may tick fine once the map is finalized. Both change behaviour, so decide first.
-
----
-
 ## 8. Dubs Bad Hygiene pipe overlaps a DBH building's pipe cell
 
 **Seen:** 2026-10-31, Windows, RimWorld 1.7.4990, Dubs Bad Hygiene loaded; blueprint `E4790701-7001-4170-B68A-FAA50C7D60DB`

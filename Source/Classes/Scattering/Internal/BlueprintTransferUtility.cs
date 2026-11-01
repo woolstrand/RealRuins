@@ -713,30 +713,34 @@ namespace RealRuins
                                     Debug.Extra(Debug.BlueprintTransfer, "Spawned");
                                     if (!(thing is MinifiedThing || thing is Corpse || thing is Pawn)) FillContainer(thing, itemTile); //those are complete already
                                     if (thing.def.building?.isAttachment == true) spawnedAttachments.Add(thing);
-                                    try
+                                    //one tick settles items (rot etc.). Buildings are not ticked during mapgen: some need map state that isn't there yet (Rimefeller well heads)
+                                    if (thing.def.category == ThingCategory.Item)
                                     {
-                                        switch (thing.def.tickerType)
+                                        try
                                         {
-                                            case TickerType.Never:
-                                                break;
-                                            case TickerType.Normal:
-                                                thing.DoTick();
-                                                break;
-                                            case TickerType.Long:
-                                                thing.TickLong();
-                                                break;
-                                            case TickerType.Rare:
-                                                thing.TickRare();
-                                                break;
-                                        }
-                                        //Debug.Message("Ticked");
+                                            switch (thing.def.tickerType)
+                                            {
+                                                case TickerType.Never:
+                                                    break;
+                                                case TickerType.Normal:
+                                                    thing.DoTick();
+                                                    break;
+                                                case TickerType.Long:
+                                                    thing.TickLong();
+                                                    break;
+                                                case TickerType.Rare:
+                                                    thing.TickRare();
+                                                    break;
+                                            }
+                                            //Debug.Message("Ticked");
 
-                                    }
-                                    catch (Exception)
-                                    {
-                                        Debug.Log(Debug.BlueprintTransfer, "Exception while tried to perform tick for {0} of cost {1}, retrhrowing...", thing.def.defName, itemTile.cost);
-                                        thing.Destroy();
-                                        throw;
+                                        }
+                                        catch (Exception)
+                                        {
+                                            Debug.Log(Debug.BlueprintTransfer, "Exception while tried to perform tick for {0} of cost {1}, retrhrowing...", thing.def.defName, itemTile.cost);
+                                            thing.Destroy();
+                                            throw;
+                                        }
                                     }
 
                                     //Debug.Message("Setting up props");
