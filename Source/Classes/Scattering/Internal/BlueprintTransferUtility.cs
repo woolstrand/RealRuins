@@ -136,6 +136,38 @@ namespace RealRuins
             }
         }
 
+        // Dubs Bad Hygiene allows one pipe comp per mode (sewage, air) in a cell and logs an error for a second one. Older DBH versions
+        // allowed a pipe under a fixture, so blueprints can have such overlaps.
+        private const string DubsPipePropsClass = "DubsBadHygiene.CompProperties_Pipe";
+
+        private static IEnumerable<string> DubsPipeModes(ThingDef def)
+        {
+            if (def.comps == null) yield break;
+            foreach (CompProperties props in def.comps)
+            {
+                if (props.GetType().FullName == DubsPipePropsClass)
+                {
+                    yield return props.GetType().GetField("mode")?.GetValue(props)?.ToString() ?? "";
+                }
+            }
+        }
+
+        private bool OverlapsDubsPipe(Thing thing, IntVec3 location, Rot4 rotation)
+        {
+            List<string> modes = DubsPipeModes(thing.def).ToList();
+            if (modes.Count == 0) return false;
+
+            foreach (IntVec3 cell in GenAdj.CellsOccupiedBy(location, rotation, thing.def.Size))
+            {
+                if (!cell.InBounds(map)) continue;
+                foreach (Thing existing in map.thingGrid.ThingsListAt(cell))
+                {
+                    if (DubsPipeModes(existing.def).Any(modes.Contains)) return true;
+                }
+            }
+            return false;
+        }
+
         // spawnsDirectly: the thing will be spawned on the map by the caller, which then fills it with FillContainer
         private Thing MakeThingFromItemTile(ItemTile itemTile, bool enableLogging = false, int? x = null, int? z = null, bool spawnsDirectly = false)
         {
@@ -706,6 +738,12 @@ namespace RealRuins
                                         GenConstruct.GetWallAttachedTo(mapLocation, rotation, map) == null)
                                     {
                                         Debug.Warning(Debug.BlueprintTransfer, "Skipping wall attachment {0} at ({1}, {2}): no supporting wall present", thing.def.defName, mapLocation.x, mapLocation.z);
+                                        continue;
+                                    }
+
+                                    if (OverlapsDubsPipe(thing, mapLocation, rotation))
+                                    {
+                                        Debug.Extra(Debug.BlueprintTransfer, "Skipping {0} at ({1}, {2}): overlaps a Dubs Bad Hygiene pipe of the same mode", thing.def.defName, mapLocation.x, mapLocation.z);
                                         continue;
                                     }
 

@@ -52,25 +52,6 @@ error and picks its default. The wall still spawns (vanilla default material).
 
 ---
 
-## 8. Dubs Bad Hygiene pipe overlaps a DBH building's pipe cell
-
-**Seen:** 2026-10-31, Windows, RimWorld 1.7.4990, Dubs Bad Hygiene loaded; blueprint `E4790701-7001-4170-B68A-FAA50C7D60DB`
-(reproduced in single-file mode, always the same map cell).
-
-**Log:** `ERROR [Verse] More than 1 pipe comp in the same cell at (107, 0, 87), things with pipes cannot overlap!` from
-`DubsBadHygiene.HygienePipeMapComp.RegisterPipe` ← `CompPipe.PostSpawnSetup` ← `Building_Pipe.SpawnSetup` <-
-`GenSpawn.Spawn` ← `BlueprintTransferUtility.Transfer`.
-
-**Where:** not a duplicate pipe: the blueprint has no cell with two pipes, and skipping a building when the same def already
-stands in the cell did not help (tried, reverted). The other pipe comp belongs to a (multi-cell) DBH building whose footprint
-covers a pipe cell - allowed by the DBH version the blueprint was made with, rejected by the current one. Both things spawn;
-it's log noise.
-
-**Fix direction:** none generic and cheap found. If it matters: before spawning, check the occupied cells for a thing with a
-comp of the same type (generic over comp types, not over DBH) and skip.
-
----
-
 ## Related, already noted elsewhere
 
 - `CleaningStation` NRE in `MakeThingFromItemTile` (2026-10-29, macOS) - see the skill's `NOTES.md`; not
