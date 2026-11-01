@@ -470,16 +470,15 @@ namespace RealRuins {
             // Get all blueprints available on disk for this game (previous sessions + current)
             HashSet<string> availableBlueprints = new HashSet<string>(SnapshotStoreManager.Instance.GetAvailableBlueprintsForGamePath(gamePath));
 
-            blueprintsToProcessCount = mapTiles.Count;
+            // Only blueprints present on disk are processed: with a download limit most listed tiles were never loaded,
+            // and counting them would start the progress far from zero and report them as dropped.
+            List<PlanetTileInfo> localTiles = mapTiles.Where(t => availableBlueprints.Contains(t.mapId)).ToList();
+            Debug.Log(Debug.POI, "{0} of {1} listed blueprints are available locally", localTiles.Count, mapTiles.Count);
+
+            blueprintsToProcessCount = localTiles.Count;
             blueprintsProcessedCount = 0;
             List<PlanetTileInfo> candidates = new List<PlanetTileInfo>();
-            foreach (PlanetTileInfo t in mapTiles) {
-                if (!availableBlueprints.Contains(t.mapId)) {
-                    Debug.Log(Debug.POI, "Skipped: Blueprint {0} is not available locally", t.mapId);
-                    blueprintsProcessedCount++;
-                    continue;
-                }
-
+            foreach (PlanetTileInfo t in localTiles) {
                 if (biomeStrict && (t.originX == 0 && t.originZ == 0 || t.biomeName == null)) {
                     Debug.Log(Debug.POI, "Skipped: Biome filtering is on, but blueprint does not contain biome or location information");
                     blueprintsProcessedCount++;

@@ -168,6 +168,20 @@ namespace RealRuins
             return false;
         }
 
+        private static bool InnerGraphicWorks(MinifiedThing minified)
+        {
+            try
+            {
+                Graphic innerGraphic = minified.InnerThing.Graphic;
+                return true;
+            }
+            catch (Exception e)
+            {
+                Debug.Extra(Debug.BlueprintTransfer, "Skipping minified {0}: its graphic fails: {1}", minified.InnerThing.def.defName, e.Message);
+                return false;
+            }
+        }
+
         // spawnsDirectly: the thing will be spawned on the map by the caller, which then fills it with FillContainer
         private Thing MakeThingFromItemTile(ItemTile itemTile, bool enableLogging = false, int? x = null, int? z = null, bool spawnsDirectly = false)
         {
@@ -307,14 +321,18 @@ namespace RealRuins
                         //the inner thing was never spawned, so comps set up in PostSpawnSetup are empty (e.g. a moisture pump's power comp,
                         //and then it works on a null map). A crate's contents are inert anyway; installing it spawns the inner thing normally.
                         minified.GetDirectlyHeldThings().dontTickContents = true;
-                        try
+                        //graphics can only be made on the main thread, and new game map generation runs on another one:
+                        //there the check waits until loading is over, and a failing crate is destroyed instead of skipped
+                        if (UnityData.IsInMainThread)
                         {
-                            Graphic innerGraphic = minified.InnerThing.Graphic;
+                            if (!InnerGraphicWorks(minified)) return null;
                         }
-                        catch (Exception e)
+                        else
                         {
-                            Debug.Extra(Debug.BlueprintTransfer, "Skipping minified {0}: its graphic fails: {1}", minified.InnerThing.def.defName, e.Message);
-                            return null;
+                            LongEventHandler.ExecuteWhenFinished(() =>
+                            {
+                                if (!minified.Destroyed && !InnerGraphicWorks(minified)) minified.Destroy();
+                            });
                         }
                     }
 

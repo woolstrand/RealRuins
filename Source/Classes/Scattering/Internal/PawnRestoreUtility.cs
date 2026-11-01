@@ -26,7 +26,9 @@ namespace RealRuins
         public PawnRestoreUtility(long dateShift, Faction faction)
         {
             this.dateShift = dateShift;
-            this.faction = faction;
+            //restored pawns belonged to another player's colony: when the site itself is the player's (taking over a planetary
+            //location at game start) they must not become the player's dead colonists or free colonists in caskets
+            this.faction = faction == Faction.OfPlayer ? null : faction;
         }
 
         /// <summary>
