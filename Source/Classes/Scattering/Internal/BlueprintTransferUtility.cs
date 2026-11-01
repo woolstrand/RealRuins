@@ -116,7 +116,28 @@ namespace RealRuins
 
             return cachedFallbackMaterial;
         }
-        private Thing MakeThingFromItemTile(ItemTile itemTile, bool enableLogging = false, int? x = null, int? z = null)
+        // Adds the blueprint's inner items to a container one by one, so one failing item doesn't take the container or the rest with it.
+        private void FillContainer(Thing container, ItemTile itemTile)
+        {
+            if (itemTile.innerItems == null || !(container is IThingHolder holder)) return;
+
+            foreach (ItemTile innerTile in itemTile.innerItems)
+            {
+                Thing innerThing = MakeThingFromItemTile(innerTile, false);
+                if (innerThing == null) continue;
+                try
+                {
+                    holder.GetDirectlyHeldThings().TryAdd(innerThing);
+                }
+                catch (Exception e)
+                {
+                    Debug.Extra(Debug.BlueprintTransfer, "Failed to add {0} to {1}: {2}", innerTile.defName, container.def.defName, e.Message);
+                }
+            }
+        }
+
+        // spawnsDirectly: the thing will be spawned on the map by the caller, which then fills it with FillContainer
+        private Thing MakeThingFromItemTile(ItemTile itemTile, bool enableLogging = false, int? x = null, int? z = null, bool spawnsDirectly = false)
         {
             try
             {
@@ -239,17 +260,11 @@ namespace RealRuins
 
                 if (thing != null)
                 {
-                    if (itemTile.innerItems != null && thing is IThingHolder)
+                    //a minified thing is nothing without its inner thing. Other containers spawned on the map are filled after spawning (Transfer),
+                    //because they may need a map when an item is added (bookcases) or fail to spawn with restored contents (Rimatomics reactors).
+                    if (itemTile.innerItems != null && thing is IThingHolder && (thing is MinifiedThing || !spawnsDirectly))
                     {
-                        //Debug.Message("Found inners");
-                        foreach (ItemTile innerTile in itemTile.innerItems)
-                        {
-                            Thing innerThing = MakeThingFromItemTile(innerTile, false);
-                            if (innerThing != null)
-                            {
-                                ((IThingHolder)thing).GetDirectlyHeldThings().TryAdd(innerThing);
-                            }
-                        }
+                        FillContainer(thing, itemTile);
                         if (thing.GetInnerIfMinified() == null) return null;
                     }
 
@@ -661,7 +676,7 @@ namespace RealRuins
                         foreach (ItemTile itemTile in blueprint.itemsMap[x, z])
                         {
                             Debug.Extra(Debug.BlueprintTransfer, "Creating thing {2} at cell ({0}, {1})", x, z, itemTile.defName);
-                            Thing thing = MakeThingFromItemTile(itemTile, false, x, z);
+                            Thing thing = MakeThingFromItemTile(itemTile, false, x, z, spawnsDirectly: true);
                             if (thing != null)
                             {
                                 try
@@ -696,6 +711,7 @@ namespace RealRuins
 
                                     GenSpawn.Spawn(thing, mapLocation, map, rotation);
                                     Debug.Extra(Debug.BlueprintTransfer, "Spawned");
+                                    if (!(thing is MinifiedThing || thing is Corpse || thing is Pawn)) FillContainer(thing, itemTile); //those are complete already
                                     if (thing.def.building?.isAttachment == true) spawnedAttachments.Add(thing);
                                     try
                                     {

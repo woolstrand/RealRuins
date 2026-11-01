@@ -52,22 +52,6 @@ error and picks its default. The wall still spawns (vanilla default material).
 
 ---
 
-## 3. Bookcase contents added before the bookcase is spawned
-
-**Seen:** 2026-10-30, Windows, RimWorld 1.7.4990, new game on a planetary POI (seed `writer`, attack mode).
-
-**Log:** `[BlueprintTransfer]: Failed to spawn item BookcaseSmall because of System.NullReferenceException` at
-`Building_Bookcase.Notify_ItemAdded` ← `ThingOwner.TryAdd` ← `BlueprintTransferUtility.MakeThingFromItemTile`.
-
-**Where:** `MakeThingFromItemTile` puts the blueprint's inner items into the container while the bookcase is not yet
-spawned. `Building_Bookcase.Notify_ItemAdded` uses `MapHeld.listerHaulables`, and `MapHeld` is null for an unspawned
-thing. The whole bookcase is discarded.
-
-**Fix direction (universal):** fill containers after the container is spawned. Or catch a failing inner `TryAdd` per item
-and keep the container, so one bad content item doesn't drop the whole thing.
-
----
-
 ## 6. Rimefeller well heads fail in the post-spawn tick
 
 **Seen:** 2026-10-31, Windows, RimWorld 1.7.4990, entering Pristine Ruins sites with Rimefeller loaded; 7 of 30 random ruins.
@@ -85,23 +69,6 @@ spawning; the rest of the map is fine.
 
 **Fix direction:** the tick exists to settle items (rot etc.). Restrict it to items, or on a tick exception keep the building
 instead of destroying it - it may tick fine once the map is finalized. Both change behaviour, so decide first.
-
----
-
-## 7. Rimatomics reactor core fails in `SpawnSetup`
-
-**Seen:** 2026-10-31, Windows, RimWorld 1.7.4990, Rimatomics loaded; blueprints `E6F75BFA-5362-4433-A8D8-3AE39B2AB63C`
-(`ReactorCoreA`), `F7808E0B-A7FC-496C-B50A-0401B9740838` and `E43CD04F-2A28-4E83-A0CF-D099C03D7D3C` (`ReactorCoreC`).
-
-**Log:** `WARN ... Failed to spawn item ReactorCoreC<id> of cost 4268 because of exception System.ArgumentOutOfRangeException:
-Index was out of range` from `List.get_Item` ← `Rimatomics.Item_NuclearFuel.UpdateFuelRefs(reactorCore)` <-
-`reactorCore.RefreshFuelGrid` ← `reactorCore.SpawnSetup` ← `GenSpawn.Spawn` ← `BlueprintTransferUtility.Transfer`.
-
-**Where:** the core is spawned with the fuel restored from the blueprint as its contents; on spawn Rimatomics indexes its
-fuel slot list with values the restored fuel carries, and they don't match. The whole core (cost ~4k) is lost.
-
-**Fix direction (universal):** the same as #3 - when spawning a container with restored contents fails, retry it empty
-(contents dropped or placed next to it), so the container itself survives.
 
 ---
 
