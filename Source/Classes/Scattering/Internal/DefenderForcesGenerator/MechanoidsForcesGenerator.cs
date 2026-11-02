@@ -40,15 +40,22 @@ namespace RealRuins {
 
             Faction faction = Faction.OfMechanoids;
 
+            //kinds without a positive combat power (unset or modded) would never advance the loop below
+            List<PawnKindDef> mechKinds = DefDatabase<PawnKindDef>.AllDefsListForReading
+                .Where(kind => kind.RaceProps != null && kind.RaceProps.IsMechanoid && !kind.RaceProps.IsWorkMech && kind.combatPower > 0)
+                .ToList();
+            if (mechKinds.Count == 0) {
+                Debug.Warning(Debug.ForceGen, "No suitable mechanoid kinds found, skipping mechanoid forces");
+                return;
+            }
+
             Lord lord = LordMaker.MakeNewLord(lordJob: new LordJob_DefendPoint(rect.CenterCell), faction: faction, map: map, startingPawns: null);
             int tile = map.Tile;
 
-            while (cumulativePower <= powerThreshold) {
+            int maxPawns = 100; //sanity cap
+            while (cumulativePower <= powerThreshold && maxPawns-- > 0) {
 
-
-                PawnKindDef currentPawnKindDef = (from kind in DefDatabase<PawnKindDef>.AllDefsListForReading
-                                                  where kind.RaceProps.IsMechanoid
-                                                  select kind).RandomElementByWeight((PawnKindDef kind) => 1f / kind.combatPower);
+                PawnKindDef currentPawnKindDef = mechKinds.RandomElementByWeight((PawnKindDef kind) => 1f / kind.combatPower);
 
                 PawnGenerationRequest request =
                     new PawnGenerationRequest(currentPawnKindDef, faction: faction, tile: tile, forceGenerateNewPawn: true,

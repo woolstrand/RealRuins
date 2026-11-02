@@ -43,6 +43,7 @@ namespace RealRuins
                 SnapshotManager.Instance.LoadSomeSnapshots();
             }
             SnapshotStoreManager.Instance.CheckCacheSizeLimits();
+            SnapshotManager.Instance.UploadPendingSnapshots();
 
         }
 
@@ -67,6 +68,20 @@ namespace RealRuins
                         SnapshotManager.Instance.UploadCurrentMapSnapshot();
                     }
                 }
+            }
+
+            //Final snapshot of a lost colony: ignores the upload frequency limit and falls back to any home map
+            //if the player is looking at some other map when the game ends.
+            public static void SaveGameOverSnapshot()
+            {
+                if (!RealRuins_ModSettings.allowUploads && !RealRuins_ModSettings.offlineMode) return;
+                Map map = Find.CurrentMap;
+                if (map == null || !map.IsPlayerHome)
+                {
+                    map = Find.Maps.FirstOrDefault(m => m.IsPlayerHome);
+                }
+                if (map == null) return;
+                SnapshotManager.Instance.UploadMapSnapshot(map, force: true);
             }
         }
 
@@ -292,13 +307,67 @@ namespace RealRuins
             }
         }
 
-        // This patch saves the last save when game is over
+        // This patch saves the last save when game is over (game over dialog is shown only by some endings like the planetkiller)
         [HarmonyPatch(typeof(GenGameEnd), "EndGameDialogMessage", typeof(string), typeof(bool), typeof(Color))]
         class GameOver_Patch
         {
             static void Postfix()
             {
-                SnapshotSaver.SaveSnapshot();
+                SnapshotSaver.SaveGameOverSnapshot();
+            }
+        }
+
+        // "Everyone is dead" game over is announced with a letter when the countdown reaches zero, without the dialog above
+        [HarmonyPatch(typeof(GameEnder), "GameEndTick")]
+        class GameEndTick_Patch
+        {
+            static void Postfix(bool ___gameEnding, int ___ticksToGameOver)
+            {
+                if (___gameEnding && ___ticksToGameOver == 0)
+                {
+                    SnapshotSaver.SaveGameOverSnapshot();
+                }
+            }
+        }
+
+        // Ruins raids and starting parties can come from non-hostile factions (they fight each other for the loot). Their steal duty
+        // ignores ownership, so they would carry away the player's gravship parts and cargo. Hostile thieves are left vanilla.
+        [HarmonyPatch(typeof(StealAIUtility), nameof(StealAIUtility.TryFindBestItemToSteal))]
+        static class StealAIUtility_TryFindBestItemToSteal_Patch
+        {
+            private static bool searching = false;
+
+            static void Postfix(IntVec3 root, Map map, float maxDist, ref Thing item, Pawn thief, List<Thing> disallowed, ref bool __result)
+            {
+                if (searching || !__result || !IsPlayerPropertyForNonHostile(item, thief)) return;
+
+                //the best candidate is off limits: search again without it
+                searching = true;
+                try
+                {
+                    List<Thing> excluded = disallowed != null ? new List<Thing>(disallowed) : new List<Thing>();
+                    for (int attempt = 0; attempt < 10 && __result && IsPlayerPropertyForNonHostile(item, thief); attempt++)
+                    {
+                        excluded.Add(item);
+                        __result = StealAIUtility.TryFindBestItemToSteal(root, map, maxDist, out item, thief, excluded);
+                    }
+                    if (__result && IsPlayerPropertyForNonHostile(item, thief))
+                    {
+                        item = null;
+                        __result = false;
+                    }
+                }
+                finally
+                {
+                    searching = false;
+                }
+            }
+
+            private static bool IsPlayerPropertyForNonHostile(Thing thing, Pawn thief)
+            {
+                if (thing == null || thief?.Faction == null || thief.Faction.IsPlayer || thief.HostileTo(Faction.OfPlayer)) return false;
+                if (thing.Faction == Faction.OfPlayer) return true;
+                return thing.Spawned && (thing.Map.terrainGrid.FoundationAt(thing.Position)?.IsSubstructure ?? false); //gravship cargo
             }
         }
 

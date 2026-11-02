@@ -199,23 +199,40 @@ namespace RealRuins {
             }
         }
 
-        public void UploadCurrentMapSnapshot() {
-            if (Find.CurrentMap == null) {
+        //Uploads wait here until the server confirms them, so an upload cut short (game closed right after game over,
+        //server down) is retried on the next start instead of being lost.
+        private const string PendingUploadsFolderName = "RealRuinsPendingUploads";
+        private const int MaxPendingUploads = 10;
+        private const int PendingUploadMaxAgeDays = 14;
+
+        private static string PendingUploadsFolderPath() {
+            string path = Path.Combine(GenFilePaths.SaveDataFolderPath, PendingUploadsFolderName);
+            if (!Directory.Exists(path)) Directory.CreateDirectory(path);
+            return path;
+        }
+
+        //force: skip the once per three hours limit (used for the final snapshot on game over)
+        public void UploadCurrentMapSnapshot(bool force = false) {
+            UploadMapSnapshot(Find.CurrentMap, force);
+        }
+
+        public void UploadMapSnapshot(Map map, bool force = false) {
+            if (map == null) {
                 return;
             }
 
             string worldId = (Math.Abs(Find.World.info.persistentRandomValue)).ToString();
-            string mapId = Find.CurrentMap.uniqueID.ToString();
+            string mapId = map.uniqueID.ToString();
             string snapshotId = worldId + mapId;
 
-            if (snapshotTimestamps.ContainsKey(snapshotId) && (DateTime.Now - snapshotTimestamps[snapshotId]).TotalMinutes < 180) {
+            if (!force && snapshotTimestamps.ContainsKey(snapshotId) && (DateTime.Now - snapshotTimestamps[snapshotId]).TotalMinutes < 180) {
                 return; //skip upload if we're trying to do it more frequent than once per three hours.
             }
 
             //we actually don't care if something goes wrong. big data, y'know
             snapshotTimestamps[snapshotId] = DateTime.Now;
 
-            SnapshotGenerator generator = new SnapshotGenerator(Find.CurrentMap);
+            SnapshotGenerator generator = new SnapshotGenerator(map);
             if (!generator.CanGenerate()) return; //skip if generation is not allowed on some reason (too small area, empty area, whatever)
 
             string tmpFilename = generator.Generate();
@@ -228,17 +245,78 @@ namespace RealRuins {
                 } else if (RealRuins_ModSettings.offlineMode) {
                     SnapshotStoreManager.Instance.StoreBinaryData(File.ReadAllBytes(tmpFilename), "local-" + snapshotId);
                 } else {
-                    Debug.Log(Debug.Store, "Uploading file {0}", tmpFilename);
-                    APIService service = new APIService();
-                    service.UploadMap(tmpFilename, delegate (bool success) {
-                        if (!RealRuins_ModSettings.debugKeepSnapshotsAfterUpload) {
-                            File.Delete(tmpFilename);
-                        } else {
-                            Debug.Log(Debug.Store, "[DEBUG] Keeping snapshot file: {0}", tmpFilename);
-                        }
-                        completion?.Invoke(success);
-                    });
+                    try {
+                        string pendingFilename = Path.Combine(PendingUploadsFolderPath(), snapshotId + "-" + DateTime.UtcNow.Ticks + ".bp");
+                        File.Move(tmpFilename, pendingFilename);
+                        UploadSnapshotFile(pendingFilename, true, completion);
+                    } catch (Exception e) {
+                        Debug.Warning(Debug.Store, "Could not queue snapshot {0} for upload, uploading it directly: {1}", tmpFilename, e);
+                        UploadSnapshotFile(tmpFilename, false, completion);
+                    }
                 }
+            }
+        }
+
+        //Retries uploads left over from previous sessions. Called once on startup.
+        public void UploadPendingSnapshots() {
+            string folder;
+            List<FileInfo> files;
+            try {
+                folder = Path.Combine(GenFilePaths.SaveDataFolderPath, PendingUploadsFolderName);
+                if (!Directory.Exists(folder)) return;
+                files = new DirectoryInfo(folder).GetFiles().OrderByDescending(f => f.LastWriteTimeUtc).ToList();
+            } catch (Exception e) {
+                Debug.Warning(Debug.Store, "Could not read pending uploads: {0}", e);
+                return;
+            }
+
+            bool uploadsAllowed = RealRuins_ModSettings.allowUploads && !RealRuins_ModSettings.offlineMode && !RealRuins.SingleFile;
+            for (int i = 0; i < files.Count; i++) {
+                FileInfo file = files[i];
+                bool expired = i >= MaxPendingUploads || (DateTime.UtcNow - file.LastWriteTimeUtc).TotalDays > PendingUploadMaxAgeDays;
+                if (!uploadsAllowed || expired) {
+                    try {
+                        file.Delete();
+                    } catch { }
+                    continue;
+                }
+                Debug.Log(Debug.Store, "Retrying pending upload {0}", file.FullName);
+                UploadSnapshotFile(file.FullName, true, null);
+            }
+        }
+
+        private void UploadSnapshotFile(string filename, bool queued, Action<bool> onFinished) {
+            Debug.Log(Debug.Store, "Uploading file {0}", filename);
+            APIService service = new APIService();
+            try {
+                service.UploadMap(filename, OnUploaded);
+            } catch (Exception e) {
+                Debug.Warning(Debug.Store, "Could not upload snapshot {0}: {1}", filename, e);
+            }
+
+            void OnUploaded(bool success) {
+                try {
+                    if (success) {
+                        if (!RealRuins_ModSettings.debugKeepSnapshotsAfterUpload) {
+                            File.Delete(filename);
+                        } else {
+                            //move out of the pending folder, otherwise it would be uploaded again on the next start
+                            string keptFilename = Path.Combine(Path.GetTempPath(), Path.GetFileName(filename));
+                            if (keptFilename != filename) {
+                                if (File.Exists(keptFilename)) File.Delete(keptFilename);
+                                File.Move(filename, keptFilename);
+                            }
+                            Debug.Log(Debug.Store, "[DEBUG] Keeping snapshot file: {0}", keptFilename);
+                        }
+                    } else if (queued) {
+                        Debug.Log(Debug.Store, "Upload failed, keeping {0} for a retry on the next start", filename);
+                    } else {
+                        File.Delete(filename); //could not be queued, nothing to retry from
+                    }
+                } catch (Exception e) {
+                    Debug.Warning(Debug.Store, "Could not clean up uploaded snapshot {0}: {1}", filename, e);
+                }
+                onFinished?.Invoke(success);
             }
         }
     }

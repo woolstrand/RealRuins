@@ -123,6 +123,7 @@ namespace RealRuins
 
             foreach (ItemTile innerTile in itemTile.innerItems)
             {
+                if (ThingDefOf.Wastepack != null && innerTile.defName == ThingDefOf.Wastepack.defName) continue; //same as top level items, see BlueprintPreprocessor
                 Thing innerThing = MakeThingFromItemTile(innerTile, false);
                 if (innerThing == null) continue;
                 try
@@ -303,6 +304,13 @@ namespace RealRuins
                 }
 
                 Thing thing = ThingMaker.MakeThing(thingDef, stuffDef);
+
+                //snapshots don't keep genes, and a xenogerm without a gene set breaks trading and inspection.
+                //Vanilla's debug spawn gives it a random set, same as a fresh genepack gets.
+                if (thing is Xenogerm xenogerm && xenogerm.GeneSet == null)
+                {
+                    xenogerm.Notify_DebugSpawned();
+                }
 
 
                 if (thing != null)
