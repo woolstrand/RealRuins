@@ -75,6 +75,8 @@ namespace RealRuins {
             }
             BaseGen.symbolStack.Push("refuel", rp);
             BaseGen.Generate();
+            //after ensureCanHoldRoof: it gives up on roofs where no pillar fits, and some sites don't run it at all
+            RoofSupportUtility.RemoveUnsupportedRoofs(map, plan.rect);
 
             //adding starting party
             //don't doing it via basegen because of uh oh i don't remember, something with pawn location control

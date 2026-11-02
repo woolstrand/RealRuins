@@ -175,7 +175,9 @@ namespace RealRuins
                         rp.faction = Find.FactionManager.OfAncientsHostile;
                         var center = CellFinder.RandomNotEdgeCell(10, map);
                         rp.rect = new CellRect(center.x, center.z, 1, 1); //after generation will be extended to a real size
-                        RuinsScatterer.Scatter(rp, new ScatterContext(options, settings), coverageMap, generators);
+                        ScatterContext context = new ScatterContext(options, settings);
+                        RuinsScatterer.Scatter(rp, context, coverageMap, generators);
+                        RoofSupportUtility.RemoveUnsupportedRoofs(map, context.state.placementRect.ExpandedBy(1));
                     } catch {
                         Debug.Warning(Debug.Scatter, "Could not scatter a single ruins chunk.");
                     }
