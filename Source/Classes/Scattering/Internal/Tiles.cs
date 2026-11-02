@@ -34,7 +34,6 @@ namespace RealRuins {
         public bool isDoor = false;
 
         public ItemArt art = null;
-        public string attachedText = null;
 
         public List<ItemTile> innerItems;
 
@@ -117,13 +116,10 @@ namespace RealRuins {
                 isDoor = true;
             }
 
-            XmlAttribute textAttribute = node.Attributes["text"];
-            if (textAttribute != null) {
-                attachedText = textAttribute.Value;
-            }
-
             XmlAttribute wallAttribute = node.Attributes["actsAsWall"];
-            if (wallAttribute != null || defName.ToLower().Contains("wall") || defName.Equals("Cooler") || defName.Equals("Vent")) { //compatibility
+            //name check is for blueprints older than actsAsWall; a stacked item is never a wall (e.g. a "SpellOf_ArcaneWall" scroll)
+            bool namedLikeWall = stackCount <= 1 && defName.ToLower().Contains("wall");
+            if (wallAttribute != null || namedLikeWall || defName.Equals("Cooler") || defName.Equals("Vent")) { //compatibility
                 isWall = true;
             }
 

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -41,6 +41,16 @@ namespace RealRuins {
         public override IEnumerable<FloatMenuOption> GetTransportersFloatMenuOptions(IEnumerable<IThingHolder> pods, Action<PlanetTile, TransportersArrivalAction> launchAction) { 
             foreach (FloatMenuOption transportPodsFloatMenuOption in base.GetTransportersFloatMenuOptions(pods, launchAction)) {
                 yield return transportPodsFloatMenuOption;
+            }
+            foreach (FloatMenuOption floatMenuOption in TransportPodsArrivalAction_VisitRuins.GetFloatMenuOptions(launchAction, pods, this)) {
+                yield return floatMenuOption;
+            }
+        }
+
+        //Shuttles ask for their own options, without this only "form caravan" is offered on the ruins tile
+        public override IEnumerable<FloatMenuOption> GetShuttleFloatMenuOptions(IEnumerable<IThingHolder> pods, Action<PlanetTile, TransportersArrivalAction> launchAction) {
+            foreach (FloatMenuOption shuttleFloatMenuOption in base.GetShuttleFloatMenuOptions(pods, launchAction)) {
+                yield return shuttleFloatMenuOption;
             }
             foreach (FloatMenuOption floatMenuOption in TransportPodsArrivalAction_VisitRuins.GetFloatMenuOptions(launchAction, pods, this)) {
                 yield return floatMenuOption;

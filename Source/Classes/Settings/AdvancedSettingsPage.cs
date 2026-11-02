@@ -14,14 +14,19 @@ namespace RealRuins.Settings
             "RealRuins.Reform.Manual"
         };
 
-        private string spawnBlacklistBuffer;
-        private string materialBlacklistBuffer;
-        private string fallbackMaterialBuffer;
+        // The page outlives settings import and reset, so each buffer remembers the setting value it was last synced with.
+        private string spawnBlacklistBuffer, spawnBlacklistSynced;
+        private string materialBlacklistBuffer, materialBlacklistSynced;
+        private string fallbackMaterialBuffer, fallbackMaterialSynced;
 
-        public AdvancedSettingsPage() {
-            spawnBlacklistBuffer = RealRuins_ModSettings.spawnBlacklist ?? "";
-            materialBlacklistBuffer = RealRuins_ModSettings.materialBlacklist ?? "";
-            fallbackMaterialBuffer = RealRuins_ModSettings.fallbackMaterial ?? "";
+        private static string BufferedTextField(Rect rect, string value, ref string buffer, ref string synced) {
+            if (buffer == null || value != synced) {
+                //first draw, or the setting was changed elsewhere (import, reset): show it instead of writing the old text back
+                buffer = value ?? "";
+            }
+            buffer = Widgets.TextField(rect, buffer);
+            synced = buffer;
+            return buffer;
         }
 
         public override string TabLabel => "RealRuins.AdvancedSettings".Translate();
@@ -131,11 +136,8 @@ namespace RealRuins.Settings
                 spawnBlacklistRect.LeftHalf().ContractedBy(0, 0),
                 "RealRuins.SpawnBlacklist".Translate());
             
-            spawnBlacklistBuffer = Widgets.TextField(spawnBlacklistRect.RightHalf().ContractedBy(0, 3), spawnBlacklistBuffer);
-            if (spawnBlacklistBuffer != RealRuins_ModSettings.spawnBlacklist)
-            {
-                RealRuins_ModSettings.spawnBlacklist = spawnBlacklistBuffer;
-            }
+            RealRuins_ModSettings.spawnBlacklist = BufferedTextField(spawnBlacklistRect.RightHalf().ContractedBy(0, 3),
+                RealRuins_ModSettings.spawnBlacklist, ref spawnBlacklistBuffer, ref spawnBlacklistSynced);
             
             TooltipHandler.TipRegion(spawnBlacklistRect, "RealRuins.SpawnBlacklistTT".Translate());
 
@@ -146,11 +148,8 @@ namespace RealRuins.Settings
                 materialBlacklistRect.LeftHalf().ContractedBy(0, 0),
                 "RealRuins.MaterialBlacklist".Translate());
             
-            materialBlacklistBuffer = Widgets.TextField(materialBlacklistRect.RightHalf().ContractedBy(0, 3), materialBlacklistBuffer);
-            if (materialBlacklistBuffer != RealRuins_ModSettings.materialBlacklist)
-            {
-                RealRuins_ModSettings.materialBlacklist = materialBlacklistBuffer;
-            }
+            RealRuins_ModSettings.materialBlacklist = BufferedTextField(materialBlacklistRect.RightHalf().ContractedBy(0, 3),
+                RealRuins_ModSettings.materialBlacklist, ref materialBlacklistBuffer, ref materialBlacklistSynced);
             
             TooltipHandler.TipRegion(materialBlacklistRect, "RealRuins.MaterialBlacklistTT".Translate());
 
@@ -161,11 +160,8 @@ namespace RealRuins.Settings
                 fallbackMaterialRect.LeftHalf().ContractedBy(0, 0),
                 "RealRuins.FallbackMaterial".Translate());
             
-            fallbackMaterialBuffer = Widgets.TextField(fallbackMaterialRect.RightHalf().ContractedBy(0, 3), fallbackMaterialBuffer);
-            if (fallbackMaterialBuffer != RealRuins_ModSettings.fallbackMaterial)
-            {
-                RealRuins_ModSettings.fallbackMaterial = fallbackMaterialBuffer;
-            }
+            RealRuins_ModSettings.fallbackMaterial = BufferedTextField(fallbackMaterialRect.RightHalf().ContractedBy(0, 3),
+                RealRuins_ModSettings.fallbackMaterial, ref fallbackMaterialBuffer, ref fallbackMaterialSynced);
             
             TooltipHandler.TipRegion(fallbackMaterialRect, "RealRuins.FallbackMaterialTT".Translate());
 

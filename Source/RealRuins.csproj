@@ -103,10 +103,16 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   
+  <!-- The same assembly runs on 1.6 and 1.7: mirror the 1.7 build into 1.6 until 1.8 is out
+       (then retarget OutputPath and drop or repoint this). Runs before the copy to the mod folder. -->
+  <Target Name="MirrorTo16" AfterTargets="Build">
+    <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(ProjectDir)..\1.6\Assemblies\" />
+  </Target>
+
   <!-- Post-build: Copy files to RimWorld mod folder -->
   <!-- For Windows -->
   <Target Name="PostBuildWin"
-        AfterTargets="Build"
+        AfterTargets="MirrorTo16"
         Condition="'$(OS)' == 'Windows_NT' Or '$(OS)' == 'Windows'">
     <Exec Command="call &quot;$(ProjectDir)..\postbuildwin.bat&quot;" 
           WorkingDirectory="$(ProjectDir).." 
@@ -115,7 +121,7 @@
   
   <!-- For Unix-like systems (macOS, Linux) - runs if not Windows -->
   <Target Name="PostBuildUnix"
-        AfterTargets="Build"
+        AfterTargets="MirrorTo16"
         Condition="'$(OS)' != 'Windows_NT' And '$(OS)' != 'Windows'">
     <Exec Command="zsh &quot;$(ProjectDir)..\postbuild.sh&quot;" 
           WorkingDirectory="$(ProjectDir).." 

@@ -9,29 +9,18 @@ using Verse;
 
 
 namespace RealRuins {
-    class CaravanArrivalAction_VisitAbandonedBase: CaravanArrivalAction {
-        private MapParent mapParent;
-
+    class CaravanArrivalAction_VisitAbandonedBase: CaravanArrivalAction_VisitRuinsBase {
         public override string Label => "RealRuins.EnterPOI".Translate();
 
         public override string ReportString => "RealRuins.CaravanEnteringPOI".Translate();
 
-        public CaravanArrivalAction_VisitAbandonedBase(MapParent mapParent) {
-            this.mapParent = mapParent;
+        public CaravanArrivalAction_VisitAbandonedBase() {
         }
 
-        public override void Arrived(Caravan caravan) {
-            if (!mapParent.HasMap) {
-                LongEventHandler.QueueLongEvent(delegate {
-                    DoEnter(caravan);
-                }, "GeneratingMapForNewEncounter", doAsynchronously: false, exceptionHandler: null);
-            } else {
-                DoEnter(caravan);
-            }
+        public CaravanArrivalAction_VisitAbandonedBase(MapParent mapParent) : base(mapParent) {
         }
 
-
-        private void DoEnter(Caravan caravan) {
+        protected override void DoEnter(Caravan caravan) {
             Debug.Log(Debug.Event, "Major event entering.");
             Pawn t = caravan.PawnsListForReading[0];
             bool flag = mapParent.Faction == null || mapParent.Faction.HostileTo(Faction.OfPlayer);

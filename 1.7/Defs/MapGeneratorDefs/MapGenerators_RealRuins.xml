@@ -3,7 +3,7 @@
   <!-- Empty ruins -->
   <GenStepDef>
     <defName>ScatterRealRuins</defName>
-    <order>301</order>
+    <order>760</order>
     <genStep Class="RealRuins.GenStep_ScatterRealRuins">
     </genStep>
   </GenStepDef>

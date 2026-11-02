@@ -12,7 +12,16 @@ namespace RealRuins
 {
     class RealRuinsPOIFactory
     {
-        public static bool CreatePOI(PlanetTileInfo tileInfo, string gameName, bool biomeStrict, bool costStrict, bool itemsStrict, int abandonedChance = 25, bool aggressiveDiscard = false, bool disableFriendlyLocations = false)
+        // Blueprint loaded and analyzed off the main thread, waiting to be turned into a world object.
+        public class PreparedPOI
+        {
+            public PlanetTileInfo tileInfo;
+            public Blueprint blueprint;
+            public BlueprintAnalyzer analyzer;
+        }
+
+        // Main thread only.
+        public static bool IsSuitableTile(PlanetTileInfo tileInfo, bool biomeStrict)
         {
             if (tileInfo.tile >= Find.WorldGrid.TilesCount)
             {
@@ -32,19 +41,24 @@ namespace RealRuins
                 return false;
             }
 
+            return true;
+        }
+
+        // Safe to call from a background thread: touches only the blueprint file and defs.
+        public static PreparedPOI PreparePOI(PlanetTileInfo tileInfo, string gameName, IntVec3 initialMapSize, bool costStrict, bool aggressiveDiscard)
+        {
             string filename = SnapshotStoreManager.SnapshotNameFor(tileInfo.mapId, gameName);
             Blueprint bp = BlueprintLoader.LoadWholeBlueprintAtPath(filename);
             if (bp == null)
             {
                 Debug.Log(Debug.POI, "[3] Skipped: Blueprint loader failed.");
-                return false;
+                return null;
             }
 
-            if (bp.originX + bp.width > Find.World.info.initialMapSize.x || bp.originZ + bp.height > Find.World.info.initialMapSize.z)
+            if (bp.originX + bp.width > initialMapSize.x || bp.originZ + bp.height > initialMapSize.z)
             {
-                Debug.Log(Debug.POI, "2");
-                Debug.Log(Debug.POI, "[3] Skipped: Blueprint doesn't fit onto target map ({0} + {1} > {2} && {3} + {4} > {5})", bp.originX, bp.width, Find.World.info.initialMapSize.x, bp.originZ, bp.height, Find.World.info.initialMapSize.z);
-                return false;
+                Debug.Log(Debug.POI, "[3] Skipped: Blueprint doesn't fit onto target map ({0} + {1} > {2} && {3} + {4} > {5})", bp.originX, bp.width, initialMapSize.x, bp.originZ, bp.height, initialMapSize.z);
+                return null;
             }
 
             BlueprintAnalyzer ba = new BlueprintAnalyzer(bp);
@@ -52,17 +66,32 @@ namespace RealRuins
             if (aggressiveDiscard && ba.determinedType == POIType.Ruins)
             {
                 Debug.Log(Debug.POI, "[3] Skipped: Aggressive discard is ON and POI is ruins");
-                return false;
+                return null;
             }
             if (costStrict && (ba.result.totalItemsCost < 1000))
             {
                 Debug.Log(Debug.POI, "[3] Skipped: Low total cost or tiles count (cost/size filtering is ON)");
-                return false;
+                return null;
             }
 
             if (ba.result.occupiedTilesCount < 50 || ba.result.totalArea < 200)
             {
                 Debug.Log(Debug.POI, "[3] Skipped: Low area ({0}) and/or items count ({1}). (filtering not related to cost/size setting ON or OFF)", ba.result.totalArea, ba.result.occupiedTilesCount);
+                return null;
+            }
+
+            return new PreparedPOI { tileInfo = tileInfo, blueprint = bp, analyzer = ba };
+        }
+
+        // Main thread only. Tile is re-checked because POIs committed earlier may have taken it or its neighbourhood.
+        public static bool CommitPOI(PreparedPOI prepared, string gameName, bool biomeStrict, int abandonedChance = 25, bool disableFriendlyLocations = false)
+        {
+            PlanetTileInfo tileInfo = prepared.tileInfo;
+            Blueprint bp = prepared.blueprint;
+            BlueprintAnalyzer ba = prepared.analyzer;
+
+            if (!IsSuitableTile(tileInfo, biomeStrict))
+            {
                 return false;
             }
 

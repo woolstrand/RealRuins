@@ -11,65 +11,19 @@ namespace RealRuins {
     class MilitaryForcesGenerator : AbstractDefenderForcesGenerator {
 
         float militaryPower = 1;
-        int minTriggerTimeout = 0;
 
-        public MilitaryForcesGenerator(float militaryPower, int minimalTriggerFiringTimeout = 0) {
+        public MilitaryForcesGenerator(float militaryPower) {
             if (militaryPower > 1) {
                 this.militaryPower = militaryPower;
-                minTriggerTimeout = minimalTriggerFiringTimeout;
             }
         }
 
-        public override void GenerateForces(Map map, ResolveParams rp, ScatterOptions options) {
-            if (options == null) return;
-
-            int addedTriggers = 0;
-            float ratio = 10;
-            float remainingCost = options.uncoveredCost * (Rand.Value + 0.5f); //cost estimation as seen by other factions
-            Debug.Log(Debug.ForceGen, "Running military force generation with remaining cost of {0} (while uncovered is {1})", remainingCost, options.uncoveredCost);
-
-            float initialCost = remainingCost;
-
-            int triggersAbsoluteMaximum = 100;
-
-            while (remainingCost > 0) {
-
-                IntVec3 mapLocation = rp.rect.RandomCell;
-                if (!mapLocation.InBounds(map)) continue;
-
-                ThingDef raidTriggerDef = ThingDef.Named("RaidTrigger");
-                RaidTrigger trigger = ThingMaker.MakeThing(raidTriggerDef) as RaidTrigger;
-
-                trigger.faction = rp.faction;
-
-                int raidMaxPoints = (int)(remainingCost / ratio);
-                float raidValue = Math.Abs(Rand.Gaussian()) * raidMaxPoints + Rand.Value * raidMaxPoints + 250.0f;
-                if (raidValue > 10000) raidValue = Rand.Range(8000, 11000); //sanity cap. against some beta-poly bases.
-                remainingCost -= raidValue * ratio;
-
-                trigger.value = ScalePointsToDifficulty(raidValue);
-
-                GenSpawn.Spawn(trigger, mapLocation, map);
-                Debug.Log(Debug.ForceGen, "Spawned trigger at {0}, {1} for {2} points, ticks left: {3}, faction: {4}", mapLocation.x, mapLocation.z, trigger.value, trigger.TicksLeft(), trigger.faction);
-                addedTriggers++;
-
-                options.uncoveredCost = Math.Abs(remainingCost);
-
-                if (addedTriggers > triggersAbsoluteMaximum) {
-                    if (remainingCost < initialCost * 0.2f) {
-                        if (Rand.Chance(0.1f)) {
-                            if (remainingCost > 100000) {
-                                remainingCost = Rand.Range(80000, 110000);
-                            }
-                            return;
-                        }
-                    }
-                }
-            }
+        public override void GenerateForces(Map map, ResolveParams rp, ScatterContext context) {
+            SpawnRaidTriggers(map, rp, context, "military");
         }
 
-        public override void GenerateStartingParty(Map map, ResolveParams rp, ScatterOptions currentOptions) {
-            float uncoveredCost = currentOptions.uncoveredCost;
+        public override void GenerateStartingParty(Map map, ResolveParams rp, ScatterContext context) {
+            float uncoveredCost = context.state.uncoveredCost;
 
             int points = (int)(uncoveredCost / (10 * militaryPower));
             int initialGroup = 0;
@@ -81,12 +35,11 @@ namespace RealRuins {
             Debug.Log(Debug.ForceGen, "Military gen: uncoveredCost {0}, military power: {1}, total points allowed: {2}", uncoveredCost, militaryPower, points);
 
             points -= initialGroup;
-            SpawnGroup((int)ScalePointsToDifficulty(initialGroup), rp.rect, rp.faction, map);
+            SpawnGroup((int)ScalePointsToDifficulty(initialGroup, context), context.state.placementRect, rp.faction, map);
             Debug.Log(Debug.ForceGen, "Initial group of {0} spawned, {1} points left for triggers", initialGroup, points);
 
             while (points > 0) {
-                IntVec3 mapLocation = rp.rect.RandomCell;
-                if (!mapLocation.InBounds(map)) continue;
+                bool hasLocation = TryFindTriggerLocation(map, context, out IntVec3 mapLocation);
 
                 ThingDef raidTriggerDef = ThingDef.Named("RaidTrigger");
                 RaidTrigger trigger = ThingMaker.MakeThing(raidTriggerDef) as RaidTrigger;
@@ -98,10 +51,12 @@ namespace RealRuins {
                 if (raidValue > 10000) raidValue = Rand.Range(8000, 11000); //sanity cap. against some beta-poly bases.
                 points -= (int)raidValue;
 
-                trigger.value = ScalePointsToDifficulty(points);
+                trigger.value = ScalePointsToDifficulty(raidValue, context);
 
-                GenSpawn.Spawn(trigger, mapLocation, map);
-                Debug.Log(Debug.ForceGen, "Spawned trigger at {0}, {1} for {2} points, autofiring after {3} rare ticks", mapLocation.x, mapLocation.z, trigger.value, 0);
+                if (hasLocation) {
+                    GenSpawn.Spawn(trigger, mapLocation, map);
+                    Debug.Log(Debug.ForceGen, "Spawned trigger at {0}, {1} for {2} points, autofiring after {3} rare ticks", mapLocation.x, mapLocation.z, trigger.value, 0);
+                }
             }
         }
 

@@ -8,8 +8,8 @@ namespace RealRuins.Settings
 {
     public class PlanetaryRuinsSettingsPage : SettingsPage
     {
-        private string buf1 = "";
-        private string buf2 = "";
+        private string buf1, buf2;
+        private int synced1, synced2;
 
         public override string TabLabel => "RealRuins.PlanetaryRuinsSettings.Caption".Translate();
 
@@ -37,7 +37,7 @@ namespace RealRuins.Settings
                 r,
                 "RealRuins.PlanetarySettings.DownloadLimit".Translate() + " ",
                 ref RealRuins_ModSettings.planetaryRuinsOptions.downloadLimit,
-                ref buf1);
+                ref buf1, ref synced1);
 
             listing.Gap(12f);
 
@@ -46,7 +46,7 @@ namespace RealRuins.Settings
                 r,
                 "RealRuins.PlanetarySettings.TransferLimit".Translate() + "  ",
                 ref RealRuins_ModSettings.planetaryRuinsOptions.transferLimit,
-                ref buf2);
+                ref buf2, ref synced2);
 
             listing.Gap(12f);
 

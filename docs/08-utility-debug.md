@@ -124,7 +124,7 @@ String constants representing subsystems: `Generic`, `Loader`, `Store`, `Bluepri
 
 **`Extra(category, message)`**: Logged only when `logLevel == 0` AND the category appears in `debugExtras` list. Provides per-subsystem verbose opt-in without flooding all debug output.
 
-**`Debug.Log()` → `Debug.Message()` → `Debug.Warning()` → `Debug.Error()`**: Tiered output methods each checking their level threshold.
+**`Debug.Log()` → `Debug.Message()` → `Debug.Warning()` → `Debug.Error()`**: Tiered output methods each checking their level threshold. Warnings go to `Log.Warning`, errors to `Log.Error` (which opens the log window in dev mode, so expected situations use `Debug.Warning`); everything else goes to `Log.Message`.
 
 ### Visual Debug Helpers
 `PrintIntMap`, `PrintBoolMap`, `PrintNormalizedFloatMap`: Render 2D arrays as ASCII art in Verse log. Used during development to visualize deterioration maps, room topology, and scatter fields.

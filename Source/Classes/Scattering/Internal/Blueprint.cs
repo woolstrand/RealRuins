@@ -37,7 +37,7 @@ namespace RealRuins {
             get => snapshotYearInt;
             set {
                 snapshotYearInt = value;
-                dateShift = -(value - 5500) - Rand.Range(5, 500);
+                dateShift = -(value - 5500) - ThreadSafeRand.Range(5, 500);
             }
         }
         public int dateShift { get; private set; }
@@ -133,12 +133,14 @@ namespace RealRuins {
 
             for (int x = 0; x < width; x++) {
                 for (int z = 0; z < height; z++) {
-                    if (wallMap[x, z] == value) wallMap[x, z] = -1;
+                    if (wallMap[x, z] == value) wallMap[x, z] = 1;
                 }
             }
         }
 
-        //This method affects wall map only, it does not actually remove a wall
+        //This method affects wall map only, it does not actually remove a wall.
+        //Not an issue (FIXES_QUEUE L1): the full map scan below runs only when the removal merges different rooms, and each merge
+        //retires at least one room number, so all calls together do at most (rooms count + rooms created here - 1) scans.
         public void RemoveWall(int posX, int posZ) {
             if (posX < 0 || posZ < 0 || posX >= width || posZ >= height) return;
             if (wallMap[posX, posZ] != -1) return; //alerady no wall there
@@ -165,6 +167,14 @@ namespace RealRuins {
                     newValue = distinct.Pop();
                 }
             }
+
+            //cell surrounded by walls becomes a new room, so destroying the rest of a thick wall later still connects it
+            if (newValue == null) {
+                newValue = roomsCount;
+                roomsCount++;
+                roomAreas?.Add(1);
+            }
+            wallMap[posX, posZ] = newValue.Value;
 
             if (distinct.Count > 0) {
                 for (int x = 0; x < width; x++) {
@@ -280,10 +290,12 @@ namespace RealRuins {
             int centerX = location.x;
             int centerZ = location.z;
 
-            int minX = Math.Max(0, centerX - size.x / 2);
-            int maxX = Math.Min(width - 1, centerX + size.x / 2);
-            int minZ = Math.Max(0, centerZ - size.z / 2);
-            int maxZ = Math.Min(height - 1, centerZ + size.z / 2);
+            //max bounds are exclusive. min bounds are clamped inside the blueprint: the center can be off it when the blueprint is
+            //smaller than the piece in one dimension only (see RandomPartCenteredAtRoom), and that used to give a negative size.
+            int minX = Math.Max(0, Math.Min(centerX - size.x / 2, width - 1));
+            int maxX = Math.Min(width, minX + size.x);
+            int minZ = Math.Max(0, Math.Min(centerZ - size.z / 2, height - 1));
+            int maxZ = Math.Min(height, minZ + size.z);
 
             //Debug.Message("Cutting area of size {0}x{1}. Frame is {2}..{3}, {4}..{5}", size.x, size.z, minX, maxX, minZ, maxZ);
 

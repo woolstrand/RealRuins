@@ -7,7 +7,7 @@ using System.IO.Compression;
 
 namespace RealRuins {
     class Compressor {
-        //Dangerous zipping: if somethig goes wrong the information is lost, but we don't care too.
+        // Deliberately deletes the original before writing: losing one blueprint on a failed write is acceptable (the server holds millions).
         public static void ZipFile(string filename) {
             var bytes = File.ReadAllBytes(filename);
             File.Delete(filename);

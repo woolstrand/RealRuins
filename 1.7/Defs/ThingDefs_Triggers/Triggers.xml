@@ -3,14 +3,8 @@
     <defName>RaidTrigger</defName>
     <label>rough floor</label>
     <thingClass>RealRuins.RaidTrigger</thingClass>
-    <tickerType>Normal</tickerType>
+    <tickerType>Rare</tickerType>
   </ThingDef>
 
-  <ThingDef ParentName="EtherealThingBase">
-    <defName>TrippingTrigger</defName>
-    <label>rough floor</label>
-    <thingClass>RealRuins.TrippingTrigger</thingClass>
-    <tickerType>Normal</tickerType>
-  </ThingDef>
 
 </Defs>

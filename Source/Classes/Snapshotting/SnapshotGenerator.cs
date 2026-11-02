@@ -76,7 +76,7 @@ namespace RealRuins
 
             //age
             writer.WriteElementString("biologicalAge", pawn.ageTracker.AgeBiologicalTicks.ToString());
-            writer.WriteElementString("chronologicalAge", pawn.ageTracker.AgeBiologicalTicks.ToString());
+            writer.WriteElementString("chronologicalAge", pawn.ageTracker.AgeChronologicalTicks.ToString());
 
             //story and appearance
             if (pawn.story != null)
@@ -163,9 +163,6 @@ namespace RealRuins
             {
                 if (thing.def.building != null && thing.def.building.isNaturalRock) return; //ignoring natural rocks too
 
-                Type CompTextClass = Type.GetType("SaM.CompText, Signs_and_Memorials");
-
-
                 if (thing.HitPoints > thing.MaxHitPoints * 0.9f)
                 {
                     maxHPItemsCount++;
@@ -196,28 +193,6 @@ namespace RealRuins
                     writer.WriteAttributeString("artAuthor", a.AuthorName.RawText);
                     writer.WriteAttributeString("artTitle", a.Title);
                     writer.WriteAttributeString("artDescription", a.GenerateImageDescription().RawText);
-                }
-
-                ThingWithComps thingWithComps = thing as ThingWithComps;
-                if (thingWithComps != null && CompTextClass != null)
-                {
-                    Object textComp = null;
-                    for (int i = 0; i < thingWithComps.AllComps.Count; i++)
-                    {
-                        var val = thingWithComps.AllComps[i];
-                        if (val.GetType() == CompTextClass)
-                        {
-                            textComp = val;
-                        }
-                    }
-                    if (textComp != null)
-                    {
-                        string text = (string)(textComp?.GetType()?.GetField("text")?.GetValue(textComp));
-                        if (text != null && text is string)
-                        {
-                            writer.WriteAttributeString("text", text);
-                        }
-                    }
                 }
 
                 if (thing.def.passability == Traversability.Impassable || thing.def.fillPercent > 0.99)

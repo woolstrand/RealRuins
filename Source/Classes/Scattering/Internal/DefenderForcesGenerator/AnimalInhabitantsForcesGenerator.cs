@@ -9,15 +9,15 @@ using Verse.AI.Group;
 
 namespace RealRuins {
     class AnimalInhabitantsForcesGenerator : AbstractDefenderForcesGenerator {
-        public override void GenerateForces(Map map, ResolveParams rp, ScatterOptions options) {
+        public override void GenerateForces(Map map, ResolveParams rp, ScatterContext context) {
             Debug.Log(Debug.ForceGen, "Animal forces generation");
-            CellRect rect = rp.rect;
+            CellRect rect = context.state.placementRect;
 
             /*if (rect.minX < 15 || rect.minZ < 15 || rect.maxX > map.Size.x - 15 || rect.maxZ > map.Size.z - 15) {
                 return; //do not add enemies if we're on the map edge
             }
 
-            if (!CellFinder.TryFindRandomCellInsideWith(rect, (IntVec3 x) => x.Standable(map) && options.roomMap[x.x - rect.BottomLeft.x, x.z - rect.BottomLeft.z] > 1, out IntVec3 testCell)) {
+            if (!CellFinder.TryFindRandomCellInsideWith(rect, (IntVec3 x) => x.Standable(map) && context.state.roomMap[x.x - rect.BottomLeft.x, x.z - rect.BottomLeft.z] > 1, out IntVec3 testCell)) {
                 return; //interrupt if there are no closed cells available
             }*/
 
@@ -26,9 +26,9 @@ namespace RealRuins {
            
             pawnKindDef = map.Biome.AllWildAnimals.RandomElementByWeight((PawnKindDef def) => (def.RaceProps.foodType == FoodTypeFlags.CarnivoreAnimal || def.RaceProps.foodType == FoodTypeFlags.OmnivoreAnimal) ? 1 : 0);
            
-            float powerMax = (float)Math.Sqrt(options.uncoveredCost / 10 * (rect.Area / 30.0f));
-            Debug.Log(Debug.ForceGen, "Unscaled power is {0} based on cost of {1} and area of {2}", powerMax, options.uncoveredCost, rect.Area);
-            powerMax = ScalePointsToDifficulty(powerMax);
+            float powerMax = (float)Math.Sqrt(context.state.uncoveredCost / 10 * (rect.Area / 30.0f));
+            Debug.Log(Debug.ForceGen, "Unscaled power is {0} based on cost of {1} and area of {2}", powerMax, context.state.uncoveredCost, rect.Area);
+            powerMax = ScalePointsToDifficulty(powerMax, context);
             float powerThreshold = (Math.Abs(Rand.Gaussian(0.5f, 1)) * powerMax) + 1;
 
             float cumulativePower = 0;
@@ -46,7 +46,7 @@ namespace RealRuins {
                     mustBeCapableOfViolence: true, forceAddFreeWarmLayerIfNeeded: true);
 
                 IntVec3 cell = IntVec3.Invalid;
-                if (!CellFinder.TryFindRandomCellInsideWith(rect, (IntVec3 x) => x.Standable(map) && options.roomMap[x.x - rect.minX, x.z - rect.minZ] > 1, out cell)) {
+                if (!CellFinder.TryFindRandomCellInsideWith(rect, (IntVec3 x) => x.Standable(map) && context.state.roomMap[x.x - rect.minX, x.z - rect.minZ] > 1, out cell)) {
                     CellFinder.TryFindRandomSpawnCellForPawnNear(rect.CenterCell, map, out cell);
                 }
 
@@ -64,7 +64,7 @@ namespace RealRuins {
             }
         }
 
-        public override void GenerateStartingParty(Map map, ResolveParams rp, ScatterOptions options) {
+        public override void GenerateStartingParty(Map map, ResolveParams rp, ScatterContext context) {
         }
     }
 }

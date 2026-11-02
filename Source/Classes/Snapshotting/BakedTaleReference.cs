@@ -2,6 +2,7 @@ using RimWorld;
 using Verse;
 
 namespace RealRuins {
+    // TaleReference.ExposeData is not virtual, so bakedTale is saved by TaleReference_ExposeData_Patch in RealRuins.cs.
     public class BakedTaleReference : TaleReference {
         public TaggedString bakedTale; //to allow access in original tale reference object's patched ExposeData method
         
@@ -17,11 +18,6 @@ namespace RealRuins {
         public BakedTaleReference(TaggedString taleDescription) {
             //Debug.Message("Created baked tale reference");
             bakedTale = taleDescription;
-        }
-
-        public new void ExposeData()
-        {
-            Scribe_Values.Look(ref bakedTale, "bakedTale", "DeterioratedArtDescription".Translate(), false);
         }
     }
 }

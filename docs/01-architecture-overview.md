@@ -132,7 +132,7 @@ DynamicMapObjects/              # POI world object, factory, analyzer, store
   DefenderForcesGenerator/      # (same subpath in DynamicMapObjects — note duplicate folder name)
 Quest/                          # QuestNode_FindBlueprint, QuestNode_GenerateRuinsObject
 Components/                     # WorldObjectComps (RuinedBase, POI, FormCaravan)
-Triggers/                       # RaidTrigger, TrippingTrigger
+Triggers/                       # RaidTrigger
 Thoughts/                       # ThoughtWorker_ScavengingRuins
 Settings/                       # All settings page classes, SettingsSerializer
 Utility/                        # APIService, SnapshotManager, SnapshotStoreManager,

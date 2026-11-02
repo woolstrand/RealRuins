@@ -16,16 +16,16 @@ namespace RealRuins {
             powerMax = power;
         }
 
-        public override void GenerateForces(Map map, ResolveParams rp, ScatterOptions options) {
+        public override void GenerateForces(Map map, ResolveParams rp, ScatterContext context) {
             Debug.Log(Debug.ForceGen, "Generating mechanoid forces");
 
-            CellRect rect = rp.rect;
+            CellRect rect = context.state.placementRect;
 
             /*if (rect.minX < 15 || rect.minZ < 15 || rect.maxX > map.Size.x - 15 || rect.maxZ > map.Size.z - 15) {
                 return; //do not add enemies if we're on the map edge
             }
 
-            if (!CellFinder.TryFindRandomCellInsideWith(rect, (IntVec3 x) => x.Standable(map) && options.roomMap[x.x - rect.BottomLeft.x, x.z - rect.BottomLeft.z] > 1, out IntVec3 testCell)) {
+            if (!CellFinder.TryFindRandomCellInsideWith(rect, (IntVec3 x) => x.Standable(map) && context.state.roomMap[x.x - rect.BottomLeft.x, x.z - rect.BottomLeft.z] > 1, out IntVec3 testCell)) {
                 return; //interrupt if there are no closed cells available
             }*/
 
@@ -33,22 +33,29 @@ namespace RealRuins {
                 powerMax = rect.Area / 30.0f;
             }
 
-            powerMax = ScalePointsToDifficulty(powerMax);
+            powerMax = ScalePointsToDifficulty(powerMax, context);
 
             float powerThreshold = (Math.Abs(Rand.Gaussian(0.5f, 1)) * powerMax) + 1;
             float cumulativePower = 0;
 
             Faction faction = Faction.OfMechanoids;
 
+            //kinds without a positive combat power (unset or modded) would never advance the loop below
+            List<PawnKindDef> mechKinds = DefDatabase<PawnKindDef>.AllDefsListForReading
+                .Where(kind => kind.RaceProps != null && kind.RaceProps.IsMechanoid && !kind.RaceProps.IsWorkMech && kind.combatPower > 0)
+                .ToList();
+            if (mechKinds.Count == 0) {
+                Debug.Warning(Debug.ForceGen, "No suitable mechanoid kinds found, skipping mechanoid forces");
+                return;
+            }
+
             Lord lord = LordMaker.MakeNewLord(lordJob: new LordJob_DefendPoint(rect.CenterCell), faction: faction, map: map, startingPawns: null);
             int tile = map.Tile;
 
-            while (cumulativePower <= powerThreshold) {
+            int maxPawns = 100; //sanity cap
+            while (cumulativePower <= powerThreshold && maxPawns-- > 0) {
 
-
-                PawnKindDef currentPawnKindDef = (from kind in DefDatabase<PawnKindDef>.AllDefsListForReading
-                                                  where kind.RaceProps.IsMechanoid
-                                                  select kind).RandomElementByWeight((PawnKindDef kind) => 1f / kind.combatPower);
+                PawnKindDef currentPawnKindDef = mechKinds.RandomElementByWeight((PawnKindDef kind) => 1f / kind.combatPower);
 
                 PawnGenerationRequest request =
                     new PawnGenerationRequest(currentPawnKindDef, faction: faction, tile: tile, forceGenerateNewPawn: true,
@@ -72,7 +79,7 @@ namespace RealRuins {
             }
         }
 
-        public override void GenerateStartingParty(Map map, ResolveParams rp, ScatterOptions options) {
+        public override void GenerateStartingParty(Map map, ResolveParams rp, ScatterContext context) {
         }
     }
 }

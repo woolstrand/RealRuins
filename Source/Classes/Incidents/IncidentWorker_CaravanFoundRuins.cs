@@ -25,10 +25,6 @@ namespace RealRuins {
             return CaravanIncidentUtility.CanFireIncidentWhichWantsToGenerateMapAt(parms.target.Tile);
         }
 
-        private bool TryFindEntryCell(Map map, out IntVec3 cell) {
-            return CellFinder.TryFindRandomEdgeCellWith((IntVec3 x) => x.Standable(map) && map.reachability.CanReachColony(x), map, CellFinder.EdgeRoadChance_Hostile, out cell);
-        }
-
         protected override bool TryExecuteWorker(IncidentParms parms) {
 			if (parms.target is Map) {
 				return IncidentDefOf.TravelerGroup.Worker.TryExecute(parms);

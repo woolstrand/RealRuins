@@ -22,7 +22,6 @@ Ruins appear on the world map as two types of objects:
 - `Source/Classes/Components/RealRuinsPOIComp.cs`
 - `Source/Classes/Components/FormCaravanFromRuinsComp.cs`
 - `Source/Classes/Triggers/RaidTrigger.cs`
-- `Source/Classes/Triggers/TrippingTrigger.cs`
 - `Source/Classes/Thoughts/ThoughtWorker_ScavengingRuins.cs`
 
 ---
@@ -78,8 +77,6 @@ Fires when a caravan discovers small ruins nearby.
 - If target is a `Map`: delegates to vanilla `TravelerGroup` incident
 - For caravans: shows `Dialog_NodeTree` with "Investigate" / "Move On"
 - "Investigate": queues `LongEventHandler` to generate a 120×120 map using `SmallRuinsWorldObject`, then enters caravan at edge
-
-**Dead code**: `TryFindEntryCell()` is defined but never called.
 
 ---
 
@@ -178,14 +175,14 @@ Inactive → WaitingForArrival → FightingWaves → WaitingForEnemiesToBeDefeat
 - Creates emergent time pressure: unvisited ruins are eventually looted by NPCs
 
 ### `PostMapGenerate()`
-Overrides `currentCapCost` with `max(actual_map_wealth, 150000)` to prevent underscaled forces. Sets `destructionLevel = actualCost / capCost`.
+Stores `referenceWealth = max(actual_map_wealth, 150000)` (saved) and sets `destructionLevel = actualCost / referenceWealth`. `referenceWealth` is used only for V2 force scaling and the unlock timer; `currentCapCost` keeps the value left by off-map scavenging. Saves from before this change overwrote `currentCapCost` with the reference value, and `ReferenceWealth` falls back to it.
 
 ### `DoRareTask()` (every 60 ticks)
-- V2 forces: if hostile count < `15 × destructionLevel × forceMultiplier` AND total < 90: triggers small patrol raid (500–2500 pts)
-- Reform type 2: drives state machine through `FightingWaves → ... → InformedWaitingForLeaving`
+- V2 forces (only in `FightingWaves`): if hostile count < `15 × destructionLevel × forceMultiplier` AND total < 90: triggers small patrol raid (500–2500 pts). `destructionLevel` is recomputed if a pre-fix save loaded it as 0.
+- Drives the state machine through `FightingWaves → ... → InformedWaitingForLeaving` in every reform mode. After the last enemy is gone it waits `45000 .. 60000 + referenceWealth` ticks, then shows `RealRuins.NoMoreEnemies`.
 
 ### `CheckTriggers()`
-Iterates `triggersCache` (pre-built list of `RaidTrigger` things). When all triggers have fired, transitions to `WaitingForEnemiesToBeDefeated` after `unlockHysteresisTimeout` (1000 ticks) safety delay.
+Iterates `triggersCache` (pre-built list of `RaidTrigger` things). When all triggers have fired, transitions to `WaitingForEnemiesToBeDefeated` after a 1000-tick safety delay (`allTriggersFiredTick`, saved).
 
 ### `TriggerRaid()`
 Fires `RaidEnemy` incident directly via `IncidentDef.Worker.TryExecute()` with `FactionSelector.GetRandomFaction()`.
@@ -194,11 +191,10 @@ Fires `RaidEnemy` incident directly via `IncidentDef.Worker.TryExecute()` with `
 Wealth and activity described in 5 tiers each (threshold arrays). Only shown when `WaitingForArrival`.
 
 ### Wealth Calculation
-`GetTotalMapWealth()` counts only `CountAsResource` things — differs from `RealRuinsPOIWorldObject.CurrentMapWealth()` which counts all things with market cost. The two systems produce different numeric values for the same map.
+`GetTotalMapWealth()` counts only `CountAsResource` things — differs from `RealRuinsPOIWorldObject.CurrentMapWealth()` which counts all things with market cost. The two systems never compare their numbers, so this is fine.
 
-### Known Issues
-- V1 faction-transfer code (`caravanReformType == 1` path) runs every tick alongside V2 system — redundant/conflicting ownership logic
-- `mapExitLocked` property exposed but never called from within this class (external use only)
+### Exit Lock
+`mapExitLocked` is true from `FightingWaves` until `InformedWaitingForLeaving`. Used only in manual reform mode (`caravanReformType == 2`): `FormCaravanComp_CanFormOrReform_Patch` (in `RealRuins.cs`) makes `CanFormOrReformCaravanNow` false, which hides reforming and turns on vanilla `ExitMapGrid`, and the reform gizmo is disabled with `RealRuins.ReformLockedManual`.
 
 ---
 
@@ -208,38 +204,27 @@ Wealth and activity described in 5 tiers each (threshold arrays). Only shown whe
 
 **Persisted fields**: `blueprintName`, `gameName`, `originX`, `originZ`, `poiType` (as int), `militaryPower`, `approximateSnapshotCost`, `bedsCount`, `mannableCount`.
 
-**Note**: `POIType` enum is declared at global scope (no namespace) in this file — pollutes the global namespace.
+**Note**: `POIType` ordinals are persisted in saves and used in texture and translation keys — append new values only.
 
 ---
 
 ## FormCaravanFromRuinsComp
 
-Extends vanilla `FormCaravanComp`. Overrides `CanFormOrReformCaravanNow`:
-- `caravanReformType == 1` (instant reform): blocks if there are active hostiles or no free colonists
-- Other modes: always `true`
-
-**`new` shadow**: Uses `new` keyword (not `override`) to hide the base property. Callers with a `FormCaravanComp` reference would call the base. Correctness depends on concrete type usage.
+Extends vanilla `FormCaravanComp`. Overrides only `GetGizmos()`: the reform button is always shown when free colonists are on the map. It is disabled while hostiles are around in instant mode, and while `RuinedBaseComp.mapExitLocked` in manual mode. In non-instant modes `DialogFormCaravan_Patch` turns the reform into regular caravan forming (pawns walk out).
 
 ---
 
 ## RaidTrigger
 
-A `Thing` placed on the map. After a countdown (`|Rand.Gaussian(0, 100)|` ticks, half-normal), fires a `RaidEnemy` incident and destroys itself.
+A `Thing` placed on the map. After a countdown (`|Rand.Gaussian(0, 100)|` rare ticks of 250 game ticks, half-normal), fires a `RaidEnemy` incident and destroys itself.
 
 **`IAttackTarget`** implementation is vestigial — `TargetPriorityFactor = 0` and `ThreatDisabled = true`, so it's invisible to AI targeting. Comment notes the "step-on-trigger" mechanic was abandoned.
 
-**`Tick()` override** calls manual 250-tick gating before delegating to `TickRare()` — redundant (the 250-tick pattern duplicates what `TickRare` does automatically). But is there TickRare for trigger? It's not always available.
+The def uses `tickerType` `Rare`, so the engine calls `TickRare()` directly. Spawn and fire are logged at the Generic level with game ticks (spawn log includes the expected fire tick).
 
 **`ExposeData()`**: Persists `faction`, `value`, `ticksLeft` — allows save/load to resume countdowns.
 
 **Issue**: All triggers placed simultaneously fire in a tight cluster (all initialized with similar random values from the same distribution).
-
----
-
-## TrippingTrigger
-
-A `Thing` placed on the map. Deals 1–10 blunt damage (70% chance) to any pawn stepping on it, then destroys itself. Runs every tick — potentially expensive at scale (O(triggers × thingListSize) per tick).
-Is it used? Check for usage and report.
 
 ---
 
@@ -252,13 +237,13 @@ Generates mood thoughts based on `RuinedBaseComp.currentCapCost`. Five stages:
 - Stage 3 (100,000–500,000): strong positive
 - Stage 4 (> 1,000,000): extreme positive
 
-**Gap bug**: Values between 10,000 and 25,000 produce `ThoughtState.Inactive` (neither stage 0 nor stage 1). May be intentional or an off-by-one error.
+Uses `RuinedBaseComp.currentCapCost`, i.e. what off-map scavenging left, so ruins picked clean before arrival give the low stages. 10,000–25,000 gives no thought.
 
 ---
 
 ## XML Def Registration
 
-- `1.7/Defs/ThingDefs_Triggers/` — `RaidTrigger` and `TrippingTrigger` ThingDefs
+- `1.7/Defs/ThingDefs_Triggers/` — `RaidTrigger` ThingDef (`TrippingTrigger` was removed; it is still defined in the legacy root and 1.1–1.6 folders)
 - `1.7/Defs/Thoughts/` — `ThoughtDef` for scavenging ruins
 - `1.7/Defs/Storyteller/` — storyteller settings for incident pacing
 - `1.7/Patches/WorldObjects_Patch.xml` — patches vanilla world object defs to add components

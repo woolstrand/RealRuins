@@ -19,6 +19,10 @@ namespace RealRuins.Classes.Utility
 
             // cutting anything beyond last tag bracket
             int cutLocation = data.LastIndexOf("</cell>");
+            if (cutLocation < 0)
+            {
+                return false; // not a single complete cell, nothing to recover
+            }
             if (cutLocation < data.Length - 7)
             {
                 data = data.Substring(0, cutLocation);

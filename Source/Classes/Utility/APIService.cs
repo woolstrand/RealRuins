@@ -18,9 +18,13 @@ namespace RealRuins
     class APIService
     {
 
-        private const string APIRoot = "https://woolstrand.art/";
+        private static string APIRoot => RealRuins_ModSettings.useStagingEnvironment
+            ? "https://staging.woolstrand.art/"
+            : "https://api.woolstrand.art/";
         //private const string APIRoot = "http://173.23.44.32/"; //for testing unresponsive host
-        private const string BucketRoot = "https://realruinsv2.sfo2.digitaloceanspaces.com/";
+        private static string BucketRoot => RealRuins_ModSettings.useStagingEnvironment
+            ? "https://realruins-staging.sfo3.digitaloceanspaces.com/"
+            : "https://realruinsv2.sfo2.digitaloceanspaces.com/";
 
         private const string MapsRandomListPath = "maps/random";
         private const string MapsBySeedListPath = "maps/seed/";
@@ -113,7 +117,7 @@ namespace RealRuins
 
         public void LoadAllMapsForSeed(string seed, int mapSize, float coverage, Action<bool, List<PlanetTileInfo>> completionHandler)
         {
-            var path = APIRoot + MapsBySeedListPath + seed;
+            var path = APIRoot + MapsBySeedListPath + Uri.EscapeDataString(seed); //seed is user text and may contain '/', '?', '#' etc.
 
             string requestLink = path + "?limit=9999&coverage=" + coverage + "&mapSize=" + mapSize;
             Debug.Log(Debug.Loader, "Loading all compatible blueprings by link {0}", requestLink);
@@ -153,7 +157,7 @@ namespace RealRuins
 
             void failureHandler(Exception ex)
             {
-                Debug.Error(Debug.Loader, string.Format("Could not load maps list. Try not to alt-tab while waiting for maps loading."), true);
+                Debug.Warning(Debug.Loader, string.Format("Could not load maps list. Try not to alt-tab while waiting for maps loading."), true);
                 completionHandler(false, null);
             }
 

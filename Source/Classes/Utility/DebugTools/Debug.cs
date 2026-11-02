@@ -90,18 +90,23 @@ namespace RealRuins {
 
         public static void Warning(string part, string format, params object[] args) {
             if (logLevel < 2) {
-                Message(part, format, args);
+                Message(part, format, args, Verse.Log.Warning);
             }
         }
 
+        // Log.Error opens the debug log window in dev mode, so use it only for real failures, not for expected situations.
         public static void Error(string part, string format, params object[] args) {
             if (logLevel < 3) {
-                Message(part, format, args);
+                Message(part, format, args, Verse.Log.Error);
             }
         }
 
 
         private static void Message(string part, string format, params object[] args) {
+            Message(part, format, args, Verse.Log.Message);
+        }
+
+        private static void Message(string part, string format, object[] args, Action<string> output) {
             if (!active) return;
 
             object[] safeArgs = new object[args.Length];
@@ -114,7 +119,7 @@ namespace RealRuins {
             }
 
             string message = "[RealRuins][" + part + "]: " + string.Format(format, safeArgs);
-            Verse.Log.Message(message);
+            output(message);
         }
 
         public static void PrintIntMap(int[,] map, string charMap = "#._23456789ABCDEFGHIJKLMNOPQRSTU", int delta = 0) {

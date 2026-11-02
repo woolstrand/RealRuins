@@ -12,7 +12,6 @@ namespace RealRuins
         public static bool offlineMode = false;
         public static bool allowDownloads = true;
         public static bool allowUploads = true;
-        public static bool allowInstantCaravanReform = false;
         public static int caravanReformType = 0; //0 - regular, 1 - instant, 2 - manual
         public static bool startWithoutRuins = false;
         public static bool preserveStandardRuins = false; //preservers standard ruins and adds real ruinson top of that.
@@ -21,6 +20,7 @@ namespace RealRuins
         public static float diskCacheLimit = 256.0f; //256mb cache by default, it's about 2000 to 10000 blueprints in average.
         public static bool useRuinsForcesGenerationV2 = true; // support fixed amount of troops on ruins maps
         public static int logLevel = 2; //0 = all, 1 = warnings, 2 = errors
+        public static bool useStagingEnvironment = false; // debug: use staging server instead of production
         public static bool debugKeepSnapshotsAfterUpload = false; // debug: keep snapshot files after upload instead of deleting
         public static int debugTileFocusId = -1; // debug: tile ID to focus/select in world view
         public static List<string> debugExtras = new List<string>() { "BlueprintPawnDecoder" }; // debug: extra debug categories to log
@@ -31,7 +31,7 @@ namespace RealRuins
         public static string materialBlacklist = ""; // newline-separated list of materials to exclude from spawning
         public static string fallbackMaterial = "Wood"; // material to use when blacklisted material is encountered
 
-        public static ScatterOptions defaultScatterOptions = ScatterOptions.Default;
+        public static ScatterOptions defaultScatterOptions = new ScatterOptions();
         public static PlanetaryRuinsOptions planetaryRuinsOptions = new PlanetaryRuinsOptions();
 
         public override void ExposeData()
@@ -41,7 +41,6 @@ namespace RealRuins
             Scribe_Values.Look(ref allowDownloads, "allowDownloads", true, false);
             Scribe_Values.Look(ref allowUploads, "allowUploads", true, false);
             Scribe_Values.Look(ref diskCacheLimit, "diskCacheLimit", 256.0f, false);
-            Scribe_Values.Look(ref allowInstantCaravanReform, "allowInstantCaravanReform", false, false);
             Scribe_Values.Look(ref caravanReformType, "caravanReformType", 0, false);
             Scribe_Values.Look(ref preserveStandardRuins, "preserveStandardRuins", false, false);
             Scribe_Values.Look(ref forceMultiplier, "forceMultiplier", 1.0f, false);
@@ -49,6 +48,7 @@ namespace RealRuins
             Scribe_Values.Look(ref startWithoutRuins, "startWithoutRuins", false, false);
             Scribe_Values.Look(ref useRuinsForcesGenerationV2, "useRuinsForcesGenerationV2", true, true);
             Scribe_Values.Look(ref logLevel, "logLevel", 2, false);
+            Scribe_Values.Look(ref useStagingEnvironment, "useStagingEnvironment", false, false);
             Scribe_Values.Look(ref debugKeepSnapshotsAfterUpload, "debugKeepSnapshotsAfterUpload", false, false);
             Scribe_Values.Look(ref debugTileFocusId, "debugTileFocusId", -1, false);
             Scribe_Collections.Look(ref debugExtras, "debugExtras", LookMode.Value);
@@ -69,7 +69,7 @@ namespace RealRuins
                 }
                 if (defaultScatterOptions == null)
                 {
-                    defaultScatterOptions = ScatterOptions.Default;
+                    defaultScatterOptions = new ScatterOptions();
                 }
                 if (planetaryRuinsOptions == null)
                 {
@@ -84,15 +84,16 @@ namespace RealRuins
             planetaryRuinsOptions = new PlanetaryRuinsOptions();
 
             offlineMode = false;
+            diskCacheLimit = 256.0f;
             allowDownloads = true;
             allowUploads = true;
-            allowInstantCaravanReform = false;
             caravanReformType = 0;
             startWithoutRuins = false;
             preserveStandardRuins = false;
             forceMultiplier = 1.0f;
             ruinsCostCap = 1.0e+9f;
             logLevel = 2;
+            useStagingEnvironment = false;
             debugKeepSnapshotsAfterUpload = false;
             debugTileFocusId = -1;
             debugExtras = new List<string>() { "BlueprintPawnDecoder" };

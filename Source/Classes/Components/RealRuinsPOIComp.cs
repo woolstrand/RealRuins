@@ -3,22 +3,23 @@ using RimWorld;
 using RimWorld.Planet;
 using Verse;
 
-enum POIType {
-    MilitaryBaseSmall = 0,
-    Outpost,
-    Camp,
-    City,
-    Factory,
-    Research,
-    PowerPlant,
-    MilitaryBaseLarge,
-    Storage,
-    Communication,
-    Ruins,
-    Stronghold
-}
-
 namespace RealRuins {
+    //Ordinals are persisted in saves and used in texture and translation keys: append new values only.
+    enum POIType {
+        MilitaryBaseSmall = 0,
+        Outpost,
+        Camp,
+        City,
+        Factory,
+        Research,
+        PowerPlant,
+        MilitaryBaseLarge,
+        Storage,
+        Communication,
+        Ruins,
+        Stronghold
+    }
+
     class RealRuinsPOIComp : WorldObjectComp {
         public string blueprintName = "";
         public string gameName = "";

@@ -5,6 +5,8 @@ Real Ruins is a RimWorld mod that periodically uploads player bases to a server 
 
 **Game Version Support**: 1.0, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7
 
+**Active builds: 1.6 and 1.7.** The same assembly runs on both, so every build compiles into `1.7/Assemblies/` and the `MirrorTo16` target in `RealRuins.csproj` copies it into `1.6/Assemblies/`. Keep both updated until 1.8 is out, then retarget `OutputPath` and drop or repoint the mirror.
+
 ## Project Structure
 Project uses RealRuins.csproj for building, so each time you add a new file, you
 need to csproj in order to be compiled.

@@ -53,7 +53,17 @@
   <RealRuins.CacheSettings.Caption>General, Network and Cache settings</RealRuins.CacheSettings.Caption>
   <RealRuins.CacheSettings.Description>Manage your snapshot cache settings. Adjust the storage limit and download options. You can find more options on the other tabs.</RealRuins.CacheSettings.Description>
   <RealRuins_ModOptions_NoLimit>No limit</RealRuins_ModOptions_NoLimit>
-  <RealRuins_ModOptions_ClearCacheConfirm>Are you sure you want to clear all cached snapshots? This action cannot be undone.</RealRuins_ModOptions_ClearCacheConfirm>
+  <RealRuins_ModOptions_ClearCacheConfirm>Are you sure you want to clear all cached snapshots, including planetary ruins blueprints? This action cannot be undone.</RealRuins_ModOptions_ClearCacheConfirm>
+  <RealRuins.CacheSettings.PlanetaryCaption>Planetary ruins cache</RealRuins.CacheSettings.PlanetaryCaption>
+  <RealRuins.CacheSettings.PlanetaryDescription>Blueprints downloaded for planetary ruins are stored separately for every world seed, coverage and map size.</RealRuins.CacheSettings.PlanetaryDescription>
+  <RealRuins.CacheSettings.PlanetaryEmpty>No planetary ruins blueprints are stored.</RealRuins.CacheSettings.PlanetaryEmpty>
+  <RealRuins.CacheSettings.Seed>Seed</RealRuins.CacheSettings.Seed>
+  <RealRuins.CacheSettings.Coverage>Coverage</RealRuins.CacheSettings.Coverage>
+  <RealRuins.CacheSettings.MapSize>Map size</RealRuins.CacheSettings.MapSize>
+  <RealRuins.CacheSettings.Blueprints>Blueprints</RealRuins.CacheSettings.Blueprints>
+  <RealRuins.CacheSettings.FolderSize>Size</RealRuins.CacheSettings.FolderSize>
+  <RealRuins.CacheSettings.ClearFolder>Clear</RealRuins.CacheSettings.ClearFolder>
+  <RealRuins.CacheSettings.ClearFolderConfirm>Remove all {1} planetary ruins blueprints ({2}) stored for seed "{0}"? Worlds with this seed will download them again when needed.</RealRuins.CacheSettings.ClearFolderConfirm>
   <RealRuins_ModOptions_DownloadMoreTooltip>Download additional blueprints from the server.</RealRuins_ModOptions_DownloadMoreTooltip>
 
   <RealRuins.SpawnSettings.TabCaption>Spawn Settings</RealRuins.SpawnSettings.TabCaption>
@@ -108,7 +118,8 @@
   <RealRuins.RuinsActivity.4>extreme</RealRuins.RuinsActivity.4>
   
   <!-- Ruins messages -->
-  <RealRuins.NoMoreEnemies>Looks like no one's gonna show up anymore. You can safely pack up and leave. (Instant caravan reform allowed)</RealRuins.NoMoreEnemies>
+  <RealRuins.NoMoreEnemies>Looks like no one's gonna show up anymore. You can safely pack up and leave.</RealRuins.NoMoreEnemies>
+  <RealRuins.ReformLockedManual>Raiders may still show up. Pick up what your pawns can carry and leave via the map edge, or wait until things calm down.</RealRuins.ReformLockedManual>
 
   <!-- POI captions and descriptions -->
   <RealRuins.CaptionPOI0>Small military base</RealRuins.CaptionPOI0>
@@ -224,7 +235,7 @@
   <RealRuins.Reform.Automatic>Automatic</RealRuins.Reform.Automatic>
   <RealRuins.Reform.Instant>Instant</RealRuins.Reform.Instant>
   <RealRuins.Reform.Manual>Manual</RealRuins.Reform.Manual>
-  <RealRuins.CaravanReformTooltip>Way of caravan reforming in Real Ruins events. "Automatic" is the same way as caravan is formed on your home map. "Instant" allows instant reform via button on the world map. "Manual" is for manual items pickup and leaving via map edge.</RealRuins.CaravanReformTooltip>
+  <RealRuins.CaravanReformTooltip>Way of caravan reforming in Real Ruins events. "Automatic" is the same way as caravan is formed on your home map. "Instant" allows instant reform via button on the world map. "Manual" is for manual items pickup and leaving via map edge until the raids are over.</RealRuins.CaravanReformTooltip>
 
   <RealRuins.ForceMultiplier>Events threat scale</RealRuins.ForceMultiplier>
   <RealRuins.AbsoluteWealthCap>Absolute wealth cap for events</RealRuins.AbsoluteWealthCap>
@@ -274,6 +285,8 @@
   <RealRuins.DebugSettings.ResetSettingsConfirm>Are you sure you want to reset all settings to their default values?</RealRuins.DebugSettings.ResetSettingsConfirm>
   <RealRuins.DebugSettings.KeepSnapshotsAfterUpload>Keep snapshot files after upload</RealRuins.DebugSettings.KeepSnapshotsAfterUpload>
   <RealRuins.DebugSettings.KeepSnapshotsAfterUploadTooltip>When enabled, snapshot files will be kept in the temp directory after uploading instead of being deleted. Useful for debugging upload issues.</RealRuins.DebugSettings.KeepSnapshotsAfterUploadTooltip>
+  <RealRuins.DebugSettings.UseStagingEnvironment>Use staging environment</RealRuins.DebugSettings.UseStagingEnvironment>
+  <RealRuins.DebugSettings.UseStagingEnvironmentTooltip>When enabled, all API requests go to staging.woolstrand.art and blueprints are stored in the staging bucket (realruins-staging, sfo3). Disable for normal play.</RealRuins.DebugSettings.UseStagingEnvironmentTooltip>
   <RealRuins.DebugSettings.ManualUpload>Manually trigger blueprint capture</RealRuins.DebugSettings.ManualUpload>
   <RealRuins.DebugSettings.ManualUploadTooltip>Manually trigger a blueprint capture and upload of the current map. Useful for testing upload functionality.</RealRuins.DebugSettings.ManualUploadTooltip>
   <RealRuins.DebugSettings.UploadTriggered>Blueprint capture triggered. Check logs for details.</RealRuins.DebugSettings.UploadTriggered>

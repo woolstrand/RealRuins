@@ -48,7 +48,7 @@ namespace RealRuins.Settings
                 innerText.height = viewHeight;
                 Widgets.BeginScrollView(textAreaRect, ref scrollPos, innerText);
                 GUI.SetNextControlName("ExportTextField");
-                textContent = GUI.TextArea(new Rect(0, 0, innerText.width, innerText.height), textContent);
+                GUI.TextArea(new Rect(0, 0, innerText.width, innerText.height), textContent); //result ignored: text can be selected and copied, but edits are dropped
                 Widgets.EndScrollView();
             }
             else

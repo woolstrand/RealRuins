@@ -56,7 +56,8 @@ namespace RealRuins {
                         }
 
                         //remove items we don't want to see in the ruins
-                        if (thingDef == ThingDefOf.Campfire || thingDef == ThingDefOf.TorchLamp) {
+                        //toxic wastepacks dissolve into pollution, nobody wants to loot them (ThingDefOf.Wastepack is null without Biotech)
+                        if (thingDef == ThingDefOf.Campfire || thingDef == ThingDefOf.TorchLamp || thingDef == ThingDefOf.Wastepack) {
                             itemsToRemove.Add(item);
                             continue;
                         }

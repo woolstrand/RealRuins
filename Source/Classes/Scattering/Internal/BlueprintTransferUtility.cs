@@ -35,10 +35,35 @@ namespace RealRuins
         Blueprint blueprint;
         ResolveParams rp;
         ScatterOptions options;
+        ScatterContext context;
         Map map;
 
         int mapOriginX;
         int mapOriginZ;
+
+        private const int UsedRectsPadding = 2;
+        private List<CellRect> protectedRects;
+
+        private bool IsProtected(IntVec3 cell)
+        {
+            if (protectedRects == null)
+            {
+                protectedRects = new List<CellRect>();
+                if (options.avoidUsedRects)
+                {
+                    foreach (CellRect used in MapGenerator.UsedRects)
+                    {
+                        protectedRects.Add(used.ExpandedBy(UsedRectsPadding));
+                    }
+                }
+            }
+
+            for (int i = 0; i < protectedRects.Count; i++)
+            {
+                if (protectedRects[i].Contains(cell)) return true;
+            }
+            return false;
+        }
 
 
         // Clear the cell from other destroyable objects
@@ -77,22 +102,89 @@ namespace RealRuins
         private ThingDef GetFallbackMaterial()
         {
             if (cachedFallbackMaterial != null) return cachedFallbackMaterial;
-            
+
             if (!string.IsNullOrEmpty(fallbackMaterialName))
             {
                 cachedFallbackMaterial = DefDatabase<ThingDef>.GetNamed(fallbackMaterialName, false);
             }
-            
+
             if (cachedFallbackMaterial == null)
             {
                 // Fallback to wood if specified material not found
                 cachedFallbackMaterial = DefDatabase<ThingDef>.GetNamed("Wood", false);
             }
-            
+
             return cachedFallbackMaterial;
         }
+        // Adds the blueprint's inner items to a container one by one, so one failing item doesn't take the container or the rest with it.
+        private void FillContainer(Thing container, ItemTile itemTile)
+        {
+            if (itemTile.innerItems == null || !(container is IThingHolder holder)) return;
 
-        private Thing MakeThingFromItemTile(ItemTile itemTile, bool enableLogging = false, int? x = null, int? z = null)
+            foreach (ItemTile innerTile in itemTile.innerItems)
+            {
+                if (ThingDefOf.Wastepack != null && innerTile.defName == ThingDefOf.Wastepack.defName) continue; //same as top level items, see BlueprintPreprocessor
+                Thing innerThing = MakeThingFromItemTile(innerTile, false);
+                if (innerThing == null) continue;
+                try
+                {
+                    holder.GetDirectlyHeldThings().TryAdd(innerThing);
+                }
+                catch (Exception e)
+                {
+                    Debug.Extra(Debug.BlueprintTransfer, "Failed to add {0} to {1}: {2}", innerTile.defName, container.def.defName, e.Message);
+                }
+            }
+        }
+
+        // Dubs Bad Hygiene allows one pipe comp per mode (sewage, air) in a cell and logs an error for a second one. Older DBH versions
+        // allowed a pipe under a fixture, so blueprints can have such overlaps.
+        private const string DubsPipePropsClass = "DubsBadHygiene.CompProperties_Pipe";
+
+        private static IEnumerable<string> DubsPipeModes(ThingDef def)
+        {
+            if (def.comps == null) yield break;
+            foreach (CompProperties props in def.comps)
+            {
+                if (props.GetType().FullName == DubsPipePropsClass)
+                {
+                    yield return props.GetType().GetField("mode")?.GetValue(props)?.ToString() ?? "";
+                }
+            }
+        }
+
+        private bool OverlapsDubsPipe(Thing thing, IntVec3 location, Rot4 rotation)
+        {
+            List<string> modes = DubsPipeModes(thing.def).ToList();
+            if (modes.Count == 0) return false;
+
+            foreach (IntVec3 cell in GenAdj.CellsOccupiedBy(location, rotation, thing.def.Size))
+            {
+                if (!cell.InBounds(map)) continue;
+                foreach (Thing existing in map.thingGrid.ThingsListAt(cell))
+                {
+                    if (DubsPipeModes(existing.def).Any(modes.Contains)) return true;
+                }
+            }
+            return false;
+        }
+
+        private static bool InnerGraphicWorks(MinifiedThing minified)
+        {
+            try
+            {
+                Graphic innerGraphic = minified.InnerThing.Graphic;
+                return true;
+            }
+            catch (Exception e)
+            {
+                Debug.Extra(Debug.BlueprintTransfer, "Skipping minified {0}: its graphic fails: {1}", minified.InnerThing.def.defName, e.Message);
+                return false;
+            }
+        }
+
+        // spawnsDirectly: the thing will be spawned on the map by the caller, which then fills it with FillContainer
+        private Thing MakeThingFromItemTile(ItemTile itemTile, bool enableLogging = false, int? x = null, int? z = null, bool spawnsDirectly = false)
         {
             try
             {
@@ -123,7 +215,8 @@ namespace RealRuins
                     if (itemTile.innerItems != null)
                     {
                         Debug.Log(Debug.BlueprintTransfer, "Now need to instantiate corpse at {0}, {1}", x, z);
-                        Pawn p = (Pawn)MakeThingFromItemTile(itemTile.innerItems.First(), x: x, z: z,enableLogging: true);
+                        Pawn p = MakeThingFromItemTile(itemTile.innerItems.First(), x: x, z: z, enableLogging: true) as Pawn;
+                        if (p == null) return null;
                         Find.WorldPawns.PassToWorld(p);
                         Corpse corpse = null;
                         if (p.Corpse != null)
@@ -154,16 +247,27 @@ namespace RealRuins
                     if ((!itemTile.innerItems?.Any()) ?? true) return null;
                 }
 
-                if (itemTile.defName == "Hive") return null; //Ignore hives, probably should add more comprehensive ignore list here.
-
-                ThingDef thingDef = DefDatabase<ThingDef>.GetNamed(itemTile.defName, false); //here thingDef is definitely not null because it was checked earlier
+                // Top-level items are filtered for missing defs in Transfer, but inner items (minified things,
+                // other containers) reach here through recursion unchecked - e.g. a modded PortableReactor inside a MinifiedThing.
+                ThingDef thingDef = DefDatabase<ThingDef>.GetNamed(itemTile.defName, false);
+                if (thingDef == null)
+                {
+                    if (enableLogging)
+                    {
+                        Debug.Extra(Debug.BlueprintTransfer, "Skipping item with missing def {0}", itemTile.defName);
+                    }
+                    return null;
+                }
                 if (thingDef.category == ThingCategory.Ethereal) return null; //don't spawn ethereals like drop pod landing sites and so on
+                //things that spawn pawns (hives, mech cluster buildings) would wake up in the ruins with no faction and often no room to
+                //place the pawns (vanilla logs an error then); they are threats of the original map, not part of the base
+                if (thingDef.HasComp<CompSpawnerPawn>() || thingDef.HasComp<CompPawnSpawnOnWakeup>()) return null;
 
                 ThingDef stuffDef = null; //but stuff can still be null, or can be missing, so we have to check and use default just in case.
                 if (itemTile.stuffDef != null && thingDef.MadeFromStuff)
                 { //some mods may alter thing and add stuff parameter to it. this will result in a bug on a vanilla, so need to double-check here
                     stuffDef = DefDatabase<ThingDef>.GetNamed(itemTile.stuffDef, false);
-                    
+
                     // Check if this material is blacklisted
                     if (materialBlacklistCache.Contains(itemTile.stuffDef))
                     {
@@ -180,6 +284,13 @@ namespace RealRuins
                     }
                 }
 
+                // The stuff may exist but be invalid for this thing (e.g. a missing modded wall was replaced with a vanilla Wall
+                // but kept its original stuff). Treat it as missing so the default below is used instead of a vanilla error.
+                if (stuffDef != null && !(stuffDef.IsStuff && stuffDef.stuffProps.CanMake(thingDef)))
+                {
+                    stuffDef = null;
+                }
+
                 if (stuffDef == null)
                 {
                     if (itemTile.isWall && thingDef.MadeFromStuff)
@@ -194,29 +305,55 @@ namespace RealRuins
 
                 Thing thing = ThingMaker.MakeThing(thingDef, stuffDef);
 
+                //snapshots don't keep genes, and a xenogerm without a gene set breaks trading and inspection.
+                //Vanilla's debug spawn gives it a random set, same as a fresh genepack gets.
+                if (thing is Xenogerm xenogerm && xenogerm.GeneSet == null)
+                {
+                    xenogerm.Notify_DebugSpawned();
+                }
+
 
                 if (thing != null)
                 {
-                    if (itemTile.innerItems != null && thing is IThingHolder)
+                    //a minified thing is nothing without its inner thing. Other containers spawned on the map are filled after spawning (Transfer),
+                    //because they may need a map when an item is added (bookcases) or fail to spawn with restored contents (Rimatomics reactors).
+                    if (itemTile.innerItems != null && thing is IThingHolder && (thing is MinifiedThing || !spawnsDirectly))
                     {
-                        //Debug.Message("Found inners");
-                        foreach (ItemTile innerTile in itemTile.innerItems)
-                        {
-                            Thing innerThing = MakeThingFromItemTile(innerTile, false);
-                            if (innerThing != null)
-                            {
-                                ((IThingHolder)thing).GetDirectlyHeldThings().TryAdd(innerThing);
-                            }
-                        }
+                        FillContainer(thing, itemTile);
                         if (thing.GetInnerIfMinified() == null) return null;
+                    }
+
+                    //a minified thing is drawn with its inner thing's graphic; some modded buildings can't make one while unspawned
+                    if (thing is MinifiedThing minified)
+                    {
+                        //the inner thing was never spawned, so comps set up in PostSpawnSetup are empty (e.g. a moisture pump's power comp,
+                        //and then it works on a null map). A crate's contents are inert anyway; installing it spawns the inner thing normally.
+                        minified.GetDirectlyHeldThings().dontTickContents = true;
+                        //graphics can only be made on the main thread, and new game map generation runs on another one:
+                        //there the check waits until loading is over, and a failing crate is destroyed instead of skipped
+                        if (UnityData.IsInMainThread)
+                        {
+                            if (!InnerGraphicWorks(minified)) return null;
+                        }
+                        else
+                        {
+                            LongEventHandler.ExecuteWhenFinished(() =>
+                            {
+                                if (!minified.Destroyed && !InnerGraphicWorks(minified)) minified.Destroy();
+                            });
+                        }
                     }
 
                     if (thingDef.CanHaveFaction)
                     {
-                        if (thingDef.IsDoor || thingDef.IsWall) {
-                            if (Rand.Chance(options.doorOwnershipProbability)) {
+                        if (thingDef.IsDoor || thingDef.IsWall)
+                        {
+                            if (Rand.Chance(options.doorOwnershipProbability))
+                            {
                                 thing.SetFaction(rp.faction);
-                            } else {
+                            }
+                            else
+                            {
                                 thing.SetFaction(null);
                             }
                         }
@@ -264,31 +401,6 @@ namespace RealRuins
                         }
                     }
 
-                    if (itemTile.attachedText != null && thing is ThingWithComps)
-                    {
-                        ThingWithComps thingWithComps = thing as ThingWithComps;
-                        Type CompTextClass = Type.GetType("SaM.CompText, Signs_and_Memorials");
-                        if (CompTextClass != null)
-                        {
-                            System.Object textComp = null;
-                            for (int i = 0; i < thingWithComps.AllComps.Count; i++)
-                            {
-                                var val = thingWithComps.AllComps[i];
-                                if (val.GetType() == CompTextClass)
-                                {
-                                    textComp = val;
-                                }
-                            }
-
-                            //var textComp = Activator.CreateInstance(CompTextClass);
-                            if (textComp != null)
-                            {
-                                textComp?.GetType()?.GetField("text").SetValue(textComp, itemTile.attachedText);
-                            }
-                            //thingWithComps.
-                        }
-                    }
-
                     if (thing is UnfinishedThing)
                     {
                         ((UnfinishedThing)thing).workLeft = 10000;
@@ -324,41 +436,17 @@ namespace RealRuins
         }
 
 
-        public BlueprintTransferUtility(Blueprint blueprint, Map map, ResolveParams rp, ScatterOptions options)
+        public BlueprintTransferUtility(Blueprint blueprint, Map map, ResolveParams rp, ScatterContext context)
         {
             this.blueprint = blueprint;
             this.map = map;
             this.rp = rp;
-            this.options = options;
+            this.context = context;
+            this.options = context?.options;
 
-            // Parse and cache blacklists for efficient O(1) lookup
-            spawnBlacklistCache = new HashSet<string>();
-            if (!string.IsNullOrEmpty(RealRuins_ModSettings.spawnBlacklist))
-            {
-                foreach (string line in RealRuins_ModSettings.spawnBlacklist.Split(new[] { "\r\n", "\r", "\n", "," }, StringSplitOptions.RemoveEmptyEntries))
-                {
-                    string trimmed = line.Trim();
-                    if (!string.IsNullOrEmpty(trimmed))
-                    {
-                        spawnBlacklistCache.Add(trimmed);
-                    }
-                }
-            }
-
-            materialBlacklistCache = new HashSet<string>();
-            if (!string.IsNullOrEmpty(RealRuins_ModSettings.materialBlacklist))
-            {
-                foreach (string line in RealRuins_ModSettings.materialBlacklist.Split(new[] { "\r\n", "\r", "\n", "," }, StringSplitOptions.RemoveEmptyEntries))
-                {
-                    string trimmed = line.Trim();
-                    if (!string.IsNullOrEmpty(trimmed))
-                    {
-                        materialBlacklistCache.Add(trimmed);
-                    }
-                }
-            }
-
-            fallbackMaterialName = RealRuins_ModSettings.fallbackMaterial;
+            spawnBlacklistCache = context?.settings?.spawnBlacklist ?? new HashSet<string>();
+            materialBlacklistCache = context?.settings?.materialBlacklist ?? new HashSet<string>();
+            fallbackMaterialName = context?.settings?.fallbackMaterialName;
             cachedFallbackMaterial = null; // Will be resolved lazily
 
             Debug.Log("Transferring blueprint of faction {0}", rp.faction?.Name ?? "none");
@@ -511,6 +599,27 @@ namespace RealRuins
         }
 
 
+        // Wall attachments (wall lamps etc.) whose wall did not make it into the ruins (natural rock is not in snapshots, walls can be
+        // scavenged or fail to spawn). Vanilla expects the wall to exist: PowerConnectionMaker.TryConnectToAnyPowerNet throws on
+        // GetWallAttachedTo(...) == null during Map.FinalizeInit, which aborts the whole map generation.
+        // Checked after all items are spawned, because a wall can be spawned after its attachment.
+        private void RemoveDetachedWallAttachments(List<Thing> attachments)
+        {
+            int removed = 0;
+            foreach (Thing thing in attachments)
+            {
+                if (thing.Spawned && GenConstruct.GetWallAttachedTo(thing) == null)
+                {
+                    thing.Destroy(DestroyMode.Vanish);
+                    removed++;
+                }
+            }
+            if (removed > 0)
+            {
+                Debug.Log(Debug.BlueprintTransfer, "Removed {0} of {1} wall attachments without a supporting wall", removed, attachments.Count);
+            }
+        }
+
         public void Transfer(CoverageMap coverageMap)
         {
             //Planting blueprint
@@ -519,9 +628,10 @@ namespace RealRuins
             int transferredTiles = 0;
             int totalTerrains = 0;
             int totalItems = 0;
+            List<Thing> spawnedAttachments = new List<Thing>();
 
-            //update rect to actual placement rect using width and height
-            rp.rect = new CellRect(mapOriginX, mapOriginZ, blueprint.width, blueprint.height);
+            //report actual placement rect using width and height
+            context.state.placementRect = new CellRect(mapOriginX, mapOriginZ, blueprint.width, blueprint.height);
 
             Debug.Extra(Debug.BlueprintTransfer, "Clearing map...");
 
@@ -533,9 +643,9 @@ namespace RealRuins
                     {
                         IntVec3 mapLocation = new IntVec3(x + mapOriginX, 0, z + mapOriginZ);
                         //Check if thepoint is in allowed bounds of the map
-                        if (!mapLocation.InBounds(map) || mapLocation.InNoBuildEdgeArea(map))
+                        if (!mapLocation.InBounds(map) || mapLocation.InNoBuildEdgeArea(map) || IsProtected(mapLocation))
                         {
-                            continue; //ignore invalid cells
+                            continue; //ignore invalid and protected cells
                         }
 
                         if (options.overwritesEverything || Rand.Chance(0.6f))
@@ -562,6 +672,8 @@ namespace RealRuins
                 {
 
                     IntVec3 mapLocation = new IntVec3(x + mapOriginX, 0, z + mapOriginZ);
+                    if (mapLocation.InBounds(map) && IsProtected(mapLocation)) continue;
+
                     if (coverageMap != null)
                     {
                         if (coverageMap.isMarked(mapLocation.x, mapLocation.z) == true)
@@ -623,7 +735,7 @@ namespace RealRuins
                         foreach (ItemTile itemTile in blueprint.itemsMap[x, z])
                         {
                             Debug.Extra(Debug.BlueprintTransfer, "Creating thing {2} at cell ({0}, {1})", x, z, itemTile.defName);
-                            Thing thing = MakeThingFromItemTile(itemTile, false, x, z);
+                            Thing thing = MakeThingFromItemTile(itemTile, false, x, z, spawnsDirectly: true);
                             if (thing != null)
                             {
                                 try
@@ -637,39 +749,53 @@ namespace RealRuins
                                         {
                                             if (GenSpawn.SpawningWipes(thing.def, existingItem.def))
                                             {
-                                                if (thing.def.thingClass.ToString().Contains("DubsBadHygiene")) throw new Exception("Can't spawn item because it will destroy Dubs Bad Hygiene Item and it will lead to app freeze.");
+                                                if (existingItem.def.thingClass.ToString().Contains("DubsBadHygiene")) throw new Exception("Can't spawn item because it will destroy Dubs Bad Hygiene Item and it will lead to app freeze.");
                                                 if (!existingItem.def.destroyable) throw new Exception($"Can't spawn item because it would destroy non-destroyable thing {existingItem.def.defName}.");
                                                 existingItem.Destroy(DestroyMode.Vanish);
                                             }
                                         }
                                     }
 
+                                    //wall attachments are not checked for a supporting wall here: the wall may come later in the loop.
+                                    //RemoveDetachedWallAttachments does it after all items are spawned.
+                                    if (OverlapsDubsPipe(thing, mapLocation, rotation))
+                                    {
+                                        Debug.Extra(Debug.BlueprintTransfer, "Skipping {0} at ({1}, {2}): overlaps a Dubs Bad Hygiene pipe of the same mode", thing.def.defName, mapLocation.x, mapLocation.z);
+                                        continue;
+                                    }
+
                                     GenSpawn.Spawn(thing, mapLocation, map, rotation);
                                     Debug.Extra(Debug.BlueprintTransfer, "Spawned");
-                                    try
+                                    if (!(thing is MinifiedThing || thing is Corpse || thing is Pawn)) FillContainer(thing, itemTile); //those are complete already
+                                    if (thing.def.building?.isAttachment == true) spawnedAttachments.Add(thing);
+                                    //one tick settles items (rot etc.). Buildings are not ticked during mapgen: some need map state that isn't there yet (Rimefeller well heads)
+                                    if (thing.def.category == ThingCategory.Item)
                                     {
-                                        switch (thing.def.tickerType)
+                                        try
                                         {
-                                            case TickerType.Never:
-                                                break;
-                                            case TickerType.Normal:
-                                                thing.DoTick();
-                                                break;
-                                            case TickerType.Long:
-                                                thing.TickLong();
-                                                break;
-                                            case TickerType.Rare:
-                                                thing.TickRare();
-                                                break;
-                                        }
-                                        //Debug.Message("Ticked");
+                                            switch (thing.def.tickerType)
+                                            {
+                                                case TickerType.Never:
+                                                    break;
+                                                case TickerType.Normal:
+                                                    thing.DoTick();
+                                                    break;
+                                                case TickerType.Long:
+                                                    thing.TickLong();
+                                                    break;
+                                                case TickerType.Rare:
+                                                    thing.TickRare();
+                                                    break;
+                                            }
+                                            //Debug.Message("Ticked");
 
-                                    }
-                                    catch (Exception e)
-                                    {
-                                        Debug.Log(Debug.BlueprintTransfer, "Exception while tried to perform tick for {0} of cost {1}, retrhrowing...", thing.def.defName, itemTile.cost);
-                                        thing.Destroy();
-                                        throw e;
+                                        }
+                                        catch (Exception)
+                                        {
+                                            Debug.Log(Debug.BlueprintTransfer, "Exception while tried to perform tick for {0} of cost {1}, retrhrowing...", thing.def.defName, itemTile.cost);
+                                            thing.Destroy();
+                                            throw;
+                                        }
                                     }
 
                                     //Debug.Message("Setting up props");
@@ -699,7 +825,7 @@ namespace RealRuins
                                 }
                                 catch (Exception e)
                                 {
-                                    Debug.Warning(Debug.BlueprintTransfer, "Failed to spawn item {0} of cost {1} because of exception {2}", thing, itemTile.cost, e.Message);
+                                    Debug.Warning(Debug.BlueprintTransfer, "Failed to spawn item {0} of cost {1} because of exception {2}", thing, itemTile.cost, e);
                                     //ignore
                                 }
                             }
@@ -708,12 +834,13 @@ namespace RealRuins
                 }
             }
 
+            RemoveDetachedWallAttachments(spawnedAttachments);
             Debug.Log(Debug.BlueprintTransfer, "Finished transferring");
             if (options.shouldKeepDefencesAndPower)
             {
                 RestoreDefencesAndPower();
             }
-            options.uncoveredCost = totalCost;
+            context.state.uncoveredCost = totalCost;
             Debug.Log(Debug.BlueprintTransfer, "Transferred blueprint of size {0}x{1}, age {2}, total cost of approximately {3}. Items: {4}/{5}, terrains: {6}/{7}", blueprint.width, blueprint.height, -blueprint.dateShift, totalCost, transferredTiles, totalItems, transferredTerrains, totalTerrains);
         }
 
@@ -741,7 +868,7 @@ namespace RealRuins
                     try
                     {
                         IntVec3 mapLocation = new IntVec3(x + mapOriginX, 0, z + mapOriginZ);
-                        if (!mapLocation.InBounds(map)) continue;
+                        if (!mapLocation.InBounds(map) || IsProtected(mapLocation)) continue;
 
                         if (filthMap[x, z] <= 0 || Rand.Chance(0.2f)) continue;
 
