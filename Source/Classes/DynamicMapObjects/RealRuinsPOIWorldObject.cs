@@ -188,7 +188,7 @@ namespace RealRuins {
         private float CurrentMapWealth() {
             float totalCost = 0;
             foreach (Thing thing in Map.listerThings.AllThings) {
-                totalCost += thing.def.ThingComponentsMarketCost(thing.Stuff) * thing.stackCount;
+                totalCost += thing.def.LegacyMarketCost(thing.Stuff) * thing.stackCount;
             }
             return totalCost;
         }

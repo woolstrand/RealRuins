@@ -13,7 +13,8 @@ namespace RealRuins {
     //stores information about terrain in the blueprint
     class Tile {
         public string defName;
-        public float cost = 0.0f; //populated later
+        public float cost = 0.0f; //populated later. Market value including work and, for containers, their contents
+        public float legacyCost = 0.0f; //old scheme (materials only, contents ignored), kept for comparison
         public float weight = 1.0f;
         public IntVec3 location;
     }

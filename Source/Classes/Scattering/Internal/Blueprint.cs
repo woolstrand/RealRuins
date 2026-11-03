@@ -22,6 +22,7 @@ namespace RealRuins {
         public readonly Version version;
 
         public float totalCost { get; private set; }
+        public float legacyTotalCost { get; private set; } //same with the old cost scheme, for comparison
         public float itemsDensity { get; private set; }
         public int itemsCount { get; private set; }
         public int terrainTilesCount { get; private set; }
@@ -73,6 +74,7 @@ namespace RealRuins {
 
         public void UpdateBlueprintStats(bool includeCost = false) {
             totalCost = 0;
+            legacyTotalCost = 0;
             terrainTilesCount = 0;
             itemsCount = 0;
             for (int x = 0; x < width; x ++) {
@@ -85,11 +87,9 @@ namespace RealRuins {
                         if (thingDef == null) continue; //to handle corpses
 
                         if (includeCost) {
-                            try {
-                                //Since at this moment we don't have filtered all things, we can't be sure that cost for all items can be calculated
-                                item.cost = thingDef.ThingComponentsMarketCost(stuffDef) * item.stackCount;
-                                totalCost += item.cost;
-                            } catch (Exception) { } //just ignore items with uncalculatable cost
+                            UpdateItemCost(item, thingDef, stuffDef);
+                            totalCost += item.cost;
+                            legacyTotalCost += item.legacyCost;
                         }
 
                         if (item.defName.Contains("Wall")) item.weight = 5; //walls are on some reason always have weight of 1, which is obviously not correct. The game itself does not need walls weight, so that's ok, but we need.
@@ -113,9 +113,15 @@ namespace RealRuins {
                         TerrainDef terrainDef = DefDatabase<TerrainDef>.GetNamed(terrainTile.defName, false);
                         if (terrainDef != null && includeCost) {
                             try {
-                                terrainTile.cost = terrainDef.ThingComponentsMarketCost();
-                                totalCost += terrainTile.cost;
+                                terrainTile.legacyCost = terrainDef.LegacyMarketCost();
+                                legacyTotalCost += terrainTile.legacyCost;
                             } catch (Exception) { }
+                            try {
+                                terrainTile.cost = terrainDef.AbstractMarketValue();
+                            } catch (Exception) {
+                                terrainTile.cost = terrainTile.legacyCost;
+                            }
+                            totalCost += terrainTile.cost;
                         }
                         terrainTilesCount++;
                     }
@@ -123,6 +129,53 @@ namespace RealRuins {
             }
             itemsDensity = (float)itemsCount / (width * height);
             //Debug.Message("Recalculated blueprint stats. Processed {0} items and {1} tiles, got {2} cost", itemsCount, terrainTilesCount, totalCost);
+        }
+
+        //Sets both cost schemes of an item. The new cost of a container (shelf, minified thing, sarcophagus) includes its contents,
+        //so scavengers and cost caps see a full shelf as one valuable tile. The legacy cost keeps the old scheme: the tile itself only.
+        //Since at this moment not all things are filtered yet, cost can't be calculated for some of them: those fall back to the legacy cost, or 0.
+        private static void UpdateItemCost(ItemTile item, ThingDef thingDef, ThingDef stuffDef) {
+            item.legacyCost = 0;
+            try {
+                item.legacyCost = thingDef.LegacyMarketCost(stuffDef) * item.stackCount;
+            } catch (Exception) { }
+
+            try {
+                item.cost = thingDef.AbstractMarketValue(stuffDef) * item.stackCount;
+            } catch (Exception) {
+                item.cost = item.legacyCost;
+            }
+
+            if (item.innerItems == null) return;
+            foreach (ItemTile inner in item.innerItems) {
+                ThingDef innerDef = DefDatabase<ThingDef>.GetNamed(inner.defName, false);
+                if (innerDef == null) continue; //corpses and missing defs: no value, and a corpse's pawn is not loot
+                ThingDef innerStuff = (inner.stuffDef != null) ? DefDatabase<ThingDef>.GetNamed(inner.stuffDef, false) : null;
+                UpdateItemCost(inner, innerDef, innerStuff);
+                item.cost += inner.cost;
+            }
+        }
+
+        //Top tiles by how much the new cost scheme differs from the legacy one, for the comparison log
+        public string CostComparisonSummary(int topCount = 5) {
+            var tiles = new List<Tile>();
+            for (int x = 0; x < width; x++) {
+                for (int z = 0; z < height; z++) {
+                    if (itemsMap[x, z] != null) tiles.AddRange(itemsMap[x, z]);
+                    if (terrainMap[x, z] != null) tiles.Add(terrainMap[x, z]);
+                }
+            }
+
+            var builder = new StringBuilder();
+            builder.AppendFormat("cost {0:F0}, legacy {1:F0} (x{2:F2}). Largest differences:", totalCost, legacyTotalCost, legacyTotalCost > 0 ? totalCost / legacyTotalCost : 0);
+            foreach (Tile tile in tiles.OrderByDescending(t => Math.Abs(t.cost - t.legacyCost)).Take(topCount)) {
+                ItemTile itemTile = tile as ItemTile;
+                string stuff = itemTile?.stuffDef != null ? " (" + itemTile.stuffDef + ")" : "";
+                string count = itemTile != null && itemTile.stackCount > 1 ? " x" + itemTile.stackCount : "";
+                string contents = itemTile?.innerItems != null ? " +" + itemTile.innerItems.Count + " inside" : "";
+                builder.AppendFormat(" {0}{1}{2}{3}: {4:F0} vs {5:F0};", tile.defName, stuff, count, contents, tile.cost, tile.legacyCost);
+            }
+            return builder.ToString();
         }
 
         // -------------- walls processing ------------

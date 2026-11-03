@@ -66,7 +66,7 @@ The central object holding all parsed data for one blueprint.
 
 **`Part(location, size)`**: Slices a sub-rectangle (exclusive max bounds, clipped to the blueprint). **Mutates the original** — `itemsMap` lists are moved by reference, not copied. Do not use the parent blueprint after calling `Part()`.
 
-**`UpdateBlueprintStats(includeCost)`**: Computes `totalCost`, `itemsCount`, `itemsDensity`. When `includeCost=true`, calls `ThingComponentsMarketCost()` for every item — expensive. Called twice during the pipeline (once in `BlueprintFinder`, once in `RuinsScatterer` post-preprocess).
+**`UpdateBlueprintStats(includeCost)`**: Computes `totalCost`, `itemsCount`, `itemsDensity`. When `includeCost=true`, sets two costs on every tile — expensive: `cost` (`AbstractMarketValue()`, materials plus work; a container's cost includes its `innerItems`, corpses inside are not counted) and `legacyCost` (`LegacyMarketCost()`, the old materials-only scheme, top-level tile only), with `legacyTotalCost` as its total. `cost` is what scavenging, cost caps, the item cost limit, the analyzer and defender forces use; `legacyCost` is only logged for comparison (`CostComparisonSummary()`, and the transfer log). Called twice during the pipeline (once in `BlueprintFinder`, once in `RuinsScatterer` post-preprocess).
 
 ### `Tiles` (`TerrainTile`, `ItemTile`)
 Lightweight data holders deserialized from blueprint XML.

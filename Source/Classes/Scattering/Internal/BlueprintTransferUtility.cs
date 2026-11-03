@@ -624,6 +624,7 @@ namespace RealRuins
         {
             //Planting blueprint
             float totalCost = 0;
+            float legacyTotalCost = 0;
             int transferredTerrains = 0;
             int transferredTiles = 0;
             int totalTerrains = 0;
@@ -704,6 +705,7 @@ namespace RealRuins
                             {
                                 map.terrainGrid.SetTerrain(mapLocation, blueprintTerrain);
                                 totalCost += blueprint.terrainMap[x, z].cost;
+                                legacyTotalCost += blueprint.terrainMap[x, z].legacyCost;
                                 transferredTerrains++;
                             }
                         }
@@ -822,6 +824,7 @@ namespace RealRuins
 
                                     transferredTiles++;
                                     totalCost += itemTile.cost;
+                                    legacyTotalCost += itemTile.legacyCost;
                                 }
                                 catch (Exception e)
                                 {
@@ -841,7 +844,7 @@ namespace RealRuins
                 RestoreDefencesAndPower();
             }
             context.state.uncoveredCost = totalCost;
-            Debug.Log(Debug.BlueprintTransfer, "Transferred blueprint of size {0}x{1}, age {2}, total cost of approximately {3}. Items: {4}/{5}, terrains: {6}/{7}", blueprint.width, blueprint.height, -blueprint.dateShift, totalCost, transferredTiles, totalItems, transferredTerrains, totalTerrains);
+            Debug.Log(Debug.BlueprintTransfer, "Transferred blueprint of size {0}x{1}, age {2}, total cost of approximately {3:F0} (legacy {8:F0}). Items: {4}/{5}, terrains: {6}/{7}", blueprint.width, blueprint.height, -blueprint.dateShift, totalCost, transferredTiles, totalItems, transferredTerrains, totalTerrains, legacyTotalCost);
         }
 
         public void AddFilthAndRubble()

@@ -84,6 +84,7 @@ namespace RealRuins {
             Debug.Extra(Debug.Scatter, "Recalculating stats...");
 
             bp.UpdateBlueprintStats(true); //Update total cost, items count, etc
+            Debug.Log(Debug.Scatter, "Blueprint {0} before deterioration and scavenging: {1}", filename, bp.CostComparisonSummary());
 
             Debug.Extra(Debug.Scatter, "Deteriorating...");
             DeteriorationProcessor.Process(bp, options); //create deterioration maps and do deterioration

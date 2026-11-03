@@ -47,17 +47,31 @@ namespace RealRuins {
 
     // -------------------- cost and weight related methods --------------------
 
-    //Calculates cost of item made of stuff, or default cost if stuff is null
-    //Golden wall is a [Wall] made of [Gold], golden tile is a [GoldenTile] made of default material
     static class ThingDefExtension {
-        static public float ThingComponentsMarketCost(this BuildableDef buildable, ThingDef stuffDef = null) {
+        //Market value as the game calculates it for a def: materials plus work. Quality is rolled only when a thing is spawned,
+        //so it is not included. A def made from stuff without a stuff in the blueprint is valued with its default stuff.
+        static public float AbstractMarketValue(this BuildableDef buildable, ThingDef stuffDef = null) {
+            if (buildable == null) return 0;
+
+            if (buildable is ThingDef thingDef && thingDef.MadeFromStuff) {
+                if (stuffDef == null) stuffDef = GenStuff.DefaultStuffFor(thingDef);
+            } else {
+                stuffDef = null;
+            }
+            return buildable.GetStatValueAbstract(StatDefOf.MarketValue, stuffDef);
+        }
+
+        //Old cost scheme, kept to compare against AbstractMarketValue: materials only, no work.
+        //Calculates cost of item made of stuff, or default cost if stuff is null
+        //Golden wall is a [Wall] made of [Gold], golden tile is a [GoldenTile] made of default material
+        static public float LegacyMarketCost(this BuildableDef buildable, ThingDef stuffDef = null) {
             float num = 0f;
 
             if (buildable == null) return 0; //can be for missing subcomponents, i.e. bed from alpha-poly. Bed does exist, but alpha poly does not.
 
             if (buildable.costList != null) {
                 foreach (ThingDefCountClass cost in buildable.costList) {
-                    num += cost.count * ThingComponentsMarketCost(cost.thingDef);
+                    num += cost.count * LegacyMarketCost(cost.thingDef);
                 }
             }
 

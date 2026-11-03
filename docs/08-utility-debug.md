@@ -32,8 +32,11 @@ Replaces all invalid filesystem characters with `_` via regex. Used to sanitize 
 
 ### `ThingDefExtension`
 
-**`ThingComponentsMarketCost(BuildableDef def, ThingDef stuff)`**
-Recursively computes market cost from `costList` items plus stuff cost, adjusted by `VolumePerUnit`. Falls back to `BaseMarketValue` for items without recipes (e.g., golden walls). Used extensively in blueprint cost calculations.
+**`AbstractMarketValue(BuildableDef def, ThingDef stuff)`**
+The game's own abstract `MarketValue` stat for a def: materials plus work (`StatWorker_MarketValue`). Defs made from stuff without a stuff are valued with their default stuff. Quality is not included: it is rolled only when the thing is spawned. This is the tile `cost` in blueprint cost calculations.
+
+**`LegacyMarketCost(BuildableDef def, ThingDef stuff)`**
+The old scheme, kept to compare against `AbstractMarketValue` (tile `legacyCost`). Recursively computes market cost from `costList` items plus stuff cost, adjusted by `VolumePerUnit`; ignores work, so crafted items (weapons, apparel, bionics, art) come out much cheaper than in game. Falls back to `BaseMarketValue` for items without recipes (e.g., golden walls). Still used for the POI map wealth ratio (`RealRuinsPOIWorldObject`).
 
 **`ThingWeight(ThingDef def, ThingDef stuff)`**
 Tries `Mass` stat; if zero or 1.0 (likely default), falls back to recursive weight sum from `costList`. Returns minimum 1.0. Used by `ScavengingProcessor` for raider carry-capacity calculations.
