@@ -15,8 +15,13 @@ searching to figure out. Keep entries short; no screen coordinates (they change 
 - **Ruins wealth distribution:** quicktest → Debug actions → RealRuins → Sample ruins wealth → N maps. Generates full maps on random
   tiles (~3 s each), logs one `[Wealth]: MAP ...` line per map and a `[Wealth]: SAMPLE ...` summary with percentiles of wealth
   and generation time. Keep the window focused (take a screenshot every ~10 s): the game stops while unfocused.
-- **Pristine ruins:** since 1.6 only the quest `RealRuins_AbandonedBase` creates them: Debug actions →
-  **Generate quest** → `RealRuins_AbandonedBase`. The old incident `Quest_PristineRuins` is retired
+- **Pristine ruins:** since 1.6 only the quest `RealRuins_AbandonedBase` creates them: Debug actions → **RealRuins →
+  Generate pristine ruins quest** (then Quests tab → Active → the quest → Jump to ruins). Vanilla **Generate quest** →
+  `RealRuins_AbandonedBase` answers "CanRun returned false" on a fresh paused game: the quest has `affectedByPoints` false, so the
+  debug menu passes 0 points, and `QuestScriptDef.CanRun` caches per (tick, points) with a cache that starts as "tick 0, points 0,
+  false" - it returns false without testing anything. It works once the game has run a tick; our action passes real points.
+  To force a cost cut on the site, lower the absolute wealth cap (`ruinsCostCap`, Events and Advanced page): the quest caps the
+  site's starting value at it. The old incident `Quest_PristineRuins` is retired
   (`baseChance` 0); firing it via Do incident (World) only sends a letter pointing to the quest.
   **RealRuins → Simulate random quest rolls** counts how often the random quest slot would give it.
 - **Force one blueprint everywhere (debug):** set `RealRuins.SingleFileName` (`Source/Classes/RealRuins.cs`)
@@ -205,8 +210,9 @@ blueprint id) - that file also states the spawn philosophy: spawn what can be sp
 - 2026-11-03 (Windows, 1.7): unified costs (cached market value, one cut). 50-map sample clean; cost calculation 5 ms median per
   map (was ~60). The MAP block now ends with "Estimate minus actual, by def": walls and doors lead (live market value scales with
   hit points, StatPart_Health). Dense maps near settlements (27-34 chunks) exhaust the 15k budget: late chunks get allowance 0 and
-  are cut to bare walls/doors. Debug "Generate quest" → RealRuins_AbandonedBase failed with "CanRun returned false" on two
-  quicktest worlds before any mod code ran (no "TestRun launched" line), while vanilla OpportunitySite_ItemStash worked - open.
+  are cut to bare walls/doors. Debug "Generate quest" → RealRuins_AbandonedBase failed with "CanRun returned false" (vanilla CanRun
+  cache at tick 0, see Getting to things). With the new debug action: an 895k blueprint capped at 40k (ruinsCostCap) spawned at
+  40,019 with expensive walls dismantled (half-open rooms, floors kept), 0 errors.
 - 2026-11-03 (Windows, 1.7): ruins wealth sampling, 50 maps (cost = game market value + container contents, scavengers take
   contents out). Median ruins wealth per map 3.0k, p90 9.5k, max 33k; biggest spikes were ship structural beams (1065 each,
   one blueprint spawned twice). actual/estimate 0.83, estimate/legacy 1.10. New cost calculation 68 ms median per map (legacy 24),

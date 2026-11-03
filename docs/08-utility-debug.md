@@ -148,6 +148,8 @@ Registers a `[DebugAction]` in RimWorld's developer debug menu (LudeonTK) for th
 
 Uses `[StaticConstructorOnStartup]` to ensure registration during game startup.
 
+**`GeneratePristineRuinsQuest()`** ("Generate pristine ruins quest", on a map): generates `RealRuins_AbandonedBase` with the current threat points. Vanilla "Generate quest" passes no points for this quest (`affectedByPoints` false), and `QuestScriptDef.CanRun` caches its result per (tick, points) starting from "tick 0, 0 points, false", so on a fresh, still paused game it always answers "CanRun returned false" without testing anything.
+
 **`SampleRuinsWealth()`** ("Sample ruins wealth", 10/25/50 maps, on a map) → `RuinsWealthSampler`: for each map a temporary player settlement on a random settle-able tile, full map generation (regular ruins scatter runs as on a new colony), then the map and settlement are removed. Turns the wealth log on and drops the log level to errors for the duration (the game stops logging after 10000 messages), then logs a `SAMPLE` line with percentiles of ruins wealth (actual, estimate, richest chunk, chunk count) and generation time (whole map, ruins scatter, cost calculation).
 
 **`ToggleRuinsWealthLog()`** ("Toggle ruins wealth log", in game only: `AllowedGameStates` flags must all match, so `Entry | Playing` never shows): flips `RealRuins_ModSettings.debugLogRuinsWealth`, the same setting as the "Log ruins wealth" checkbox on the mod's debug settings page, and saves settings.

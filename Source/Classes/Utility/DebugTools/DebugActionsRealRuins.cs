@@ -42,6 +42,27 @@ namespace RealRuins
             Messages.Message("RealRuins: ruins wealth log " + (RealRuins_ModSettings.debugLogRuinsWealth ? "enabled" : "disabled"), MessageTypeDefOf.NeutralEvent, historical: false);
         }
 
+        // Vanilla "Generate quest" passes no points for this quest (affectedByPoints is false), and QuestScriptDef.CanRun caches its last
+        // result per tick and points, starting as "false at tick 0 with 0 points": on a fresh, still paused game (dev quicktest) it
+        // always answers "CanRun returned false" without testing anything. Real threat points never match that cache.
+        [DebugAction("RealRuins", "Generate pristine ruins quest", allowedGameStates = AllowedGameStates.PlayingOnMap)]
+        public static void GeneratePristineRuinsQuest()
+        {
+            QuestScriptDef script = DefDatabase<QuestScriptDef>.GetNamed("RealRuins_AbandonedBase");
+            var slate = new RimWorld.QuestGen.Slate();
+            slate.Set("points", Math.Max(1f, StorytellerUtility.DefaultThreatPointsNow(Find.World)));
+            if (!script.CanRun(slate, Find.World))
+            {
+                Messages.Message("RealRuins: the pristine ruins quest can't run now (event disabled, too few blueprints or no site tile). See the log.", MessageTypeDefOf.RejectInput, historical: false);
+                return;
+            }
+            Quest quest = QuestUtility.GenerateQuestAndMakeAvailable(script, slate);
+            if (!quest.hidden && quest.root.sendAvailableLetter)
+            {
+                QuestUtility.SendLetterQuestAvailable(quest);
+            }
+        }
+
         // Generates maps on random tiles, measures the scattered ruins (see RuinsWealthReport) and logs the distribution.
         [DebugAction("RealRuins", "Sample ruins wealth", allowedGameStates = AllowedGameStates.PlayingOnMap)]
         public static List<DebugActionNode> SampleRuinsWealth()
