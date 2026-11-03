@@ -10,8 +10,11 @@ searching to figure out. Keep entries short; no screen coordinates (they change 
 - **Dev toolbar** (top center, dev mode only): 4th icon = **Debug actions**. It opens on the
   *Settings* tab - switch to **Actions/tools**. Typing into its search box via `type` didn't register
   reliably; clicking entries works.
-- **RealRuins debug actions:** only "Focus on tile" (`Source/Classes/Utility/DebugTools/DebugActionsRealRuins.cs`).
-  Quests/events are fired as incidents instead.
+- **RealRuins debug actions** (`Source/Classes/Utility/DebugTools/DebugActionsRealRuins.cs`): Focus on tile, Toggle ruins wealth
+  log, **Sample ruins wealth** (10/25/50 maps), Simulate random quest rolls. Quests/events are fired as incidents.
+- **Ruins wealth distribution:** quicktest → Debug actions → RealRuins → Sample ruins wealth → N maps. Generates full maps on random
+  tiles (~3 s each), logs one `[Wealth]: MAP ...` line per map and a `[Wealth]: SAMPLE ...` summary with percentiles of wealth
+  and generation time. Keep the window focused (take a screenshot every ~10 s): the game stops while unfocused.
 - **Pristine ruins:** since 1.6 only the quest `RealRuins_AbandonedBase` creates them: Debug actions →
   **Generate quest** → `RealRuins_AbandonedBase`. The old incident `Quest_PristineRuins` is retired
   (`baseChance` 0); firing it via Do incident (World) only sends a letter pointing to the quest.
@@ -97,6 +100,13 @@ searching to figure out. Keep entries short; no screen coordinates (they change 
 - Ctrl+V for paste: `key 86 ctrl` (Windows VK code; `key v ctrl` fails).
 - Game speed keys on Windows: `key 50` (VK of "2") - `key 2` sends raw VK 2 and does nothing. Check the clock on the
   screenshot: with several ruin maps loaded an in-game hour takes 30-60 s at speed 2.
+- **The game stops updating while its window is unfocused** (log: `[Vulkan] Focus regained after N s idle`). A long wait with
+  nothing happening is usually that, not a hang; a `driver.sh ss` brings the window back.
+- **Generating and removing maps in debug code:** run `LongEventHandler.ForceExecuteToExecuteWhenFinished()` after
+  `MapGenerator.GenerateMap` before `DeinitAndRemoveMap` - map init defers the drawer setup, and removing earlier throws in
+  `MapDrawer.Dispose`, then floods the log with "Exception printing ..." and access violations. An occasional
+  "Thing Mech_X is associated with invalid map index" remains (1 in 50 maps), harmless for a debug run.
+- **`AllowedGameStates` flags must all match:** `Entry | Playing` never shows the action anywhere.
 - **`logVerbose` in `Prefs.xml` fills the log with DeepProfiler "--- Main thread ---" dumps** (thousands per raid) and hits
   the ~420k line cap within minutes. Turn it off for a test session, restore after.
 - The Debug actions window has a different layout on the world map than on a colony map; if the incident list shows map
@@ -192,6 +202,10 @@ blueprint id) - that file also states the spawn philosophy: spawn what can be sp
 - 2026-10-30 (Windows, 1.7): verified H1 + H9 on the planetary loader, seed `shotgun`: 579 fresh downloads, window closed
   mid-transfer (173/579) and sites kept appearing → 393 sites, 0 exceptions; only the 2 failed downloads were missing
   locally (completion now waits for disk writes). Second world, same seed: Close turned green on completion.
+- 2026-11-03 (Windows, 1.7): ruins wealth sampling, 50 maps (cost = game market value + container contents, scavengers take
+  contents out). Median ruins wealth per map 3.0k, p90 9.5k, max 33k; biggest spikes were ship structural beams (1065 each,
+  one blueprint spawned twice). actual/estimate 0.83, estimate/legacy 1.10. New cost calculation 68 ms median per map (legacy 24),
+  ruins scatter 0.85 s, whole map 2.8 s. Found: log level "all" hits the 10000 message cap within ~30 maps.
 - 2026-11-01 (Windows, 1.7.4995): compatibility rolling run (branch `chores/compatibility_rolling`), ~59 mods incl. DBH,
   Rimefeller, Rimatomics, plus newly added Vanilla Races Expanded - Android and NewRatkinPlus (HAR). Targeted pristine ruins on
   DBH-heaviest blueprints (E26958BD, CA1DCCA3), DBH pipe overlap (E4790701), pump/reactor/spell (E43CD04F), android pawns

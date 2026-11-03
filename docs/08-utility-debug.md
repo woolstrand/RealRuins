@@ -144,7 +144,9 @@ Registers a `[DebugAction]` in RimWorld's developer debug menu (LudeonTK) for th
 
 Uses `[StaticConstructorOnStartup]` to ensure registration during game startup.
 
-**`ToggleRuinsWealthLog()`** ("Toggle ruins wealth log", main menu and in game): flips `RealRuins_ModSettings.debugLogRuinsWealth`, the same setting as the "Log ruins wealth" checkbox on the mod's debug settings page, and saves settings.
+**`SampleRuinsWealth()`** ("Sample ruins wealth", 10/25/50 maps, on a map) → `RuinsWealthSampler`: for each map a temporary player settlement on a random settle-able tile, full map generation (regular ruins scatter runs as on a new colony), then the map and settlement are removed. Turns the wealth log on and drops the log level to errors for the duration (the game stops logging after 10000 messages), then logs a `SAMPLE` line with percentiles of ruins wealth (actual, estimate, legacy, richest chunk, chunk count) and generation time (whole map, ruins scatter, new and legacy cost calculation).
+
+**`ToggleRuinsWealthLog()`** ("Toggle ruins wealth log", in game only: `AllowedGameStates` flags must all match, so `Entry | Playing` never shows): flips `RealRuins_ModSettings.debugLogRuinsWealth`, the same setting as the "Log ruins wealth" checkbox on the mod's debug settings page, and saves settings.
 
 ---
 
@@ -153,6 +155,8 @@ Uses `[StaticConstructorOnStartup]` to ensure registration during game startup.
 Debug measurement of ruins wealth, collected only while `debugLogRuinsWealth` is on and logged with `Debug.Report` (category `Wealth`) whatever the log level is.
 
 `BlueprintTransferUtility.Transfer` creates one report per run (`ScatterState.wealthReport`): for every transferred tile it adds the estimate in both cost schemes (`cost`, `legacyCost`) and the actual value of what was spawned — `Thing.MarketValue × stackCount` (quality and hit points included) plus the contents of containers (minified things already report their inner thing; pawns are skipped), and the abstract market value of placed terrain. Measured right after the item is spawned, before forces, filth and roof cleanup.
+
+`CostTiming` (same file) counts time spent in the new and legacy cost calculations (`Blueprint.UpdateItemStats` and terrain), always on; the `MAP` line of generic ruins shows `scatterMs`, `costMs`, `legacyCostMs`.
 
 Log lines:
 - `Chunk <blueprint>: estimate, legacy, actual (things, terrain). Top: ...` — per run, from `RuinsScatterer`.

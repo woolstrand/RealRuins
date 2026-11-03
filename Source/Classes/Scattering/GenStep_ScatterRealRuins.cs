@@ -115,6 +115,9 @@ namespace RealRuins
             if (map.generatorDef?.genSteps?.Any(step => step.genStep is GenStep_ScatterPOIRuins) == true) return;
 
             if (!map.TileInfo.WaterCovered) {
+                long started = CostTiming.Now;
+                long newCostTicks = CostTiming.newTicks;
+                long legacyCostTicks = CostTiming.legacyTicks;
 
                 float densityMultiplier = 1.0f;
                 float scaleMultiplier = 1.0f;
@@ -186,8 +189,13 @@ namespace RealRuins
                 }
 
                 if (RuinsWealthReport.Enabled) {
-                    RuinsWealthReport.LogMapSummary(map, wealthReports, string.Format("site=GenericRuins planned={0} dist={1} scav={2:F2} radius={3}-{4}",
-                        num, distanceToSettlement, options.scavengingMultiplier, options.minRadius, options.maxRadius));
+                    var timing = new MapWealthSample {
+                        scatterMs = CostTiming.Ms(CostTiming.Now - started),
+                        costMs = CostTiming.Ms(CostTiming.newTicks - newCostTicks),
+                        legacyCostMs = CostTiming.Ms(CostTiming.legacyTicks - legacyCostTicks),
+                    };
+                    RuinsWealthReport.LogMapSummary(map, wealthReports, string.Format("site=GenericRuins planned={0} dist={1} scav={2:F2} radius={3}-{4} scatterMs={5:F0} costMs={6:F0} legacyCostMs={7:F0}",
+                        num, distanceToSettlement, options.scavengingMultiplier, options.minRadius, options.maxRadius, timing.scatterMs, timing.costMs, timing.legacyCostMs), timing);
                 }
 
                 if (shouldUnpause) {

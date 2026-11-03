@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 
 using RimWorld;
 using Verse;
@@ -21,6 +22,9 @@ namespace RealRuins {
         private readonly List<KeyValuePair<string, float>> things = new List<KeyValuePair<string, float>>();
 
         public float Actual => items + terrain;
+
+        // Map totals collected while RuinsWealthSampler runs, null otherwise.
+        public static List<MapWealthSample> samples;
 
         public void AddThing(Thing thing) {
             float value = ActualValue(thing, out int contentsCount);
@@ -70,7 +74,7 @@ namespace RealRuins {
         }
 
         // One greppable line per map (prefix "MAP") with the totals, followed by every chunk and the most valuable things of the whole map.
-        public static void LogMapSummary(Map map, IList<RuinsWealthReport> reports, string conditions) {
+        public static void LogMapSummary(Map map, IList<RuinsWealthReport> reports, string conditions, MapWealthSample timing = null) {
             var builder = new StringBuilder();
             builder.AppendFormat("MAP tile={0} size={1}x{2} chunks={3} estimate={4:F0} legacy={5:F0} actual={6:F0} things={7:F0} terrain={8:F0} maxChunk={9:F0} {10}",
                 map.Tile, map.Size.x, map.Size.z, reports.Count,
@@ -84,6 +88,53 @@ namespace RealRuins {
             builder.AppendLine();
             builder.Append("  Most valuable on the map: ").Append(TopThings(reports.SelectMany(r => r.things), 10));
             Debug.Report(Debug.Wealth, "{0}", builder.ToString());
+
+            samples?.Add(new MapWealthSample {
+                scatterMs = timing?.scatterMs ?? 0,
+                costMs = timing?.costMs ?? 0,
+                legacyCostMs = timing?.legacyCostMs ?? 0,
+                chunks = reports.Count,
+                estimate = reports.Sum(r => r.estimate),
+                legacyEstimate = reports.Sum(r => r.legacyEstimate),
+                actual = reports.Sum(r => r.Actual),
+                maxChunk = reports.Count > 0 ? reports.Max(r => r.Actual) : 0,
+            });
         }
+    }
+
+    // Time spent in the two cost schemes, to compare them. Always counted (two timestamps per tile); blueprints are also
+    // analyzed off the main thread, hence Interlocked.
+    static class CostTiming {
+        public static long newTicks;
+        public static long legacyTicks;
+
+        public static long Now => System.Diagnostics.Stopwatch.GetTimestamp();
+
+        // Each returns the current timestamp, so calls can be chained
+        public static long AddNew(long started) {
+            long now = Now;
+            Interlocked.Add(ref newTicks, now - started);
+            return now;
+        }
+
+        public static long AddLegacy(long started) {
+            long now = Now;
+            Interlocked.Add(ref legacyTicks, now - started);
+            return now;
+        }
+
+        public static double Ms(long ticks) => ticks * 1000.0 / System.Diagnostics.Stopwatch.Frequency;
+    }
+
+    class MapWealthSample {
+        public double scatterMs; // GenStep_ScatterRealRuins, whole
+        public double costMs; // new cost scheme, part of scatterMs
+        public double legacyCostMs; // legacy cost scheme, part of scatterMs
+        public double mapGenMs; // whole map generation, set by RuinsWealthSampler
+        public int chunks;
+        public float estimate;
+        public float legacyEstimate;
+        public float actual;
+        public float maxChunk;
     }
 }

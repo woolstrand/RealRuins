@@ -99,15 +99,18 @@ namespace RealRuins {
                     if (terrainTile != null) {
                         TerrainDef terrainDef = DefDatabase<TerrainDef>.GetNamed(terrainTile.defName, false);
                         if (terrainDef != null && includeCost) {
+                            long started = CostTiming.Now;
                             try {
                                 terrainTile.legacyCost = terrainDef.LegacyMarketCost();
                                 legacyTotalCost += terrainTile.legacyCost;
                             } catch (Exception) { }
+                            started = CostTiming.AddLegacy(started);
                             try {
                                 terrainTile.cost = terrainDef.AbstractMarketValue();
                             } catch (Exception) {
                                 terrainTile.cost = terrainTile.legacyCost;
                             }
+                            CostTiming.AddNew(started);
                             totalCost += terrainTile.cost;
                         }
                         terrainTilesCount++;
@@ -124,16 +127,19 @@ namespace RealRuins {
         //Since at this moment not all things are filtered yet, cost can't be calculated for some of them: those fall back to the legacy cost, or 0.
         private static void UpdateItemStats(ItemTile item, ThingDef thingDef, ThingDef stuffDef, bool includeCost) {
             if (includeCost) {
+                long started = CostTiming.Now;
                 item.legacyCost = 0;
                 try {
                     item.legacyCost = thingDef.LegacyMarketCost(stuffDef) * item.stackCount;
                 } catch (Exception) { }
+                started = CostTiming.AddLegacy(started);
 
                 try {
                     item.cost = thingDef.AbstractMarketValue(stuffDef) * item.stackCount;
                 } catch (Exception) {
                     item.cost = item.legacyCost;
                 }
+                CostTiming.AddNew(started);
             }
 
             if (item.defName.Contains("Wall")) item.weight = 5; //walls are on some reason always have weight of 1, which is obviously not correct. The game itself does not need walls weight, so that's ok, but we need.
