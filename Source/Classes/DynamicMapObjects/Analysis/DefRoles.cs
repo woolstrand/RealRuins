@@ -21,6 +21,7 @@ namespace RealRuins {
         public float powerOutput; //watts, generators only
         public bool battery;
         public bool comms; //comms console, long range scanner: talks to the world beyond
+        public bool gravshipPart; //hull and everything else built on substructure, grav engine, thrusters, fuel tanks
         public bool amenity; //furniture, lamps, recreation: spacer chairs and lamps don't make a research site
         public TechLevel techLevel;
     }
@@ -32,6 +33,7 @@ namespace RealRuins {
 
         private static readonly ConcurrentDictionary<ThingDef, DefRole> roles = new ConcurrentDictionary<ThingDef, DefRole>();
         private static DesignationCategoryDef security, furniture, joy;
+        private static TerrainAffordanceDef substructure;
         private static bool categoriesResolved;
 
         public static DefRole Of(ThingDef def) {
@@ -44,6 +46,8 @@ namespace RealRuins {
             security = DefDatabase<DesignationCategoryDef>.GetNamedSilentFail("Security");
             furniture = DefDatabase<DesignationCategoryDef>.GetNamedSilentFail("Furniture");
             joy = DefDatabase<DesignationCategoryDef>.GetNamedSilentFail("Joy");
+            //what gravship substructure provides: gravship hull and gravship facilities can't be built anywhere else (Odyssey)
+            substructure = DefDatabase<TerrainAffordanceDef>.GetNamedSilentFail("Substructure");
             categoriesResolved = true;
         }
 
@@ -60,6 +64,9 @@ namespace RealRuins {
                 role.mannable = HasComp(def, typeof(CompMannable));
                 //traps, sandbags, barricades, embrasures too
                 role.military = role.turret || (def.building?.isTrap ?? false) || (security != null && def.designationCategory == security && !role.isStructure);
+                role.gravshipPart = (substructure != null && def.terrainAffordanceNeeded == substructure)
+                    || typeof(Building_GravEngine).IsAssignableFrom(def.thingClass)
+                    || HasCompProperties(def, typeof(CompProperties_GravshipFacility));
                 role.amenity = def.designationCategory != null && (def.designationCategory == furniture || def.designationCategory == joy);
 
                 role.researchBench = typeof(Building_ResearchBench).IsAssignableFrom(def.thingClass);
@@ -82,6 +89,14 @@ namespace RealRuins {
             if (def.comps == null) return false;
             foreach (CompProperties props in def.comps) {
                 if (props.compClass != null && compType.IsAssignableFrom(props.compClass)) return true;
+            }
+            return false;
+        }
+
+        private static bool HasCompProperties(ThingDef def, Type propsType) {
+            if (def.comps == null) return false;
+            foreach (CompProperties props in def.comps) {
+                if (propsType.IsInstanceOfType(props)) return true;
             }
             return false;
         }

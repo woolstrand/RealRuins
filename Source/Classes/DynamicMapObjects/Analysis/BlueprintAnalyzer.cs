@@ -67,6 +67,7 @@ namespace RealRuins {
                 case POIType.Camp:
                 case POIType.Outpost:
                 case POIType.Storage:
+                case POIType.Shipwreck:
                     return 0.3f;
 
                 case POIType.MilitaryBaseSmall:

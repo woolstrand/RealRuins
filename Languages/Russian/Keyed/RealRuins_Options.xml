@@ -111,6 +111,7 @@
   <RealRuins.CaptionPOI12>Деревня</RealRuins.CaptionPOI12>
   <RealRuins.CaptionPOI13>Замок</RealRuins.CaptionPOI13>
   <RealRuins.CaptionPOI14>Мастерская</RealRuins.CaptionPOI14>
+  <RealRuins.CaptionPOI15>Обломки корабля</RealRuins.CaptionPOI15>
 
 
   <RealRuins.DescPOI0>Небольшая группа строений, похоже на что-то военное. Склад боеприпасов или небольшая перевалочная военная база. Здесь может быть несколько стационарных орудий и десяток-другой солдат.</RealRuins.DescPOI0>
@@ -128,6 +129,7 @@
   <RealRuins.DescPOI12>Деревня земледельцев и ремесленников. Дома простые, но жители будут их защищать.</RealRuins.DescPOI12>
   <RealRuins.DescPOI13>Замок за толстыми стенами. Его охраняет вооруженный гарнизон, и без боя хозяин его не отдаст.</RealRuins.DescPOI13>
   <RealRuins.DescPOI14>Мастерские, полные верстаков, инструментов и товаров ручной работы. Ремесленники держат немного охраны, чтобы беречь своё добро.</RealRuins.DescPOI14>
+  <RealRuins.DescPOI15>Гравикорабль, который приземлился здесь и больше не взлетел. В корпусе всё ещё лежит то, что везла команда, и кто-то мог там поселиться.</RealRuins.DescPOI15>
 
   <RealRuins.POINowRuined>Однажды в этом месте бурлила жизнь, но сейчас оно покинуто, никто не знает почему. Так что лучше будьте готовы к тому, что вас может подстерегать любая опасность.</RealRuins.POINowRuined>
   <RealRuins.POIUselessRuins>Сложно сказать, что здесь было раньше. Сейчас - по большей части камни и мусор.</RealRuins.POIUselessRuins>

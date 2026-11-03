@@ -161,6 +161,7 @@ namespace RealRuins {
                 case POIType.Camp:
                 case POIType.Village:
                 case POIType.Workshop:
+                case POIType.Shipwreck:
                 case POIType.City:
                 case POIType.Factory:
                 case POIType.PowerPlant:

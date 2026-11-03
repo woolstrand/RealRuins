@@ -37,6 +37,9 @@ searching to figure out. Keep entries short; no screen coordinates (they change 
 - **Planetary POI start:** New colony → scenario → storyteller (just press Next, the defaults are fine) → Generate world → the "Load blueprints
   for planet" window opens on site selection → **Load automatically** (downloads by seed, places POIs) → Close → click a
   POI icon (inspector shows Faction) → Next → choose mode (abandoned / own / **attack**) → confirm → Start.
+- **Visit a POI or pristine ruins fast:** dev mode → select the site on the world map → **DEV: Explore** (random armed caravan,
+  enters at once, camera jumps to it). **DEV: Reset** removes the map and the player pawns there and restores the site, so
+  test visits don't pile up maps (`DevSiteTools`).
 - **Attack a faction base:** spawn a caravan next to it, select caravan, right-click base → **Attack X (Dev: instantly)**.
   Some planetary POIs look like vanilla settlements (e.g. "Temporary camp") - check the inspector before attacking.
 - **Small ruins event:** select a caravan on the world map → Debug actions → **Do incident (<caravan>)...** →

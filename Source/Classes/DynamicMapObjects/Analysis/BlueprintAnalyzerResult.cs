@@ -41,6 +41,12 @@ namespace RealRuins {
         public float powerOutput;
         public int commsCount;
 
+        // Gravships: gravship parts, hull walls included, and substructure. A floor laid over substructure hides it in a snapshot,
+        // so the hull is the main marker.
+        public int gravshipPartsCount;
+        public int floorArea; //cells with a built floor
+        public int substructureArea;
+
         // Fortification: enclosed unroofed area (a courtyard), and the walls between it and the outside (up to 2 cells thick)
         public int enclosedOpenArea;
         public int perimeterWallLength;
@@ -94,6 +100,11 @@ namespace RealRuins {
                     if (blueprint.wallMap[x, z] >= 2 && !blueprint.roofMap[x, z]) {
                         result.enclosedOpenArea++;
                     }
+                    TerrainTile terrain = blueprint.terrainMap[x, z];
+                    if (terrain != null) {
+                        result.floorArea++;
+                        if (DefDatabase<TerrainDef>.GetNamed(terrain.defName, false)?.IsSubstructure ?? false) result.substructureArea++;
+                    }
                 }
             }
             return result;
@@ -130,6 +141,7 @@ namespace RealRuins {
             if (role.mannable) mannableCount++;
             if (role.worktable) productionItemsCount++;
             if (role.bed) bedsCount++;
+            if (role.gravshipPart) gravshipPartsCount++;
 
             if (blueprint.wallMap[x, z] > 1 || blueprint.roofMap[x, z] == true) {
                 itemsInside++;

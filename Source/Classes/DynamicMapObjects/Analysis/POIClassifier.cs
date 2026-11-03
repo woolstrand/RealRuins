@@ -41,6 +41,14 @@ namespace RealRuins {
         public const int minGenerators = 4;
         public const float minPowerShare = 0.15f;
 
+        // Shipwreck: the blueprint is mostly a gravship. Main marker: gravship parts (hull walls mostly) make this share of the
+        // walls and buildings. Gravships in sampled blueprints have 0.3-0.8, colonies with a small gravship parked next to them
+        // 0.05-0.2. Also: substructure under most of the floor (ships walled with ordinary walls).
+        public const float minGravshipPartsShare = 0.3f;
+        public const int minGravshipParts = 30;
+        public const float minShipSubstructureShare = 0.6f;
+        public const int minShipSubstructureArea = 200;
+
         // Production site: many worktables, and many per bed (median of all bases is ~0.55 per bed)
         public const int minProductionWorktables = 6;
         public const float minWorktablesPerBed = 0.75f;
@@ -110,6 +118,14 @@ namespace RealRuins {
             bool production = result.productionItemsCount >= minProductionWorktables && result.productionItemsCount >= result.bedsCount * minWorktablesPerBed;
             c.researchScore = result.highTechBuildingsCount
                 + researchFacilityWeight * Math.Min(result.researchFacilitiesCount, researchFacilitiesPerBench * result.researchBenchesCount);
+
+            //a ship before anything it carries: generators, labs and turrets of a ship don't make it a power plant, research or military base
+            bool hull = result.gravshipPartsCount >= minGravshipParts
+                && result.gravshipPartsCount >= (result.buildingsCount + result.wallLength) * minGravshipPartsShare;
+            bool substructure = result.substructureArea >= minShipSubstructureArea && result.substructureArea >= result.floorArea * minShipSubstructureShare;
+            if (hull || substructure) {
+                return POIType.Shipwreck;
+            }
 
             bool stronghold = c.militaryFeatures >= 8 && result.defensiveItemsCount > 15;
             if (stronghold) {

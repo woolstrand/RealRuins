@@ -20,7 +20,8 @@ namespace RealRuins {
         Stronghold,
         Village,
         Castle,
-        Workshop
+        Workshop,
+        Shipwreck
     }
 
     static class POITypeUtility {
@@ -44,6 +45,7 @@ namespace RealRuins {
                 case POIType.MilitaryBaseLarge:
                 case POIType.MilitaryBaseSmall:
                 case POIType.PowerPlant:
+                case POIType.Shipwreck: //spacer ship, but anyone may live in a wreck; below industrial it goes to ruins
                     return TechLevel.Industrial;
                 default:
                     return TechLevel.Undefined;

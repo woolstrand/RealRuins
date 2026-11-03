@@ -147,6 +147,7 @@
   <RealRuins.CaptionPOI12>Village</RealRuins.CaptionPOI12>
   <RealRuins.CaptionPOI13>Castle</RealRuins.CaptionPOI13>
   <RealRuins.CaptionPOI14>Workshop</RealRuins.CaptionPOI14>
+  <RealRuins.CaptionPOI15>Shipwreck</RealRuins.CaptionPOI15>
 
 
   <RealRuins.DescPOI0>A small group of buildings, presumably of military kind. Probably an armoury or a small transit military base. It can have several stationary weapons and a dozen or two soldiers.</RealRuins.DescPOI0>
@@ -164,6 +165,7 @@
   <RealRuins.DescPOI12>A village of farmers and craftsmen. Its houses are simple, but the villagers will defend them.</RealRuins.DescPOI12>
   <RealRuins.DescPOI13>A castle behind thick walls. A garrison of armed men guards it, and its lord will not give it up without a fight.</RealRuins.DescPOI13>
   <RealRuins.DescPOI14>Workshops full of benches, tools and finished goods made by hand. The craftsmen keep a few guards to protect their wares.</RealRuins.DescPOI14>
+  <RealRuins.DescPOI15>A gravship that landed here and never took off again. Its hull still holds whatever the crew carried, and someone may have moved in.</RealRuins.DescPOI15>
 
   <RealRuins.POINowRuined>Once this place was a {0}, full of life, but now it's abandoned, no one knows why. So better beware of all kinds of danger.</RealRuins.POINowRuined>
   <RealRuins.POIUselessRuins>You wonder what it could be long ago. Now it's mostly rock and rubble.</RealRuins.POIUselessRuins>

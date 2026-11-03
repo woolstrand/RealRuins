@@ -47,7 +47,7 @@ namespace RealRuins {
         }
 
         // Which defs fill a role, to check that the generic detection (DefRoles) picks the right things
-        private static readonly string[] roleNames = { "research bench", "research facility", "high tech building", "comms", "generator", "turret", "other military building" };
+        private static readonly string[] roleNames = { "research bench", "research facility", "high tech building", "comms", "generator", "turret", "other military building", "gravship part" };
 
         private static void TallyRoles(Blueprint bp, Dictionary<string, Dictionary<string, int>> tally) {
             for (int x = 0; x < bp.width; x++) {
@@ -56,11 +56,11 @@ namespace RealRuins {
                     if (items == null) continue;
                     foreach (ItemTile item in items) {
                         ThingDef def = DefDatabase<ThingDef>.GetNamed(item.defName, false);
-                        if (def == null || item.isWall) continue;
+                        if (def == null) continue;
                         DefRole role = DefRoles.Of(def);
-                        if (!role.isBuilding) continue;
+                        if (!role.isBuilding || item.isWall && !role.gravshipPart) continue;
                         bool[] has = { role.researchBench, role.researchFacility, role.techLevel >= TechLevel.Spacer && !role.amenity, role.comms,
-                            role.powerOutput > 0, role.turret, role.military && !role.turret };
+                            role.powerOutput > 0, role.turret, role.military && !role.turret, role.gravshipPart };
                         for (int i = 0; i < roleNames.Length; i++) {
                             if (!has[i]) continue;
                             if (!tally.TryGetValue(roleNames[i], out var byDef)) tally[roleNames[i]] = byDef = new Dictionary<string, int>();

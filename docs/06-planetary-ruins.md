@@ -125,29 +125,36 @@ Analyzes a loaded `Blueprint` and classifies it for POI creation. Files in `Sour
   to a research bench); high tech buildings (spacer and above, not furniture or recreation).
 - **Power**: generators (`CompPowerPlant` subclasses, output from power props), batteries (`CompPowerBattery`).
 - **Comms**: `Building_CommsConsole` subclasses, long range mineral scanners. Not trade beacons, nearly every colony has several.
+- **Gravship**: gravship parts (anything needing the Substructure affordance: hull, consoles, extenders, gravcore cells; grav
+  engine; gravship facilities: thrusters, fuel tanks), hull walls included; substructure under the floor. A floor laid over
+  substructure hides it in a snapshot, so the hull is the main marker. The vanilla endgame ship is not counted.
 - **Fortification**: `enclosedOpenArea` (enclosed unroofed cells, a courtyard) and perimeter walls: walls next to the outside with
   a courtyard cell within 2 cells, weighted by `DefRoles.WallStrength` (hit points relative to a steel wall, capped at 3).
 
 ### `POIClassifier` rules, in order
 1. **Ruins**: `wallLength < 70` or (cost < 2000 and no beds); under 30% of items inside rooms; no enclosed rooms;
    `internalArea / wallLength < 2` with few rooms; average cost per tile < 10.
-2. `fortification` = perimeter wall strength / perimeter of a square of the internal area (~ average strength of a closed ring),
+2. **Shipwreck** (before anything a ship carries: its generators, labs and turrets): gravship parts at least 30% of walls and
+   buildings (30+ parts; gravships in sampled blueprints have 0.3–0.8, colonies with a small gravship parked next to them
+   0.05–0.2), or substructure under 60%+ of the floor (200+ cells). Mostly from blueprints that were power plants before.
+   Faction chance 0.3, defenders as a city; below industrial it falls back to ruins.
+3. `fortification` = perimeter wall strength / perimeter of a square of the internal area (~ average strength of a closed ring),
    0 without a courtyard of 15% of the internal area (at least 100 cells).
    `militaryFeatures = (militaryItems + turrets × 10) × 25 / internalArea + fortification × 2.5`,
    `militaryPower = turrets × 250 / internalArea + 1` (defender strength).
-3. **Stronghold**: military features >= 8 and more than 15 turrets.
-4. **Research** (prevails over military): a research bench, `highTech + 2 × min(facilities, 2 × benches) >= 12`, haulable stacks
+4. **Stronghold**: military features >= 8 and more than 15 turrets.
+5. **Research** (prevails over military): a research bench, `highTech + 2 × min(facilities, 2 × benches) >= 12`, haulable stacks
    worth 150 on average.
-5. **PowerPlant**: 4+ generators, generators and batteries at least 15% of the buildings.
-6. Production site = 6+ worktables and at least 0.75 per bed.
-7. Military features < 3, not production: **City** (internal area 1200+, 13+ rooms, 8+ beds; up to medieval era 600+, 8+, 5+
+6. **PowerPlant**: 4+ generators, generators and batteries at least 15% of the buildings.
+7. Production site = 6+ worktables and at least 0.75 per bed.
+8. Military features < 3, not production: **City** (internal area 1200+, 13+ rooms, 8+ beds; up to medieval era 600+, 8+, 5+
    as villages are smaller; beds counted before the tech filter, which takes them under a Neolithic cap), else **Camp** (small,
    cheap, has beds), **Storage**, **Camp**.
-8. Military features >= 3, power < 8, not production, by internal area (military bases have ~1000–1800): < 800:
+9. Military features >= 3, power < 8, not production, by internal area (military bases have ~1000–1800): < 800:
    **MilitaryBaseSmall** if fortification >= 0.5, else **Communication** with comms, else **Outpost**; < 1500:
    **MilitaryBaseSmall**; < 6000: **MilitaryBaseLarge**; larger: **City**.
-9. **Factory**: production with military features < 8.
-10. Military features >= 8: **MilitaryBaseLarge** (internal area 1200+) or **MilitaryBaseSmall**.
+10. **Factory**: production with military features < 8.
+11. Military features >= 8: **MilitaryBaseLarge** (internal area 1200+) or **MilitaryBaseSmall**.
 
 ### Era fit (`POITypeUtility`, next to `POIType`)
 The rules tell what kind of place it is (settlement, production, military); `POITypeUtility.FitToEra` then steps the type down
@@ -164,7 +171,7 @@ to its counterpart one era earlier until `MinTechLevel(type) <= era`:
 The era is Medieval when at most 5% (`POIClassifier.lowTechAllowedShare`) of the buildings are above medieval, and the POI tech
 level cap if that is lower. With the cap on, the analyzed blueprint is already filtered, so a Medieval cap always gives medieval
 types and a Neolithic cap villages and camps. `Village`, `Castle` and `Workshop` (ordinals 12–14, icons `Textures/poi-12..14.png`)
-are produced only this way. Defenders: `Castle` and `Communication` as military bases, `Village` and `Workshop` as cities and
+are produced only this way. `Shipwreck` is ordinal 15 (`Textures/poi-15.png`). Defenders: `Castle` and `Communication` as military bases, `Village` and `Workshop` as cities and
 factories.
 
 ### Tuning: Sample POI types

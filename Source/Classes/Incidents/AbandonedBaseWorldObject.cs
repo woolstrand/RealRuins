@@ -11,7 +11,7 @@ using RimWorld.QuestGen;
 
 namespace RealRuins {
     [StaticConstructorOnStartup]
-    class AbandonedBaseWorldObject: MapParent {
+    class AbandonedBaseWorldObject: MapParent, IDevExplorableSite {
         public override Texture2D ExpandingIcon => ContentFinder<Texture2D>.Get("ruinedbase");
         public override Color ExpandingIconColor => Color.white;
         public override bool GravShipCanLandOn => true;
@@ -28,6 +28,10 @@ namespace RealRuins {
 
         public AbandonedBaseWorldObject() {
         }
+
+        public CaravanArrivalAction DevArrivalAction() => new CaravanArrivalAction_VisitAbandonedBase(this);
+        public object DevSaveState() => GetComponent<RuinedBaseComp>()?.DevSaveState();
+        public void DevRestoreState(object saved) => GetComponent<RuinedBaseComp>()?.DevRestoreState(saved);
 
         public override IEnumerable<FloatMenuOption> GetFloatMenuOptions(Caravan caravan) {
             foreach (FloatMenuOption floatMenuOption in base.GetFloatMenuOptions(caravan)) {
@@ -61,7 +65,10 @@ namespace RealRuins {
             foreach (Gizmo gizmo in base.GetGizmos()) {
                 yield return gizmo;
             }
-            
+            foreach (Gizmo gizmo in DevSiteTools.Gizmos(this)) {
+                yield return gizmo;
+            }
+
             // Debug button to test empty signal triggering
             if (Prefs.DevMode) {
                 var comp = this.GetComponent<RuinedBaseComp>();
