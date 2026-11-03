@@ -74,7 +74,8 @@ namespace RealRuins {
         }
 
         // Planetary POI. Spawns either as ruins (content filters apply) or as an intact base (they don't).
-        public static ScatterOptions ForPOI(string blueprintFileName, Blueprint blueprint, POIType poiType, bool hasFaction, bool forceSpawnAsRuins) {
+        // takenOver: the player starts the game in the intact base and owns all of it.
+        public static ScatterOptions ForPOI(string blueprintFileName, Blueprint blueprint, POIType poiType, bool hasFaction, bool forceSpawnAsRuins, bool takenOver = false) {
             ScatterOptions options = FromModOptions();
             ApplyTechLimit(options, RealRuins_ModSettings.techLimitPOIs); //intact bases too: the cap is about the era, not about ruins
 
@@ -115,6 +116,7 @@ namespace RealRuins {
                 options.forceFullHitPoints = true;
                 options.enableDeterioration = false;
                 options.overwritesEverything = true;
+                options.claimEverything = takenOver;
             }
 
             options.overridePosition = new IntVec3(blueprint.originX, 0, blueprint.originZ);

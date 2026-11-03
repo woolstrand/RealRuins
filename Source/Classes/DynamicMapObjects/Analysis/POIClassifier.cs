@@ -53,6 +53,14 @@ namespace RealRuins {
         public const int minVillageRooms = 8;
         public const int minVillageBeds = 5;
 
+        // Military site size by internal area. Military bases in sampled blueprints have ~1000-1800.
+        // Moderate military features: outpost (or comm center) < 800 <= small base < 1500 <= large base < 6000 <= armed city.
+        // High military features (8+): large base from 1200.
+        public const int maxOutpostArea = 800;
+        public const int minLargeBaseArea = 1500;
+        public const int minArmedCityArea = 6000;
+        public const int minHeavyLargeBaseArea = 1200;
+
         public static POIClassification Classify(BlueprintAnalyzerResult result, ScatterOptions options) {
             POIClassification c = new POIClassification();
             c.era = Era(result, options);
@@ -134,16 +142,14 @@ namespace RealRuins {
             }
 
             if (c.militaryFeatures >= 3 && c.militaryPower < 8 && !production) {
-                if (result.internalArea < 2000) {
+                if (result.internalArea < maxOutpostArea) {
                     if (c.fortification >= minSmallBaseFortification) return POIType.MilitaryBaseSmall;
                     return result.commsCount > 0 ? POIType.Communication : POIType.Outpost;
                 }
-                if (result.internalArea > 2000 && result.internalArea < 6000 && result.roomsCount < 20) {
+                if (result.internalArea < minLargeBaseArea) {
                     return POIType.MilitaryBaseSmall;
                 }
-                if (result.internalArea > 6000 || result.roomsCount > 20) {
-                    return POIType.City;
-                }
+                return result.internalArea < minArmedCityArea ? POIType.MilitaryBaseLarge : POIType.City;
             }
 
             if (c.militaryFeatures < 8 && production) {
@@ -151,7 +157,7 @@ namespace RealRuins {
             }
 
             if (c.militaryFeatures >= 8) {
-                return result.internalArea > 2500 ? POIType.MilitaryBaseLarge : POIType.MilitaryBaseSmall;
+                return result.internalArea >= minHeavyLargeBaseArea ? POIType.MilitaryBaseLarge : POIType.MilitaryBaseSmall;
             }
 
             return POIType.Ruins;

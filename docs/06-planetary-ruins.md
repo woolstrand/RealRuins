@@ -143,10 +143,11 @@ Analyzes a loaded `Blueprint` and classifies it for POI creation. Files in `Sour
 7. Military features < 3, not production: **City** (internal area 1200+, 13+ rooms, 8+ beds; up to medieval era 600+, 8+, 5+
    as villages are smaller; beds counted before the tech filter, which takes them under a Neolithic cap), else **Camp** (small,
    cheap, has beds), **Storage**, **Camp**.
-8. Military features >= 3, power < 8, not production: internal area < 2000: **MilitaryBaseSmall** if fortification >= 0.5,
-   else **Communication** with comms, else **Outpost**; 2000–6000 and < 20 rooms: **MilitaryBaseSmall**; larger: **City**.
+8. Military features >= 3, power < 8, not production, by internal area (military bases have ~1000–1800): < 800:
+   **MilitaryBaseSmall** if fortification >= 0.5, else **Communication** with comms, else **Outpost**; < 1500:
+   **MilitaryBaseSmall**; < 6000: **MilitaryBaseLarge**; larger: **City**.
 9. **Factory**: production with military features < 8.
-10. Military features >= 8: **MilitaryBaseLarge** (internal area > 2500) or **MilitaryBaseSmall**.
+10. Military features >= 8: **MilitaryBaseLarge** (internal area 1200+) or **MilitaryBaseSmall**.
 
 ### Era fit (`POITypeUtility`, next to `POIType`)
 The rules tell what kind of place it is (settlement, production, military); `POITypeUtility.FitToEra` then steps the type down

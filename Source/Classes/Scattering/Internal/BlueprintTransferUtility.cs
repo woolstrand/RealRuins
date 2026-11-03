@@ -346,7 +346,11 @@ namespace RealRuins
 
                     if (thingDef.CanHaveFaction)
                     {
-                        if (thingDef.IsDoor || thingDef.IsWall)
+                        if (options.claimEverything)
+                        {
+                            thing.SetFaction(rp.faction);
+                        }
+                        else if (thingDef.IsDoor || thingDef.IsWall)
                         {
                             if (Rand.Chance(options.doorOwnershipProbability))
                             {
@@ -415,8 +419,8 @@ namespace RealRuins
                     }
                     thing.HitPoints = thing.MaxHitPoints - Rand.Range(0, maxDeltaHP);
 
-                    //Forbid haulable stuff
-                    if (thing.def.EverHaulable)
+                    //Forbid haulable stuff, unless it is the player's own base now
+                    if (thing.def.EverHaulable && !options.claimEverything)
                     {
                         thing.SetForbidden(true, false);
                     }
