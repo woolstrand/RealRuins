@@ -15,6 +15,10 @@ searching to figure out. Keep entries short; no screen coordinates (they change 
 - **Ruins wealth distribution:** quicktest → Debug actions → RealRuins → Sample ruins wealth → N maps. Generates full maps on random
   tiles (~3 s each), logs one `[Wealth]: MAP ...` line per map and a `[Wealth]: SAMPLE ...` summary with percentiles of wealth
   and generation time. Keep the window focused (take a screenshot every ~10 s): the game stops while unfocused.
+- **POI type distribution:** works right from the main menu: dev toolbar → Debug actions → Actions/tools → RealRuins →
+  **Sample POI types** → N blueprints. Asynchronous long event, ~4.5 min for 1000. The table and per-role def tally go to
+  Player.log (`grep "POI types of"`), all metrics to `RealRuinsPOISample.csv` next to the `RealRuins` cache folder. The log has
+  a 10000 message limit; the sampler mutes mod logging while it runs.
 - **Pristine ruins:** since 1.6 only the quest `RealRuins_AbandonedBase` creates them: Debug actions → **RealRuins →
   Generate pristine ruins quest** (then Quests tab → Active → the quest → Jump to ruins). Vanilla **Generate quest** →
   `RealRuins_AbandonedBase` answers "CanRun returned false" on a fresh paused game: the quest has `affectedByPoints` false, so the

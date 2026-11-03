@@ -76,8 +76,7 @@ Single list of known bugs, code smells and design weaknesses. Entries are groupe
 
 ---
 
-### M4. Won't fix
-Intended randomness, see the comment in `BlueprintAnalyzer.supposedType()`.
+### M4. Fixed
 
 ---
 

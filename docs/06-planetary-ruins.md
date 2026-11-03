@@ -107,36 +107,50 @@ A `Window` subclass implementing a multi-step download + placement wizard.
 
 ## BlueprintAnalyzer
 
-Analyzes a loaded `Blueprint` and classifies it for POI creation.
+Analyzes a loaded `Blueprint` and classifies it for POI creation. Files in `Source/Classes/DynamicMapObjects/Analysis/`:
+- `BlueprintAnalyzer`: pipeline. `FindRooms()`, beds count (before the tech filter), `ProcessBlueprint()` with `ForAnalyzer`
+  options (no mod options except the POI tech level cap), `BlueprintAnalyzerResult.Collect`, `POIClassifier.Classify`.
+  Safe on a background thread. A second constructor takes options (sampling with other caps).
+- `BlueprintAnalyzerResult`: metrics. `ToString()` lists all fields by reflection.
+- `DefRoles`: what a def is for, from def data only (classes, comps, architect category, stats), cached. No def names
+  except the vanilla architect categories Security, Furniture and Joy, which mods use too.
+- `POIClassifier`: rules, thresholds as named constants.
 
-### `BlueprintAnalyzerResult`
-Struct with ~16 metrics: wall count, room counts, total cost, military items, beds, production tables, etc. `ToString()` uses reflection to enumerate all fields (debug convenience).
+### What counts (`DefRoles`, `BlueprintAnalyzerResult`)
+- **Buildings**: placed buildings except walls (`ItemTile.isWall`), doors, fences and power conduits. Era and high tech are
+  judged by them only: haulables are traded and looted, buildings show what the owners could make.
+- **Military items**: primary weapons, shells, apparel with sharp armor >= 0.4 (default stuff), turrets (`building.IsTurret`,
+  also counted as defensive items), traps, Security buildings (sandbags, barricades, modded trenches).
+- **Research**: `Building_ResearchBench` subclasses; research facilities (`CompProperties_Facility` with research speed or linked
+  to a research bench); high tech buildings (spacer and above, not furniture or recreation).
+- **Power**: generators (`CompPowerPlant` subclasses, output from power props), batteries (`CompPowerBattery`).
+- **Comms**: `Building_CommsConsole` subclasses, long range mineral scanners. Not trade beacons, nearly every colony has several.
+- **Fortification**: `enclosedOpenArea` (enclosed unroofed cells, a courtyard) and perimeter walls: walls next to the outside with
+  a courtyard cell within 2 cells, weighted by `DefRoles.WallStrength` (hit points relative to a steel wall, capped at 3).
 
-### `Analyze()` Pipeline
-1. `FindRooms()` + `ProcessBlueprint()` on the blueprint. `ForAnalyzer` options apply no mod options except the tech level cap
-   (POI group), so a base whose turrets can't exist is not classified as military
-2. Initializes result, counts total area and room data
-3. Iterates all tiles; `ProcessTile()` accumulates cost/count metrics
-4. Military detection: checks `IsShell`, `IsRangedWeapon`, name-contains `"turret"`, `"cannon"`, `"gun"` — string matching, will miss modded items and may have false positives
-
-### `supposedType()` Classification
-
-Uses threshold-based if/else rules (not a scoring system):
-
-**Classified as `Ruins`** if:
-- `wallLength < 70` OR low cost OR no beds
-- Less than 30% of items inside rooms
-- `internalArea / wallLength < 2` AND few rooms
-- Average cost per tile < 10
-
-**Otherwise classified by:**
-- `militaryFeatures = (militaryItems + defensiveItems × 10) × 25 / internalArea`
-- `militaryPower = defensiveItems × 250 / internalArea + 1`
-- Classification tree: `Stronghold`, `Military`, `Outpost`, `City`, `Factory`, `Communication` based on feature scores, area, room count
+### `POIClassifier` rules, in order
+1. **Ruins**: `wallLength < 70` or (cost < 2000 and no beds); under 30% of items inside rooms; no enclosed rooms;
+   `internalArea / wallLength < 2` with few rooms; average cost per tile < 10.
+2. `fortification` = perimeter wall strength / perimeter of a square of the internal area (~ average strength of a closed ring),
+   0 without a courtyard of 15% of the internal area (at least 100 cells).
+   `militaryFeatures = (militaryItems + turrets × 10) × 25 / internalArea + fortification × 2.5`,
+   `militaryPower = turrets × 250 / internalArea + 1` (defender strength).
+3. **Stronghold**: military features >= 8 and more than 15 turrets.
+4. **Research** (prevails over military): a research bench, `highTech + 2 × min(facilities, 2 × benches) >= 12`, haulable stacks
+   worth 150 on average.
+5. **PowerPlant**: 4+ generators, generators and batteries at least 15% of the buildings.
+6. Production site = 6+ worktables and at least 0.75 per bed.
+7. Military features < 3, not production: **City** (internal area 1200+, 13+ rooms, 8+ beds; up to medieval era 600+, 8+, 5+
+   as villages are smaller; beds counted before the tech filter, which takes them under a Neolithic cap), else **Camp** (small,
+   cheap, has beds), **Storage**, **Camp**.
+8. Military features >= 3, power < 8, not production: internal area < 2000: **MilitaryBaseSmall** if fortification >= 0.5,
+   else **Communication** with comms, else **Outpost**; 2000–6000 and < 20 rooms: **MilitaryBaseSmall**; larger: **City**.
+9. **Factory**: production with military features < 8.
+10. Military features >= 8: **MilitaryBaseLarge** (internal area > 2500) or **MilitaryBaseSmall**.
 
 ### Era fit (`POITypeUtility`, next to `POIType`)
-`supposedType()` tells what kind of place it is (settlement, production, military); `Analyze()` then fits it to an era with
-`POITypeUtility.FitToEra`, which steps the type down to its counterpart one era earlier until `MinTechLevel(type) <= era`:
+The rules tell what kind of place it is (settlement, production, military); `POITypeUtility.FitToEra` then steps the type down
+to its counterpart one era earlier until `MinTechLevel(type) <= era`:
 
 | Industrial | Medieval | Neolithic |
 |---|---|---|
@@ -146,17 +160,34 @@ Uses threshold-based if/else rules (not a scoring system):
 | `Communication` | `Outpost` | `Camp` |
 | | `Storage` | `Camp` |
 
-The era is Medieval when at most `lowTechAllowedShare` (5%) of the items above medieval (`aboveMedievalItemsCount` of
-`techRatedItemsCount`: items except walls and doors, contents included, minified things counted as what is inside, tech level from
-`TechLevelFilter.TechLevelOf`), and the POI tech level cap if that is lower. With the cap on (strict), the analyzed blueprint
-is already filtered, so a Medieval cap always gives medieval types and a Neolithic cap villages and camps.
-`Village`, `Castle` and `Workshop` (ordinals 12–14, icons `Textures/poi-12..14.png`) are produced only this way.
-Defenders: `Castle` as military bases, `Village` and `Workshop` as cities and factories.
+The era is Medieval when at most 5% (`POIClassifier.lowTechAllowedShare`) of the buildings are above medieval, and the POI tech
+level cap if that is lower. With the cap on, the analyzed blueprint is already filtered, so a Medieval cap always gives medieval
+types and a Neolithic cap villages and camps. `Village`, `Castle` and `Workshop` (ordinals 12–14, icons `Textures/poi-12..14.png`)
+are produced only this way. Defenders: `Castle` and `Communication` as military bases, `Village` and `Workshop` as cities and
+factories.
+
+### Tuning: Sample POI types
+Debug actions → RealRuins → **Sample POI types** (main menu or in game) → 100 / 300 / 1000 blueprints. Classifies random cached
+blueprints (seeded; the set still shifts when new blueprints are downloaded) under no cap, Spacer, Industrial, Medieval,
+Medieval limited and Neolithic caps; logs a type × cap table and the most frequent defs per role, and writes every analysis
+with all metrics to `RealRuinsPOISample.csv` in the save data folder. About 4 blueprints per second per cap.
+
+Measured on 1000 blueprints (2026-11-03), counts of ~530 non-ruins POIs:
+
+| Type | No cap | Medieval | Neolithic |
+|---|---|---|---|
+| Camp | 156 | 147 | 239 |
+| City / Village | 68 / 9 | 0 / 244 | 0 / 282 |
+| Factory / Workshop | 95 / 4 | 0 / 17 | |
+| Research | 46 | | |
+| Outpost / Communication | 50 / 28 | 54 / 0 | |
+| MilitaryBaseSmall / Castle | 20 / 1 | 0 / 21 | |
+| Storage | 32 | 47 | |
+| PowerPlant | 12 | | |
+| Stronghold | 9 | | |
 
 **Known issues:**
-- Uses `Rand.Chance(0.5f)` to decide between `Outpost` and `Communication` — non-deterministic on purpose (FIXES_QUEUE M4, won't fix)
-- `POIType.PowerPlant` appears in `chanceOfHavingFaction()` and `FitToEra` but is never returned by `supposedType()` — dead path
-- Division-by-zero possible when `occupiedTilesCount == wallLength` and `haulableStacksCount == 0`
+- Mined or found materials have no tech level (plasteel, modded natural resources), so they pass any cap.
 
 ### `chanceOfHavingFaction()`
 Switch on `POIType` returning 0–0.9 probability:

@@ -27,12 +27,13 @@ namespace RealRuins {
         public int mannableCount;
         public int productionItemsCount;
         public int bedsCount;
+        public int bedsBeforeTechLimit; //a settlement stays one when the tech level cap takes its beds (beds are medieval)
 
         // Buildings except walls, doors, fences and conduits: what the owners built, so what they could research.
         // Haulables say little about the era, they are traded and looted.
         public int buildingsCount;
         public int aboveMedievalBuildingsCount;
-        public int highTechBuildingsCount; //spacer and above
+        public int highTechBuildingsCount; //spacer and above, except furniture and recreation
         public int researchBenchesCount;
         public int researchFacilitiesCount;
         public int generatorsCount;
@@ -40,10 +41,10 @@ namespace RealRuins {
         public float powerOutput;
         public int commsCount;
 
-        // Fortification: walls between the outside and the rooms, and enclosed unroofed area (a courtyard)
-        public int outerWallLength;
-        public float outerWallStrength; //sum of DefRoles.WallStrength over the outer walls
+        // Fortification: enclosed unroofed area (a courtyard), and the walls between it and the outside (up to 2 cells thick)
         public int enclosedOpenArea;
+        public int perimeterWallLength;
+        public float perimeterWallStrength; //sum of DefRoles.WallStrength over the perimeter walls
 
         public override string ToString() {
             string message = "Analyzer result:\r\n";
@@ -55,6 +56,21 @@ namespace RealRuins {
             }
 
             return message;
+        }
+
+        public static int CountBeds(Blueprint blueprint) {
+            int beds = 0;
+            for (int z = 0; z < blueprint.height; z++) {
+                for (int x = 0; x < blueprint.width; x++) {
+                    List<ItemTile> tiles = blueprint.itemsMap[x, z];
+                    if (tiles == null) continue;
+                    foreach (ItemTile itemTile in tiles) {
+                        ThingDef def = DefDatabase<ThingDef>.GetNamed(itemTile.defName, false);
+                        if (def != null && DefRoles.Of(def).bed) beds++;
+                    }
+                }
+            }
+            return beds;
         }
 
         public static BlueprintAnalyzerResult Collect(Blueprint blueprint) {
@@ -94,10 +110,10 @@ namespace RealRuins {
 
             if (itemTile.isWall) {
                 wallLength++;
-                if (IsOuterWall(blueprint, x, z)) {
-                    outerWallLength++;
+                if (IsPerimeterWall(blueprint, x, z)) {
+                    perimeterWallLength++;
                     ThingDef stuff = itemTile.stuffDef != null ? DefDatabase<ThingDef>.GetNamed(itemTile.stuffDef, false) : null;
-                    outerWallStrength += DefRoles.WallStrength(itemDef, stuff);
+                    perimeterWallStrength += DefRoles.WallStrength(itemDef, stuff);
                 }
             } else if (role.isBuilding) {
                 AddBuilding(itemTile, role);
@@ -129,7 +145,7 @@ namespace RealRuins {
 
             buildingsCount++;
             if (level > TechLevel.Medieval) aboveMedievalBuildingsCount++;
-            if (level >= TechLevel.Spacer) highTechBuildingsCount++;
+            if (level >= TechLevel.Spacer && !role.amenity) highTechBuildingsCount++;
             if (role.researchBench) researchBenchesCount++;
             if (role.researchFacility) researchFacilitiesCount++;
             if (role.powerOutput > 0) {
@@ -140,12 +156,22 @@ namespace RealRuins {
             if (role.comms) commsCount++;
         }
 
-        // A wall with the outside (room 1) next to it
-        private static bool IsOuterWall(Blueprint blueprint, int x, int z) {
-            return (x > 0 && blueprint.wallMap[x - 1, z] == 1)
+        // A wall with the outside (room 1) next to it and a courtyard cell (enclosed, unroofed) within 2 cells: the outer
+        // layer of a compound wall. Walls of buildings standing in the open have roofed rooms behind them instead.
+        private static bool IsPerimeterWall(Blueprint blueprint, int x, int z) {
+            bool outside = (x > 0 && blueprint.wallMap[x - 1, z] == 1)
                 || (x < blueprint.width - 1 && blueprint.wallMap[x + 1, z] == 1)
                 || (z > 0 && blueprint.wallMap[x, z - 1] == 1)
                 || (z < blueprint.height - 1 && blueprint.wallMap[x, z + 1] == 1);
+            if (!outside) return false;
+            for (int dx = -2; dx <= 2; dx++) {
+                for (int dz = -2; dz <= 2; dz++) {
+                    int cx = x + dx, cz = z + dz;
+                    if (cx < 0 || cz < 0 || cx >= blueprint.width || cz >= blueprint.height) continue;
+                    if (blueprint.wallMap[cx, cz] >= 2 && !blueprint.roofMap[cx, cz]) return true;
+                }
+            }
+            return false;
         }
     }
 }

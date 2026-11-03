@@ -128,8 +128,9 @@ them into `ScatterOptions.maxTechLevel` (Undefined = no cap) and `techLimitStric
 
 `TechLevelFilter` does the work in `BlueprintPreprocessor.ProcessBlueprint`, so the analyzer sees the same filtered blueprint as
 the scatterer and costs are estimated after the filter. A def's tech level (cached) is the highest of: its own `techLevel`, its
-`researchPrerequisites`, its `recipeMaker` research, and the own `techLevel` of its `costList` ingredients (one level deep, which
-catches buildings made of components). The stuff counts too. Undefined everywhere means it always stays.
+`researchPrerequisites`, its `recipeMaker` research, the research of the easiest standalone recipe making it (modded fabricated
+materials, chemfuel), and the own `techLevel` of its `costList` ingredients (one level deep, which catches buildings made of
+components). The stuff counts too. Undefined everywhere means it always stays: mined or found materials (plasteel, sky steel).
 - Items above the cap are removed; walls and doors are replaced with a granite wall / wooden door so rooms stay closed.
 - Contents of containers are filtered at any depth (an emptied minified thing is not spawned); terrain too.
 - Restored pawns skip apparel above the cap (`PawnRestoreUtility`); pawn races themselves are not filtered.

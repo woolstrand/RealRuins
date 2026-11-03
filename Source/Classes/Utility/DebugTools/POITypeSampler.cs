@@ -34,7 +34,42 @@ namespace RealRuins {
         private const string skipped = "Skipped";
 
         public static void Run(int count) {
-            LongEventHandler.QueueLongEvent(() => Sample(count), "Sampling POI types", true, e => Log.Error("RealRuins: POI type sampling failed: " + e));
+            int logLevel = RealRuins_ModSettings.logLevel;
+            //loading logs several lines per blueprint at log level "all", and the game stops logging after 10000 messages
+            RealRuins_ModSettings.logLevel = 2;
+            LongEventHandler.QueueLongEvent(() => {
+                try {
+                    Sample(count);
+                } finally {
+                    RealRuins_ModSettings.logLevel = logLevel;
+                }
+            }, "Sampling POI types", true, e => Log.Error("RealRuins: POI type sampling failed: " + e));
+        }
+
+        // Which defs fill a role, to check that the generic detection (DefRoles) picks the right things
+        private static readonly string[] roleNames = { "research bench", "research facility", "high tech building", "comms", "generator", "turret", "other military building" };
+
+        private static void TallyRoles(Blueprint bp, Dictionary<string, Dictionary<string, int>> tally) {
+            for (int x = 0; x < bp.width; x++) {
+                for (int z = 0; z < bp.height; z++) {
+                    List<ItemTile> items = bp.itemsMap[x, z];
+                    if (items == null) continue;
+                    foreach (ItemTile item in items) {
+                        ThingDef def = DefDatabase<ThingDef>.GetNamed(item.defName, false);
+                        if (def == null || item.isWall) continue;
+                        DefRole role = DefRoles.Of(def);
+                        if (!role.isBuilding) continue;
+                        bool[] has = { role.researchBench, role.researchFacility, role.techLevel >= TechLevel.Spacer && !role.amenity, role.comms,
+                            role.powerOutput > 0, role.turret, role.military && !role.turret };
+                        for (int i = 0; i < roleNames.Length; i++) {
+                            if (!has[i]) continue;
+                            if (!tally.TryGetValue(roleNames[i], out var byDef)) tally[roleNames[i]] = byDef = new Dictionary<string, int>();
+                            byDef.TryGetValue(def.defName, out int n);
+                            byDef[def.defName] = n + 1;
+                        }
+                    }
+                }
+            }
         }
 
         private static void Sample(int count) {
@@ -52,6 +87,7 @@ namespace RealRuins {
 
             //type -> cap -> count
             var table = new Dictionary<string, int[]>();
+            var roles = new Dictionary<string, Dictionary<string, int>>();
             int failed = 0;
             for (int i = 0; i < picked.Count; i++) {
                 LongEventHandler.SetCurrentEventText(string.Format("Sampling POI types {0}/{1}", i + 1, picked.Count));
@@ -73,6 +109,8 @@ namespace RealRuins {
                         if (c == 0) failed++;
                         break;
                     }
+
+                    if (c == 0) TallyRoles(bp, roles);
 
                     //same size filter as PreparePOI
                     bool tooSmall = analyzer.result.occupiedTilesCount < 50 || analyzer.result.totalArea < 200;
@@ -100,6 +138,11 @@ namespace RealRuins {
                 report.Append(string.Format("{0,-18}", pair.Key));
                 foreach (int n in pair.Value) report.Append(string.Format("{0,16}", n));
                 report.Append("\n");
+            }
+            report.Append("Most frequent defs by role (no cap, buildings placed):\n");
+            foreach (string roleName in roleNames) {
+                if (!roles.TryGetValue(roleName, out var byDef)) continue;
+                report.AppendFormat("  {0}: {1}\n", roleName, string.Join(", ", byDef.OrderByDescending(p => p.Value).Take(15).Select(p => p.Key + " " + p.Value)));
             }
             Log.Message(report.ToString());
         }

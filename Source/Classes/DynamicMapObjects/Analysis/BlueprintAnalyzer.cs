@@ -39,10 +39,12 @@ namespace RealRuins {
             }
 
             blueprint.FindRooms();
+            int bedsBeforeTechLimit = TechLevelFilter.IsActive(options) ? BlueprintAnalyzerResult.CountBeds(blueprint) : -1;
             BlueprintPreprocessor.ProcessBlueprint(blueprint, options);
             blueprint.UpdateBlueprintStats(includeCost: true);
 
             result = BlueprintAnalyzerResult.Collect(blueprint);
+            result.bedsBeforeTechLimit = Math.Max(result.bedsCount, bedsBeforeTechLimit);
             classification = POIClassifier.Classify(result, options);
 
             //The classification tells what kind of place it is (settlement, production, military), the era what it is called:

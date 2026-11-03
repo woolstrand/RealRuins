@@ -23,6 +23,21 @@ namespace RealRuins {
             return techLevels.GetOrAdd(def, Calculate);
         }
 
+        // Things made by a standalone recipe (a material from a modded fabricator, chemfuel, components): research of the easiest
+        // recipe making it. Undefined if any recipe needs no research, or none makes it (mined, harvested, found: plasteel, sky steel).
+        private static readonly Lazy<Dictionary<ThingDef, TechLevel>> productionTechLevels = new Lazy<Dictionary<ThingDef, TechLevel>>(() => {
+            var result = new Dictionary<ThingDef, TechLevel>();
+            foreach (RecipeDef recipe in DefDatabase<RecipeDef>.AllDefsListForReading) {
+                if (recipe.products == null) continue;
+                TechLevel level = Max(Max(TechLevel.Undefined, recipe.researchPrerequisite), recipe.researchPrerequisites);
+                foreach (ThingDefCountClass product in recipe.products) {
+                    if (product.thingDef == null) continue;
+                    result[product.thingDef] = result.TryGetValue(product.thingDef, out TechLevel known) && known < level ? known : level;
+                }
+            }
+            return result;
+        });
+
         private static TechLevel Calculate(BuildableDef def) {
             ThingDef thingDef = def as ThingDef;
             TechLevel result = thingDef?.techLevel ?? TechLevel.Undefined;
@@ -30,6 +45,9 @@ namespace RealRuins {
             if (thingDef?.recipeMaker != null) {
                 result = Max(result, thingDef.recipeMaker.researchPrerequisite);
                 result = Max(result, thingDef.recipeMaker.researchPrerequisites);
+            }
+            if (thingDef != null && productionTechLevels.Value.TryGetValue(thingDef, out TechLevel production) && production > result) {
+                result = production;
             }
             if (def.costList != null) {
                 //one level deep: an ingredient's own tech level only, which also keeps recipe cycles out

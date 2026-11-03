@@ -20,7 +20,8 @@ namespace RealRuins {
         public bool bed;
         public float powerOutput; //watts, generators only
         public bool battery;
-        public bool comms; //comms console, trade beacon, long range scanner: talks to the world beyond
+        public bool comms; //comms console, long range scanner: talks to the world beyond
+        public bool amenity; //furniture, lamps, recreation: spacer chairs and lamps don't make a research site
         public TechLevel techLevel;
     }
 
@@ -30,22 +31,20 @@ namespace RealRuins {
         public const float armorSharpThreshold = 0.4f;
 
         private static readonly ConcurrentDictionary<ThingDef, DefRole> roles = new ConcurrentDictionary<ThingDef, DefRole>();
-        private static DesignationCategoryDef security;
-        private static bool securityResolved;
+        private static DesignationCategoryDef security, furniture, joy;
+        private static bool categoriesResolved;
 
         public static DefRole Of(ThingDef def) {
             return roles.GetOrAdd(def, Calculate);
         }
 
-        private static DesignationCategoryDef Security {
-            get {
-                if (!securityResolved) {
-                    //the vanilla category every defensive building goes to, mods put theirs there too
-                    security = DefDatabase<DesignationCategoryDef>.GetNamedSilentFail("Security");
-                    securityResolved = true;
-                }
-                return security;
-            }
+        //vanilla architect categories, mods put their buildings there too
+        private static void ResolveCategories() {
+            if (categoriesResolved) return;
+            security = DefDatabase<DesignationCategoryDef>.GetNamedSilentFail("Security");
+            furniture = DefDatabase<DesignationCategoryDef>.GetNamedSilentFail("Furniture");
+            joy = DefDatabase<DesignationCategoryDef>.GetNamedSilentFail("Joy");
+            categoriesResolved = true;
         }
 
         private static DefRole Calculate(ThingDef def) {
@@ -56,10 +55,12 @@ namespace RealRuins {
             role.isBuilding = isBuilding && !role.isStructure;
 
             if (isBuilding) {
+                ResolveCategories();
                 role.turret = def.building?.IsTurret ?? false;
                 role.mannable = HasComp(def, typeof(CompMannable));
                 //traps, sandbags, barricades, embrasures too
-                role.military = role.turret || (def.building?.isTrap ?? false) || (Security != null && def.designationCategory == Security && !role.isStructure);
+                role.military = role.turret || (def.building?.isTrap ?? false) || (security != null && def.designationCategory == security && !role.isStructure);
+                role.amenity = def.designationCategory != null && (def.designationCategory == furniture || def.designationCategory == joy);
 
                 role.researchBench = typeof(Building_ResearchBench).IsAssignableFrom(def.thingClass);
                 role.researchFacility = IsResearchFacility(def);
@@ -67,8 +68,8 @@ namespace RealRuins {
                 role.bed = def.IsBed;
                 role.battery = HasComp(def, typeof(CompPowerBattery));
                 role.powerOutput = PowerOutput(def);
+                //not trade beacons: nearly every colony has several
                 role.comms = typeof(Building_CommsConsole).IsAssignableFrom(def.thingClass)
-                    || typeof(Building_OrbitalTradeBeacon).IsAssignableFrom(def.thingClass)
                     || HasComp(def, typeof(CompLongRangeMineralScanner));
             } else {
                 role.military = def.equipmentType == EquipmentType.Primary || def.IsShell || (def.IsApparel && SharpArmor(def) >= armorSharpThreshold);
