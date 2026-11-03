@@ -33,10 +33,14 @@ Replaces all invalid filesystem characters with `_` via regex. Used to sanitize 
 ### `ThingDefExtension`
 
 **`AbstractMarketValue(BuildableDef def, ThingDef stuff)`**
-The game's own abstract `MarketValue` stat for a def: materials plus work (`StatWorker_MarketValue`). Defs made from stuff without a stuff are valued with their default stuff. Quality is not included: it is rolled only when the thing is spawned. This is the tile `cost` in blueprint cost calculations.
+The game's own abstract `MarketValue` stat for a def: materials plus work (`StatWorker_MarketValue`). Defs made from stuff without a stuff are valued with their default stuff. Quality is not included: it is rolled only when the thing is spawned. The only blueprint cost (tile `cost`). Cached per (def, stuff) under a lock: a def's value doesn't change during a session, and the planetary loader analyzes blueprints off the main thread. (Before 2026-11-03 blueprints used a materials-only estimate that ignored work; it was ~10% lower overall and much lower for crafted items.)
 
-**`LegacyMarketCost(BuildableDef def, ThingDef stuff)`**
-The old scheme, kept to compare against `AbstractMarketValue` (tile `legacyCost`). Recursively computes market cost from `costList` items plus stuff cost, adjusted by `VolumePerUnit`; ignores work, so crafted items (weapons, apparel, bionics, art) come out much cheaper than in game. Falls back to `BaseMarketValue` for items without recipes (e.g., golden walls). Still used for the POI map wealth ratio (`RealRuinsPOIWorldObject`).
+## WealthUtility.cs
+
+Wealth of things already spawned, in the same units as blueprint costs.
+- **`MarketValueWithContents(thing)`**: `MarketValue × stackCount` (quality and hit points included) plus what the thing holds, at any depth. Minified things report their inner thing already; pawns and corpses are not opened.
+- **`MapWealth(map, filter)`**: the above summed over the map's things. `RuinedBaseComp` (resources only), `RealRuinsPOIWorldObject` (all things).
+- **`WealthDescription(cost)`**: the `RealRuins.RuinsWealth.N` tier (0-10k, 10k-100k, 100k-1M, 1M-10M, more) shown in the abandoned base and POI inspect strings.
 
 **`ThingWeight(ThingDef def, ThingDef stuff)`**
 Tries `Mass` stat; if zero or 1.0 (likely default), falls back to recursive weight sum from `costList`. Returns minimum 1.0. Used by `ScavengingProcessor` for raider carry-capacity calculations.
@@ -144,7 +148,7 @@ Registers a `[DebugAction]` in RimWorld's developer debug menu (LudeonTK) for th
 
 Uses `[StaticConstructorOnStartup]` to ensure registration during game startup.
 
-**`SampleRuinsWealth()`** ("Sample ruins wealth", 10/25/50 maps, on a map) → `RuinsWealthSampler`: for each map a temporary player settlement on a random settle-able tile, full map generation (regular ruins scatter runs as on a new colony), then the map and settlement are removed. Turns the wealth log on and drops the log level to errors for the duration (the game stops logging after 10000 messages), then logs a `SAMPLE` line with percentiles of ruins wealth (actual, estimate, legacy, richest chunk, chunk count) and generation time (whole map, ruins scatter, new and legacy cost calculation).
+**`SampleRuinsWealth()`** ("Sample ruins wealth", 10/25/50 maps, on a map) → `RuinsWealthSampler`: for each map a temporary player settlement on a random settle-able tile, full map generation (regular ruins scatter runs as on a new colony), then the map and settlement are removed. Turns the wealth log on and drops the log level to errors for the duration (the game stops logging after 10000 messages), then logs a `SAMPLE` line with percentiles of ruins wealth (actual, estimate, richest chunk, chunk count) and generation time (whole map, ruins scatter, cost calculation).
 
 **`ToggleRuinsWealthLog()`** ("Toggle ruins wealth log", in game only: `AllowedGameStates` flags must all match, so `Entry | Playing` never shows): flips `RealRuins_ModSettings.debugLogRuinsWealth`, the same setting as the "Log ruins wealth" checkbox on the mod's debug settings page, and saves settings.
 
@@ -154,13 +158,13 @@ Uses `[StaticConstructorOnStartup]` to ensure registration during game startup.
 
 Debug measurement of ruins wealth, collected only while `debugLogRuinsWealth` is on and logged with `Debug.Report` (category `Wealth`) whatever the log level is.
 
-`BlueprintTransferUtility.Transfer` creates one report per run (`ScatterState.wealthReport`): for every transferred tile it adds the estimate in both cost schemes (`cost`, `legacyCost`) and the actual value of what was spawned — `Thing.MarketValue × stackCount` (quality and hit points included) plus the contents of containers (minified things already report their inner thing; pawns are skipped), and the abstract market value of placed terrain. Measured right after the item is spawned, before forces, filth and roof cleanup.
+`BlueprintTransferUtility.Transfer` creates one report per run (`ScatterState.wealthReport`): for every transferred tile it adds the estimate (tile `cost`) and the actual value of what was spawned — `WealthUtility.MarketValueWithContents` (pawns skipped) and the market value of placed terrain. Measured right after the item is spawned, before forces, filth and roof cleanup.
 
-`CostTiming` (same file) counts time spent in the new and legacy cost calculations (`Blueprint.UpdateItemStats` and terrain), always on; the `MAP` line of generic ruins shows `scatterMs`, `costMs`, `legacyCostMs`.
+`CostTiming` (same file) counts time spent in blueprint cost calculation (`Blueprint.UpdateItemStats` and terrain), always on; the `MAP` line of generic ruins shows `limit`, `scatterMs`, `costMs`.
 
 Log lines:
-- `Chunk <blueprint>: estimate, legacy, actual (things, terrain). Top: ...` — per run, from `RuinsScatterer`.
-- `MAP tile=.. size=.. chunks=.. estimate=.. legacy=.. actual=.. things=.. terrain=.. maxChunk=.. site=..` — one greppable line per map, followed by every chunk sorted by actual value and the 10 most valuable things on the map. Written by `GenStep_ScatterRealRuins` (with proximity conditions: planned chunk count, settlement distance, scavenging multiplier, radius) and by `GenStep_RealRuinsSite` for single-run sites (abandoned base, caravan ruins, POI).
+- `Chunk <blueprint>: estimate, allowance, actual (things, terrain). Top: ...` — per run, from `RuinsScatterer`.
+- `MAP tile=.. size=.. chunks=.. estimate=.. actual=.. things=.. terrain=.. maxChunk=.. site=..` — one greppable line per map, followed by every chunk sorted by actual value and the 10 most valuable things on the map. Written by `GenStep_ScatterRealRuins` (with proximity conditions: planned chunk count, settlement distance, scavenging multiplier, radius) and by `GenStep_RealRuinsSite` for single-run sites (abandoned base, caravan ruins, POI).
 
 ---
 

@@ -209,25 +209,22 @@ namespace RealRuins
             }
             var withRuins = samples.Where(s => s.chunks > 0).ToList();
             float estimate = withRuins.Sum(s => s.estimate);
-            float legacy = withRuins.Sum(s => s.legacyEstimate);
             var sb = new StringBuilder();
-            sb.AppendFormat("SAMPLE maps={0}/{1} failed={2} withRuins={3} actual/estimate={4:F2} estimate/legacy={5:F2}",
+            sb.AppendFormat("SAMPLE maps={0}/{1} failed={2} withRuins={3} actual/estimate={4:F2} limit={5:F0}",
                 samples.Count, requested, failed, withRuins.Count,
                 estimate > 0 ? withRuins.Sum(s => s.actual) / estimate : 0,
-                legacy > 0 ? estimate / legacy : 0);
+                RealRuins_ModSettings.RuinsWealthPerMapLimit);
             sb.AppendLine();
             sb.Append("  maps with ruins, min / p25 / median / p75 / p90 / max / mean:");
             AppendPercentiles(sb, "actual", withRuins.Select(s => s.actual));
             AppendPercentiles(sb, "estimate", withRuins.Select(s => s.estimate));
-            AppendPercentiles(sb, "legacy", withRuins.Select(s => s.legacyEstimate));
             AppendPercentiles(sb, "max chunk", withRuins.Select(s => s.maxChunk));
             AppendPercentiles(sb, "chunks", withRuins.Select(s => (float)s.chunks));
             sb.AppendLine();
             sb.Append("  generation time, ms, all maps:");
             AppendPercentiles(sb, "map", samples.Select(s => (float)s.mapGenMs));
             AppendPercentiles(sb, "ruins scatter", samples.Select(s => (float)s.scatterMs));
-            AppendPercentiles(sb, "new cost", samples.Select(s => (float)s.costMs));
-            AppendPercentiles(sb, "legacy cost", samples.Select(s => (float)s.legacyCostMs));
+            AppendPercentiles(sb, "cost calculation", samples.Select(s => (float)s.costMs));
             Debug.Report(Debug.Wealth, "{0}", sb.ToString());
             Messages.Message(string.Format("RealRuins: sampled {0} maps ({1} with ruins), median ruins wealth {2:F0}. Details in the log.",
                 samples.Count, withRuins.Count, Percentile(withRuins.Select(s => s.actual).OrderBy(v => v).ToList(), 0.5f)), MessageTypeDefOf.NeutralEvent, historical: false);

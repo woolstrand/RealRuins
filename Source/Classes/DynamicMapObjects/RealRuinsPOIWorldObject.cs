@@ -185,12 +185,9 @@ namespace RealRuins {
             return false;
         }
 
+        //Same units as approximateSnapshotCost (the game's market value), which the difference is compared with
         private float CurrentMapWealth() {
-            float totalCost = 0;
-            foreach (Thing thing in Map.listerThings.AllThings) {
-                totalCost += thing.def.LegacyMarketCost(thing.Stuff) * thing.stackCount;
-            }
-            return totalCost;
+            return WealthUtility.MapWealth(Map);
         }
 
         public override string GetInspectString() {
@@ -208,14 +205,7 @@ namespace RealRuins {
 
                     if ((POIType)comp.poiType != POIType.Ruins) {
 
-                        int[] costThresholds = { 0, 10000, 100000, 1000000, 10000000 };
-                        string wealthDesc = null;
-                        if (comp.approximateSnapshotCost > costThresholds[costThresholds.Length - 1]) wealthDesc = ("RealRuins.RuinsWealth." + (costThresholds.Length - 1)).Translate();
-                        for (int i = 0; i < costThresholds.Length - 1; i++) {
-                            if (comp.approximateSnapshotCost > costThresholds[i] && comp.approximateSnapshotCost <= costThresholds[i + 1]) {
-                                wealthDesc = ("RealRuins.RuinsWealth." + i.ToString()).Translate();
-                            }
-                        }
+                        string wealthDesc = WealthUtility.WealthDescription(comp.approximateSnapshotCost);
                         if (wealthDesc != null) {
                             builder.Append("RealRuins.RuinsWealth".Translate());
                             builder.AppendLine(wealthDesc);

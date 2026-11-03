@@ -66,7 +66,7 @@ The central object holding all parsed data for one blueprint.
 
 **`Part(location, size)`**: Slices a sub-rectangle (exclusive max bounds, clipped to the blueprint). **Mutates the original** — `itemsMap` lists are moved by reference, not copied. Do not use the parent blueprint after calling `Part()`.
 
-**`UpdateBlueprintStats(includeCost)`**: Computes `totalCost`, `itemsCount`, `itemsDensity`. When `includeCost=true`, sets two costs on every tile — expensive: `cost` (`AbstractMarketValue()`, materials plus work; a container's cost includes its `innerItems`, corpses inside are not counted) and `legacyCost` (`LegacyMarketCost()`, the old materials-only scheme, top-level tile only), with `legacyTotalCost` as its total. `cost` is what scavenging, cost caps, the item cost limit, the analyzer and defender forces use; `legacyCost` is only logged for comparison (`CostComparisonSummary()`, and the transfer log). Called twice during the pipeline (once in `BlueprintFinder`, once in `RuinsScatterer` post-preprocess).
+**`UpdateBlueprintStats(includeCost)`**: Computes `totalCost`, `itemsCount`, `itemsDensity` and tile weights. When `includeCost=true`, sets `cost` on every tile: `AbstractMarketValue()` (the game's market value, materials plus work, cached per def and stuff) × stack count; a container's cost includes its `innerItems` (corpses and pawns inside count 0). This is the only blueprint cost: scavenging, cost cuts, the item cost limit, the analyzer, quests and defender forces all use it. Called several times during the pipeline (`BlueprintFinder`, preprocessor, transfer utility, `RuinsScatterer`); the cache makes repeats cheap.
 
 ### `Tiles` (`TerrainTile`, `ItemTile`)
 Lightweight data holders deserialized from blueprint XML.
@@ -186,8 +186,8 @@ Simulates NPC factions looting the ruins before the player arrives. Operates on 
 7. Removed walls: replaced with `WallReplacementItemTile()` (granite) to preserve structure
 8. Post-raid: doors without two adjacent walls on either axis are removed
 
-### `LimitCostToCap()`
-If `options.costCap > 0`, randomly removes tiles until `totalCost ≤ costCap` (tiles with `OwnCost > 20` first). Contents are taken out of their containers the same way as in raids. Walls/doors downgraded to wood rather than removed.
+### `CutTo(target)`
+Runs after the raids when the blueprint is over its target: the lower of the map ruins wealth allowance (`ScatterContext.wealthAllowance`) and `options.costCap` (abandoned base: what off-map scavenging left; ruined POI: a random cap). Removes the most valuable things first (by `OwnCost`, ignoring weight), candidates taken from the blueprint itself. Contents are taken out of containers (`ItemTile.TakeOutOfContainer`). Walls and doors: replaced with granite walls / mostly wooden doors in regular ruins (an old ruin with a golden room looks implausible, a hole breaks it); dismantled, leaving a hole, where `options.cutDismantlesWalls` is set (abandoned base, ruined POI: a half-dismantled golden room fits a scavenged site). Replacement costs are counted, so the cut lands on the target. The hanging-door check runs after the cut.
 
 **Note**: `age = -blueprint.dateShift` (always positive). Older blueprints have more scavenging.
 

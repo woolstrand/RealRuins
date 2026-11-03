@@ -14,7 +14,6 @@ namespace RealRuins {
     class Tile {
         public string defName;
         public float cost = 0.0f; //populated later. Market value including work and, for containers, their contents
-        public float legacyCost = 0.0f; //old scheme (materials only, contents ignored), kept for comparison
         public float weight = 1.0f;
         public IntVec3 location;
     }
@@ -37,6 +36,7 @@ namespace RealRuins {
         public ItemArt art = null;
 
         public List<ItemTile> innerItems;
+        public ItemTile container; //the item holding this one (bookcase, minified thing, sarcophagus), null for a top level item
 
         //Value of the item itself: cost includes the contents, this one doesn't
         public float OwnCost {
@@ -46,6 +46,24 @@ namespace RealRuins {
                     foreach (ItemTile inner in innerItems) result -= inner.cost;
                 }
                 return result;
+            }
+        }
+
+        //Takes the item out of its container; every container it was in becomes cheaper by its value.
+        //A minified thing left empty is not spawned at all (BlueprintTransferUtility): there is nothing left in the crate.
+        public void TakeOutOfContainer() {
+            if (container == null) return;
+            container.innerItems.Remove(this);
+            for (ItemTile current = container; current != null; current = current.container) {
+                current.cost -= cost;
+            }
+        }
+
+        private static float CostOf(ThingDef def, ThingDef stuff) {
+            try {
+                return def.AbstractMarketValue(stuff);
+            } catch (Exception) {
+                return 0;
             }
         }
 
@@ -63,7 +81,7 @@ namespace RealRuins {
                 isWall = true,
                 stackCount = 1,
                 rot = 0,
-                cost = 0,
+                cost = CostOf(ThingDefOf.Wall, ThingDefOf.BlocksGranite),
                 weight = 1.0f,
                 location = location
             };
@@ -85,7 +103,7 @@ namespace RealRuins {
             tile.location = location;
             tile.stackCount = 1;
             tile.rot = 0;
-            tile.cost = 0;
+            tile.cost = CostOf(ThingDefOf.Door, ThingDefOf.WoodLog);
             tile.weight = 1.0f;
 
             return tile;
@@ -165,6 +183,7 @@ namespace RealRuins {
                 foreach (XmlNode childNode in node.ChildNodes) {
                     if (childNode.Name.Equals("item")) {
                         ItemTile innerTile = new ItemTile(childNode);
+                        innerTile.container = this;
                         innerItems.Add(innerTile);
                     }
                 }

@@ -33,6 +33,7 @@ namespace RealRuins {
         public float minimumDensityRequired = 0.1f;
         public int minimumCostRequired = 0;
         public int costCap = -1;
+        public bool cutDismantlesWalls = false; //cost cut removes expensive walls and doors instead of replacing them with cheap ones (scavenged sites)
         public int startingPartyPoints = 0;
         public bool shouldKeepDefencesAndPower = false;
         public bool shouldLoadPartOnly = true; //indicates if the loader should load only a part of the blueprint or the whole one
@@ -95,6 +96,7 @@ namespace RealRuins {
                 minimumDensityRequired = minimumDensityRequired,
                 minimumCostRequired = minimumCostRequired,
                 costCap = costCap,
+                cutDismantlesWalls = cutDismantlesWalls,
                 startingPartyPoints = startingPartyPoints,
                 deleteLowQuality = deleteLowQuality,
                 shouldKeepDefencesAndPower = shouldKeepDefencesAndPower,

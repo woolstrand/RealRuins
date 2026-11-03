@@ -223,18 +223,7 @@ namespace RealRuins {
             if (!ParentHasMap && state == RuinedBaseState.WaitingForArrival) {
                 string result = "";
                 if (currentCapCost > 0) {
-                    string wealthDesc = "";
-
-                    int[] costThresholds = {0, 10000, 100000, 1000000, 10000000 };
-                    if (currentCapCost > costThresholds[costThresholds.Length - 1]) wealthDesc = ("RealRuins.RuinsWealth." + (costThresholds.Length - 1)).Translate();
-                    for (int i = 0; i < costThresholds.Length - 1; i++) {
-                        if (currentCapCost > costThresholds[i] && currentCapCost <= costThresholds[i + 1]) {
-                            wealthDesc = ("RealRuins.RuinsWealth." + i.ToString()).Translate();
-                        }
-                    }
-                    
-
-                    result += "RealRuins.RuinsWealth".Translate() + wealthDesc;
+                    result += "RealRuins.RuinsWealth".Translate() + WealthUtility.WealthDescription(currentCapCost);
                     if (Prefs.DevMode) { result += " (" + currentCapCost + ")"; }
                 }
 
@@ -281,11 +270,7 @@ namespace RealRuins {
         }
 
         private float GetTotalMapWealth(Map map) {
-            if (map == null) return 0f;
-
-            return map.listerThings.AllThings
-                .Where(t => t.def != null && t.def.CountAsResource)
-                .Sum(t => t.MarketValue * t.stackCount);
+            return WealthUtility.MapWealth(map, t => t.def.CountAsResource);
         }
     }
 }

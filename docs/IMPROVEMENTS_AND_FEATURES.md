@@ -70,7 +70,7 @@ Add null checks on all `AccessTools.Field()`/`AccessTools.Method()` results in `
 **Effort**: S–M  
 **File**: `Source/Classes/DynamicMapObjects/RealRuinsPOIWorldObject.cs`, `ShouldRemoveMapNow()` / `CurrentMapWealth()`
 POI and pristine-ruins wealth formulas differ, but that is fine: the two systems never compare against each other's numbers, and each is consistent with itself. `RuinedBaseComp` uses `GetTotalMapWealth` on both sides, and the inspect-string thresholds in both systems are applied to blueprint costs. The weak spot is inside the POI: `ratio = (wealthOnEnter - CurrentMapWealth()) / approximateSnapshotCost`.
-- The numerator counts every thing on the map: pawns, corpses, plants, rocks, chunks and filth, priced with `ThingComponentsMarketCost`. For things without a cost list that is `BaseMarketValue`.
+- The numerator counts every thing on the map: pawns, corpses, plants, rocks, chunks and filth, priced with the game's market value (`WealthUtility.MapWealth`, same units as the denominator since 2026-11-03; before that a materials-only estimate).
 - The denominator is `BlueprintAnalyzer.totalItemsCost`: only blueprint items, measured on the full snapshot before deterioration.
 So killing or driving off defenders (pawns removed, corpses added at a different price), chopping plants and mining all count as "stolen". Deterioration makes the denominator larger than what actually spawned.
 **Current effect**: The outcome on leaving (owner restores, may abandon, or POI destroyed, at the 0.1/0.3 thresholds) is noisy. A fight-heavy visit with little looting can destroy a POI. A heavily deteriorated POI is hard to destroy by looting. The enter cooldown (`difference / 2000` days) is affected the same way. The effect is on balance only.

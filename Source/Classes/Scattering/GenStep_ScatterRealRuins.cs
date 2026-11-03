@@ -116,8 +116,7 @@ namespace RealRuins
 
             if (!map.TileInfo.WaterCovered) {
                 long started = CostTiming.Now;
-                long newCostTicks = CostTiming.newTicks;
-                long legacyCostTicks = CostTiming.legacyTicks;
+                long costTicks = CostTiming.ticks;
 
                 float densityMultiplier = 1.0f;
                 float scaleMultiplier = 1.0f;
@@ -198,11 +197,10 @@ namespace RealRuins
                 if (RuinsWealthReport.Enabled) {
                     var timing = new MapWealthSample {
                         scatterMs = CostTiming.Ms(CostTiming.Now - started),
-                        costMs = CostTiming.Ms(CostTiming.newTicks - newCostTicks),
-                        legacyCostMs = CostTiming.Ms(CostTiming.legacyTicks - legacyCostTicks),
+                        costMs = CostTiming.Ms(CostTiming.ticks - costTicks),
                     };
-                    RuinsWealthReport.LogMapSummary(map, wealthReports, string.Format("site=GenericRuins planned={0} dist={1} scav={2:F2} radius={3}-{4} limit={8:F0} scatterMs={5:F0} costMs={6:F0} legacyCostMs={7:F0}",
-                        num, distanceToSettlement, options.scavengingMultiplier, options.minRadius, options.maxRadius, timing.scatterMs, timing.costMs, timing.legacyCostMs, wealthLimit), timing);
+                    RuinsWealthReport.LogMapSummary(map, wealthReports, string.Format("site=GenericRuins planned={0} dist={1} scav={2:F2} radius={3}-{4} limit={7:F0} scatterMs={5:F0} costMs={6:F0}",
+                        num, distanceToSettlement, options.scavengingMultiplier, options.minRadius, options.maxRadius, timing.scatterMs, timing.costMs, wealthLimit), timing);
                 }
 
                 if (shouldUnpause) {

@@ -15,14 +15,15 @@ namespace RealRuins {
 
         //Scavengers take things out of containers (bookcases, minified things, sarcophagi) instead of carrying the whole container away:
         //contents are separate candidates, and a container is judged by its own value only (OwnCost).
-        private readonly Dictionary<ItemTile, ItemTile> containerOf = new Dictionary<ItemTile, ItemTile>(); //contents -> the item holding them
+        private readonly List<ItemTile> contents = new List<ItemTile>();
         private readonly HashSet<ItemTile> removedItems = new HashSet<ItemTile>();
 
         int totalRemovedTiles = 0;
         int totalRemovedTerrains = 0;
         int totalReplacedTiles = 0;
 
-        //wealthAllowance: what this blueprint may still be worth after scavenging (its share of the map's ruins wealth), -1 for no limit
+        //wealthAllowance: what this blueprint may still be worth after scavenging (its share of the map's ruins wealth), -1 for no limit.
+        //options.costCap is the other limit (abandoned base, ruined POI); the lower one applies.
         public void RaidAndScavenge(Blueprint blueprint, ScatterOptions options, float wealthAllowance = -1) {
             //remove the most precious things. smash some other things.
             //word is spread, so each next raid is more destructive than the previous ones
@@ -91,7 +92,7 @@ namespace RealRuins {
                     } else {
                         if (Rand.Chance(0.999f)) { //there is still chance that even the most expensive thing will be left after raid. ("Big momma said ya shouldn't touch that golden chair, it's cursed")
                             raidCapacity -= topTile.weight; 
-                            msg += RemoveTile(topTile);
+                            msg += RemoveTile(topTile, replaceWalls: true);
                         }
                     }
                     Debug.Log(Debug.BlueprintTransfer, msg);
@@ -100,7 +101,12 @@ namespace RealRuins {
                 if (shouldStop) break;
             }
 
-            //Check that there are no "hanging doors" left
+            float target = -1;
+            if (wealthAllowance >= 0) target = wealthAllowance;
+            if (options.costCap > 0 && (target < 0 || options.costCap < target)) target = options.costCap;
+            if (target >= 0 && totalCost > target) CutTo(target);
+
+            //Check that there are no "hanging doors" left (also after a cut that dismantled walls)
             bool HasWallsIn(List<ItemTile> list) {
                 foreach (ItemTile tile in list) {
                     if (tile.isWall) return true;
@@ -129,16 +135,15 @@ namespace RealRuins {
             }
             Debug.active = true;
             //Debug.Message("Scavenging completed. Terrain removed: {0}/{1}, Tiles removed: {2}/{3}, tiles replaced: {4}.", totalRemovedTerrains, processedTerrains, totalRemovedTiles, processedTiles, totalReplacedTiles);
-
-            if (wealthAllowance >= 0 && totalCost > wealthAllowance) { CutToAllowance(wealthAllowance); }
-            if (options.costCap > 0) { LimitCostToCap(); }
         }
 
-        //Takes a tile away the way scavengers do: contents out of their container, terrain removed, doors and wall-like things
-        //replaced with cheap ones to keep the walls closed. Returns a log message.
-        private string RemoveTile(Tile tile) {
-            if (tile is ItemTile contentTile && containerOf.ContainsKey(contentTile)) {
-                TakeOut(contentTile);
+        //Takes a tile away: contents out of their container, terrain removed, items removed. Doors and wall-like things are either
+        //replaced with cheap ones to keep the walls closed (replaceWalls), or dismantled, leaving a hole. Returns a log message.
+        private string RemoveTile(Tile tile, bool replaceWalls) {
+            if (tile is ItemTile contentTile && contentTile.container != null) {
+                contentTile.TakeOutOfContainer();
+                removedItems.Add(contentTile);
+                totalCost -= contentTile.cost;
                 totalRemovedTiles++;
                 return "Taken out of a container.";
             }
@@ -149,39 +154,38 @@ namespace RealRuins {
                 return "Terrain removed.";
             }
 
-            string msg = "";
             ItemTile itemTile = tile as ItemTile;
             totalCost -= itemTile.cost;
             blueprint.itemsMap[tile.location.x, tile.location.z].Remove(itemTile);
             removedItems.Add(itemTile);
-            if (itemTile.isDoor) { //if door is removed it should be replaced with another door, raiders are very polite and always replace expensive doors with cheaper ones.
-                if (Rand.Chance(0.8f)) { //ok, not always.
-                    ItemTile replacementTile = ItemTile.DefaultDoorItemTile(itemTile.location);
-                    blueprint.itemsMap[tile.location.x, tile.location.z].Add(replacementTile);
-                    msg += "Added " + replacementTile.defName + ", original ";
-                    totalReplacedTiles++;
-                } else {
-                    totalRemovedTiles++;
-                    blueprint.RemoveWall(itemTile.location.x, itemTile.location.z);
-                }
-            } else if (itemTile.isWall) { //if something like a wall removed (vent or aircon) you usually want to cover the hole to keep wall integrity
-                ItemTile replacementTile = ItemTile.WallReplacementItemTile(itemTile.location);
-                blueprint.itemsMap[tile.location.x, tile.location.z].Add(replacementTile);
-                msg += "Added " + replacementTile.defName + ", original ";
-                totalReplacedTiles++;
-            } else {
-                totalRemovedTiles++;
+
+            ItemTile replacementTile = null;
+            if (replaceWalls && itemTile.isDoor) { //if door is removed it should be replaced with another door, raiders are very polite and always replace expensive doors with cheaper ones.
+                if (Rand.Chance(0.8f)) replacementTile = ItemTile.DefaultDoorItemTile(itemTile.location); //ok, not always.
+            } else if (replaceWalls && itemTile.isWall) { //if something like a wall removed (vent or aircon) you usually want to cover the hole to keep wall integrity
+                replacementTile = ItemTile.WallReplacementItemTile(itemTile.location);
             }
-            return msg + "Tile removed.";
+
+            if (replacementTile != null) {
+                blueprint.itemsMap[tile.location.x, tile.location.z].Add(replacementTile);
+                totalCost += replacementTile.cost;
+                totalReplacedTiles++;
+                return "Replaced with " + replacementTile.defName + ".";
+            }
+            if (itemTile.isWall || itemTile.isDoor) blueprint.RemoveWall(itemTile.location.x, itemTile.location.z);
+            totalRemovedTiles++;
+            return "Tile removed.";
         }
 
-        //The map's ruins wealth limit: this blueprint got more than its share, so the most valuable things go first until it fits.
-        //Unlike raids it ignores weight: taking a few expensive things keeps the ruin looking as it was.
-        private void CutToAllowance(float allowance) {
-            Debug.Log(Debug.BlueprintTransfer, "Cutting cost of {0} to the map wealth allowance of {1}", totalCost, allowance);
+        //Brings the blueprint down to the target cost (map ruins wealth allowance, or the cost cap of an abandoned base / ruined POI):
+        //the most valuable things go first. Unlike raids it ignores weight, so a few expensive things go and the ruin keeps its look.
+        //Walls and doors are replaced in regular ruins (a golden room in old ruins looks implausible, a hole breaks the ruin),
+        //and dismantled where options.cutDismantlesWalls is set (a half-dismantled golden room fits a scavenged base).
+        private void CutTo(float target) {
+            Debug.Log(Debug.BlueprintTransfer, "Cutting cost of {0} to {1}", totalCost, target);
             //candidates come from the blueprint, not from tilesByCost: raids pop tiles they don't take (the "too cheap per kg" one ending a raid),
             //and heavy expensive things like ship beams are exactly those
-            var candidates = new List<Tile>(containerOf.Keys);
+            var candidates = new List<Tile>(contents);
             for (int x = 0; x < blueprint.width; x++) {
                 for (int z = 0; z < blueprint.height; z++) {
                     if (blueprint.terrainMap[x, z] != null) candidates.Add(blueprint.terrainMap[x, z]);
@@ -189,63 +193,19 @@ namespace RealRuins {
                 }
             }
 
+            bool replaceWalls = !options.cutDismantlesWalls;
+            float replacementWallCost = ItemTile.WallReplacementItemTile().cost;
             int removed = 0;
             foreach (Tile tile in candidates.OrderByDescending(OwnCost).ToList()) {
-                if (totalCost <= allowance) break;
+                if (totalCost <= target) break;
                 if (OwnCost(tile) <= 0) break;
                 if (tile is ItemTile item && IsGone(item)) continue;
-                RemoveTile(tile);
+                //replacing a wall with one worth as much (granite with granite, or cheaper) gains nothing
+                if (replaceWalls && tile is ItemTile wall && wall.isWall && !wall.isDoor && wall.OwnCost <= replacementWallCost) continue;
+                RemoveTile(tile, replaceWalls);
                 removed++;
             }
             Debug.Log(Debug.BlueprintTransfer, "Removed {0} tiles, resulting cost is {1}", removed, totalCost);
-        }
-
-        private void LimitCostToCap() {
-            Debug.Log(Debug.BlueprintTransfer, "Capping current cost of {0} to target cost of {1}", totalCost, options.costCap);
-
-            var initialCount = tilesByCost.Count;
-
-            tilesByCost.RemoveAll(tile => tile is ItemTile item && IsGone(item));
-            var filteredItems = tilesByCost.Where(item => OwnCost(item) > 20).ToList();
-            var filteredCost = 0f;
-            filteredItems.ForEach(tile => filteredCost += OwnCost(tile));
-
-            if (filteredItems.Count == 0 || totalCost - filteredCost > options.costCap) {
-                filteredItems = tilesByCost;
-            }
-
-            Debug.Log(Debug.BlueprintTransfer, "TilesByCost: {0} items, filteredTiles: {1} items of cost {2}", tilesByCost.Count, filteredItems.Count, filteredCost);
-
-            while (filteredItems.Count > 0 && totalCost > options.costCap) {
-                var tile = filteredItems.RandomElement();
-                filteredItems.Remove(tile);
-                if (tile is ItemTile maybeContent) {
-                    if (IsGone(maybeContent)) continue;
-                    if (containerOf.ContainsKey(maybeContent)) {
-                        TakeOut(maybeContent);
-                        continue;
-                    }
-                }
-                totalCost -= tile.cost;
-                if (tile is ItemTile) {
-                    var itemTile = tile as ItemTile;
-                    if (itemTile.isWall && !itemTile.isDoor) {
-                        itemTile.defName = "Wall";
-                        itemTile.stuffDef = "Wood";
-                    } else if (itemTile.isDoor) {
-                        itemTile.defName = "Door";
-                        itemTile.stuffDef = "Wood";
-                    } else { 
-                        blueprint.itemsMap[tile.location.x, tile.location.z].Remove(tile as ItemTile);
-                        removedItems.Add(itemTile);
-                    }
-                }
-                if (tile is TerrainTile) {
-                    blueprint.terrainMap[tile.location.x, tile.location.z] = null;
-                }
-            }
-
-            Debug.Log(Debug.BlueprintTransfer, "Done. Resulting cost is {0}. Items left: {1}/{2}", totalCost, tilesByCost.Count, initialCount);
         }
 
         //Adds a container's contents as separate candidates. Things with no value (corpses, pawns, missing defs) are left inside.
@@ -253,7 +213,7 @@ namespace RealRuins {
             if (container.innerItems == null) return;
             foreach (ItemTile inner in container.innerItems) {
                 if (inner.cost <= 0) continue;
-                containerOf[inner] = container;
+                contents.Add(inner);
                 tilesByCost.Add(inner);
                 AddContents(inner);
             }
@@ -266,22 +226,10 @@ namespace RealRuins {
 
         //Removed itself, or its container (at any level) was carried away whole
         private bool IsGone(ItemTile item) {
-            for (ItemTile current = item; current != null; current = containerOf.TryGetValue(current, out ItemTile container) ? container : null) {
+            for (ItemTile current = item; current != null; current = current.container) {
                 if (removedItems.Contains(current)) return true;
             }
             return false;
-        }
-
-        //Takes a thing out of its container; every container it was in becomes cheaper by its value.
-        //A minified thing left empty is not spawned at all (BlueprintTransferUtility), as there is nothing left in the crate.
-        private void TakeOut(ItemTile item) {
-            ItemTile container = containerOf[item];
-            container.innerItems.Remove(item);
-            removedItems.Add(item);
-            for (ItemTile current = container; current != null; current = containerOf.TryGetValue(current, out ItemTile up) ? up : null) {
-                current.cost -= item.cost;
-            }
-            totalCost -= item.cost;
         }
     }
 

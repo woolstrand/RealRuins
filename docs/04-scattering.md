@@ -97,9 +97,10 @@ or mechanoid (20%) defenders. The game is paused while scattering.
 `RealRuins_ModSettings.ruinsWealthPerMap` (default 15,000; slider on the map generation page, 100,000 = no limit) is the
 market value all chunks of a map may share. `RuinsWealthBudget` gives each chunk, in order, what is left minus a reserve of
 `min(500, limit / chunks / 2)` for every chunk still to come, and is charged with what the chunk actually transferred
-(`ScatterState.transferredCost`). `ScavengingProcessor.CutToAllowance` runs after the normal raids when a blueprint is over its
+(`ScatterState.transferredCost`). `ScavengingProcessor.CutTo` runs after the normal raids when a blueprint is over its
 allowance: it takes the most valuable things first (by `OwnCost`, ignoring weight), with the same removal as raids (contents out
-of containers, cheap door/wall replacements). Only regular scattered ruins are limited; abandoned bases, POIs and the main ruin
+of containers, cheap door/wall replacements). The same cut serves the abandoned base and ruined POI cost caps, which dismantle
+walls instead (see 03-blueprint-pipeline). Only regular scattered ruins are limited; abandoned bases, POIs and the main ruin
 of the caravan event are not.
 
 Measured on 50 sampled maps (Sample ruins wealth debug action, 2026-11-03): median ruins wealth 3k per map, p90 ~10k; before the

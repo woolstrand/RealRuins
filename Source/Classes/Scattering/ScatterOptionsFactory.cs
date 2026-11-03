@@ -55,6 +55,7 @@ namespace RealRuins {
 
             options.blueprintFileName = blueprintFileName;
             options.costCap = costCap;
+            options.cutDismantlesWalls = true; //scavenged base: a half-dismantled golden room fits the story
             options.startingPartyPoints = (int)raidersActivity;
             options.minimumCostRequired = (int)Math.Min(100000.0f, RealRuins_ModSettings.ruinsCostCap);
             options.minimumDensityRequired = 0.015f;
@@ -103,6 +104,7 @@ namespace RealRuins {
                 options.enableDeterioration = true;
                 options.overwritesEverything = false;
                 options.costCap = (int)Math.Abs(Rand.Gaussian(0, Math.Max(5000, blueprint.width * blueprint.height)));
+                options.cutDismantlesWalls = true;
                 options.itemCostLimit = Rand.Range(50, 500);
             } else {
                 options.shouldAddFilth = false;

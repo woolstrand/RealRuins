@@ -50,6 +50,8 @@ namespace RealRuins {
     static class ThingDefExtension {
         //Market value as the game calculates it for a def: materials plus work. Quality is rolled only when a thing is spawned,
         //so it is not included. A def made from stuff without a stuff in the blueprint is valued with its default stuff.
+        //The single source of blueprint costs (Blueprint.UpdateBlueprintStats). Cached: the value of a def never changes in a session,
+        //and a blueprint is costed several times per ruin. Locked: the planetary loader analyzes blueprints off the main thread.
         static public float AbstractMarketValue(this BuildableDef buildable, ThingDef stuffDef = null) {
             if (buildable == null) return 0;
 
@@ -58,42 +60,19 @@ namespace RealRuins {
             } else {
                 stuffDef = null;
             }
-            return buildable.GetStatValueAbstract(StatDefOf.MarketValue, stuffDef);
+
+            var key = (buildable, stuffDef);
+            lock (marketValueCache) {
+                if (marketValueCache.TryGetValue(key, out float cached)) return cached;
+            }
+            float value = buildable.GetStatValueAbstract(StatDefOf.MarketValue, stuffDef);
+            lock (marketValueCache) {
+                marketValueCache[key] = value;
+            }
+            return value;
         }
 
-        //Old cost scheme, kept to compare against AbstractMarketValue: materials only, no work.
-        //Calculates cost of item made of stuff, or default cost if stuff is null
-        //Golden wall is a [Wall] made of [Gold], golden tile is a [GoldenTile] made of default material
-        static public float LegacyMarketCost(this BuildableDef buildable, ThingDef stuffDef = null) {
-            float num = 0f;
-
-            if (buildable == null) return 0; //can be for missing subcomponents, i.e. bed from alpha-poly. Bed does exist, but alpha poly does not.
-
-            if (buildable.costList != null) {
-                foreach (ThingDefCountClass cost in buildable.costList) {
-                    num += cost.count * LegacyMarketCost(cost.thingDef);
-                }
-            }
-
-            if (buildable.costStuffCount > 0) {
-                if (stuffDef == null) {
-                    stuffDef = GenStuff.DefaultStuffFor(buildable);
-                }
-
-                if (stuffDef != null) {
-                    num += (float)buildable.costStuffCount * stuffDef.BaseMarketValue * (1.0f / stuffDef.VolumePerUnit);
-                }
-            }
-
-            if (num == 0) {
-                if (buildable is ThingDef) {
-                    if (((ThingDef)buildable).recipeMaker == null) {
-                        return ((ThingDef)buildable).BaseMarketValue; //on some reason base market value is calculated wrong for, say, golden walls
-                    }
-                }
-            }
-            return num;
-        }
+        private static readonly Dictionary<(BuildableDef, ThingDef), float> marketValueCache = new Dictionary<(BuildableDef, ThingDef), float>();
 
         static public float ThingWeight(this ThingDef thingDef, ThingDef stuffDef) {
             if (thingDef == null) return 0;

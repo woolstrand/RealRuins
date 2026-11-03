@@ -104,7 +104,9 @@ namespace RealRuins {
             //Recalculate cost data after removing some items (should speed up, as cost calculation seems to be cpu-expensive process)
             blueprint.UpdateBlueprintStats(true);
 
-            //Perform removing all items exceeding maximum cost
+            //Perform removing all items exceeding maximum cost. Limits of 0 and 1000 mean "no limit" actually
+            if (options.itemCostLimit <= 0 || options.itemCostLimit >= 1000) return;
+
             for (int x = 0; x < blueprint.width; x++) {
                 for (int z = 0; z < blueprint.height; z++) {
 
@@ -118,12 +120,10 @@ namespace RealRuins {
 
                     if (items == null) continue;
                     foreach (ItemTile item in items) {
-                        if (options.itemCostLimit > 0 && options.itemCostLimit < 1000) { //filter too expensive items. limit of 1000 means "no limit" actually
-                            //a container is judged by its own value: too expensive contents are taken out, the cheap ones stay inside
-                            RemoveExpensiveContents(item, options.itemCostLimit);
-                            if (item.OwnCost > options.itemCostLimit) { //removes only items where at least one item is more expensive than limit we have. limiting stacks is done later.
-                                itemsToRemove.Add(item);
-                            }
+                        //a container is judged by its own value: too expensive contents are taken out, the cheap ones stay inside
+                        RemoveExpensiveContents(item, options.itemCostLimit);
+                        if (item.OwnCost > options.itemCostLimit) { //removes only items where at least one item is more expensive than limit we have. limiting stacks is done later.
+                            itemsToRemove.Add(item);
                         }
                     }
 
@@ -137,20 +137,13 @@ namespace RealRuins {
             }
         }
 
-        //Removes contents more expensive than the limit, at any depth; every container they were in becomes cheaper by their value.
-        //Returns the removed value.
-        private static float RemoveExpensiveContents(ItemTile container, float limit) {
-            if (container.innerItems == null) return 0;
-            float removed = 0;
+        //Removes contents more expensive than the limit, at any depth
+        private static void RemoveExpensiveContents(ItemTile container, float limit) {
+            if (container.innerItems == null) return;
             foreach (ItemTile inner in container.innerItems.ToList()) {
-                removed += RemoveExpensiveContents(inner, limit);
-                if (inner.OwnCost > limit) {
-                    container.innerItems.Remove(inner);
-                    removed += inner.cost;
-                }
+                RemoveExpensiveContents(inner, limit);
+                if (inner.OwnCost > limit) inner.TakeOutOfContainer();
             }
-            container.cost -= removed;
-            return removed;
         }
     }
 }

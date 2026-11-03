@@ -15,8 +15,7 @@ namespace RealRuins {
 
         public string blueprintName;
         public float allowance = -1; // share of the map's ruins wealth limit this run got, -1 for none
-        public float estimate; // tile cost of what was transferred, new scheme
-        public float legacyEstimate; // same, legacy scheme
+        public float estimate; // tile cost of what was transferred
         public float items; // actual market value of spawned things, contents and quality included
         public float terrain; // actual market value of placed terrain
         public int thingsCount;
@@ -28,7 +27,8 @@ namespace RealRuins {
         public static List<MapWealthSample> samples;
 
         public void AddThing(Thing thing) {
-            float value = ActualValue(thing, out int contentsCount);
+            if (thing is Pawn) return; //not loot
+            float value = WealthUtility.MarketValueWithContents(thing, out int contentsCount);
             items += value;
             thingsCount++;
             string label = thing.LabelCap;
@@ -38,37 +38,14 @@ namespace RealRuins {
 
         public void AddTerrain(TerrainDef def) {
             try {
-                terrain += def.GetStatValueAbstract(StatDefOf.MarketValue);
+                terrain += def.AbstractMarketValue();
             } catch (Exception) { }
-        }
-
-        // Market value of a spawned thing with its quality and hit points, plus whatever it holds (bookcase, grave, reactor).
-        // A minified thing already reports its inner thing's value, so it is not opened. Pawns are not loot and are skipped.
-        public static float ActualValue(Thing thing, out int contentsCount) {
-            contentsCount = 0;
-            if (thing == null || thing is Pawn) return 0;
-
-            float value = 0;
-            try {
-                value = thing.MarketValue * thing.stackCount;
-            } catch (Exception) { }
-
-            if (!(thing is MinifiedThing) && thing is IThingHolder holder) {
-                ThingOwner contents = holder.GetDirectlyHeldThings();
-                if (contents != null) {
-                    foreach (Thing inner in contents) {
-                        value += ActualValue(inner, out int innerCount);
-                        contentsCount += 1 + innerCount;
-                    }
-                }
-            }
-            return value;
         }
 
         public string Summary(int topCount = 5) {
             string allowanceStr = allowance >= 0 ? string.Format(", allowance {0:F0}", allowance) : "";
-            return string.Format("{0}: estimate {1:F0}{8}, legacy {2:F0}, actual {3:F0} (things {4:F0} in {5}, terrain {6:F0}). Top: {7}",
-                blueprintName ?? "?", estimate, legacyEstimate, Actual, items, thingsCount, terrain, TopThings(things, topCount), allowanceStr);
+            return string.Format("{0}: estimate {1:F0}{7}, actual {2:F0} (things {3:F0} in {4}, terrain {5:F0}). Top: {6}",
+                blueprintName ?? "?", estimate, Actual, items, thingsCount, terrain, TopThings(things, topCount), allowanceStr);
         }
 
         private static string TopThings(IEnumerable<KeyValuePair<string, float>> things, int count) {
@@ -78,9 +55,9 @@ namespace RealRuins {
         // One greppable line per map (prefix "MAP") with the totals, followed by every chunk and the most valuable things of the whole map.
         public static void LogMapSummary(Map map, IList<RuinsWealthReport> reports, string conditions, MapWealthSample timing = null) {
             var builder = new StringBuilder();
-            builder.AppendFormat("MAP tile={0} size={1}x{2} chunks={3} estimate={4:F0} legacy={5:F0} actual={6:F0} things={7:F0} terrain={8:F0} maxChunk={9:F0} {10}",
+            builder.AppendFormat("MAP tile={0} size={1}x{2} chunks={3} estimate={4:F0} actual={5:F0} things={6:F0} terrain={7:F0} maxChunk={8:F0} {9}",
                 map.Tile, map.Size.x, map.Size.z, reports.Count,
-                reports.Sum(r => r.estimate), reports.Sum(r => r.legacyEstimate), reports.Sum(r => r.Actual),
+                reports.Sum(r => r.estimate), reports.Sum(r => r.Actual),
                 reports.Sum(r => r.items), reports.Sum(r => r.terrain),
                 reports.Count > 0 ? reports.Max(r => r.Actual) : 0, conditions);
             foreach (RuinsWealthReport report in reports.OrderByDescending(r => r.Actual)) {
@@ -94,35 +71,23 @@ namespace RealRuins {
             samples?.Add(new MapWealthSample {
                 scatterMs = timing?.scatterMs ?? 0,
                 costMs = timing?.costMs ?? 0,
-                legacyCostMs = timing?.legacyCostMs ?? 0,
                 chunks = reports.Count,
                 estimate = reports.Sum(r => r.estimate),
-                legacyEstimate = reports.Sum(r => r.legacyEstimate),
                 actual = reports.Sum(r => r.Actual),
                 maxChunk = reports.Count > 0 ? reports.Max(r => r.Actual) : 0,
             });
         }
     }
 
-    // Time spent in the two cost schemes, to compare them. Always counted (two timestamps per tile); blueprints are also
+    // Time spent in blueprint cost calculation. Always counted (two timestamps per tile); blueprints are also
     // analyzed off the main thread, hence Interlocked.
     static class CostTiming {
-        public static long newTicks;
-        public static long legacyTicks;
+        public static long ticks;
 
         public static long Now => System.Diagnostics.Stopwatch.GetTimestamp();
 
-        // Each returns the current timestamp, so calls can be chained
-        public static long AddNew(long started) {
-            long now = Now;
-            Interlocked.Add(ref newTicks, now - started);
-            return now;
-        }
-
-        public static long AddLegacy(long started) {
-            long now = Now;
-            Interlocked.Add(ref legacyTicks, now - started);
-            return now;
+        public static void Add(long started) {
+            Interlocked.Add(ref ticks, Now - started);
         }
 
         public static double Ms(long ticks) => ticks * 1000.0 / System.Diagnostics.Stopwatch.Frequency;
@@ -130,12 +95,10 @@ namespace RealRuins {
 
     class MapWealthSample {
         public double scatterMs; // GenStep_ScatterRealRuins, whole
-        public double costMs; // new cost scheme, part of scatterMs
-        public double legacyCostMs; // legacy cost scheme, part of scatterMs
+        public double costMs; // blueprint cost calculation, part of scatterMs
         public double mapGenMs; // whole map generation, set by RuinsWealthSampler
         public int chunks;
         public float estimate;
-        public float legacyEstimate;
         public float actual;
         public float maxChunk;
     }
