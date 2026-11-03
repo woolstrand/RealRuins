@@ -10,7 +10,7 @@ namespace RealRuins.Settings
     {
         public override string TabLabel => "RealRuins.SpawnSettings.TabCaption".Translate();
 
-        public override float ContentHeight => 830f;
+        public override float ContentHeight => 920f;
 
         public override void Draw(Rect rect)
         {
@@ -128,6 +128,19 @@ namespace RealRuins.Settings
 
             RealRuins_ModSettings.ruinsWealthPerMap =
                 Mathf.Round(listing.Slider(RealRuins_ModSettings.ruinsWealthPerMap, 1000.0f, RealRuins_ModSettings.ruinsWealthPerMapUnlimited) / 1000.0f) * 1000.0f;
+
+            listing.CheckboxLabeled(
+                "RealRuins_MapOptions_WealthScaleWithProximity".Translate(),
+                ref RealRuins_ModSettings.ruinsWealthScaleWithProximity,
+                "RealRuins_MapOptions_WealthScaleWithProximityTT".Translate());
+            listing.CheckboxLabeled(
+                "RealRuins_MapOptions_WealthIgnoreStructure".Translate(),
+                ref RealRuins_ModSettings.ruinsWealthIgnoreStructure,
+                "RealRuins_MapOptions_WealthIgnoreStructureTT".Translate());
+            listing.CheckboxLabeled(
+                "RealRuins_MapOptions_WealthCountDamage".Translate(),
+                ref RealRuins_ModSettings.ruinsWealthCountDamage,
+                "RealRuins_MapOptions_WealthCountDamageTT".Translate());
 
             listing.Gap(12);
 

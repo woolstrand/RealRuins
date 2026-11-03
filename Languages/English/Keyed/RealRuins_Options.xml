@@ -37,6 +37,12 @@
   <RealRuins_MapOptions_ScavengersTT>Zero is pristine blueprints.</RealRuins_MapOptions_ScavengersTT>
   <RealRuins_MapOptions_WealthPerMap>Ruins wealth per map</RealRuins_MapOptions_WealthPerMap>
   <RealRuins_MapOptions_WealthPerMapTT>Total market value all scattered ruins of one map may have together (things and floors). Most maps stay well below the default; on a map with an unusually rich ruin its most valuable things are taken away until the ruins fit. Rightmost position: no limit. Does not affect abandoned bases, planetary ruins and the main ruin of a caravan event.</RealRuins_MapOptions_WealthPerMapTT>
+  <RealRuins_MapOptions_WealthScaleWithProximity>Scale wealth with proximity</RealRuins_MapOptions_WealthScaleWithProximity>
+  <RealRuins_MapOptions_WealthScaleWithProximityTT>Raise the limit near settlements and lower it far from them, the same way the number of ruins changes with proximity, so each ruin keeps about the same share. Off: ruins near settlements share one limit, so the dense ruins there are more picked over. Needs proximity to be enabled.</RealRuins_MapOptions_WealthScaleWithProximityTT>
+  <RealRuins_MapOptions_WealthIgnoreStructure>Don't count walls and floors</RealRuins_MapOptions_WealthIgnoreStructure>
+  <RealRuins_MapOptions_WealthIgnoreStructureTT>Plain walls, doors and floors (up to 50 silver per tile) don't count toward the limit and are never removed for it: there are lots of them and they are not loot. Golden walls, silver floors, autodoors and the like still count.</RealRuins_MapOptions_WealthIgnoreStructureTT>
+  <RealRuins_MapOptions_WealthCountDamage>Count damaged things at lower value</RealRuins_MapOptions_WealthCountDamage>
+  <RealRuins_MapOptions_WealthCountDamageTT>Off: everything counts at full price, since repairing restores it and a damaged thing often works just as well. On: the actual market value of what spawned is counted (damage lowers it, quality changes it), so more fits into the limit.</RealRuins_MapOptions_WealthCountDamageTT>
   <RealRuins_MapOptions_CostLimitTT>All items with total cost higher than selected value will be destroyed</RealRuins_MapOptions_CostLimitTT>
   <RealRuins_MapOptions_DisableHaulablesTT>All haulable items won't spawn, but furniture may still appear</RealRuins_MapOptions_DisableHaulablesTT>
   <RealRuins_MapOptions_WallsAndDoorsOnlyTT>This setting is pretty aggressive and will remove everything that is not based on a vanilla wall or a door.</RealRuins_MapOptions_WallsAndDoorsOnlyTT>

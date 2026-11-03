@@ -16,6 +16,16 @@ namespace RealRuins {
         public float cost = 0.0f; //populated later. Market value including work and, for containers, their contents
         public float weight = 1.0f;
         public IntVec3 location;
+
+        //Value of the tile itself: an item's cost includes its contents, this one doesn't
+        public virtual float OwnCost => cost;
+
+        //Plain walls, doors and floors worth no more than this per tile: abundant, and not loot
+        public const float basicStructureMaxCost = 50;
+        public bool IsBasicStructure => (this is TerrainTile || this is ItemTile item && (item.isWall || item.isDoor)) && OwnCost <= basicStructureMaxCost;
+
+        //Counts toward the map's ruins wealth limit (RealRuins_ModSettings.ruinsWealthIgnoreStructure)
+        public bool CountsForWealthLimit => !RealRuins_ModSettings.ruinsWealthIgnoreStructure || !IsBasicStructure;
     }
 
     class TerrainTile : Tile {
@@ -38,8 +48,7 @@ namespace RealRuins {
         public List<ItemTile> innerItems;
         public ItemTile container; //the item holding this one (bookcase, minified thing, sarcophagus), null for a top level item
 
-        //Value of the item itself: cost includes the contents, this one doesn't
-        public float OwnCost {
+        public override float OwnCost {
             get {
                 float result = cost;
                 if (innerItems != null) {

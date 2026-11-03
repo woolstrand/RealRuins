@@ -218,6 +218,7 @@ namespace RealRuins
             sb.Append("  maps with ruins, min / p25 / median / p75 / p90 / max / mean:");
             AppendPercentiles(sb, "actual", withRuins.Select(s => s.actual));
             AppendPercentiles(sb, "estimate", withRuins.Select(s => s.estimate));
+            AppendPercentiles(sb, "counted for limit", withRuins.Select(s => s.counted));
             AppendPercentiles(sb, "max chunk", withRuins.Select(s => s.maxChunk));
             AppendPercentiles(sb, "chunks", withRuins.Select(s => (float)s.chunks));
             sb.AppendLine();

@@ -624,6 +624,7 @@ namespace RealRuins
         {
             //Planting blueprint
             float totalCost = 0;
+            float limitedCost = 0; //what counts toward the map's ruins wealth limit
             int transferredTerrains = 0;
             int transferredTiles = 0;
             int totalTerrains = 0;
@@ -705,6 +706,7 @@ namespace RealRuins
                             {
                                 map.terrainGrid.SetTerrain(mapLocation, blueprintTerrain);
                                 totalCost += blueprint.terrainMap[x, z].cost;
+                                limitedCost += WealthLimitCost(blueprint.terrainMap[x, z], null);
                                 wealthReport?.AddTerrain(blueprintTerrain, blueprint.terrainMap[x, z].cost);
                                 transferredTerrains++;
                             }
@@ -824,6 +826,7 @@ namespace RealRuins
 
                                     transferredTiles++;
                                     totalCost += itemTile.cost;
+                                    limitedCost += WealthLimitCost(itemTile, thing);
                                     wealthReport?.AddThing(thing, itemTile.cost);
                                 }
                                 catch (Exception e)
@@ -844,12 +847,22 @@ namespace RealRuins
                 RestoreDefencesAndPower();
             }
             context.state.uncoveredCost = totalCost;
-            context.state.transferredCost = totalCost;
+            context.state.transferredCost = limitedCost;
             if (wealthReport != null) {
                 wealthReport.estimate = totalCost;
+                wealthReport.counted = limitedCost;
                 context.state.wealthReport = wealthReport;
             }
             Debug.Log(Debug.BlueprintTransfer, "Transferred blueprint of size {0}x{1}, age {2}, total cost of approximately {3:F0}. Items: {4}/{5}, terrains: {6}/{7}", blueprint.width, blueprint.height, -blueprint.dateShift, totalCost, transferredTiles, totalItems, transferredTerrains, totalTerrains);
+        }
+
+        //What a transferred tile counts toward the map's ruins wealth limit: nothing for basic structure (if so set), the full price
+        //estimate, or (RealRuins_ModSettings.ruinsWealthCountDamage) the actual value of what spawned. Pawns are not loot.
+        private static float WealthLimitCost(Tile tile, Thing spawned) {
+            if (!tile.CountsForWealthLimit || spawned is Pawn) return 0;
+            if (!RealRuins_ModSettings.ruinsWealthCountDamage) return tile.cost;
+            if (spawned != null) return WealthUtility.MarketValueWithContents(spawned);
+            return tile.cost; //terrain has no damage
         }
 
         public void AddFilthAndRubble()

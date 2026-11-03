@@ -101,10 +101,9 @@ namespace RealRuins {
                 if (shouldStop) break;
             }
 
-            float target = -1;
-            if (wealthAllowance >= 0) target = wealthAllowance;
-            if (options.costCap > 0 && (target < 0 || options.costCap < target)) target = options.costCap;
-            if (target >= 0 && totalCost > target) CutTo(target);
+            //the cost cap (abandoned base, ruined POI) counts everything, the map's wealth limit may leave out basic structure
+            if (options.costCap > 0) CutTo(options.costCap, countAll: true);
+            if (wealthAllowance >= 0) CutTo(wealthAllowance, countAll: false);
 
             //Check that there are no "hanging doors" left (also after a cut that dismantled walls)
             bool HasWallsIn(List<ItemTile> list) {
@@ -181,8 +180,8 @@ namespace RealRuins {
         //the most valuable things go first. Unlike raids it ignores weight, so a few expensive things go and the ruin keeps its look.
         //Walls and doors are replaced in regular ruins (a golden room in old ruins looks implausible, a hole breaks the ruin),
         //and dismantled where options.cutDismantlesWalls is set (a half-dismantled golden room fits a scavenged base).
-        private void CutTo(float target) {
-            Debug.Log(Debug.BlueprintTransfer, "Cutting cost of {0} to {1}", totalCost, target);
+        private void CutTo(float target, bool countAll) {
+            countAll |= !RealRuins_ModSettings.ruinsWealthIgnoreStructure;
             //candidates come from the blueprint, not from tilesByCost: raids pop tiles they don't take (the "too cheap per kg" one ending a raid),
             //and heavy expensive things like ship beams are exactly those
             var candidates = new List<Tile>(contents);
@@ -193,19 +192,32 @@ namespace RealRuins {
                 }
             }
 
+            candidates.RemoveAll(tile => tile is ItemTile item && IsGone(item));
+            if (!countAll) candidates.RemoveAll(tile => !tile.CountsForWealthLimit);
+            //what the target is compared with: everything (totalCost), or only what counts for the wealth limit
+            float countedCost = countAll ? totalCost : candidates.Sum(tile => tile.OwnCost);
+            if (countedCost <= target) return;
+            Debug.Log(Debug.BlueprintTransfer, "Cutting cost of {0} (total {1}) to {2}", countedCost, totalCost, target);
+
             bool replaceWalls = !options.cutDismantlesWalls;
             float replacementWallCost = ItemTile.WallReplacementItemTile().cost;
             int removed = 0;
             foreach (Tile tile in candidates.OrderByDescending(OwnCost).ToList()) {
-                if (totalCost <= target) break;
+                if (countedCost <= target) break;
                 if (OwnCost(tile) <= 0) break;
                 if (tile is ItemTile item && IsGone(item)) continue;
                 //replacing a wall with one worth as much (granite with granite, or cheaper) gains nothing
                 if (replaceWalls && tile is ItemTile wall && wall.isWall && !wall.isDoor && wall.OwnCost <= replacementWallCost) continue;
-                RemoveTile(tile, replaceWalls);
+                if (countAll) {
+                    RemoveTile(tile, replaceWalls);
+                    countedCost = totalCost; //replacements count too
+                } else {
+                    countedCost -= tile.cost; //with whatever it still holds; replacements are basic structure and don't count
+                    RemoveTile(tile, replaceWalls);
+                }
                 removed++;
             }
-            Debug.Log(Debug.BlueprintTransfer, "Removed {0} tiles, resulting cost is {1}", removed, totalCost);
+            Debug.Log(Debug.BlueprintTransfer, "Removed {0} tiles, resulting cost is {1} (total {2})", removed, countedCost, totalCost);
         }
 
         //Adds a container's contents as separate candidates. Things with no value (corpses, pawns, missing defs) are left inside.
@@ -219,10 +231,7 @@ namespace RealRuins {
             }
         }
 
-        //Value of the tile itself, without the contents it still holds
-        private static float OwnCost(Tile tile) {
-            return tile is ItemTile item ? item.OwnCost : tile.cost;
-        }
+        private static float OwnCost(Tile tile) => tile.OwnCost;
 
         //Removed itself, or its container (at any level) was carried away whole
         private bool IsGone(ItemTile item) {

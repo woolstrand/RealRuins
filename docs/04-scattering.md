@@ -103,6 +103,20 @@ of containers, cheap door/wall replacements). The same cut serves the abandoned 
 walls instead (see 03-blueprint-pipeline). Only regular scattered ruins are limited; abandoned bases, POIs and the main ruin
 of the caravan event are not.
 
+Options next to the slider:
+- `ruinsWealthScaleWithProximity` (default off): the limit is multiplied by the proximity count multiplier, the same factor as the
+  chunk count (x1.72 at 4 tiles or closer, x0.49 at 16+), so each chunk keeps about the same share. Off is the lore-friendly
+  default: denser ruins near settlements share one limit and are more picked over. Needs `enableProximity`.
+- `ruinsWealthIgnoreStructure` (default on): `Tile.IsBasicStructure` (walls, doors and floors worth at most
+  `Tile.basicStructureMaxCost` = 50 per tile: granite wall ~8, wooden door ~32; golden walls, silver floors, autodoors still count)
+  doesn't count toward the limit and is never cut for it. Without it, dense maps ran out of budget and late chunks were cut to
+  bare walls, whose own value still pushed the map over the limit.
+- `ruinsWealthCountDamage` (default off): the budget is charged with the full-price estimate (repairing is free, a damaged thing
+  often works the same). On: with the live market value of what spawned (`StatPart_Health` lowers it for damage, quality changes it).
+
+What a chunk is charged with is `ScatterState.transferredCost` (`BlueprintTransferUtility.WealthLimitCost`); pawns never count.
+The cost cap of abandoned bases / ruined POIs always counts everything.
+
 Measured on 50 sampled maps (Sample ruins wealth debug action, 2026-11-03): median ruins wealth 3k per map, p90 ~10k; before the
 limit the maximum was 33k, with the limit 15k. The limit only touched the last chunks of maps already close to it.
 

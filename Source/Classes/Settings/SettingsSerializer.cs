@@ -29,6 +29,9 @@ namespace RealRuins.Settings
             Add("forceMultiplier",                  RealRuins_ModSettings.forceMultiplier.ToString("R"));
             Add("ruinsCostCap",                     RealRuins_ModSettings.ruinsCostCap.ToString("R"));
             Add("ruinsWealthPerMap",                RealRuins_ModSettings.ruinsWealthPerMap.ToString("R"));
+            Add("ruinsWealthScaleWithProximity",    RealRuins_ModSettings.ruinsWealthScaleWithProximity.ToString());
+            Add("ruinsWealthIgnoreStructure",       RealRuins_ModSettings.ruinsWealthIgnoreStructure.ToString());
+            Add("ruinsWealthCountDamage",           RealRuins_ModSettings.ruinsWealthCountDamage.ToString());
             Add("diskCacheLimit",                   RealRuins_ModSettings.diskCacheLimit.ToString("R"));
             Add("useRuinsForcesGenerationV2",       RealRuins_ModSettings.useRuinsForcesGenerationV2.ToString());
             Add("logLevel",                         RealRuins_ModSettings.logLevel.ToString());
@@ -99,6 +102,9 @@ namespace RealRuins.Settings
                         case "forceMultiplier":                 TryParseFloat(val, ref RealRuins_ModSettings.forceMultiplier); break;
                         case "ruinsCostCap":                    TryParseFloat(val, ref RealRuins_ModSettings.ruinsCostCap); break;
                         case "ruinsWealthPerMap":               TryParseFloat(val, ref RealRuins_ModSettings.ruinsWealthPerMap); break;
+                        case "ruinsWealthScaleWithProximity":   TryParseBool(val, ref RealRuins_ModSettings.ruinsWealthScaleWithProximity); break;
+                        case "ruinsWealthIgnoreStructure":      TryParseBool(val, ref RealRuins_ModSettings.ruinsWealthIgnoreStructure); break;
+                        case "ruinsWealthCountDamage":          TryParseBool(val, ref RealRuins_ModSettings.ruinsWealthCountDamage); break;
                         case "diskCacheLimit":                  TryParseFloat(val, ref RealRuins_ModSettings.diskCacheLimit); break;
                         case "useRuinsForcesGenerationV2":      TryParseBool(val, ref RealRuins_ModSettings.useRuinsForcesGenerationV2); break;
                         case "logLevel":                        TryParseInt(val, ref RealRuins_ModSettings.logLevel); break;

@@ -16,6 +16,7 @@ namespace RealRuins {
         public string blueprintName;
         public float allowance = -1; // share of the map's ruins wealth limit this run got, -1 for none
         public float estimate; // tile cost of what was transferred
+        public float counted; // what was charged to the map's ruins wealth limit
         public float items; // actual market value of spawned things, contents and quality included
         public float terrain; // actual market value of placed terrain
         public int thingsCount;
@@ -54,8 +55,8 @@ namespace RealRuins {
 
         public string Summary(int topCount = 5) {
             string allowanceStr = allowance >= 0 ? string.Format(", allowance {0:F0}", allowance) : "";
-            return string.Format("{0}: estimate {1:F0}{7}, actual {2:F0} (things {3:F0} in {4}, terrain {5:F0}). Top: {6}",
-                blueprintName ?? "?", estimate, Actual, items, thingsCount, terrain, TopThings(things, topCount), allowanceStr);
+            return string.Format("{0}: estimate {1:F0}{7}, counted {8:F0}, actual {2:F0} (things {3:F0} in {4}, terrain {5:F0}). Top: {6}",
+                blueprintName ?? "?", estimate, Actual, items, thingsCount, terrain, TopThings(things, topCount), allowanceStr, counted);
         }
 
         private static string TopThings(IEnumerable<KeyValuePair<string, float>> things, int count) {
@@ -65,11 +66,11 @@ namespace RealRuins {
         // One greppable line per map (prefix "MAP") with the totals, followed by every chunk and the most valuable things of the whole map.
         public static void LogMapSummary(Map map, IList<RuinsWealthReport> reports, string conditions, MapWealthSample timing = null) {
             var builder = new StringBuilder();
-            builder.AppendFormat("MAP tile={0} size={1}x{2} chunks={3} estimate={4:F0} actual={5:F0} things={6:F0} terrain={7:F0} maxChunk={8:F0} {9}",
+            builder.AppendFormat("MAP tile={0} size={1}x{2} chunks={3} estimate={4:F0} counted={10:F0} actual={5:F0} things={6:F0} terrain={7:F0} maxChunk={8:F0} {9}",
                 map.Tile, map.Size.x, map.Size.z, reports.Count,
                 reports.Sum(r => r.estimate), reports.Sum(r => r.Actual),
                 reports.Sum(r => r.items), reports.Sum(r => r.terrain),
-                reports.Count > 0 ? reports.Max(r => r.Actual) : 0, conditions);
+                reports.Count > 0 ? reports.Max(r => r.Actual) : 0, conditions, reports.Sum(r => r.counted));
             foreach (RuinsWealthReport report in reports.OrderByDescending(r => r.Actual)) {
                 builder.AppendLine();
                 builder.Append("  ").Append(report.Summary(3));
@@ -86,6 +87,7 @@ namespace RealRuins {
                 costMs = timing?.costMs ?? 0,
                 chunks = reports.Count,
                 estimate = reports.Sum(r => r.estimate),
+                counted = reports.Sum(r => r.counted),
                 actual = reports.Sum(r => r.Actual),
                 maxChunk = reports.Count > 0 ? reports.Max(r => r.Actual) : 0,
             });
@@ -112,6 +114,7 @@ namespace RealRuins {
         public double mapGenMs; // whole map generation, set by RuinsWealthSampler
         public int chunks;
         public float estimate;
+        public float counted;
         public float actual;
         public float maxChunk;
     }
