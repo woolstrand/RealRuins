@@ -112,7 +112,7 @@ namespace RealRuins
         
         private static string snapshotsFolderPath = null;
 
-        private static string GetSnapshotsFolderPath() {
+        public static string GetSnapshotsFolderPath() {
             if (snapshotsFolderPath == null) {
                 snapshotsFolderPath = Path.Combine(GenFilePaths.SaveDataFolderPath, "RealRuins");
                 DirectoryInfo directoryInfo = new DirectoryInfo(snapshotsFolderPath);

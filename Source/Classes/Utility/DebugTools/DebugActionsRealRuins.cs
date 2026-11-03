@@ -75,6 +75,24 @@ namespace RealRuins
             return list;
         }
 
+        // Classifies random cached blueprints under several tech level caps (see POITypeSampler). Needs no game, so it is in the
+        // main menu too (game state flags must all match, hence two actions).
+        [DebugAction("RealRuins", "Sample POI types", allowedGameStates = AllowedGameStates.Entry)]
+        public static List<DebugActionNode> SamplePOITypesAtEntry() => SamplePOITypeNodes();
+
+        [DebugAction("RealRuins", "Sample POI types", allowedGameStates = AllowedGameStates.Playing)]
+        public static List<DebugActionNode> SamplePOITypes() => SamplePOITypeNodes();
+
+        private static List<DebugActionNode> SamplePOITypeNodes()
+        {
+            var list = new List<DebugActionNode>();
+            foreach (int count in new[] { 100, 300, 1000 })
+            {
+                list.Add(new DebugActionNode(count + " blueprints", DebugActionType.Action, () => POITypeSampler.Run(count)));
+            }
+            return list;
+        }
+
         // Vanilla "Generate quests x#" -> "*Natural random" rolls the quest type once and generates it N times.
         // This rolls the storyteller's random quest slot N times instead and only counts the outcomes (nothing is spawned).
         [DebugAction("RealRuins", "Simulate random quest rolls", allowedGameStates = AllowedGameStates.PlayingOnMap)]

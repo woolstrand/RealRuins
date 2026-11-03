@@ -144,6 +144,7 @@ namespace RealRuins {
                 case POIType.MilitaryBaseLarge:
                 case POIType.Stronghold:
                 case POIType.Outpost:
+                case POIType.Communication:
                 case POIType.Castle:
                     result.Add(new MilitaryForcesGenerator(poiComp.militaryPower));
                     break;
