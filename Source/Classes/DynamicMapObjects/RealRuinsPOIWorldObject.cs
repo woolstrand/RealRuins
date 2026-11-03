@@ -34,7 +34,10 @@ namespace RealRuins {
                     case POIType.City:
                     case POIType.Stronghold:
                     case POIType.MilitaryBaseLarge:
+                    case POIType.Castle:
                         return "World/WorldObjects/DefaultSettlement";
+                    case POIType.Village:
+                    case POIType.Workshop:
                     case POIType.Research:
                     case POIType.Storage:
                     case POIType.Factory:

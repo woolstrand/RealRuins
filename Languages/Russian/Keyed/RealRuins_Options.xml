@@ -108,6 +108,9 @@
   <RealRuins.CaptionPOI9>Центр связи</RealRuins.CaptionPOI9>
   <RealRuins.CaptionPOI10>Руины</RealRuins.CaptionPOI10>
   <RealRuins.CaptionPOI11>Цитадель</RealRuins.CaptionPOI11>
+  <RealRuins.CaptionPOI12>Деревня</RealRuins.CaptionPOI12>
+  <RealRuins.CaptionPOI13>Замок</RealRuins.CaptionPOI13>
+  <RealRuins.CaptionPOI14>Мастерская</RealRuins.CaptionPOI14>
 
 
   <RealRuins.DescPOI0>Небольшая группа строений, похоже на что-то военное. Склад боеприпасов или небольшая перевалочная военная база. Здесь может быть несколько стационарных орудий и десяток-другой солдат.</RealRuins.DescPOI0>
@@ -122,6 +125,9 @@
   <RealRuins.DescPOI9>Небольшое здание, похожее на центр связи. Возможно, просто временный военный лагерь с несколькими охранниками.</RealRuins.DescPOI9>
   <RealRuins.DescPOI10>Остатки каких-то строений, куски мебели, сломанные верстаки, обломки труб и арматуры. Невозможно определить, что здесь было раньше, сейчас это просто разграбленные руины.</RealRuins.DescPOI10>
   <RealRuins.DescPOI11>Отлично охраняемая до зубов вооруженная цитадель, с массой стационарных орудий, толпами солдат, несметными волнами подкреплений и чем-то ужасно ценным внутри.</RealRuins.DescPOI11>
+  <RealRuins.DescPOI12>Деревня земледельцев и ремесленников. Дома простые, но жители будут их защищать.</RealRuins.DescPOI12>
+  <RealRuins.DescPOI13>Замок за толстыми стенами. Его охраняет вооруженный гарнизон, и без боя хозяин его не отдаст.</RealRuins.DescPOI13>
+  <RealRuins.DescPOI14>Мастерские, полные верстаков, инструментов и товаров ручной работы. Ремесленники держат немного охраны, чтобы беречь своё добро.</RealRuins.DescPOI14>
 
   <RealRuins.POINowRuined>Однажды в этом месте бурлила жизнь, но сейчас оно покинуто, никто не знает почему. Так что лучше будьте готовы к тому, что вас может подстерегать любая опасность.</RealRuins.POINowRuined>
   <RealRuins.POIUselessRuins>Сложно сказать, что здесь было раньше. Сейчас - по большей части камни и мусор.</RealRuins.POIUselessRuins>

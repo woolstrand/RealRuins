@@ -134,9 +134,28 @@ Uses threshold-based if/else rules (not a scoring system):
 - `militaryPower = defensiveItems × 250 / internalArea + 1`
 - Classification tree: `Stronghold`, `Military`, `Outpost`, `City`, `Factory`, `Communication` based on feature scores, area, room count
 
+### Era fit (`POITypeUtility`, next to `POIType`)
+`supposedType()` tells what kind of place it is (settlement, production, military); `Analyze()` then fits it to an era with
+`POITypeUtility.FitToEra`, which steps the type down to its counterpart one era earlier until `MinTechLevel(type) <= era`:
+
+| Industrial | Medieval | Neolithic |
+|---|---|---|
+| `City` | `Village` | `Village` |
+| `Factory`, `Research`, `PowerPlant` | `Workshop` | `Village` |
+| `MilitaryBaseSmall`, `MilitaryBaseLarge`, `Stronghold` | `Castle` | `Village` |
+| `Communication` | `Outpost` | `Camp` |
+| | `Storage` | `Camp` |
+
+The era is Medieval when at most `lowTechAllowedShare` (5%) of the items above medieval (`aboveMedievalItemsCount` of
+`techRatedItemsCount`: items except walls and doors, contents included, minified things counted as what is inside, tech level from
+`TechLevelFilter.TechLevelOf`), and the POI tech level cap if that is lower. With the cap on (strict), the analyzed blueprint
+is already filtered, so a Medieval cap always gives medieval types and a Neolithic cap villages and camps.
+`Village`, `Castle` and `Workshop` (ordinals 12–14, icons `Textures/poi-12..14.png`) are produced only this way.
+Defenders: `Castle` as military bases, `Village` and `Workshop` as cities and factories.
+
 **Known issues:**
 - Uses `Rand.Chance(0.5f)` to decide between `Outpost` and `Communication` — non-deterministic on purpose (FIXES_QUEUE M4, won't fix)
-- `POIType.PowerPlant` appears in `chanceOfHavingFaction()` but is never returned by `supposedType()` — dead path
+- `POIType.PowerPlant` appears in `chanceOfHavingFaction()` and `FitToEra` but is never returned by `supposedType()` — dead path
 - Division-by-zero possible when `occupiedTilesCount == wallLength` and `haulableStacksCount == 0`
 
 ### `chanceOfHavingFaction()`
@@ -166,8 +185,8 @@ Factory that creates `RealRuinsPOIWorldObject` instances from `PlanetTileInfo` +
 ### `TryCreateWorldObject()`
 Creates either `RealRuinsPOI` or `RealRuinsPOI_Unlisted` based on whether it's a ruins type. Refuses to create if a world object already exists at the tile.
 
-### `MinTechLevelForPOIType()`
-Maps POI type to minimum faction tech level (e.g., Military requires Industrial+). With the tech level cap on for POIs, the
+### Faction tech level
+`POITypeUtility.MinTechLevel()` maps POI type to minimum faction tech level (e.g., Military requires Industrial+, Castle Medieval). With the tech level cap on for POIs, the
 faction's maximum tech level is the cap and the minimum is lowered to it (see 04-scattering, Tech level cap).
 
 ---

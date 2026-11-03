@@ -26,6 +26,8 @@ namespace RealRuins {
         public int mannableCount;
         public int productionItemsCount;
         public int bedsCount;
+        public int techRatedItemsCount; //items except walls and doors, contents included
+        public int aboveMedievalItemsCount;
 
         public override string ToString() {
             string message = "Analyzer result:\r\n";
@@ -93,6 +95,10 @@ namespace RealRuins {
                 result.wallLength++;
             }
 
+            if (!itemTile.isWall && !itemTile.isDoor) {
+                CountTechLevel(itemTile);
+            }
+
             var message = itemTile.defName + " ";
 
             if (itemDef.alwaysHaulable) {
@@ -141,6 +147,36 @@ namespace RealRuins {
             }
         }
   
+        // A minified thing counts as what is inside, a container as itself and each of its contents
+        private void CountTechLevel(ItemTile itemTile) {
+            ThingDef def = DefDatabase<ThingDef>.GetNamed(itemTile.defName, false);
+            if (def != null && def != ThingDefOf.MinifiedThing) {
+                ThingDef stuff = itemTile.stuffDef != null ? DefDatabase<ThingDef>.GetNamed(itemTile.stuffDef, false) : null;
+                TechLevel level = TechLevelFilter.TechLevelOf(def);
+                TechLevel stuffLevel = TechLevelFilter.TechLevelOf(stuff);
+                if (stuffLevel > level) level = stuffLevel;
+
+                result.techRatedItemsCount++;
+                if (level > TechLevel.Medieval) result.aboveMedievalItemsCount++;
+            }
+            if (itemTile.innerItems == null) return;
+            foreach (ItemTile inner in itemTile.innerItems) {
+                CountTechLevel(inner);
+            }
+        }
+
+        // Era the POI type has to belong to: the tech level cap, or medieval if the blueprint is a medieval one.
+        // Undefined if neither applies.
+        private TechLevel Era() {
+            TechLevel era = TechLevel.Undefined;
+            if (result.aboveMedievalItemsCount <= result.techRatedItemsCount * lowTechAllowedShare) era = TechLevel.Medieval;
+            if (TechLevelFilter.IsActive(options) && (era == TechLevel.Undefined || options.maxTechLevel < era)) era = options.maxTechLevel;
+            return era;
+        }
+
+        // Share of items above medieval a blueprint may have and still count as a medieval one
+        public const float lowTechAllowedShare = 0.05f;
+
         public void Analyze() {
             if (!shouldSuppressLogging) {
                 Debug.Log(Debug.Analyzer, "analyzing blueprint {0} with options {1}", blueprint, options);
@@ -180,9 +216,13 @@ namespace RealRuins {
             }
 
             this.mannableCount = result.mannableCount;
-            determinedType = supposedType();
+            //The classification tells what kind of place it is (settlement, production, military), the era what it is called:
+            //a medieval town is a village, a medieval factory a workshop, a medieval military base a castle.
+            POIType functionalType = supposedType();
+            TechLevel era = Era();
+            determinedType = POITypeUtility.FitToEra(functionalType, era);
             if (!shouldSuppressLogging) {
-                Debug.Log(Debug.Analyzer, "Type is {0} by {1}", determinedType, result.ToString());
+                Debug.Log(Debug.Analyzer, "Type is {0} ({1} in era {2}) by {3}", determinedType, functionalType, era, result.ToString());
             }
         }
 
@@ -286,8 +326,11 @@ namespace RealRuins {
 
                 case POIType.MilitaryBaseSmall:
                 case POIType.Communication:
+                case POIType.Village:
+                case POIType.Workshop:
                     return 0.7f;
 
+                case POIType.Castle:
                 case POIType.City:
                 case POIType.Stronghold:
                 case POIType.MilitaryBaseLarge:
