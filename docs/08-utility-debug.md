@@ -154,6 +154,21 @@ Uses `[StaticConstructorOnStartup]` to ensure registration during game startup.
 
 **`ToggleRuinsWealthLog()`** ("Toggle ruins wealth log", in game only: `AllowedGameStates` flags must all match, so `Entry | Playing` never shows): flips `RealRuins_ModSettings.debugLogRuinsWealth`, the same setting as the "Log ruins wealth" checkbox on the mod's debug settings page, and saves settings.
 
+**`SamplePOITypes()`** ("Sample POI types", main menu or in game) → `POITypeSampler`, see 06-planetary-ruins.
+
+## DevSiteTools.cs
+
+Dev mode buttons on the world map, on planetary POIs (`RealRuinsPOIWorldObject`) and pristine ruins (`AbandonedBaseWorldObject`),
+both `IDevExplorableSite`:
+- **DEV: Explore**: saves the site state (`DevSaveState`), makes a caravan of 3–6 armed colonists on the site tile and runs the
+  site's own caravan arrival action (map generation, letters, relations), then jumps to the caravan. Disabled when the site has
+  a map.
+- **DEV: Reset**: destroys player caravans on the tile and every player pawn on the site map, removes the map and restores the
+  saved state. POI: owner, the owner's goodwill (entering an owned POI makes its faction hostile), no entry cooldown. Pristine
+  ruins: scavenging state, cost cap and raider activity, and what the visit set up. The saved states are not saved with the game;
+  without one (entered normally, or after a reload) the site is reverted as far as known (POI: its owner before the player took
+  it; pristine ruins: waiting for arrival). The pristine ruins quest listens only to the site's own signals, so it goes on.
+
 ---
 
 ## RuinsWealthReport.cs

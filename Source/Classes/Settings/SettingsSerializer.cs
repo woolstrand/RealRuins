@@ -41,6 +41,12 @@ namespace RealRuins.Settings
             Add("spawnBlacklist",                   Uri.EscapeDataString(RealRuins_ModSettings.spawnBlacklist ?? ""));
             Add("materialBlacklist",                Uri.EscapeDataString(RealRuins_ModSettings.materialBlacklist ?? ""));
             Add("fallbackMaterial",                 Uri.EscapeDataString(RealRuins_ModSettings.fallbackMaterial ?? "Wood"));
+            Add("techLimitEnabled",                 RealRuins_ModSettings.techLimitEnabled.ToString());
+            Add("techLimitMaxLevel",                RealRuins_ModSettings.techLimitMaxLevel.ToString());
+            Add("techLimitStrict",                  RealRuins_ModSettings.techLimitStrict.ToString());
+            Add("techLimitRuins",                   RealRuins_ModSettings.techLimitRuins.ToString());
+            Add("techLimitPOIs",                    RealRuins_ModSettings.techLimitPOIs.ToString());
+            Add("techLimitEvents",                  RealRuins_ModSettings.techLimitEvents.ToString());
 
             // ScatterOptions
             var so = RealRuins_ModSettings.defaultScatterOptions;
@@ -114,6 +120,12 @@ namespace RealRuins.Settings
                         case "spawnBlacklist":                  RealRuins_ModSettings.spawnBlacklist = Uri.UnescapeDataString(val); break;
                         case "materialBlacklist":               RealRuins_ModSettings.materialBlacklist = Uri.UnescapeDataString(val); break;
                         case "fallbackMaterial":                RealRuins_ModSettings.fallbackMaterial = Uri.UnescapeDataString(val); break;
+                        case "techLimitEnabled":                TryParseBool(val, ref RealRuins_ModSettings.techLimitEnabled); break;
+                        case "techLimitMaxLevel":               TryParseTechLevel(val, ref RealRuins_ModSettings.techLimitMaxLevel); break;
+                        case "techLimitStrict":                 TryParseBool(val, ref RealRuins_ModSettings.techLimitStrict); break;
+                        case "techLimitRuins":                  TryParseBool(val, ref RealRuins_ModSettings.techLimitRuins); break;
+                        case "techLimitPOIs":                   TryParseBool(val, ref RealRuins_ModSettings.techLimitPOIs); break;
+                        case "techLimitEvents":                 TryParseBool(val, ref RealRuins_ModSettings.techLimitEvents); break;
 
                         case "so.densityMultiplier":        TryParseFloat(val, ref RealRuins_ModSettings.defaultScatterOptions.densityMultiplier); break;
                         case "so.minRadius":                TryParseInt(val, ref RealRuins_ModSettings.defaultScatterOptions.minRadius); break;
@@ -153,6 +165,11 @@ namespace RealRuins.Settings
         private static void TryParseInt(string val, ref int field)
         {
             if (int.TryParse(val, out int result)) field = result;
+        }
+
+        private static void TryParseTechLevel(string val, ref RimWorld.TechLevel field)
+        {
+            if (Enum.TryParse(val, out RimWorld.TechLevel result) && Enum.IsDefined(typeof(RimWorld.TechLevel), result)) field = result;
         }
 
         private static void TryParseFloat(string val, ref float field)

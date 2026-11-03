@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
+using RimWorld;
 using Verse;
 
 namespace RealRuins
@@ -37,6 +38,12 @@ namespace RealRuins
         public static string spawnBlacklist = ""; // newline-separated list of defs to exclude from spawning
         public static string materialBlacklist = ""; // newline-separated list of materials to exclude from spawning
         public static string fallbackMaterial = "Wood"; // material to use when blacklisted material is encountered
+        public static bool techLimitEnabled = false; // things above techLimitMaxLevel don't spawn (TechLevelFilter)
+        public static TechLevel techLimitMaxLevel = TechLevel.Medieval;
+        public static bool techLimitStrict = true; // false: things above the cap may still spawn, with a much lower chance
+        public static bool techLimitRuins = true; // regular ruins on generated maps
+        public static bool techLimitPOIs = true; // planetary POIs, including their classification
+        public static bool techLimitEvents = true; // abandoned base (event and quest) and caravan small ruins
 
         public static ScatterOptions defaultScatterOptions = new ScatterOptions();
         public static PlanetaryRuinsOptions planetaryRuinsOptions = new PlanetaryRuinsOptions();
@@ -70,6 +77,12 @@ namespace RealRuins
             Scribe_Values.Look(ref spawnBlacklist, "spawnBlacklist", "", false);
             Scribe_Values.Look(ref materialBlacklist, "materialBlacklist", "", false);
             Scribe_Values.Look(ref fallbackMaterial, "fallbackMaterial", "Wood", false);
+            Scribe_Values.Look(ref techLimitEnabled, "techLimitEnabled", false, false);
+            Scribe_Values.Look(ref techLimitMaxLevel, "techLimitMaxLevel", TechLevel.Medieval, false);
+            Scribe_Values.Look(ref techLimitStrict, "techLimitStrict", true, false);
+            Scribe_Values.Look(ref techLimitRuins, "techLimitRuins", true, false);
+            Scribe_Values.Look(ref techLimitPOIs, "techLimitPOIs", true, false);
+            Scribe_Values.Look(ref techLimitEvents, "techLimitEvents", true, false);
             Scribe_Deep.Look(ref defaultScatterOptions, "defaultScatterOptions");
             Scribe_Deep.Look(ref planetaryRuinsOptions, "planetaryRuinsOptions");
         
@@ -120,6 +133,12 @@ namespace RealRuins
             spawnBlacklist = "";
             materialBlacklist = "";
             fallbackMaterial = "Wood";
+            techLimitEnabled = false;
+            techLimitMaxLevel = TechLevel.Medieval;
+            techLimitStrict = true;
+            techLimitRuins = true;
+            techLimitPOIs = true;
+            techLimitEvents = true;
         }
     }
 }

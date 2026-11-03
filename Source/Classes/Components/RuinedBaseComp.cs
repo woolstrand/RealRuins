@@ -116,6 +116,34 @@ namespace RealRuins {
             Debug.Log(Debug.Generic, "Generated map. Cap cost: {0}, actual cost: {1}, reference wealth for forces: {2}.", currentCapCost, currentCost, referenceWealth);
         }
 
+        // Dev Explore / Reset (DevSiteTools, via AbandonedBaseWorldObject): the scavenging state before the visit
+        private class DevState {
+            public RuinedBaseState state;
+            public int currentCapCost;
+            public float raidersActivity;
+        }
+
+        public object DevSaveState() {
+            return new DevState { state = state, currentCapCost = currentCapCost, raidersActivity = raidersActivity };
+        }
+
+        public void DevRestoreState(object saved) {
+            if (saved is DevState devState) {
+                state = devState.state;
+                currentCapCost = devState.currentCapCost;
+                raidersActivity = devState.raidersActivity;
+            } else if (state != RuinedBaseState.Inactive && state != RuinedBaseState.ScavengedCompletely) {
+                state = RuinedBaseState.WaitingForArrival;
+            }
+            //what the visit set up, PostMapGenerate sets it again on the next one
+            unlockTargetTime = -1;
+            allTriggersFiredTick = -1;
+            triggersCache = null;
+            referenceWealth = -1;
+            destructionLevel = 0;
+            baseSmallRaidChance = 0.05f;
+        }
+
         public void StartScavenging(int initialCost) {
             currentCapCost = initialCost;
             raidersActivity = 0;

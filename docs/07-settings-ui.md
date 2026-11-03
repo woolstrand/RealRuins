@@ -114,6 +114,12 @@ Sliders for: `forceMultiplier` (0â€“2 linear), `ruinsCostCap` (logarithmic 1000â
 
 ---
 
+### TechLevelSettingsPage
+Tech level cap (see 04-scattering, Tech level cap): master toggle, maximum level and strategy dropdowns, group checkboxes.
+Everything below the master toggle is grayed out and ignores clicks while it is off.
+
+---
+
 ### PlanetaryRuinsSettingsPage
 Enable-on-start checkbox, download/transfer limit fields, exclude-plain-ruins checkbox, disable-friendly-locations checkbox, abandoned percentage slider, "Spawn Sites" and "Remove All Locations" buttons.
 

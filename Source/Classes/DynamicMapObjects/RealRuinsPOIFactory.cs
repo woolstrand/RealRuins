@@ -113,7 +113,16 @@ namespace RealRuins
 
             if (baseChance)
             {
-                Find.FactionManager.TryGetRandomNonColonyHumanlikeFaction(out faction, false, false, minTechLevel: MinTechLevelForPOIType(poiType), requireHostile: disableFriendlyLocations);
+                TechLevel minTechLevel = POITypeUtility.MinTechLevel(poiType);
+                TechLevel maxTechLevel = TechLevel.Undefined;
+                ScatterOptions techLimit = ScatterOptionsFactory.ForAnalyzer();
+                //tech level cap: the site's faction can't be more advanced than what may spawn there (limited strategy: usually)
+                if (TechLevelFilter.IsActive(techLimit) && (techLimit.techLimitStrict || !Rand.Chance(TechLevelFilter.limitedKeepChance)))
+                {
+                    maxTechLevel = techLimit.maxTechLevel;
+                    if (minTechLevel > maxTechLevel) minTechLevel = maxTechLevel;
+                }
+                Find.FactionManager.TryGetRandomNonColonyHumanlikeFaction(out faction, false, false, minTechLevel: minTechLevel, maxTechLevel: maxTechLevel, requireHostile: disableFriendlyLocations);
             }
 
             RealRuinsPOIWorldObject site = TryCreateWorldObject(tileInfo.tile, faction, poiType == POIType.Ruins);
@@ -169,28 +178,5 @@ namespace RealRuins
             Find.WorldObjects.Add(site);
             return site;
         }
-
-        static TechLevel MinTechLevelForPOIType(POIType poiType)
-        {
-            switch (poiType)
-            {
-                case POIType.Camp:
-                    return TechLevel.Neolithic;
-                case POIType.Outpost:
-                case POIType.Storage:
-                    return TechLevel.Medieval;
-                case POIType.Factory:
-                case POIType.Research:
-                case POIType.City:
-                case POIType.Communication:
-                case POIType.Stronghold:
-                case POIType.MilitaryBaseLarge:
-                case POIType.MilitaryBaseSmall:
-                    return TechLevel.Industrial;
-                default:
-                    return TechLevel.Undefined;
-            }
-        }
-
     }
 }

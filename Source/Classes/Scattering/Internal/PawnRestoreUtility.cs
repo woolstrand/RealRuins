@@ -22,10 +22,12 @@ namespace RealRuins
 
         private long dateShift;
         private Faction faction;
+        private ScatterOptions options; //tech level cap for apparel
 
-        public PawnRestoreUtility(long dateShift, Faction faction)
+        public PawnRestoreUtility(long dateShift, Faction faction, ScatterOptions options = null)
         {
             this.dateShift = dateShift;
+            this.options = options;
             //restored pawns belonged to another player's colony: when the site itself is the player's (taking over a planetary
             //location at game start) they must not become the player's dead colonists or free colonists in caskets
             this.faction = faction == Faction.OfPlayer ? null : faction;
@@ -274,6 +276,12 @@ namespace RealRuins
                     if (stuffDefName != null)
                     {
                         stuffDef = DefDatabase<ThingDef>.GetNamedSilentFail(stuffDefName);
+                    }
+
+                    if (thingDef != null && !TechLevelFilter.Allows(options, thingDef, stuffDef))
+                    {
+                        Debug.Extra(Debug.BlueprintPawnDecoder, "Apparel {0} is above the tech level cap, skipping", thingDef.defName);
+                        continue;
                     }
 
                     if (thingDef != null)

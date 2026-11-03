@@ -25,6 +25,7 @@ namespace RealRuins {
             RealRuinsPOIComp poiComp;
             bool skipForcesGeneration = false;
             bool overrideSpawnAsRuins = false;
+            bool takenOver = false;
             Faction faction = null;
             if (PlanetaryRuinsInitData.shared.startingPOI != null) {
                 Debug.Log("[MapGen]", "Found starting poi in game init context.");
@@ -40,6 +41,7 @@ namespace RealRuins {
                         faction = Faction.OfPlayer;
                         skipForcesGeneration = true;
                         overrideSpawnAsRuins = false;
+                        takenOver = true;
                         break;
                     case SettleMode.attack:
                         faction = poi.Faction;
@@ -78,7 +80,15 @@ namespace RealRuins {
                 skipForcesGeneration = true;
             }
 
-            ScatterOptions options = ScatterOptionsFactory.ForPOI(filename, bp, (POIType)poiComp.poiType, faction != null, overrideSpawnAsRuins);
+            ScatterOptions options = ScatterOptionsFactory.ForPOI(filename, bp, (POIType)poiComp.poiType, faction != null, overrideSpawnAsRuins, takenOver);
+
+            if (takenOver) {
+                //the player's own base has no unexplored rooms. Vanilla fog (GenStep_Fog, order 1500) runs after this genstep,
+                //so the fog is cleared once map generation (a long event at game start) is over
+                LongEventHandler.ExecuteWhenFinished(() => {
+                    if (map.fogGrid != null) map.fogGrid.ClearAllFog();
+                });
+            }
 
             Debug.Log(Debug.BlueprintTransfer, "Trying to place POI map at tile {0}, at {1},{2} to {3},{4} ({5}x{6})",
                 map.Parent.Tile,
@@ -144,9 +154,14 @@ namespace RealRuins {
                 case POIType.MilitaryBaseLarge:
                 case POIType.Stronghold:
                 case POIType.Outpost:
+                case POIType.Communication:
+                case POIType.Castle:
                     result.Add(new MilitaryForcesGenerator(poiComp.militaryPower));
                     break;
                 case POIType.Camp:
+                case POIType.Village:
+                case POIType.Workshop:
+                case POIType.Shipwreck:
                 case POIType.City:
                 case POIType.Factory:
                 case POIType.PowerPlant:

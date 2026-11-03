@@ -20,6 +20,7 @@ namespace RealRuins.Settings
             new Color(0.2f, 0.35f, 0.5f),   // Network & Cache - Blue
             new Color(0.2f, 0.45f, 0.3f),   // Map Generation - Green
             new Color(0.4f, 0.3f, 0.45f),   // Events & Advanced - Purple
+            new Color(0.2f, 0.4f, 0.45f),   // Tech Level - Teal
             new Color(0.45f, 0.35f, 0.2f),  // Planetary Ruins - Orange
             new Color(0.55f, 0.2f, 0.2f)    // Debug - Red
         };
@@ -39,6 +40,7 @@ namespace RealRuins.Settings
                 new NetworkCacheSettingsPage(),
                 new MapGenerationSettingsPage(),
                 new AdvancedSettingsPage(),
+                new TechLevelSettingsPage(),
                 new PlanetaryRuinsSettingsPage(),
                 new DebugSettingsPage()
             };

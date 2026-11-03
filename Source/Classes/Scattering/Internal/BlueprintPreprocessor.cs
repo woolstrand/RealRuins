@@ -27,8 +27,8 @@ namespace RealRuins {
 
                     if (terrain != null) {
                         terrainDef = DefDatabase<TerrainDef>.GetNamed(terrain.defName, false);
-                        if (terrainDef == null) {
-                            blueprint.terrainMap[x, z] = null; //remove unloadable terrain
+                        if (terrainDef == null || !TechLevelFilter.Allows(options, terrainDef)) {
+                            blueprint.terrainMap[x, z] = null; //remove unloadable terrain and terrain above the tech level cap
                             terrain = null;
                         }
                     }
@@ -36,6 +36,7 @@ namespace RealRuins {
 
 
                     List<ItemTile> itemsToRemove = new List<ItemTile>();
+                    List<ItemTile> itemsToReplace = new List<ItemTile>();
                     if (items == null) continue;
 
                     foreach (ItemTile item in items) {
@@ -60,6 +61,19 @@ namespace RealRuins {
                         if (thingDef == ThingDefOf.Campfire || thingDef == ThingDefOf.TorchLamp || thingDef == ThingDefOf.Wastepack) {
                             itemsToRemove.Add(item);
                             continue;
+                        }
+
+                        //above the tech level cap: walls and doors become plain ones so rooms stay closed, everything else goes
+                        if (TechLevelFilter.IsActive(options)) {
+                            if (!TechLevelFilter.Allows(options, item)) {
+                                if (item.isWall || item.isDoor) {
+                                    itemsToReplace.Add(item);
+                                } else {
+                                    itemsToRemove.Add(item);
+                                }
+                                continue;
+                            }
+                            TechLevelFilter.RemoveContents(options, item);
                         }
 
                         if (options.wallsDoorsOnly) { //eleminate almost everything if "doors & walls" setting is active
@@ -97,6 +111,11 @@ namespace RealRuins {
                         }
 
                         items.Remove(item);
+                    }
+
+                    foreach (ItemTile item in itemsToReplace) {
+                        items.Remove(item);
+                        items.Add(item.isDoor ? ItemTile.DefaultDoorItemTile(item.location) : ItemTile.WallReplacementItemTile(item.location));
                     }
                 }
             }

@@ -15,6 +15,7 @@ namespace RealRuins {
         public static ScatterOptions ForGenericRuins() {
             ScatterOptions options = FromModOptions();
             ApplyContentFilters(options);
+            ApplyTechLimit(options, RealRuins_ModSettings.techLimitRuins);
 
             options.doorOwnershipProbability = 0.05f;
             options.allowFriendlyRaids = !RealRuins_ModSettings.disableFriendlyRaids;
@@ -26,6 +27,7 @@ namespace RealRuins {
         public static ScatterOptions ForCaravanSmallRuins() {
             ScatterOptions options = FromModOptions();
             ApplyContentFilters(options);
+            ApplyTechLimit(options, RealRuins_ModSettings.techLimitEvents);
 
             options.minRadius = 24;
             options.maxRadius = 50;
@@ -45,6 +47,7 @@ namespace RealRuins {
         // Large abandoned base event. Content filters (walls & doors only, no items) are deliberately not applied.
         public static ScatterOptions ForAbandonedBase(string blueprintFileName, int costCap, float raidersActivity) {
             ScatterOptions options = FromModOptions();
+            ApplyTechLimit(options, RealRuins_ModSettings.techLimitEvents);
 
             options.minRadius = 200;
             options.maxRadius = 200;
@@ -71,8 +74,10 @@ namespace RealRuins {
         }
 
         // Planetary POI. Spawns either as ruins (content filters apply) or as an intact base (they don't).
-        public static ScatterOptions ForPOI(string blueprintFileName, Blueprint blueprint, POIType poiType, bool hasFaction, bool forceSpawnAsRuins) {
+        // takenOver: the player starts the game in the intact base and owns all of it.
+        public static ScatterOptions ForPOI(string blueprintFileName, Blueprint blueprint, POIType poiType, bool hasFaction, bool forceSpawnAsRuins, bool takenOver = false) {
             ScatterOptions options = FromModOptions();
+            ApplyTechLimit(options, RealRuins_ModSettings.techLimitPOIs); //intact bases too: the cap is about the era, not about ruins
 
             options.minRadius = 400;
             options.maxRadius = 400;
@@ -111,6 +116,7 @@ namespace RealRuins {
                 options.forceFullHitPoints = true;
                 options.enableDeterioration = false;
                 options.overwritesEverything = true;
+                options.claimEverything = takenOver;
             }
 
             options.overridePosition = new IntVec3(blueprint.originX, 0, blueprint.originZ);
@@ -118,10 +124,11 @@ namespace RealRuins {
             return options;
         }
 
-        // Blueprint analysis. Always sees the full, untouched blueprint: it has to know what the blueprint could be in theory,
-        // so no mod options apply here.
+        // Blueprint analysis (planetary POIs). Sees the full, untouched blueprint: it has to know what the blueprint could be in
+        // theory, so no mod options apply here. The exception is the tech level cap: what is above it never spawns, so a base
+        // full of turrets which can't exist must not be classified as a military one.
         public static ScatterOptions ForAnalyzer() {
-            return new ScatterOptions {
+            ScatterOptions options = new ScatterOptions {
                 overwritesEverything = true,
                 canHaveFood = true,
                 scavengingMultiplier = 0.0f,
@@ -136,6 +143,8 @@ namespace RealRuins {
                 minimumDensityRequired = 0.0f,
                 minimumAreaRequired = 0,
             };
+            ApplyTechLimit(options, RealRuins_ModSettings.techLimitPOIs);
+            return options;
         }
 
         // Generation tuning mod options every scatterer starts from. Scatterers override what they need.
@@ -154,6 +163,13 @@ namespace RealRuins {
                 trapChance = mod.trapChance,
                 hostileChance = mod.hostileChance,
             };
+        }
+
+        // Tech level cap mod options, for scatterers of the given group (regular ruins, POIs, events).
+        private static void ApplyTechLimit(ScatterOptions options, bool groupEnabled) {
+            if (!RealRuins_ModSettings.techLimitEnabled || !groupEnabled) return;
+            options.maxTechLevel = RealRuins_ModSettings.techLimitMaxLevel;
+            options.techLimitStrict = RealRuins_ModSettings.techLimitStrict;
         }
 
         // Content filter mod options. Applied only to scatterers which produce ruined structures.

@@ -120,6 +120,26 @@ The cost cap of abandoned bases / ruined POIs always counts everything.
 Measured on 50 sampled maps (Sample ruins wealth debug action, 2026-11-03): median ruins wealth 3k per map, p90 ~10k; before the
 limit the maximum was 33k, with the limit 15k. The limit only touched the last chunks of maps already close to it.
 
+## Tech level cap
+Settings tab "Tech Level": master toggle `techLimitEnabled`, `techLimitMaxLevel` (Neolithic–Ultra; `TechLevel` is a game enum,
+mods can't add levels), `techLimitStrict` and three groups: `techLimitRuins` (`ForGenericRuins`), `techLimitPOIs` (`ForPOI` and
+`ForAnalyzer`), `techLimitEvents` (`ForAbandonedBase`, `ForCaravanSmallRuins`). `ScatterOptionsFactory.ApplyTechLimit` copies
+them into `ScatterOptions.maxTechLevel` (Undefined = no cap) and `techLimitStrict`.
+
+`TechLevelFilter` does the work in `BlueprintPreprocessor.ProcessBlueprint`, so the analyzer sees the same filtered blueprint as
+the scatterer and costs are estimated after the filter. A def's tech level (cached) is the highest of: its own `techLevel`, its
+`researchPrerequisites`, its `recipeMaker` research, the research of the easiest standalone recipe making it (modded fabricated
+materials, chemfuel), and the own `techLevel` of its `costList` ingredients (one level deep, which catches buildings made of
+components). The stuff counts too. Undefined everywhere means it always stays: mined or found materials (plasteel, sky steel).
+- Items above the cap are removed; walls and doors are replaced with a granite wall / wooden door so rooms stay closed.
+- Contents of containers are filtered at any depth (an emptied minified thing is not spawned); terrain too.
+- Restored pawns skip apparel above the cap (`PawnRestoreUtility`); pawn races themselves are not filtered.
+- Limited strategy: a thing `n` levels above the cap stays with chance `TechLevelFilter.limitedKeepChance ^ n` (0.1). It is a roll
+  on each pass, so the analyzer and the visit see different results; nothing about it is stored.
+- POI factions (`RealRuinsPOIFactory.CommitPOI`): with the POI group on, the faction's tech level is capped too (limited strategy:
+  except with `limitedKeepChance`), and the type's minimum faction tech level is lowered to the cap.
+- Not covered: defender forces (mechanoids in regular ruins, raid parties, battle royale) come from the world's factions as they are.
+
 ---
 
 ## GenStep_RealRuinsSite

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
+using RimWorld;
 using Verse;
 
 namespace RealRuins {
@@ -45,11 +46,14 @@ namespace RealRuins {
         public bool shouldAddFilth = true;
         public IntVec3 overridePosition = new IntVec3(0, 0, 0);
         public bool overwritesEverything = false; //if true, each item, terrain and even empty cell inside a room removes everything from that tile
+        public bool claimEverything = false; //the site's faction (the player taking a POI over) owns every building, traps and turrets too, and nothing is forbidden
         public bool centerIfExceedsBounds = false;
         public bool avoidUsedRects = false; //if true, cells inside MapGenerator.UsedRects (quest-critical areas) are left untouched
         public string blueprintFileName = null;
 
         public float doorOwnershipProbability = 0.0f;
+        public TechLevel maxTechLevel = TechLevel.Undefined; //things above it don't spawn (TechLevelFilter); Undefined = no cap
+        public bool techLimitStrict = true; //false: things above the cap may still spawn, with a much lower chance
   
 
         
@@ -112,7 +116,10 @@ namespace RealRuins {
                 overridePosition = overridePosition,
                 avoidUsedRects = avoidUsedRects,
                 overwritesEverything = overwritesEverything,
+                claimEverything = claimEverything,
                 doorOwnershipProbability = doorOwnershipProbability,
+                maxTechLevel = maxTechLevel,
+                techLimitStrict = techLimitStrict,
             };
             return copy;
         }
