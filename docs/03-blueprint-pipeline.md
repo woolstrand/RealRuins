@@ -135,7 +135,7 @@ Static in-place processor with two passes.
 
 **Pass 2 — cost cap filtering:**
 - Re-runs `UpdateBlueprintStats(true)` to get accurate post-pass-1 costs
-- Removes items/terrain exceeding `options.itemCostLimit`
+- Removes items/terrain exceeding `options.itemCostLimit`. Containers are judged by `ItemTile.OwnCost` (value without contents): contents over the limit are taken out (at any depth), cheaper contents stay inside
 - **Sentinel**: `itemCostLimit >= 1000` means "no limit" (magic number)
 
 ---
@@ -177,17 +177,17 @@ The most complex processor. Simulates structural decay by computing per-cell "in
 Simulates NPC factions looting the ruins before the player arrives. Operates on sorted economic value.
 
 ### Algorithm
-1. Collect all terrain and item tiles into `tilesByCost` list with cumulative cost
-2. Sort ascending by `cost/weight` ratio (cheapest-per-kg first, most valuable last)
+1. Collect all terrain and item tiles into `tilesByCost` list with cumulative cost. Contents of containers (`innerItems` with a value, at any depth; corpses and pawns stay) are separate candidates: scavengers take things out of a bookcase, crate or sarcophagus instead of carrying the whole container away
+2. Sort ascending by `OwnCost/weight` ratio (cheapest-per-kg first, most valuable last). `OwnCost` is a container's value without the contents it still holds
 3. Compute `raidsCount = floor(log(age/10+1) × scavengersActivity)`, capped at 50
 4. Each raid's capacity grows geometrically: `capacity = baseCapacity × 1.1^i`
-5. Each raid pops tiles from the back (most valuable) until capacity exhausted or `cost/weight < 7`
+5. Each raid pops tiles from the back (most valuable) until capacity exhausted or `OwnCost/weight < 7`. Taking contents out makes every container they were in cheaper by their value; a minified thing left empty is not spawned. Contents of a container that was carried away whole are skipped
 6. Removed doors: 80% replaced with `DefaultDoorItemTile()`, 20% fully removed
 7. Removed walls: replaced with `WallReplacementItemTile()` (granite) to preserve structure
 8. Post-raid: doors without two adjacent walls on either axis are removed
 
 ### `LimitCostToCap()`
-If `options.costCap > 0`, randomly removes tiles until `totalCost ≤ costCap`. Walls/doors downgraded to wood rather than removed.
+If `options.costCap > 0`, randomly removes tiles until `totalCost ≤ costCap` (tiles with `OwnCost > 20` first). Contents are taken out of their containers the same way as in raids. Walls/doors downgraded to wood rather than removed.
 
 **Note**: `age = -blueprint.dateShift` (always positive). Older blueprints have more scavenging.
 

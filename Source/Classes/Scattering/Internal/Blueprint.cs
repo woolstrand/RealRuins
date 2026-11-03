@@ -86,23 +86,10 @@ namespace RealRuins {
                         ThingDef stuffDef = (item.stuffDef != null) ? DefDatabase<ThingDef>.GetNamed(item.stuffDef, false) : null;
                         if (thingDef == null) continue; //to handle corpses
 
+                        UpdateItemStats(item, thingDef, stuffDef, includeCost);
                         if (includeCost) {
-                            UpdateItemCost(item, thingDef, stuffDef);
                             totalCost += item.cost;
                             legacyTotalCost += item.legacyCost;
-                        }
-
-                        if (item.defName.Contains("Wall")) item.weight = 5; //walls are on some reason always have weight of 1, which is obviously not correct. The game itself does not need walls weight, so that's ok, but we need.
-
-                        item.weight = thingDef.ThingWeight(stuffDef);
-                        
-                        if (item.stackCount != 0) item.weight *= item.stackCount;
-                        if (item.weight == 0) {
-                            if (item.stackCount != 0) {
-                                item.weight = 0.5f * item.stackCount;
-                            } else {
-                                item.weight = 1.0f;
-                            }
                         }
 
                         itemsCount++;
@@ -131,28 +118,48 @@ namespace RealRuins {
             //Debug.Message("Recalculated blueprint stats. Processed {0} items and {1} tiles, got {2} cost", itemsCount, terrainTilesCount, totalCost);
         }
 
-        //Sets both cost schemes of an item. The new cost of a container (shelf, minified thing, sarcophagus) includes its contents,
-        //so scavengers and cost caps see a full shelf as one valuable tile. The legacy cost keeps the old scheme: the tile itself only.
+        //Sets weight and, if asked, both cost schemes of an item and of its contents. The new cost of a container (bookcase, minified thing,
+        //sarcophagus) includes its contents, so cost caps see the whole value; scavengers take the contents out one by one (ScavengingProcessor).
+        //The legacy cost keeps the old scheme: the tile itself only.
         //Since at this moment not all things are filtered yet, cost can't be calculated for some of them: those fall back to the legacy cost, or 0.
-        private static void UpdateItemCost(ItemTile item, ThingDef thingDef, ThingDef stuffDef) {
-            item.legacyCost = 0;
-            try {
-                item.legacyCost = thingDef.LegacyMarketCost(stuffDef) * item.stackCount;
-            } catch (Exception) { }
+        private static void UpdateItemStats(ItemTile item, ThingDef thingDef, ThingDef stuffDef, bool includeCost) {
+            if (includeCost) {
+                item.legacyCost = 0;
+                try {
+                    item.legacyCost = thingDef.LegacyMarketCost(stuffDef) * item.stackCount;
+                } catch (Exception) { }
 
-            try {
-                item.cost = thingDef.AbstractMarketValue(stuffDef) * item.stackCount;
-            } catch (Exception) {
-                item.cost = item.legacyCost;
+                try {
+                    item.cost = thingDef.AbstractMarketValue(stuffDef) * item.stackCount;
+                } catch (Exception) {
+                    item.cost = item.legacyCost;
+                }
+            }
+
+            if (item.defName.Contains("Wall")) item.weight = 5; //walls are on some reason always have weight of 1, which is obviously not correct. The game itself does not need walls weight, so that's ok, but we need.
+
+            item.weight = thingDef.ThingWeight(stuffDef);
+
+            if (item.stackCount != 0) item.weight *= item.stackCount;
+            if (item.weight == 0) {
+                if (item.stackCount != 0) {
+                    item.weight = 0.5f * item.stackCount;
+                } else {
+                    item.weight = 1.0f;
+                }
             }
 
             if (item.innerItems == null) return;
             foreach (ItemTile inner in item.innerItems) {
                 ThingDef innerDef = DefDatabase<ThingDef>.GetNamed(inner.defName, false);
-                if (innerDef == null) continue; //corpses and missing defs: no value, and a corpse's pawn is not loot
+                if (innerDef == null || innerDef.race != null) { //corpses, pawns (cryptosleep) and missing defs: no value, they are not loot
+                    inner.cost = 0;
+                    inner.legacyCost = 0;
+                    continue;
+                }
                 ThingDef innerStuff = (inner.stuffDef != null) ? DefDatabase<ThingDef>.GetNamed(inner.stuffDef, false) : null;
-                UpdateItemCost(inner, innerDef, innerStuff);
-                item.cost += inner.cost;
+                UpdateItemStats(inner, innerDef, innerStuff, includeCost);
+                if (includeCost) item.cost += inner.cost;
             }
         }
 

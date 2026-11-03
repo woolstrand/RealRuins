@@ -119,7 +119,9 @@ namespace RealRuins {
                     if (items == null) continue;
                     foreach (ItemTile item in items) {
                         if (options.itemCostLimit > 0 && options.itemCostLimit < 1000) { //filter too expensive items. limit of 1000 means "no limit" actually
-                            if (item.cost > options.itemCostLimit) { //removes only items where at least one item is more expensive than limit we have. limiting stacks is done later.
+                            //a container is judged by its own value: too expensive contents are taken out, the cheap ones stay inside
+                            RemoveExpensiveContents(item, options.itemCostLimit);
+                            if (item.OwnCost > options.itemCostLimit) { //removes only items where at least one item is more expensive than limit we have. limiting stacks is done later.
                                 itemsToRemove.Add(item);
                             }
                         }
@@ -133,6 +135,22 @@ namespace RealRuins {
                     }
                 }
             }
+        }
+
+        //Removes contents more expensive than the limit, at any depth; every container they were in becomes cheaper by their value.
+        //Returns the removed value.
+        private static float RemoveExpensiveContents(ItemTile container, float limit) {
+            if (container.innerItems == null) return 0;
+            float removed = 0;
+            foreach (ItemTile inner in container.innerItems.ToList()) {
+                removed += RemoveExpensiveContents(inner, limit);
+                if (inner.OwnCost > limit) {
+                    container.innerItems.Remove(inner);
+                    removed += inner.cost;
+                }
+            }
+            container.cost -= removed;
+            return removed;
         }
     }
 }

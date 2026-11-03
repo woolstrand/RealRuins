@@ -38,6 +38,17 @@ namespace RealRuins {
 
         public List<ItemTile> innerItems;
 
+        //Value of the item itself: cost includes the contents, this one doesn't
+        public float OwnCost {
+            get {
+                float result = cost;
+                if (innerItems != null) {
+                    foreach (ItemTile inner in innerItems) result -= inner.cost;
+                }
+                return result;
+            }
+        }
+
         public string itemXml;
 
         static public ItemTile WallReplacementItemTile() {
