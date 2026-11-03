@@ -278,6 +278,23 @@
   <RealRuins.Unlimited>Без ограничений</RealRuins.Unlimited>
   <RealRuins.AdvancedSettings>Продвинутые и событийные настройки</RealRuins.AdvancedSettings>
 
+  <RealRuins.TechLimit.Caption>Технологический уровень</RealRuins.TechLimit.Caption>
+  <RealRuins.TechLimit.Enabled>Ограничить технологический уровень руин</RealRuins.TechLimit.Enabled>
+  <RealRuins.TechLimit.EnabledTT>Вещи более продвинутые, чем выбранный уровень, убираются из руин. Уровень вещи определяется её собственным уровнем, исследованиями, нужными для её постройки или изготовления, и её ингредиентами. Стены и двери выше уровня заменяются простыми каменными стенами и деревянными дверями. Вещи без технологического уровня остаются всегда.</RealRuins.TechLimit.EnabledTT>
+  <RealRuins.TechLimit.MaxLevel>Максимальный уровень</RealRuins.TechLimit.MaxLevel>
+  <RealRuins.TechLimit.MaxLevelTT>Самый продвинутый технологический уровень вещей, которые могут появиться в руинах.</RealRuins.TechLimit.MaxLevelTT>
+  <RealRuins.TechLimit.Strategy>Способ ограничения</RealRuins.TechLimit.Strategy>
+  <RealRuins.TechLimit.StrategyTT>Строгий: ничего выше уровня не появляется. Подходит для настоящего средневековья или фэнтези.\n\nМягкий: вещи выше уровня - редкие реликвии прошлого: остаются 10% вещей на один уровень выше, 1% на два уровня выше и так далее. Подходит для низкотехнологичного постапокалипсиса.</RealRuins.TechLimit.StrategyTT>
+  <RealRuins.TechLimit.Strict>Строгий</RealRuins.TechLimit.Strict>
+  <RealRuins.TechLimit.Limited>Мягкий</RealRuins.TechLimit.Limited>
+  <RealRuins.TechLimit.AppliesTo>Применять к:</RealRuins.TechLimit.AppliesTo>
+  <RealRuins.TechLimit.Ruins>Обычным руинам</RealRuins.TechLimit.Ruins>
+  <RealRuins.TechLimit.RuinsTT>Руины, разбросанные по новым картам.</RealRuins.TechLimit.RuinsTT>
+  <RealRuins.TechLimit.POIs>Планетарным локациям</RealRuins.TechLimit.POIs>
+  <RealRuins.TechLimit.POIsTT>Локации из баз других игроков, создаваемые в начале новой игры, разрушенные или обитаемые. Тип локации определяется после применения ограничения, а её жители - из фракций допустимого уровня. Тип и жители выбираются при создании локации, поэтому у существующих локаций меняется только содержимое.</RealRuins.TechLimit.POIsTT>
+  <RealRuins.TechLimit.Events>Событиям и заданиям</RealRuins.TechLimit.Events>
+  <RealRuins.TechLimit.EventsTT>Заброшенные базы (событие и задание) и небольшие руины, найденные караванами.</RealRuins.TechLimit.EventsTT>
+
   <RealRuins.DebugSettings.LogLevel>Уровень логирования</RealRuins.DebugSettings.LogLevel>
   <RealRuins.DebugSettings.LogLevelAll>Все сообщения</RealRuins.DebugSettings.LogLevelAll>
   <RealRuins.DebugSettings.LogLevelWarnings>Предупреждения и ошибки</RealRuins.DebugSettings.LogLevelWarnings>

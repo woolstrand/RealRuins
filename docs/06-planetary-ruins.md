@@ -113,7 +113,8 @@ Analyzes a loaded `Blueprint` and classifies it for POI creation.
 Struct with ~16 metrics: wall count, room counts, total cost, military items, beds, production tables, etc. `ToString()` uses reflection to enumerate all fields (debug convenience).
 
 ### `Analyze()` Pipeline
-1. `FindRooms()` + `ProcessBlueprint()` on the blueprint
+1. `FindRooms()` + `ProcessBlueprint()` on the blueprint. `ForAnalyzer` options apply no mod options except the tech level cap
+   (POI group), so a base whose turrets can't exist is not classified as military
 2. Initializes result, counts total area and room data
 3. Iterates all tiles; `ProcessTile()` accumulates cost/count metrics
 4. Military detection: checks `IsShell`, `IsRangedWeapon`, name-contains `"turret"`, `"cannon"`, `"gun"` — string matching, will miss modded items and may have false positives
@@ -166,7 +167,8 @@ Factory that creates `RealRuinsPOIWorldObject` instances from `PlanetTileInfo` +
 Creates either `RealRuinsPOI` or `RealRuinsPOI_Unlisted` based on whether it's a ruins type. Refuses to create if a world object already exists at the tile.
 
 ### `MinTechLevelForPOIType()`
-Maps POI type to minimum faction tech level (e.g., Military requires Industrial+).
+Maps POI type to minimum faction tech level (e.g., Military requires Industrial+). With the tech level cap on for POIs, the
+faction's maximum tech level is the cap and the minimum is lowered to it (see 04-scattering, Tech level cap).
 
 ---
 

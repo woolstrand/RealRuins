@@ -113,7 +113,16 @@ namespace RealRuins
 
             if (baseChance)
             {
-                Find.FactionManager.TryGetRandomNonColonyHumanlikeFaction(out faction, false, false, minTechLevel: MinTechLevelForPOIType(poiType), requireHostile: disableFriendlyLocations);
+                TechLevel minTechLevel = MinTechLevelForPOIType(poiType);
+                TechLevel maxTechLevel = TechLevel.Undefined;
+                ScatterOptions techLimit = ScatterOptionsFactory.ForAnalyzer();
+                //tech level cap: the site's faction can't be more advanced than what may spawn there (limited strategy: usually)
+                if (TechLevelFilter.IsActive(techLimit) && (techLimit.techLimitStrict || !Rand.Chance(TechLevelFilter.limitedKeepChance)))
+                {
+                    maxTechLevel = techLimit.maxTechLevel;
+                    if (minTechLevel > maxTechLevel) minTechLevel = maxTechLevel;
+                }
+                Find.FactionManager.TryGetRandomNonColonyHumanlikeFaction(out faction, false, false, minTechLevel: minTechLevel, maxTechLevel: maxTechLevel, requireHostile: disableFriendlyLocations);
             }
 
             RealRuinsPOIWorldObject site = TryCreateWorldObject(tileInfo.tile, faction, poiType == POIType.Ruins);

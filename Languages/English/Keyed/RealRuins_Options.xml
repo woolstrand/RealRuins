@@ -272,6 +272,23 @@
   <RealRuins.Unlimited>Unlimited</RealRuins.Unlimited>
   <RealRuins.AdvancedSettings>Events and Advanced Settings</RealRuins.AdvancedSettings>
 
+  <RealRuins.TechLimit.Caption>Tech Level</RealRuins.TechLimit.Caption>
+  <RealRuins.TechLimit.Enabled>Limit tech level of ruins</RealRuins.TechLimit.Enabled>
+  <RealRuins.TechLimit.EnabledTT>Things more advanced than the selected tech level are removed from ruins. A thing's tech level comes from its own tech level, the research needed to build or craft it and its ingredients. Walls and doors above the limit are replaced with plain stone walls and wooden doors. Things with no tech level at all always stay.</RealRuins.TechLimit.EnabledTT>
+  <RealRuins.TechLimit.MaxLevel>Maximum tech level</RealRuins.TechLimit.MaxLevel>
+  <RealRuins.TechLimit.MaxLevelTT>The most advanced tech level of things which can spawn in ruins.</RealRuins.TechLimit.MaxLevelTT>
+  <RealRuins.TechLimit.Strategy>Capping strategy</RealRuins.TechLimit.Strategy>
+  <RealRuins.TechLimit.StrategyTT>Strict: nothing above the limit ever spawns. Good for true medieval or fantasy playthroughs.\n\nLimited: things above the limit are rare relics of the past: 10% of them stay one level above the limit, 1% two levels above, and so on. Good for post-apocalyptic low tech playthroughs.</RealRuins.TechLimit.StrategyTT>
+  <RealRuins.TechLimit.Strict>Strict</RealRuins.TechLimit.Strict>
+  <RealRuins.TechLimit.Limited>Limited</RealRuins.TechLimit.Limited>
+  <RealRuins.TechLimit.AppliesTo>Apply to:</RealRuins.TechLimit.AppliesTo>
+  <RealRuins.TechLimit.Ruins>Regular ruins</RealRuins.TechLimit.Ruins>
+  <RealRuins.TechLimit.RuinsTT>Ruins scattered over newly generated maps.</RealRuins.TechLimit.RuinsTT>
+  <RealRuins.TechLimit.POIs>Planetary locations</RealRuins.TechLimit.POIs>
+  <RealRuins.TechLimit.POIsTT>Locations created from other players' bases when a new game starts, ruined or inhabited. The location type is decided after the limit is applied, and inhabitants come from factions of the allowed tech level. Type and inhabitants are picked when a location is created, so for existing locations only their contents change.</RealRuins.TechLimit.POIsTT>
+  <RealRuins.TechLimit.Events>Events and quests</RealRuins.TechLimit.Events>
+  <RealRuins.TechLimit.EventsTT>Abandoned bases (event and quest) and small ruins spotted by caravans.</RealRuins.TechLimit.EventsTT>
+
   <RealRuins.FactionOwnedStartTile>Tile is occupied</RealRuins.FactionOwnedStartTile>
   <RealRuins.FactionOwnedStartTileDesc>You're about to enter a tile with a settlement on it, and this settlement belongs to another faction. You can either make it abandoned and settle in ruins, you can make it yours, or you can attack it with your starting party.</RealRuins.FactionOwnedStartTileDesc>
   <RealRuins.FactionOwnedStartTile.MakeAbandoned>Make abandoned and settle</RealRuins.FactionOwnedStartTile.MakeAbandoned>

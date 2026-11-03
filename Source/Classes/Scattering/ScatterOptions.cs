@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
+using RimWorld;
 using Verse;
 
 namespace RealRuins {
@@ -50,6 +51,8 @@ namespace RealRuins {
         public string blueprintFileName = null;
 
         public float doorOwnershipProbability = 0.0f;
+        public TechLevel maxTechLevel = TechLevel.Undefined; //things above it don't spawn (TechLevelFilter); Undefined = no cap
+        public bool techLimitStrict = true; //false: things above the cap may still spawn, with a much lower chance
   
 
         
@@ -113,6 +116,8 @@ namespace RealRuins {
                 avoidUsedRects = avoidUsedRects,
                 overwritesEverything = overwritesEverything,
                 doorOwnershipProbability = doorOwnershipProbability,
+                maxTechLevel = maxTechLevel,
+                techLimitStrict = techLimitStrict,
             };
             return copy;
         }

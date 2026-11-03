@@ -206,7 +206,7 @@ namespace RealRuins
                 if (itemTile.defName.ToLower() == "pawn")
                 {
                     Debug.Log(Debug.BlueprintTransfer, "Now need to instantiate pawn at {0}, {1}", x, z);
-                    PawnRestoreUtility restoreUtil = new PawnRestoreUtility(blueprint.dateShift, rp.faction);
+                    PawnRestoreUtility restoreUtil = new PawnRestoreUtility(blueprint.dateShift, rp.faction, options);
                     return restoreUtil.MakePawnWithRawXml(itemTile.itemXml);
                 }
 
