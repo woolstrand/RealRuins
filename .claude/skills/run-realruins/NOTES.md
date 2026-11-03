@@ -202,6 +202,11 @@ blueprint id) - that file also states the spawn philosophy: spawn what can be sp
 - 2026-10-30 (Windows, 1.7): verified H1 + H9 on the planetary loader, seed `shotgun`: 579 fresh downloads, window closed
   mid-transfer (173/579) and sites kept appearing → 393 sites, 0 exceptions; only the 2 failed downloads were missing
   locally (completion now waits for disk writes). Second world, same seed: Close turned green on completion.
+- 2026-11-03 (Windows, 1.7): unified costs (cached market value, one cut). 50-map sample clean; cost calculation 5 ms median per
+  map (was ~60). The MAP block now ends with "Estimate minus actual, by def": walls and doors lead (live market value scales with
+  hit points, StatPart_Health). Dense maps near settlements (27-34 chunks) exhaust the 15k budget: late chunks get allowance 0 and
+  are cut to bare walls/doors. Debug "Generate quest" → RealRuins_AbandonedBase failed with "CanRun returned false" on two
+  quicktest worlds before any mod code ran (no "TestRun launched" line), while vanilla OpportunitySite_ItemStash worked - open.
 - 2026-11-03 (Windows, 1.7): ruins wealth sampling, 50 maps (cost = game market value + container contents, scavengers take
   contents out). Median ruins wealth per map 3.0k, p90 9.5k, max 33k; biggest spikes were ship structural beams (1065 each,
   one blueprint spawned twice). actual/estimate 0.83, estimate/legacy 1.10. New cost calculation 68 ms median per map (legacy 24),

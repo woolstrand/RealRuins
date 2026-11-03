@@ -705,7 +705,7 @@ namespace RealRuins
                             {
                                 map.terrainGrid.SetTerrain(mapLocation, blueprintTerrain);
                                 totalCost += blueprint.terrainMap[x, z].cost;
-                                wealthReport?.AddTerrain(blueprintTerrain);
+                                wealthReport?.AddTerrain(blueprintTerrain, blueprint.terrainMap[x, z].cost);
                                 transferredTerrains++;
                             }
                         }
@@ -824,7 +824,7 @@ namespace RealRuins
 
                                     transferredTiles++;
                                     totalCost += itemTile.cost;
-                                    wealthReport?.AddThing(thing);
+                                    wealthReport?.AddThing(thing, itemTile.cost);
                                 }
                                 catch (Exception e)
                                 {

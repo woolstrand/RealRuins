@@ -20,15 +20,18 @@ namespace RealRuins {
         public float terrain; // actual market value of placed terrain
         public int thingsCount;
         private readonly List<KeyValuePair<string, float>> things = new List<KeyValuePair<string, float>>();
+        // estimate minus actual value, per def: where the estimate is off
+        private readonly Dictionary<string, float> gaps = new Dictionary<string, float>();
 
         public float Actual => items + terrain;
 
         // Map totals collected while RuinsWealthSampler runs, null otherwise.
         public static List<MapWealthSample> samples;
 
-        public void AddThing(Thing thing) {
+        public void AddThing(Thing thing, float estimated) {
             if (thing is Pawn) return; //not loot
             float value = WealthUtility.MarketValueWithContents(thing, out int contentsCount);
+            AddGap(thing.def.defName, estimated - value);
             items += value;
             thingsCount++;
             string label = thing.LabelCap;
@@ -36,10 +39,17 @@ namespace RealRuins {
             things.Add(new KeyValuePair<string, float>(label, value));
         }
 
-        public void AddTerrain(TerrainDef def) {
+        public void AddTerrain(TerrainDef def, float estimated) {
+            float value = 0;
             try {
-                terrain += def.AbstractMarketValue();
+                value = def.AbstractMarketValue();
             } catch (Exception) { }
+            terrain += value;
+            AddGap(def.defName, estimated - value);
+        }
+
+        private void AddGap(string defName, float gap) {
+            gaps[defName] = gaps.TryGetValue(defName, out float sum) ? sum + gap : gap;
         }
 
         public string Summary(int topCount = 5) {
@@ -66,6 +76,9 @@ namespace RealRuins {
             }
             builder.AppendLine();
             builder.Append("  Most valuable on the map: ").Append(TopThings(reports.SelectMany(r => r.things), 10));
+            builder.AppendLine();
+            var mapGaps = reports.SelectMany(r => r.gaps).GroupBy(p => p.Key).Select(g => new KeyValuePair<string, float>(g.Key, g.Sum(p => p.Value)));
+            builder.Append("  Estimate minus actual, by def: ").Append(string.Join("; ", mapGaps.OrderByDescending(p => Math.Abs(p.Value)).Take(8).Select(p => string.Format("{0} {1:+0;-0}", p.Key, p.Value))));
             Debug.Report(Debug.Wealth, "{0}", builder.ToString());
 
             samples?.Add(new MapWealthSample {
