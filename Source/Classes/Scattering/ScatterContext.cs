@@ -21,6 +21,10 @@ namespace RealRuins {
         // The pipeline modifies it in place, so a blueprint can feed only one run.
         public Blueprint preloadedBlueprint;
 
+        // What the scattered ruins may still be worth after scavenging: this run's share of the map's ruins wealth (RuinsWealthBudget).
+        // -1 for no limit.
+        public float wealthAllowance = -1;
+
         public ScatterContext(ScatterOptions options, PipelineSettings settings) {
             this.options = options.Copy();
             this.settings = settings;

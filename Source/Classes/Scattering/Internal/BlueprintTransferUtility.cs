@@ -847,6 +847,7 @@ namespace RealRuins
                 RestoreDefencesAndPower();
             }
             context.state.uncoveredCost = totalCost;
+            context.state.transferredCost = totalCost;
             if (wealthReport != null) {
                 wealthReport.estimate = totalCost;
                 wealthReport.legacyEstimate = legacyTotalCost;

@@ -14,6 +14,7 @@ namespace RealRuins {
         public static bool Enabled => RealRuins_ModSettings.debugLogRuinsWealth;
 
         public string blueprintName;
+        public float allowance = -1; // share of the map's ruins wealth limit this run got, -1 for none
         public float estimate; // tile cost of what was transferred, new scheme
         public float legacyEstimate; // same, legacy scheme
         public float items; // actual market value of spawned things, contents and quality included
@@ -65,8 +66,9 @@ namespace RealRuins {
         }
 
         public string Summary(int topCount = 5) {
-            return string.Format("{0}: estimate {1:F0}, legacy {2:F0}, actual {3:F0} (things {4:F0} in {5}, terrain {6:F0}). Top: {7}",
-                blueprintName ?? "?", estimate, legacyEstimate, Actual, items, thingsCount, terrain, TopThings(things, topCount));
+            string allowanceStr = allowance >= 0 ? string.Format(", allowance {0:F0}", allowance) : "";
+            return string.Format("{0}: estimate {1:F0}{8}, legacy {2:F0}, actual {3:F0} (things {4:F0} in {5}, terrain {6:F0}). Top: {7}",
+                blueprintName ?? "?", estimate, legacyEstimate, Actual, items, thingsCount, terrain, TopThings(things, topCount), allowanceStr);
         }
 
         private static string TopThings(IEnumerable<KeyValuePair<string, float>> things, int count) {

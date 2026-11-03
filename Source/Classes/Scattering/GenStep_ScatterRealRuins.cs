@@ -161,6 +161,8 @@ namespace RealRuins
                 }
 
                 CoverageMap coverageMap = CoverageMap.EmptyCoverageMap(map);
+                float wealthLimit = RealRuins_ModSettings.RuinsWealthPerMapLimit;
+                RuinsWealthBudget wealthBudget = wealthLimit >= 0 ? new RuinsWealthBudget(wealthLimit, num) : null;
                 List<RuinsWealthReport> wealthReports = new List<RuinsWealthReport>();
 
                 for (int i = 0; i < num; i++) {
@@ -180,7 +182,12 @@ namespace RealRuins
                         var center = CellFinder.RandomNotEdgeCell(10, map);
                         rp.rect = new CellRect(center.x, center.z, 1, 1); //after generation will be extended to a real size
                         ScatterContext context = new ScatterContext(options, settings);
-                        RuinsScatterer.Scatter(rp, context, coverageMap, generators);
+                        if (wealthBudget != null) context.wealthAllowance = wealthBudget.NextAllowance();
+                        try {
+                            RuinsScatterer.Scatter(rp, context, coverageMap, generators);
+                        } finally {
+                            wealthBudget?.Spend(context.state.transferredCost);
+                        }
                         RoofSupportUtility.RemoveUnsupportedRoofs(map, context.state.placementRect.ExpandedBy(1));
                         if (context.state.wealthReport != null) wealthReports.Add(context.state.wealthReport);
                     } catch {
@@ -194,8 +201,8 @@ namespace RealRuins
                         costMs = CostTiming.Ms(CostTiming.newTicks - newCostTicks),
                         legacyCostMs = CostTiming.Ms(CostTiming.legacyTicks - legacyCostTicks),
                     };
-                    RuinsWealthReport.LogMapSummary(map, wealthReports, string.Format("site=GenericRuins planned={0} dist={1} scav={2:F2} radius={3}-{4} scatterMs={5:F0} costMs={6:F0} legacyCostMs={7:F0}",
-                        num, distanceToSettlement, options.scavengingMultiplier, options.minRadius, options.maxRadius, timing.scatterMs, timing.costMs, timing.legacyCostMs), timing);
+                    RuinsWealthReport.LogMapSummary(map, wealthReports, string.Format("site=GenericRuins planned={0} dist={1} scav={2:F2} radius={3}-{4} limit={8:F0} scatterMs={5:F0} costMs={6:F0} legacyCostMs={7:F0}",
+                        num, distanceToSettlement, options.scavengingMultiplier, options.minRadius, options.maxRadius, timing.scatterMs, timing.costMs, timing.legacyCostMs, wealthLimit), timing);
                 }
 
                 if (shouldUnpause) {

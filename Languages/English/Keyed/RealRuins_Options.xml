@@ -35,6 +35,8 @@
   <RealRuins_MapOptions_SizeTT>Ruins area is selected randomly in range between 50% to 150% of the entered value</RealRuins_MapOptions_SizeTT>
   <RealRuins_MapOptions_DeteriorationTT>This value determines additional chance for a tile to be destroyed and does not influence remaining hit points amount. Zero is default setting, max will result in no ruins at all.</RealRuins_MapOptions_DeteriorationTT>
   <RealRuins_MapOptions_ScavengersTT>Zero is pristine blueprints.</RealRuins_MapOptions_ScavengersTT>
+  <RealRuins_MapOptions_WealthPerMap>Ruins wealth per map</RealRuins_MapOptions_WealthPerMap>
+  <RealRuins_MapOptions_WealthPerMapTT>Total market value all scattered ruins of one map may have together (things and floors). Most maps stay well below the default; on a map with an unusually rich ruin its most valuable things are taken away until the ruins fit. Rightmost position: no limit. Does not affect abandoned bases, planetary ruins and the main ruin of a caravan event.</RealRuins_MapOptions_WealthPerMapTT>
   <RealRuins_MapOptions_CostLimitTT>All items with total cost higher than selected value will be destroyed</RealRuins_MapOptions_CostLimitTT>
   <RealRuins_MapOptions_DisableHaulablesTT>All haulable items won't spawn, but furniture may still appear</RealRuins_MapOptions_DisableHaulablesTT>
   <RealRuins_MapOptions_WallsAndDoorsOnlyTT>This setting is pretty aggressive and will remove everything that is not based on a vanilla wall or a door.</RealRuins_MapOptions_WallsAndDoorsOnlyTT>

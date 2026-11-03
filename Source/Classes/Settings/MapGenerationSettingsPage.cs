@@ -10,7 +10,7 @@ namespace RealRuins.Settings
     {
         public override string TabLabel => "RealRuins.SpawnSettings.TabCaption".Translate();
 
-        public override float ContentHeight => 770f;
+        public override float ContentHeight => 830f;
 
         public override void Draw(Rect rect)
         {
@@ -114,6 +114,20 @@ namespace RealRuins.Settings
 
             RealRuins_ModSettings.defaultScatterOptions.itemCostLimit =
                 (int)listing.Slider(RealRuins_ModSettings.defaultScatterOptions.itemCostLimit, 0.0f, 1000.0f);
+
+            listing.Gap(12);
+
+            // Ruins wealth per map
+            string wealthStr = RealRuins_ModSettings.RuinsWealthPerMapLimit >= 0
+                ? RealRuins_ModSettings.ruinsWealthPerMap.ToString("#,0")
+                : (string)"RealRuins.Unlimited".Translate();
+            listing.Label(
+                "RealRuins_MapOptions_WealthPerMap".Translate() + ": " + wealthStr,
+                -1,
+                "RealRuins_MapOptions_WealthPerMapTT".Translate());
+
+            RealRuins_ModSettings.ruinsWealthPerMap =
+                Mathf.Round(listing.Slider(RealRuins_ModSettings.ruinsWealthPerMap, 1000.0f, RealRuins_ModSettings.ruinsWealthPerMapUnlimited) / 1000.0f) * 1000.0f;
 
             listing.Gap(12);
 

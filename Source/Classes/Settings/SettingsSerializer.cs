@@ -28,6 +28,7 @@ namespace RealRuins.Settings
             Add("preserveStandardRuins",            RealRuins_ModSettings.preserveStandardRuins.ToString());
             Add("forceMultiplier",                  RealRuins_ModSettings.forceMultiplier.ToString("R"));
             Add("ruinsCostCap",                     RealRuins_ModSettings.ruinsCostCap.ToString("R"));
+            Add("ruinsWealthPerMap",                RealRuins_ModSettings.ruinsWealthPerMap.ToString("R"));
             Add("diskCacheLimit",                   RealRuins_ModSettings.diskCacheLimit.ToString("R"));
             Add("useRuinsForcesGenerationV2",       RealRuins_ModSettings.useRuinsForcesGenerationV2.ToString());
             Add("logLevel",                         RealRuins_ModSettings.logLevel.ToString());
@@ -97,6 +98,7 @@ namespace RealRuins.Settings
                         case "preserveStandardRuins":           TryParseBool(val, ref RealRuins_ModSettings.preserveStandardRuins); break;
                         case "forceMultiplier":                 TryParseFloat(val, ref RealRuins_ModSettings.forceMultiplier); break;
                         case "ruinsCostCap":                    TryParseFloat(val, ref RealRuins_ModSettings.ruinsCostCap); break;
+                        case "ruinsWealthPerMap":               TryParseFloat(val, ref RealRuins_ModSettings.ruinsWealthPerMap); break;
                         case "diskCacheLimit":                  TryParseFloat(val, ref RealRuins_ModSettings.diskCacheLimit); break;
                         case "useRuinsForcesGenerationV2":      TryParseBool(val, ref RealRuins_ModSettings.useRuinsForcesGenerationV2); break;
                         case "logLevel":                        TryParseInt(val, ref RealRuins_ModSettings.logLevel); break;

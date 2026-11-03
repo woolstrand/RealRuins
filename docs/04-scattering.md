@@ -30,9 +30,10 @@ what differs is the genstep around it:
 - `ScatterOptionsFactory` — the only place where a scatterer's options are built (`ForGenericRuins`, `ForCaravanSmallRuins`,
   `ForAbandonedBase`, `ForPOI`, `ForAnalyzer`). Each call returns a fresh object, never linked to the settings store.
 - `PipelineSettings` — global mod options applied the same way everywhere (blacklists, fallback material, force multiplier).
-- `ScatterContext` — one per `Scatter` call: a private copy of the options, the settings, a fresh `ScatterState`, and an
-  optional `preloadedBlueprint`.
-- `ScatterState` — data produced by the run (`roomMap`, `uncoveredCost`, `placementRect`), read by force generators.
+- `ScatterContext` — one per `Scatter` call: a private copy of the options, the settings, a fresh `ScatterState`, an
+  optional `preloadedBlueprint` and `wealthAllowance` (-1 = no limit, see Ruins wealth per map).
+- `ScatterState` — data produced by the run (`roomMap`, `uncoveredCost`, `transferredCost`, `placementRect`), read by force
+  generators and the wealth budget.
 
 ---
 
@@ -91,6 +92,18 @@ produce dense "cities".
 
 Each chunk gets its own `ScatterContext`, a random `RandomNotEdgeCell(10)` position and, with `hostileChance`, animal (80%)
 or mechanoid (20%) defenders. The game is paused while scattering.
+
+### Ruins wealth per map
+`RealRuins_ModSettings.ruinsWealthPerMap` (default 15,000; slider on the map generation page, 100,000 = no limit) is the
+market value all chunks of a map may share. `RuinsWealthBudget` gives each chunk, in order, what is left minus a reserve of
+`min(500, limit / chunks / 2)` for every chunk still to come, and is charged with what the chunk actually transferred
+(`ScatterState.transferredCost`). `ScavengingProcessor.CutToAllowance` runs after the normal raids when a blueprint is over its
+allowance: it takes the most valuable things first (by `OwnCost`, ignoring weight), with the same removal as raids (contents out
+of containers, cheap door/wall replacements). Only regular scattered ruins are limited; abandoned bases, POIs and the main ruin
+of the caravan event are not.
+
+Measured on 50 sampled maps (Sample ruins wealth debug action, 2026-11-03): median ruins wealth 3k per map, p90 ~10k; before the
+limit the maximum was 33k, with the limit 15k. The limit only touched the last chunks of maps already close to it.
 
 ---
 
