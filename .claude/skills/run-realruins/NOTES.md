@@ -12,10 +12,10 @@ searching to figure out. Keep entries short; no screen coordinates (they change 
   reliably; clicking entries works.
 - **RealRuins debug actions:** only "Focus on tile" (`Source/Classes/Utility/DebugTools/DebugActionsRealRuins.cs`).
   Quests/events are fired as incidents instead.
-- **Ruins quest ("Pristine ruins found nearby"):** incident `Quest_PristineRuins`
-  (`Defs/Storyteller/Incidents.xml`, worker `IncidentWorker_RuinsFound`). It's targetTag `World`:
-  go to the **World** tab first, then Debug actions → **Do incident (World)...**. From a map you only
-  get "Do incident (Map)", which can't fire it.
+- **Pristine ruins:** since 1.6 only the quest `RealRuins_AbandonedBase` creates them: Debug actions →
+  **Generate quest** → `RealRuins_AbandonedBase`. The old incident `Quest_PristineRuins` is retired
+  (`baseChance` 0); firing it via Do incident (World) only sends a letter pointing to the quest.
+  **RealRuins → Simulate random quest rolls** counts how often the random quest slot would give it.
 - **Force one blueprint everywhere (debug):** set `RealRuins.SingleFileName` (`Source/Classes/RealRuins.cs`)
   to a full path of a cached `.bp`; `SnapshotStoreManager` then returns it for every random pick (scatter
   *and* quests). Mark the edit `// TEMP-TEST` and revert + rebuild after. Cached blueprints are gzipped XML

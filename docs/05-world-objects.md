@@ -50,20 +50,13 @@ Minimal `MapParent` for small caravan-found ruins. Removes map and world object 
 
 ---
 
-## IncidentWorker_RuinsFound
+## IncidentWorker_RuinsFound (retired in 1.6+)
 
-Fires a `StandardLetter` and spawns an `AbandonedBaseWorldObject` on the world map. The code comment notes it was once removed and then "RESTORED."
+Worker of the `Quest_PristineRuins` incident. Since 1.6 Pristine ruins are created only by the `RealRuins_AbandonedBase` quest (`QuestNode_FindBlueprint` -> `QuestNode_GenerateRuinsObject`). As a `GiveQuest`-category incident with `baseChance` 1 it used to take about half of all random quest slots (it competed with vanilla `GiveQuest_Random`).
 
-**`CanFireNowSub()`**: Requires `enableAbandonedRuinsFoundEvent`, `CanFireLargeEvent()` (≥250 stored blueprints), and existence of a non-hostile faction.
+The def is kept with `baseChance` 0 so saves (storyteller `lastFireTicks` / `recentRandomIncidents`) and translations still resolve. Firing it by hand only sends a letter pointing to the quest. Ruins it spawned in older saves keep working: they are plain `AbandonedBaseWorldObject`s with no quest attached (null signals in `RuinedBaseComp`).
 
-**`TryExecuteWorker()`**:
-1. Selects (or falls back to) a random non-hostile faction
-2. Finds tile 5–30 world-tiles away
-3. Creates `AbandonedBaseWorldObject` — sets faction to `null` on world object (faction used only for letter text)
-4. Calls `BlueprintFinder.FindRandomBlueprintWithParameters()` (min area 6400, min density 1%, max 50 attempts)
-5. Sets `RuinedBaseComp.blueprintFileName` and calls `StartScavenging(capped_cost)`
-6. Computes letter lifetime: `Math.Pow(cost/1000, 0.41) × 1.1` days (power curve)
-7. Sends letter referencing faction leader
+The 1.4/1.5 builds keep the old behavior (the incident spawns the ruins directly).
 
 ---
 

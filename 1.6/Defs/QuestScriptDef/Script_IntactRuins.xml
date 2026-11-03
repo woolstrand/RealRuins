@@ -2,8 +2,9 @@
 <Defs>
   <QuestScriptDef>
     <defName>RealRuins_AbandonedBase</defName>
-    <rootSelectionWeight>1.0</rootSelectionWeight>
+    <rootSelectionWeight>1.5</rootSelectionWeight>
     <rootMinPoints>0</rootMinPoints>
+    <affectedByPoints>false</affectedByPoints>
     <canGiveRoyalFavor>false</canGiveRoyalFavor>
     <autoAccept>true</autoAccept>
     <questNameRules>

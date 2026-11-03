@@ -119,6 +119,8 @@
   
   <!-- Ruins messages -->
   <RealRuins.NoMoreEnemies>Looks like no one's gonna show up anymore. You can safely pack up and leave.</RealRuins.NoMoreEnemies>
+  <RealRuins.PristineRuinsIncidentRetired.Label>Pristine ruins incident removed</RealRuins.PristineRuinsIncidentRetired.Label>
+  <RealRuins.PristineRuinsIncidentRetired.Text>The "nearby ruins found" incident was removed, nothing has been spawned. Pristine ruins now come as a quest. To create one manually, use Debug actions -> Generate quest -> RealRuins_AbandonedBase.</RealRuins.PristineRuinsIncidentRetired.Text>
   <RealRuins.ReformLockedManual>Raiders may still show up. Pick up what your pawns can carry and leave via the map edge, or wait until things calm down.</RealRuins.ReformLockedManual>
 
   <!-- POI captions and descriptions -->

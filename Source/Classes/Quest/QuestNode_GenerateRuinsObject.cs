@@ -41,6 +41,11 @@ namespace RealRuins
 
                 float costCap = RealRuins_ModSettings.ruinsCostCap;
                 float startingCap = Math.Min(costCap, Math.Max(cachedCost, cachedCost2));
+                if (startingCap <= 0) {
+                    // Blueprint search failed (no cost stored). A zero cap would make the comp mark the ruins scavenged on the
+                    // first tick and expire the quest at once; with the settings cap the map generator picks a blueprint itself.
+                    startingCap = costCap;
+                }
                 if (startingCap > int.MaxValue) {
                     startingCap = int.MaxValue - 1; //not sure why StartScavenging takes int as input, but don't want to change it now.
                 }
@@ -69,21 +74,13 @@ namespace RealRuins
             var tileId = tile.GetValue(slate);
             Debug.Log(Debug.QuestNode_GenerateRuinsNode, "TestRun: tileId={0}", tileId);
             
-            if (tileId == 0) {
-                Debug.Warning(Debug.QuestNode_GenerateRuinsNode, "TestRun: tileId is 0! This might cause quest rejection.");
-            }
-
-            AbandonedBaseWorldObject worldObject = (AbandonedBaseWorldObject)WorldObjectMaker.MakeWorldObject(DefDatabase<WorldObjectDef>.GetNamed("AbandonedBase"));
-            if (worldObject == null) {
-                Debug.Error(Debug.QuestNode_GenerateRuinsNode, "TestRun: Failed to create world object!");
+            if (!tileId.Valid) {
+                Debug.Warning(Debug.QuestNode_GenerateRuinsNode, "TestRun: tile is not valid, rejecting quest.");
                 return false;
             }
-            worldObject.Tile = tileId;
 
-            string storeAsKey = storeAs.GetValue(slate);
-            slate.Set(storeAsKey, worldObject);
-            Debug.Log(Debug.QuestNode_GenerateRuinsNode, "TestRun: Set slate[{0}], returning true", storeAsKey);
-
+            // No world object here: TestRun runs on every random quest roll, and MakeWorldObject would burn a world object ID
+            // and dirty the tile finder cache each time. QuestNode_SpawnWorldObjects does not read the object during TestRun.
             return true;
 		}
 

@@ -11,7 +11,10 @@
     <letterLabel>Pristine ruins found nearby</letterLabel>
     <letterText>{0}, {1} of {2}, has sent us a message.\n\nTheir scouts have discovered an old complex in almost untouched condition. Nobody knows where and why former dwellers have gone, so you should be prepared to anything. Rumors fly fast, so you will most likely be not the only one who would want to claim the treasure. And since the treasure can be enormous, the same can be hostile forces. And please hurry, in {3} days you won't find anything besides bare walls.</letterText>
     <letterDef>PositiveEvent</letterDef>
-    <baseChance>1</baseChance>
+    <!-- Retired in favor of the RealRuins_AbandonedBase quest: in the GiveQuest category it took about half of all
+         random quest slots. The def stays so saves (storyteller history) and translations still resolve. Firing it
+         by hand only sends a letter pointing to the quest (see IncidentWorker_RuinsFound). -->
+    <baseChance>0</baseChance>
     <minRefireDays>12</minRefireDays>
   </IncidentDef>
 
