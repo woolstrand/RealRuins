@@ -11,5 +11,6 @@ namespace RealRuins {
         public int[,] roomMap; // Room traversal map, in blueprint coordinates.
         public float uncoveredCost = 0; // Cost not yet covered by defenders or raid triggers.
         public CellRect placementRect; // Actual map rect the blueprint was placed into.
+        public RuinsWealthReport wealthReport; // Debug wealth measurement of the transfer, only when the wealth log is on.
     }
 }

@@ -125,6 +125,8 @@ String constants representing subsystems: `Generic`, `Loader`, `Store`, `Bluepri
 
 **`SysLog(string)`**: Bypasses level filtering. Called for critical startup/system messages.
 
+**`Report(category, format, args)`**: Bypasses level filtering too. For reports the user switched on explicitly in debug settings (`RuinsWealthReport`).
+
 **`Extra(category, message)`**: Logged only when `logLevel == 0` AND the category appears in `debugExtras` list. Provides per-subsystem verbose opt-in without flooding all debug output.
 
 **`Debug.Log()` → `Debug.Message()` → `Debug.Warning()` → `Debug.Error()`**: Tiered output methods each checking their level threshold. Warnings go to `Log.Warning`, errors to `Log.Error` (which opens the log window in dev mode, so expected situations use `Debug.Warning`); everything else goes to `Log.Message`.
@@ -141,6 +143,20 @@ Registers a `[DebugAction]` in RimWorld's developer debug menu (LudeonTK) for th
 **`ShowFocusTileDialog()`**: Opens `Dialog_FocusTile` (defined inline in same file) — a minimal window with a numeric input field. On "Focus Tile", validates tile ID and delegates to `RealRuinsDebugUtils.FocusTile()`.
 
 Uses `[StaticConstructorOnStartup]` to ensure registration during game startup.
+
+**`ToggleRuinsWealthLog()`** ("Toggle ruins wealth log", main menu and in game): flips `RealRuins_ModSettings.debugLogRuinsWealth`, the same setting as the "Log ruins wealth" checkbox on the mod's debug settings page, and saves settings.
+
+---
+
+## RuinsWealthReport.cs
+
+Debug measurement of ruins wealth, collected only while `debugLogRuinsWealth` is on and logged with `Debug.Report` (category `Wealth`) whatever the log level is.
+
+`BlueprintTransferUtility.Transfer` creates one report per run (`ScatterState.wealthReport`): for every transferred tile it adds the estimate in both cost schemes (`cost`, `legacyCost`) and the actual value of what was spawned — `Thing.MarketValue × stackCount` (quality and hit points included) plus the contents of containers (minified things already report their inner thing; pawns are skipped), and the abstract market value of placed terrain. Measured right after the item is spawned, before forces, filth and roof cleanup.
+
+Log lines:
+- `Chunk <blueprint>: estimate, legacy, actual (things, terrain). Top: ...` — per run, from `RuinsScatterer`.
+- `MAP tile=.. size=.. chunks=.. estimate=.. legacy=.. actual=.. things=.. terrain=.. maxChunk=.. site=..` — one greppable line per map, followed by every chunk sorted by actual value and the 10 most valuable things on the map. Written by `GenStep_ScatterRealRuins` (with proximity conditions: planned chunk count, settlement distance, scavenging multiplier, radius) and by `GenStep_RealRuinsSite` for single-run sites (abandoned base, caravan ruins, POI).
 
 ---
 

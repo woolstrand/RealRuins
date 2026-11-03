@@ -25,6 +25,7 @@ namespace RealRuins {
         public const string QuestNode_FindBlueprintNode = "QuestNode_FindBlueprintNode";
         public const string QuestNode_GenerateRuinsObject = "QuestNode_GenerateRuinsObject";
         public const string QuestNode_GenerateRuinsNode = "QuestNode_GenerateRuinsNode";
+        public const string Wealth = "Wealth"; // RuinsWealthReport, has its own switch in debug settings
 
         // Array of all debug categories for dynamic access
         public static readonly string[] AllCategories = new string[]
@@ -80,6 +81,11 @@ namespace RealRuins {
             if (logLevel == 0 && extras.Contains(part)) {
                 Message(part, format, args);
             }
+        }
+
+        // Reports explicitly switched on in debug settings: logged whatever the log level is.
+        public static void Report(string part, string format, params object[] args) {
+            Message(part, format, args);
         }
 
         public static void Log(string part, string format, params object[] args) {

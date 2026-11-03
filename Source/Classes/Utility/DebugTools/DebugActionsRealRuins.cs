@@ -31,6 +31,15 @@ namespace RealRuins
             Find.WindowStack.Add(new Dialog_FocusTile());
         }
 
+        // Same setting as the checkbox on the mod's debug settings page
+        [DebugAction("RealRuins", "Toggle ruins wealth log", allowedGameStates = AllowedGameStates.Entry | AllowedGameStates.Playing)]
+        public static void ToggleRuinsWealthLog()
+        {
+            RealRuins_ModSettings.debugLogRuinsWealth = !RealRuins_ModSettings.debugLogRuinsWealth;
+            LoadedModManager.GetMod<RealRuins_Mod>().WriteSettings();
+            Messages.Message("RealRuins: ruins wealth log " + (RealRuins_ModSettings.debugLogRuinsWealth ? "enabled" : "disabled"), MessageTypeDefOf.NeutralEvent, historical: false);
+        }
+
         // Vanilla "Generate quests x#" -> "*Natural random" rolls the quest type once and generates it N times.
         // This rolls the storyteller's random quest slot N times instead and only counts the outcomes (nothing is spawned).
         [DebugAction("RealRuins", "Simulate random quest rolls", allowedGameStates = AllowedGameStates.PlayingOnMap)]

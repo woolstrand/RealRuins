@@ -158,6 +158,7 @@ namespace RealRuins
                 }
 
                 CoverageMap coverageMap = CoverageMap.EmptyCoverageMap(map);
+                List<RuinsWealthReport> wealthReports = new List<RuinsWealthReport>();
 
                 for (int i = 0; i < num; i++) {
                     try {
@@ -178,9 +179,15 @@ namespace RealRuins
                         ScatterContext context = new ScatterContext(options, settings);
                         RuinsScatterer.Scatter(rp, context, coverageMap, generators);
                         RoofSupportUtility.RemoveUnsupportedRoofs(map, context.state.placementRect.ExpandedBy(1));
+                        if (context.state.wealthReport != null) wealthReports.Add(context.state.wealthReport);
                     } catch {
                         Debug.Warning(Debug.Scatter, "Could not scatter a single ruins chunk.");
                     }
+                }
+
+                if (RuinsWealthReport.Enabled) {
+                    RuinsWealthReport.LogMapSummary(map, wealthReports, string.Format("site=GenericRuins planned={0} dist={1} scav={2:F2} radius={3}-{4}",
+                        num, distanceToSettlement, options.scavengingMultiplier, options.minRadius, options.maxRadius));
                 }
 
                 if (shouldUnpause) {

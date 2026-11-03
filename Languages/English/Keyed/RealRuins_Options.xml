@@ -287,6 +287,8 @@
   <RealRuins.DebugSettings.ResetSettingsConfirm>Are you sure you want to reset all settings to their default values?</RealRuins.DebugSettings.ResetSettingsConfirm>
   <RealRuins.DebugSettings.KeepSnapshotsAfterUpload>Keep snapshot files after upload</RealRuins.DebugSettings.KeepSnapshotsAfterUpload>
   <RealRuins.DebugSettings.KeepSnapshotsAfterUploadTooltip>When enabled, snapshot files will be kept in the temp directory after uploading instead of being deleted. Useful for debugging upload issues.</RealRuins.DebugSettings.KeepSnapshotsAfterUploadTooltip>
+  <RealRuins.DebugSettings.LogRuinsWealth>Log ruins wealth</RealRuins.DebugSettings.LogRuinsWealth>
+  <RealRuins.DebugSettings.LogRuinsWealthTooltip>When enabled, every generated ruin logs its estimated wealth (new and legacy cost schemes) and the actual market value of what was spawned, and every map with scattered ruins logs a summary. Logged regardless of the log level. Also toggled from the dev mode debug actions menu (RealRuins).</RealRuins.DebugSettings.LogRuinsWealthTooltip>
   <RealRuins.DebugSettings.UseStagingEnvironment>Use staging environment</RealRuins.DebugSettings.UseStagingEnvironment>
   <RealRuins.DebugSettings.UseStagingEnvironmentTooltip>When enabled, all API requests go to staging.woolstrand.art and blueprints are stored in the staging bucket (realruins-staging, sfo3). Disable for normal play.</RealRuins.DebugSettings.UseStagingEnvironmentTooltip>
   <RealRuins.DebugSettings.ManualUpload>Manually trigger blueprint capture</RealRuins.DebugSettings.ManualUpload>

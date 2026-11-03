@@ -22,6 +22,7 @@ namespace RealRuins
         public static int logLevel = 2; //0 = all, 1 = warnings, 2 = errors
         public static bool useStagingEnvironment = false; // debug: use staging server instead of production
         public static bool debugKeepSnapshotsAfterUpload = false; // debug: keep snapshot files after upload instead of deleting
+        public static bool debugLogRuinsWealth = false; // debug: log estimated and actual wealth of spawned ruins, regardless of log level
         public static int debugTileFocusId = -1; // debug: tile ID to focus/select in world view
         public static List<string> debugExtras = new List<string>() { "BlueprintPawnDecoder" }; // debug: extra debug categories to log
         public static bool disableFriendlyRaids = false; // disable friendly raids on ruins
@@ -50,6 +51,7 @@ namespace RealRuins
             Scribe_Values.Look(ref logLevel, "logLevel", 2, false);
             Scribe_Values.Look(ref useStagingEnvironment, "useStagingEnvironment", false, false);
             Scribe_Values.Look(ref debugKeepSnapshotsAfterUpload, "debugKeepSnapshotsAfterUpload", false, false);
+            Scribe_Values.Look(ref debugLogRuinsWealth, "debugLogRuinsWealth", false, false);
             Scribe_Values.Look(ref debugTileFocusId, "debugTileFocusId", -1, false);
             Scribe_Collections.Look(ref debugExtras, "debugExtras", LookMode.Value);
             Scribe_Values.Look(ref disableFriendlyRaids, "disableFriendlyRaids", false, false);
@@ -95,6 +97,7 @@ namespace RealRuins
             logLevel = 2;
             useStagingEnvironment = false;
             debugKeepSnapshotsAfterUpload = false;
+            debugLogRuinsWealth = false;
             debugTileFocusId = -1;
             debugExtras = new List<string>() { "BlueprintPawnDecoder" };
             disableFriendlyRaids = false;

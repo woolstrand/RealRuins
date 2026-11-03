@@ -633,6 +633,7 @@ namespace RealRuins
 
             //report actual placement rect using width and height
             context.state.placementRect = new CellRect(mapOriginX, mapOriginZ, blueprint.width, blueprint.height);
+            RuinsWealthReport wealthReport = RuinsWealthReport.Enabled ? new RuinsWealthReport() : null;
 
             Debug.Extra(Debug.BlueprintTransfer, "Clearing map...");
 
@@ -706,6 +707,7 @@ namespace RealRuins
                                 map.terrainGrid.SetTerrain(mapLocation, blueprintTerrain);
                                 totalCost += blueprint.terrainMap[x, z].cost;
                                 legacyTotalCost += blueprint.terrainMap[x, z].legacyCost;
+                                wealthReport?.AddTerrain(blueprintTerrain);
                                 transferredTerrains++;
                             }
                         }
@@ -825,6 +827,7 @@ namespace RealRuins
                                     transferredTiles++;
                                     totalCost += itemTile.cost;
                                     legacyTotalCost += itemTile.legacyCost;
+                                    wealthReport?.AddThing(thing);
                                 }
                                 catch (Exception e)
                                 {
@@ -844,6 +847,11 @@ namespace RealRuins
                 RestoreDefencesAndPower();
             }
             context.state.uncoveredCost = totalCost;
+            if (wealthReport != null) {
+                wealthReport.estimate = totalCost;
+                wealthReport.legacyEstimate = legacyTotalCost;
+                context.state.wealthReport = wealthReport;
+            }
             Debug.Log(Debug.BlueprintTransfer, "Transferred blueprint of size {0}x{1}, age {2}, total cost of approximately {3:F0} (legacy {8:F0}). Items: {4}/{5}, terrains: {6}/{7}", blueprint.width, blueprint.height, -blueprint.dateShift, totalCost, transferredTiles, totalItems, transferredTerrains, totalTerrains, legacyTotalCost);
         }
 

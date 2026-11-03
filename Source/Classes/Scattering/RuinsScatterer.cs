@@ -96,6 +96,10 @@ namespace RealRuins {
             Debug.Extra(Debug.Scatter, "[{0} s] Prepared, about to start transferring.", DateTime.UtcNow.Subtract(start).TotalSeconds);
             try {
                 btu.Transfer(coverage); //transfer blueprint
+                if (context.state.wealthReport != null) {
+                    context.state.wealthReport.blueprintName = filename;
+                    Debug.Report(Debug.Wealth, "Chunk {0}", context.state.wealthReport.Summary());
+                }
                 Debug.Extra(Debug.Scatter, "[{0} s] Transferred.", DateTime.UtcNow.Subtract(start).TotalSeconds);
             } catch (Exception e) {
                 Debug.Error(Debug.BlueprintTransfer, "Failed to transfer blueprint due to {0}", e);
