@@ -151,6 +151,16 @@ namespace RealRuins
             {
                 Debug.Log("StartGame", "DoNext prefix");
                 int selectedTile = Find.WorldInterface.SelectedTile;
+
+                // A POI chosen earlier (then "Back" and another tile, or an abandoned setup) must not apply to a different tile.
+                // The re-invocation after the dialog below keeps it: the POI is removed from the world, but its tile is the selected one.
+                RealRuinsPOIWorldObject previousPOI = PlanetaryRuinsInitData.shared.startingPOI;
+                if (previousPOI != null && previousPOI.Tile != selectedTile)
+                {
+                    Debug.Log("StartGame", "Discarding starting POI chosen for another tile");
+                    PlanetaryRuinsInitData.shared.startingPOI = null;
+                }
+
                 if (selectedTile > 0)
                 {
                     Debug.Log("StartGame", "Got selected tile");
