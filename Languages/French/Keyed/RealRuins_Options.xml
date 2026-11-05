@@ -84,7 +84,7 @@
   <RealRuins.SpawnBlacklistTT>Liste séparée par des virgules des définitions d'objets à exclure.</RealRuins.SpawnBlacklistTT>
 
   <RealRuins.MaterialBlacklist>Liste noire des matériaux</RealRuins.MaterialBlacklist>
-  <RealRuins.MaterialBlacklistTT>Liste séparée par des virgules des matériaux à exclure. Lorsqu'un objet fabriqué à partir d'un matériau sur la liste noire est rencontré, il sera remplacé par le matériau de secours.</RealRuins.MaterialBlacklistTT></RealRuins.MaterialBlacklistTT>
+  <RealRuins.MaterialBlacklistTT>Liste séparée par des virgules des matériaux à exclure. Lorsqu'un objet fabriqué à partir d'un matériau sur la liste noire est rencontré, il sera remplacé par le matériau de secours.</RealRuins.MaterialBlacklistTT>
 
   <RealRuins.FallbackMaterial>Matériau de secours</RealRuins.FallbackMaterial>
   <RealRuins.FallbackMaterialTT>Matériau à utiliser lorsqu'un matériau de la liste noire est rencontré. Par défaut bois.</RealRuins.FallbackMaterialTT>
