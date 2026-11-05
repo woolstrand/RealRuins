@@ -38,17 +38,23 @@ namespace RealRuins {
             float powerThreshold = (Math.Abs(Rand.Gaussian(0.5f, 1)) * powerMax) + 1;
             float cumulativePower = 0;
 
+            List<PawnKindDef> mechanoidKinds = (from kind in DefDatabase<PawnKindDef>.AllDefsListForReading
+                                                where kind.RaceProps.IsMechanoid
+                                                select kind).ToList();
+            if (mechanoidKinds.Count == 0) {
+                Debug.Log(Debug.ForceGen, "No mechanoid kinds available, skipping mechanoid forces");
+                return;
+            }
+
             Faction faction = Faction.OfMechanoids;
 
             Lord lord = LordMaker.MakeNewLord(lordJob: new LordJob_DefendPoint(rect.CenterCell), faction: faction, map: map, startingPawns: null);
             int tile = map.Tile;
 
             while (cumulativePower <= powerThreshold) {
-
-
-                PawnKindDef currentPawnKindDef = (from kind in DefDatabase<PawnKindDef>.AllDefsListForReading
-                                                  where kind.RaceProps.IsMechanoid
-                                                  select kind).RandomElementByWeight((PawnKindDef kind) => 1f / kind.combatPower);
+                if (!mechanoidKinds.TryRandomElementByWeight((PawnKindDef kind) => 1f / kind.combatPower, out PawnKindDef currentPawnKindDef)) {
+                    break; //the list is not empty, so this happens only if all weights are zero
+                }
 
                 PawnGenerationRequest request =
                     new PawnGenerationRequest(currentPawnKindDef, faction: faction, tile: tile, forceGenerateNewPawn: true,
