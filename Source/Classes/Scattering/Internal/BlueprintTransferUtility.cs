@@ -256,6 +256,12 @@ namespace RealRuins
                     //a minified thing is drawn with its inner thing's graphic; some modded buildings can't make one while unspawned
                     if (thing is MinifiedThing minified)
                     {
+                        //the blueprint may come from a game where the inner thing was minifiable (other mods, other versions); here it may be not
+                        if (!minified.InnerThing.def.Minifiable)
+                        {
+                            Debug.Extra(Debug.BlueprintTransfer, "Skipping minified {0}: it is not minifiable in this game", minified.InnerThing.def.defName);
+                            return null;
+                        }
                         try
                         {
                             Graphic innerGraphic = minified.InnerThing.Graphic;
