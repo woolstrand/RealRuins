@@ -239,6 +239,8 @@
 
   <RealRuins.DisableFriendlyRaids>Disable friendly raids</RealRuins.DisableFriendlyRaids>
   <RealRuins.DisableFriendlyRaidsTT>If enabled, only hostile factions will spawn raids during ruins events. Friendly faction raids will be prevented.</RealRuins.DisableFriendlyRaidsTT>
+  <RealRuins.SpawnRoofs>Spawn roofs</RealRuins.SpawnRoofs>
+  <RealRuins.SpawnRoofsTT>If disabled, ruins of all kinds (including points of interest and abandoned bases) are generated without roofs. Roofs that collapsed from deterioration stay collapsed either way.</RealRuins.SpawnRoofsTT>
 
   <RealRuins.SpawnBlacklist>Item spawn blacklist</RealRuins.SpawnBlacklist>
   <RealRuins.SpawnBlacklistTT>Comma-separated list of item defs to exclude from spawning.</RealRuins.SpawnBlacklistTT>

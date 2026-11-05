@@ -79,6 +79,8 @@
 
   <RealRuins.DisableFriendlyRaids>Désactiver les raids amicaux</RealRuins.DisableFriendlyRaids>
   <RealRuins.DisableFriendlyRaidsTT>Si activé, seuls les raids des factions ennemies se produiront pendant les événements de ruines.</RealRuins.DisableFriendlyRaidsTT>
+  <RealRuins.SpawnRoofs>Générer les toits</RealRuins.SpawnRoofs>
+  <RealRuins.SpawnRoofsTT>Si désactivé, toutes les ruines (y compris les points d'intérêt et les bases abandonnées) sont générées sans toit. Les toits effondrés par la détérioration restent effondrés dans tous les cas.</RealRuins.SpawnRoofsTT>
 
   <RealRuins.SpawnBlacklist>Liste noire d'objets</RealRuins.SpawnBlacklist>
   <RealRuins.SpawnBlacklistTT>Liste séparée par des virgules des définitions d'objets à exclure.</RealRuins.SpawnBlacklistTT>

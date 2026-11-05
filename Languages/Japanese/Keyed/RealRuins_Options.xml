@@ -238,6 +238,8 @@
 
   <RealRuins.DisableFriendlyRaids>友好的な襲撃を無効にする</RealRuins.DisableFriendlyRaids>
   <RealRuins.DisableFriendlyRaidsTT>有効にすると、遺跡イベント中は敵対派閥からの襲撃のみが発生します。</RealRuins.DisableFriendlyRaidsTT>
+  <RealRuins.SpawnRoofs>屋根を生成する</RealRuins.SpawnRoofs>
+  <RealRuins.SpawnRoofsTT>無効にすると、すべての遺跡（拠点や放棄された基地を含む）が屋根なしで生成されます。劣化で崩れた屋根はどちらの場合も復元されません。</RealRuins.SpawnRoofsTT>
 
   <RealRuins.SpawnBlacklist>アイテムスポーン黒リスト</RealRuins.SpawnBlacklist>
   <RealRuins.SpawnBlacklistTT>スポーンから除外するアイテム定義のコンマ区切りリスト。</RealRuins.SpawnBlacklistTT>

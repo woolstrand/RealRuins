@@ -638,8 +638,8 @@ namespace RealRuins
                         }
 
 
-                        //construct roof everywhere where it exists in blueprint (for ruins ignoring outside: room with index 1).
-                        if (blueprint.roofMap[x, z] == true && (options.overwritesEverything || blueprint.wallMap[x, z] != 1))
+                        //construct roof everywhere where it exists in blueprint (for ruins ignoring outside: room with index 1), unless roofs are disabled in settings.
+                        if (RealRuins_ModSettings.spawnRoofs && blueprint.roofMap[x, z] == true && (options.overwritesEverything || blueprint.wallMap[x, z] != 1))
                         {
                             // Only set roof if terrain allows it (not over water, etc.)
                             TerrainDef terrainAtLocation = map.terrainGrid?.TerrainAt(mapLocation);
