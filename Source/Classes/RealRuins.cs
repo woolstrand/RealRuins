@@ -339,6 +339,15 @@ namespace RealRuins
                 // check if there is a starting poi in global context to start at
                 RealRuinsPOIWorldObject poi = PlanetaryRuinsInitData.shared.startingPOI;
 
+                // The context is static and survives leaving game setup for the main menu. Only the starting map of a new game
+                // may use it, otherwise the next map of a loaded game (e.g. an attacked enemy base) would become the starting POI.
+                if (poi != null && Current.ProgramState == ProgramState.Playing)
+                {
+                    Debug.Log("[MapGen]", "Discarding stale RR POI game start context, game is already running");
+                    PlanetaryRuinsInitData.shared.Cleanup();
+                    poi = null;
+                }
+
                 if (poi != null)
                 {
                     Debug.Log("[MapGen]", "Found RR POI in game start context. Generator def name was {0}, changing to {1}", mapGenerator.defName, poi.MapGeneratorDef.defName);
