@@ -31,7 +31,7 @@ namespace RealRuins.Settings
 
         public override string TabLabel => "RealRuins.AdvancedSettings".Translate();
 
-        public override float ContentHeight => 615f;
+        public override float ContentHeight => 655f;
 
         public override void Draw(Rect rect)
         {
@@ -114,6 +114,13 @@ namespace RealRuins.Settings
                 "RealRuins.DisableFriendlyRaids".Translate(),
                 ref RealRuins_ModSettings.disableFriendlyRaids,
                 "RealRuins.DisableFriendlyRaidsTT".Translate());
+
+            listing.Gap(15);
+
+            listing.CheckboxLabeled(
+                "RealRuins.SpawnRoofs".Translate(),
+                ref RealRuins_ModSettings.spawnRoofs,
+                "RealRuins.SpawnRoofsTT".Translate());
 
             listing.Gap(15);
 

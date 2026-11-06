@@ -326,6 +326,12 @@ namespace RealRuins
                     //a minified thing is drawn with its inner thing's graphic; some modded buildings can't make one while unspawned
                     if (thing is MinifiedThing minified)
                     {
+                        //the blueprint may come from a game where the inner thing was minifiable (other mods, other versions); here it may be not
+                        if (!minified.InnerThing.def.Minifiable)
+                        {
+                            Debug.Extra(Debug.BlueprintTransfer, "Skipping minified {0}: it is not minifiable in this game", minified.InnerThing.def.defName);
+                            return null;
+                        }
                         //the inner thing was never spawned, so comps set up in PostSpawnSetup are empty (e.g. a moisture pump's power comp,
                         //and then it works on a null map). A crate's contents are inert anyway; installing it spawns the inner thing normally.
                         minified.GetDirectlyHeldThings().dontTickContents = true;
@@ -717,8 +723,8 @@ namespace RealRuins
                         }
 
 
-                        //construct roof everywhere where it exists in blueprint (for ruins ignoring outside: room with index 1).
-                        if (blueprint.roofMap[x, z] == true && (options.overwritesEverything || blueprint.wallMap[x, z] != 1))
+                        //construct roof everywhere where it exists in blueprint (for ruins ignoring outside: room with index 1), unless roofs are disabled in settings.
+                        if (RealRuins_ModSettings.spawnRoofs && blueprint.roofMap[x, z] == true && (options.overwritesEverything || blueprint.wallMap[x, z] != 1))
                         {
                             // Only set roof if terrain allows it (not over water, etc.)
                             TerrainDef terrainAtLocation = map.terrainGrid?.TerrainAt(mapLocation);

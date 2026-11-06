@@ -273,6 +273,8 @@
 
   <RealRuins.DisableFriendlyRaids>Отключить дружественные набеги</RealRuins.DisableFriendlyRaids>
   <RealRuins.DisableFriendlyRaidsTT>Если включено, во время событий на руинах будут приходить только партии враждебных фракций.</RealRuins.DisableFriendlyRaidsTT>
+  <RealRuins.SpawnRoofs>Создавать крыши</RealRuins.SpawnRoofs>
+  <RealRuins.SpawnRoofsTT>Если выключено, все виды руин (включая точки интереса и заброшенные базы) создаются без крыш. Крыши, обрушившиеся от разрушения, в любом случае не восстанавливаются.</RealRuins.SpawnRoofsTT>
 
   <RealRuins.SpawnBlacklist>Чёрный список предметов</RealRuins.SpawnBlacklist>
   <RealRuins.SpawnBlacklistTT>Список, разделённый запятыми. Идентификаторы предметов, которые не должны появляться.</RealRuins.SpawnBlacklistTT>

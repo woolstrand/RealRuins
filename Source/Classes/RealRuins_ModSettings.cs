@@ -33,6 +33,7 @@ namespace RealRuins
         public static int debugTileFocusId = -1; // debug: tile ID to focus/select in world view
         public static List<string> debugExtras = new List<string>() { "BlueprintPawnDecoder" }; // debug: extra debug categories to log
         public static bool disableFriendlyRaids = false; // disable friendly raids on ruins
+        public static bool spawnRoofs = true; // if false, no ruins of any kind get roofs
         public static bool enableAbandonedRuinsFoundEvent = true; // enable/disable the abandoned ruins found event
         public static bool enableCaravanFoundRuinsEvent = true; // enable/disable the caravan spotted small ruins event
         public static string spawnBlacklist = ""; // newline-separated list of defs to exclude from spawning
@@ -72,6 +73,7 @@ namespace RealRuins
             Scribe_Values.Look(ref debugTileFocusId, "debugTileFocusId", -1, false);
             Scribe_Collections.Look(ref debugExtras, "debugExtras", LookMode.Value);
             Scribe_Values.Look(ref disableFriendlyRaids, "disableFriendlyRaids", false, false);
+            Scribe_Values.Look(ref spawnRoofs, "spawnRoofs", true, false);
             Scribe_Values.Look(ref enableAbandonedRuinsFoundEvent, "enableAbandonedRuinsFoundEvent", true, false);
             Scribe_Values.Look(ref enableCaravanFoundRuinsEvent, "enableCaravanFoundRuinsEvent", true, false);
             Scribe_Values.Look(ref spawnBlacklist, "spawnBlacklist", "", false);
@@ -128,6 +130,7 @@ namespace RealRuins
             debugTileFocusId = -1;
             debugExtras = new List<string>() { "BlueprintPawnDecoder" };
             disableFriendlyRaids = false;
+            spawnRoofs = true;
             enableAbandonedRuinsFoundEvent = true;
             enableCaravanFoundRuinsEvent = true;
             spawnBlacklist = "";

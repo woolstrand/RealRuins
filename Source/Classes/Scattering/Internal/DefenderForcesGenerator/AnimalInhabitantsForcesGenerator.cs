@@ -21,11 +21,12 @@ namespace RealRuins {
                 return; //interrupt if there are no closed cells available
             }*/
 
-            PawnKindDef pawnKindDef = null;
+            //a biome may have no predators or omnivores at all (or no wild animals, like orbit), then there is nobody to inhabit the ruins
+            if (!map.Biome.AllWildAnimals.TryRandomElementByWeight((PawnKindDef def) => (def.RaceProps.foodType == FoodTypeFlags.CarnivoreAnimal || def.RaceProps.foodType == FoodTypeFlags.OmnivoreAnimal) ? 1 : 0, out PawnKindDef pawnKindDef)) {
+                Debug.Log(Debug.ForceGen, "No carnivorous or omnivorous wild animals in biome {0}, skipping animal forces", map.Biome.defName);
+                return;
+            }
 
-           
-            pawnKindDef = map.Biome.AllWildAnimals.RandomElementByWeight((PawnKindDef def) => (def.RaceProps.foodType == FoodTypeFlags.CarnivoreAnimal || def.RaceProps.foodType == FoodTypeFlags.OmnivoreAnimal) ? 1 : 0);
-           
             float powerMax = (float)Math.Sqrt(context.state.uncoveredCost / 10 * (rect.Area / 30.0f));
             Debug.Log(Debug.ForceGen, "Unscaled power is {0} based on cost of {1} and area of {2}", powerMax, context.state.uncoveredCost, rect.Area);
             powerMax = ScalePointsToDifficulty(powerMax, context);

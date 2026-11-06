@@ -157,6 +157,8 @@
 
   <RealRuins.DisableFriendlyRaids>禁用友好突袭</RealRuins.DisableFriendlyRaids>
   <RealRuins.DisableFriendlyRaidsTT>如果启用，在遗迹事件中只会进行敌对派系的突袭。</RealRuins.DisableFriendlyRaidsTT>
+  <RealRuins.SpawnRoofs>生成屋顶</RealRuins.SpawnRoofs>
+  <RealRuins.SpawnRoofsTT>如果禁用，所有遗迹（包括兴趣点和废弃基地）都将在没有屋顶的情况下生成。因损坏而坍塌的屋顶在任何情况下都不会恢复。</RealRuins.SpawnRoofsTT>
 
   <RealRuins.SpawnBlacklist>物品黑名单</RealRuins.SpawnBlacklist>
   <RealRuins.SpawnBlacklistTT>逗号分割的物品定义列表，用于排除不应生成的物品。</RealRuins.SpawnBlacklistTT>

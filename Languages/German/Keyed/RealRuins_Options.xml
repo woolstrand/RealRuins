@@ -75,6 +75,8 @@
 
   <RealRuins.DisableFriendlyRaids>Freundliche Überfälle deaktivieren</RealRuins.DisableFriendlyRaids>
   <RealRuins.DisableFriendlyRaidsTT>Wenn aktiviert, werden während Ruinenereignissen nur Angriffe durch feindliche Fraktionen durchgeführt.</RealRuins.DisableFriendlyRaidsTT>
+  <RealRuins.SpawnRoofs>Dächer erzeugen</RealRuins.SpawnRoofs>
+  <RealRuins.SpawnRoofsTT>Wenn deaktiviert, werden alle Arten von Ruinen (einschließlich Sehenswürdigkeiten und verlassener Basen) ohne Dächer erzeugt. Durch Verfall eingestürzte Dächer bleiben in jedem Fall eingestürzt.</RealRuins.SpawnRoofsTT>
 
   <RealRuins.SpawnBlacklist>Gegenstands-Blacklist</RealRuins.SpawnBlacklist>
   <RealRuins.SpawnBlacklistTT>Kommagetrennte Liste von Gegenstandsdefinitionen, die nicht erscheinen sollen.</RealRuins.SpawnBlacklistTT>

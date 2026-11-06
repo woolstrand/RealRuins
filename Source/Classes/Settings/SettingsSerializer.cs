@@ -36,6 +36,7 @@ namespace RealRuins.Settings
             Add("useRuinsForcesGenerationV2",       RealRuins_ModSettings.useRuinsForcesGenerationV2.ToString());
             Add("logLevel",                         RealRuins_ModSettings.logLevel.ToString());
             Add("disableFriendlyRaids",             RealRuins_ModSettings.disableFriendlyRaids.ToString());
+            Add("spawnRoofs",                       RealRuins_ModSettings.spawnRoofs.ToString());
             Add("enableAbandonedRuinsFoundEvent",   RealRuins_ModSettings.enableAbandonedRuinsFoundEvent.ToString());
             Add("enableCaravanFoundRuinsEvent",     RealRuins_ModSettings.enableCaravanFoundRuinsEvent.ToString());
             Add("spawnBlacklist",                   Uri.EscapeDataString(RealRuins_ModSettings.spawnBlacklist ?? ""));
@@ -115,6 +116,7 @@ namespace RealRuins.Settings
                         case "useRuinsForcesGenerationV2":      TryParseBool(val, ref RealRuins_ModSettings.useRuinsForcesGenerationV2); break;
                         case "logLevel":                        TryParseInt(val, ref RealRuins_ModSettings.logLevel); break;
                         case "disableFriendlyRaids":            TryParseBool(val, ref RealRuins_ModSettings.disableFriendlyRaids); break;
+                        case "spawnRoofs":                      TryParseBool(val, ref RealRuins_ModSettings.spawnRoofs); break;
                         case "enableAbandonedRuinsFoundEvent":  TryParseBool(val, ref RealRuins_ModSettings.enableAbandonedRuinsFoundEvent); break;
                         case "enableCaravanFoundRuinsEvent":    TryParseBool(val, ref RealRuins_ModSettings.enableCaravanFoundRuinsEvent); break;
                         case "spawnBlacklist":                  RealRuins_ModSettings.spawnBlacklist = Uri.UnescapeDataString(val); break;

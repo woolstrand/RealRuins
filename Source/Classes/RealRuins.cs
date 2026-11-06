@@ -166,6 +166,16 @@ namespace RealRuins
             {
                 Debug.Log("StartGame", "DoNext prefix");
                 int selectedTile = Find.WorldInterface.SelectedTile;
+
+                // A POI chosen earlier (then "Back" and another tile, or an abandoned setup) must not apply to a different tile.
+                // The re-invocation after the dialog below keeps it: the POI is removed from the world, but its tile is the selected one.
+                RealRuinsPOIWorldObject previousPOI = PlanetaryRuinsInitData.shared.startingPOI;
+                if (previousPOI != null && previousPOI.Tile != selectedTile)
+                {
+                    Debug.Log("StartGame", "Discarding starting POI chosen for another tile");
+                    PlanetaryRuinsInitData.shared.startingPOI = null;
+                }
+
                 if (selectedTile > 0)
                 {
                     Debug.Log("StartGame", "Got selected tile");
@@ -407,6 +417,15 @@ namespace RealRuins
 
                 // check if there is a starting poi in global context to start at
                 RealRuinsPOIWorldObject poi = PlanetaryRuinsInitData.shared.startingPOI;
+
+                // The context is static and survives leaving game setup for the main menu. Only the starting map of a new game
+                // may use it, otherwise the next map of a loaded game (e.g. an attacked enemy base) would become the starting POI.
+                if (poi != null && Current.ProgramState == ProgramState.Playing)
+                {
+                    Debug.Log("[MapGen]", "Discarding stale RR POI game start context, game is already running");
+                    PlanetaryRuinsInitData.shared.Cleanup();
+                    poi = null;
+                }
 
                 if (poi != null)
                 {
