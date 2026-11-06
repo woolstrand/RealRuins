@@ -39,7 +39,7 @@ namespace RealRuins
                 // Here we have to determine starting value. Ruins value will decrease over time (lore: scavenged by other factions)
                 // However, we do not want it to be initially larger than total wealth cap.
 
-                float costCap = RealRuins_ModSettings.ruinsCostCap;
+                float costCap = RuinsWealthLimits.For(RuinsKind.AbandonedBase);
                 float startingCap = Math.Min(costCap, Math.Max(cachedCost, cachedCost2));
                 if (startingCap <= 0) {
                     // Blueprint search failed (no cost stored). A zero cap would make the comp mark the ruins scavenged on the

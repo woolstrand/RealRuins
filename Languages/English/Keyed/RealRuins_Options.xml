@@ -336,6 +336,11 @@
   <RealRuins.EnableAbandonedRuinsFoundEventTT>When enabled, the large "abandoned ruins found" world event can fire, marking a location with sizeable ruins on the world map.</RealRuins.EnableAbandonedRuinsFoundEventTT>
   <RealRuins.EnableCaravanFoundRuinsEvent>Enable "caravan spotted small ruins" event</RealRuins.EnableCaravanFoundRuinsEvent>
   <RealRuins.EnableCaravanFoundRuinsEventTT>When enabled, travelling caravans can spot a small ruin nearby and give you the option to investigate it.</RealRuins.EnableCaravanFoundRuinsEventTT>
+  <RealRuins.ScaleWithColonyWealth>Scale ruins wealth limits with colony wealth</RealRuins.ScaleWithColonyWealth>
+  <RealRuins.ScaleWithColonyWealthTT>Poor colonies find poorer ruins, rich ones richer ruins. Applies to the wealth limits of regular ruins, caravan ruins and abandoned bases. The limits you set stay the maximum, and even unlimited ones get limited this way. Colony wealth is counted the way the storyteller does, over your home maps and caravans.</RealRuins.ScaleWithColonyWealthTT>
+  <RealRuins.ColonyWealthShare>Share of colony wealth</RealRuins.ColonyWealthShare>
+  <RealRuins.ColonyWealthShareTT>What all regular ruins of a map may be worth together, as a share of colony wealth. A caravan ruin may be worth twice that, an abandoned base five times that. Small colonies still get at least 3,000, 5,000 and 25,000.</RealRuins.ColonyWealthShareTT>
+  <RealRuins.ColonyWealthExample>Colony worth {0}: regular ruins {1}, caravan ruin {2}, abandoned base {3}</RealRuins.ColonyWealthExample>
   <RealRuins.CaravanRuinsCostCap>Caravan ruins wealth cap</RealRuins.CaravanRuinsCostCap>
   <RealRuins.CaravanRuinsCostCapTT>The most a ruin spotted by a caravan may be worth. Its most valuable things are taken away until it fits. Raiders at the ruin scale with what is left.</RealRuins.CaravanRuinsCostCapTT>
 

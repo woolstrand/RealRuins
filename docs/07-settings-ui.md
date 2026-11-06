@@ -44,6 +44,8 @@ All settings are `public static` fields — accessible from anywhere.
 | `diskCacheLimit` | float | 256 | Local cache size limit (MB); -1 = unlimited |
 | `ruinsCostCap` | float | 1e9 | Max market value of an abandoned base |
 | `caravanRuinsCostCap` | float | 100000 | Max market value of the caravan event's main ruin; 100,000 = no limit |
+| `ruinsScaleWithColonyWealth` | bool | false | All ruins wealth limits also follow colony wealth (`RuinsWealthLimits`) |
+| `ruinsColonyWealthShare` | float | 0.1 | Share of colony wealth regular ruins of a map may have; 1–50%, shown only with scaling on |
 | `forceMultiplier` | float | 1.0 | Scale enemy forces |
 | `logLevel` | int | 2 | 0=all, 1=warnings, 2=errors |
 | `preserveStandardRuins` | bool | false | Keep vanilla ruins alongside mod ruins |

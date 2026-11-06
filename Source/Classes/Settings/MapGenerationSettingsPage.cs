@@ -118,7 +118,7 @@ namespace RealRuins.Settings
             listing.Gap(12);
 
             // Ruins wealth per map
-            string wealthStr = RealRuins_ModSettings.RuinsWealthPerMapLimit >= 0
+            string wealthStr = RuinsWealthLimits.SettingCap(RuinsKind.Regular) < RuinsWealthLimits.NoLimit
                 ? RealRuins_ModSettings.ruinsWealthPerMap.ToString("#,0")
                 : (string)"RealRuins.Unlimited".Translate();
             listing.Label(

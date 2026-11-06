@@ -20,7 +20,7 @@ namespace RealRuins
 			
 			int minArea = minimumArea.GetValue(slate);
 			int minWealth = minimumWealth.GetValue(slate);
-			long wealthCap = (long)RealRuins_ModSettings.ruinsCostCap;
+			long wealthCap = (long)RuinsWealthLimits.For(RuinsKind.AbandonedBase);
 			long effectiveMinWealth = (long)Math.Min(minWealth, wealthCap);
 			
 			Debug.Extra(Debug.QuestNode_FindBlueprint, "FindBlueprint: Parameters - minArea={0}, minWealth={1}, wealthCap={2}, effectiveMinWealth={3}", 

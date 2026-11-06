@@ -14,6 +14,8 @@ namespace RealRuins.Settings
             "RealRuins.Reform.Manual"
         };
 
+        private const float exampleColonyWealth = 200000;
+
         // The page outlives settings import and reset, so each buffer remembers the setting value it was last synced with.
         private string spawnBlacklistBuffer, spawnBlacklistSynced;
         private string materialBlacklistBuffer, materialBlacklistSynced;
@@ -31,7 +33,7 @@ namespace RealRuins.Settings
 
         public override string TabLabel => "RealRuins.AdvancedSettings".Translate();
 
-        public override float ContentHeight => 655f;
+        public override float ContentHeight => RealRuins_ModSettings.ruinsScaleWithColonyWealth ? 790f : 720f;
 
         public override void Draw(Rect rect)
         {
@@ -57,7 +59,7 @@ namespace RealRuins.Settings
             listing.Gap(15);
 
             // Wealth Cost Cap
-            string wealthCapStr = RealRuins_ModSettings.ruinsCostCap < 9.9999e8 ? RealRuins_ModSettings.ruinsCostCap.ToString("#,0") : (string)"RealRuins.Unlimited".Translate();
+            string wealthCapStr = RuinsWealthLimits.SettingCap(RuinsKind.AbandonedBase) < RuinsWealthLimits.NoLimit ? RealRuins_ModSettings.ruinsCostCap.ToString("#,0") : (string)"RealRuins.Unlimited".Translate();
             
             Rect wealthCapRect = listing.GetRect(25f);
             Widgets.Label(
@@ -73,6 +75,31 @@ namespace RealRuins.Settings
 
             TooltipHandler.TipRegion(wealthCapRect, "RealRuins.AbsoluteWealthCapTT".Translate());
             listing.Gap(15);
+
+            // Scaling of all ruins wealth limits
+            listing.CheckboxLabeled(
+                "RealRuins.ScaleWithColonyWealth".Translate(),
+                ref RealRuins_ModSettings.ruinsScaleWithColonyWealth,
+                "RealRuins.ScaleWithColonyWealthTT".Translate());
+
+            if (RealRuins_ModSettings.ruinsScaleWithColonyWealth) {
+                Rect shareRect = listing.GetRect(25f);
+                Widgets.Label(
+                    shareRect.LeftHalf().ContractedBy(0, 0),
+                    "RealRuins.ColonyWealthShare".Translate() + ": " + RealRuins_ModSettings.ruinsColonyWealthShare.ToStringPercent());
+
+                RealRuins_ModSettings.ruinsColonyWealthShare =
+                    Mathf.Round(Widgets.HorizontalSlider(shareRect.RightHalf().ContractedBy(0, 3), RealRuins_ModSettings.ruinsColonyWealthShare, 0.01f, 0.5f) * 100.0f) / 100.0f;
+
+                TooltipHandler.TipRegion(shareRect, "RealRuins.ColonyWealthShareTT".Translate());
+
+                listing.Label("RealRuins.ColonyWealthExample".Translate(
+                    exampleColonyWealth.ToString("#,0"),
+                    RuinsWealthLimits.ScaledLimit(RuinsKind.Regular, exampleColonyWealth).ToString("#,0"),
+                    RuinsWealthLimits.ScaledLimit(RuinsKind.Caravan, exampleColonyWealth).ToString("#,0"),
+                    RuinsWealthLimits.ScaledLimit(RuinsKind.AbandonedBase, exampleColonyWealth).ToString("#,0")));
+                listing.Gap(15);
+            }
 
             // Caravan Reform Type
             Rect caravanRect = listing.GetRect(25f);
@@ -136,7 +163,7 @@ namespace RealRuins.Settings
                 ref RealRuins_ModSettings.enableCaravanFoundRuinsEvent,
                 "RealRuins.EnableCaravanFoundRuinsEventTT".Translate());
 
-            string caravanCapStr = RealRuins_ModSettings.CaravanRuinsCostLimit >= 0
+            string caravanCapStr = RuinsWealthLimits.SettingCap(RuinsKind.Caravan) < RuinsWealthLimits.NoLimit
                 ? RealRuins_ModSettings.caravanRuinsCostCap.ToString("#,0")
                 : (string)"RealRuins.Unlimited".Translate();
             Rect caravanCapRect = listing.GetRect(25f);

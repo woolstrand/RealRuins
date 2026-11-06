@@ -93,6 +93,13 @@ produce dense "cities".
 Each chunk gets its own `ScatterContext`, a random `RandomNotEdgeCell(10)` position and, with `hostileChance`, animal (80%)
 or mechanoid (20%) defenders. The game is paused while scattering.
 
+### Ruins wealth limits
+`RuinsWealthLimits` is the only place that decides what ruins may be worth: `For(RuinsKind)` gives the limit of regular ruins (per map),
+a caravan ruin or an abandoned base, `NoLimit` if there is none. Nothing else reads the cap settings. With `ruinsScaleWithColonyWealth`
+the limit is `min(setting, max(minimum, colony wealth × ruinsColonyWealthShare × weight))`: weights 1 / 2 / 5, minimums 3k / 5k / 25k.
+Unlimited settings are limited this way too. Colony wealth is `PlayerWealthForStoryteller` of home maps and player caravans, without the map being
+generated, so the starting map gets the minimum. An abandoned base gets its limit when the quest is created, the others on map generation.
+
 ### Ruins wealth per map
 `RealRuins_ModSettings.ruinsWealthPerMap` (default 15,000; slider on the map generation page, 100,000 = no limit) is the
 market value all chunks of a map may share. `RuinsWealthBudget` gives each chunk, in order, what is left minus a reserve of

@@ -20,7 +20,8 @@ namespace RealRuins
         public static float ruinsCostCap = 1.0e+9f; //absolute cost cap of each and every ruin
         public static float ruinsWealthPerMap = 15000; //wealth all regular ruins of one map may share; ruinsWealthPerMapUnlimited and above means no limit
         public const float ruinsWealthPerMapUnlimited = 100000;
-        public static float RuinsWealthPerMapLimit => ruinsWealthPerMap < ruinsWealthPerMapUnlimited ? ruinsWealthPerMap : -1;
+        public static bool ruinsScaleWithColonyWealth = false; //all ruins wealth limits also follow colony wealth, see RuinsWealthLimits
+        public static float ruinsColonyWealthShare = 0.1f; //share of colony wealth regular ruins of a map may have; other ruins have a multiple of it
         public static bool ruinsWealthScaleWithProximity = false; //limit scales with the proximity chunk count multiplier: more ruins near settlements, more wealth
         public static bool ruinsWealthIgnoreStructure = true; //plain walls, doors and floors (Tile.IsBasicStructure) don't count toward the limit
         public static bool ruinsWealthCountDamage = false; //limit counts the actual value of spawned things (damage, quality) instead of full price
@@ -38,7 +39,6 @@ namespace RealRuins
         public static bool enableCaravanFoundRuinsEvent = true; // enable/disable the caravan spotted small ruins event
         public static float caravanRuinsCostCap = 100000; //what the main ruin of the caravan event may be worth; caravanRuinsCostCapUnlimited and above means no limit
         public const float caravanRuinsCostCapUnlimited = 100000;
-        public static float CaravanRuinsCostLimit => caravanRuinsCostCap < caravanRuinsCostCapUnlimited ? caravanRuinsCostCap : -1;
         public static string spawnBlacklist = ""; // newline-separated list of defs to exclude from spawning
         public static string materialBlacklist = ""; // newline-separated list of materials to exclude from spawning
         public static string fallbackMaterial = "Wood"; // material to use when blacklisted material is encountered
@@ -80,6 +80,8 @@ namespace RealRuins
             Scribe_Values.Look(ref enableAbandonedRuinsFoundEvent, "enableAbandonedRuinsFoundEvent", true, false);
             Scribe_Values.Look(ref enableCaravanFoundRuinsEvent, "enableCaravanFoundRuinsEvent", true, false);
             Scribe_Values.Look(ref caravanRuinsCostCap, "caravanRuinsCostCap", 100000, false);
+            Scribe_Values.Look(ref ruinsScaleWithColonyWealth, "ruinsScaleWithColonyWealth", false, false);
+            Scribe_Values.Look(ref ruinsColonyWealthShare, "ruinsColonyWealthShare", 0.1f, false);
             Scribe_Values.Look(ref spawnBlacklist, "spawnBlacklist", "", false);
             Scribe_Values.Look(ref materialBlacklist, "materialBlacklist", "", false);
             Scribe_Values.Look(ref fallbackMaterial, "fallbackMaterial", "Wood", false);
@@ -138,6 +140,8 @@ namespace RealRuins
             enableAbandonedRuinsFoundEvent = true;
             enableCaravanFoundRuinsEvent = true;
             caravanRuinsCostCap = 100000;
+            ruinsScaleWithColonyWealth = false;
+            ruinsColonyWealthShare = 0.1f;
             spawnBlacklist = "";
             materialBlacklist = "";
             fallbackMaterial = "Wood";
