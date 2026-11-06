@@ -136,6 +136,22 @@ namespace RealRuins.Settings
                 ref RealRuins_ModSettings.enableCaravanFoundRuinsEvent,
                 "RealRuins.EnableCaravanFoundRuinsEventTT".Translate());
 
+            string caravanCapStr = RealRuins_ModSettings.CaravanRuinsCostLimit >= 0
+                ? RealRuins_ModSettings.caravanRuinsCostCap.ToString("#,0")
+                : (string)"RealRuins.Unlimited".Translate();
+            Rect caravanCapRect = listing.GetRect(25f);
+            Widgets.Label(
+                caravanCapRect.LeftHalf().ContractedBy(0, 0),
+                "RealRuins.CaravanRuinsCostCap".Translate() + ": " + caravanCapStr);
+
+            RealRuins_ModSettings.caravanRuinsCostCap =
+                Mathf.Round(Widgets.HorizontalSlider(
+                    caravanCapRect.RightHalf().ContractedBy(0, 3),
+                    RealRuins_ModSettings.caravanRuinsCostCap,
+                    0.0f,
+                    RealRuins_ModSettings.caravanRuinsCostCapUnlimited) / 1000.0f) * 1000.0f;
+
+            TooltipHandler.TipRegion(caravanCapRect, "RealRuins.CaravanRuinsCostCapTT".Translate());
             listing.Gap(15);
 
             Rect spawnBlacklistRect = listing.GetRect(25f);

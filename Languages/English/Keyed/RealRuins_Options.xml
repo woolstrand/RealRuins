@@ -259,7 +259,7 @@
   <RealRuins.AbsoluteWealthCap>Absolute wealth cap for events</RealRuins.AbsoluteWealthCap>
   <RealRuins.LeaveVanillaRuins>Leave vanilla ruins</RealRuins.LeaveVanillaRuins>
   <RealRuins.ForceMultiplierTT>Tune this to make ruins event more or less difficult</RealRuins.ForceMultiplierTT>
-  <RealRuins.AbsoluteWealthCapTT>Determines absolute wealth cap for ruins events. Wooden walls and doors are not counted against total wealth.</RealRuins.AbsoluteWealthCapTT>
+  <RealRuins.AbsoluteWealthCapTT>Determines absolute wealth cap for abandoned base events and quests. Caravan ruins have their own cap. Wooden walls and doors are not counted against total wealth.</RealRuins.AbsoluteWealthCapTT>
   <RealRuins.LeaveVanillaRuinsTT>If checked, both real ruins and vanilla ruins will be spawned</RealRuins.LeaveVanillaRuinsTT>
 
   <RealRuins.UseForcesGenerationV2>Use new raids system for events</RealRuins.UseForcesGenerationV2>
@@ -336,6 +336,8 @@
   <RealRuins.EnableAbandonedRuinsFoundEventTT>When enabled, the large "abandoned ruins found" world event can fire, marking a location with sizeable ruins on the world map.</RealRuins.EnableAbandonedRuinsFoundEventTT>
   <RealRuins.EnableCaravanFoundRuinsEvent>Enable "caravan spotted small ruins" event</RealRuins.EnableCaravanFoundRuinsEvent>
   <RealRuins.EnableCaravanFoundRuinsEventTT>When enabled, travelling caravans can spot a small ruin nearby and give you the option to investigate it.</RealRuins.EnableCaravanFoundRuinsEventTT>
+  <RealRuins.CaravanRuinsCostCap>Caravan ruins wealth cap</RealRuins.CaravanRuinsCostCap>
+  <RealRuins.CaravanRuinsCostCapTT>The most a ruin spotted by a caravan may be worth. Its most valuable things are taken away until it fits. Raiders at the ruin scale with what is left.</RealRuins.CaravanRuinsCostCapTT>
 
   <!-- Import/Export settings -->
   <RealRuins.Settings.ExportSettings>Export Settings</RealRuins.Settings.ExportSettings>

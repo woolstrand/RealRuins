@@ -36,6 +36,9 @@ namespace RealRuins
         public static bool spawnRoofs = true; // if false, no ruins of any kind get roofs
         public static bool enableAbandonedRuinsFoundEvent = true; // enable/disable the abandoned ruins found event
         public static bool enableCaravanFoundRuinsEvent = true; // enable/disable the caravan spotted small ruins event
+        public static float caravanRuinsCostCap = 100000; //what the main ruin of the caravan event may be worth; caravanRuinsCostCapUnlimited and above means no limit
+        public const float caravanRuinsCostCapUnlimited = 100000;
+        public static float CaravanRuinsCostLimit => caravanRuinsCostCap < caravanRuinsCostCapUnlimited ? caravanRuinsCostCap : -1;
         public static string spawnBlacklist = ""; // newline-separated list of defs to exclude from spawning
         public static string materialBlacklist = ""; // newline-separated list of materials to exclude from spawning
         public static string fallbackMaterial = "Wood"; // material to use when blacklisted material is encountered
@@ -76,6 +79,7 @@ namespace RealRuins
             Scribe_Values.Look(ref spawnRoofs, "spawnRoofs", true, false);
             Scribe_Values.Look(ref enableAbandonedRuinsFoundEvent, "enableAbandonedRuinsFoundEvent", true, false);
             Scribe_Values.Look(ref enableCaravanFoundRuinsEvent, "enableCaravanFoundRuinsEvent", true, false);
+            Scribe_Values.Look(ref caravanRuinsCostCap, "caravanRuinsCostCap", 100000, false);
             Scribe_Values.Look(ref spawnBlacklist, "spawnBlacklist", "", false);
             Scribe_Values.Look(ref materialBlacklist, "materialBlacklist", "", false);
             Scribe_Values.Look(ref fallbackMaterial, "fallbackMaterial", "Wood", false);
@@ -133,6 +137,7 @@ namespace RealRuins
             spawnRoofs = true;
             enableAbandonedRuinsFoundEvent = true;
             enableCaravanFoundRuinsEvent = true;
+            caravanRuinsCostCap = 100000;
             spawnBlacklist = "";
             materialBlacklist = "";
             fallbackMaterial = "Wood";

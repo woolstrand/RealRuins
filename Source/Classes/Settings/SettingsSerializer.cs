@@ -39,6 +39,7 @@ namespace RealRuins.Settings
             Add("spawnRoofs",                       RealRuins_ModSettings.spawnRoofs.ToString());
             Add("enableAbandonedRuinsFoundEvent",   RealRuins_ModSettings.enableAbandonedRuinsFoundEvent.ToString());
             Add("enableCaravanFoundRuinsEvent",     RealRuins_ModSettings.enableCaravanFoundRuinsEvent.ToString());
+            Add("caravanRuinsCostCap",              RealRuins_ModSettings.caravanRuinsCostCap.ToString("R"));
             Add("spawnBlacklist",                   Uri.EscapeDataString(RealRuins_ModSettings.spawnBlacklist ?? ""));
             Add("materialBlacklist",                Uri.EscapeDataString(RealRuins_ModSettings.materialBlacklist ?? ""));
             Add("fallbackMaterial",                 Uri.EscapeDataString(RealRuins_ModSettings.fallbackMaterial ?? "Wood"));
@@ -119,6 +120,7 @@ namespace RealRuins.Settings
                         case "spawnRoofs":                      TryParseBool(val, ref RealRuins_ModSettings.spawnRoofs); break;
                         case "enableAbandonedRuinsFoundEvent":  TryParseBool(val, ref RealRuins_ModSettings.enableAbandonedRuinsFoundEvent); break;
                         case "enableCaravanFoundRuinsEvent":    TryParseBool(val, ref RealRuins_ModSettings.enableCaravanFoundRuinsEvent); break;
+                        case "caravanRuinsCostCap":             TryParseFloat(val, ref RealRuins_ModSettings.caravanRuinsCostCap); break;
                         case "spawnBlacklist":                  RealRuins_ModSettings.spawnBlacklist = Uri.UnescapeDataString(val); break;
                         case "materialBlacklist":               RealRuins_ModSettings.materialBlacklist = Uri.UnescapeDataString(val); break;
                         case "fallbackMaterial":                RealRuins_ModSettings.fallbackMaterial = Uri.UnescapeDataString(val); break;

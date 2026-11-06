@@ -243,7 +243,7 @@ namespace RealRuins
         }
     }
 
-    // Single medium-sized ruin spotted by a caravan (CaravanSmallRuinsWorldObject). Random blueprint, sometimes a raid party.
+    // Single medium-sized ruin spotted by a caravan (CaravanSmallRuinsWorldObject). Random blueprint, raiders in proportion to its value.
     class GenStep_ScatterMediumRealRuins : GenStep_RealRuinsSite {
 
         public override int SeedPart {
@@ -259,27 +259,9 @@ namespace RealRuins
                 faction = Find.FactionManager.OfAncientsHostile,
                 rect = new CellRect(0, 0, map.Size.x, map.Size.z),
                 ensureCanHoldRoof = false,
+                generators = new List<AbstractDefenderForcesGenerator> { new CaravanRuinsForcesGenerator() },
             };
             return plan;
-        }
-
-        // Sometimes a raid party of a random enemy faction is already there.
-        protected override void PushExtraSymbols(Map map, ResolveParams siteParams, SitePlan plan) {
-            if (!Rand.Chance(0.5f * Find.Storyteller.difficulty.threatScale)) return;
-
-            float pointsCost = Math.Abs(Rand.Gaussian()) * 500 * Find.Storyteller.difficulty.threatScale;
-
-            ResolveParams rp = siteParams; //copy!
-            rp.faction = Find.FactionManager.RandomEnemyFaction();
-            rp.singlePawnLord = LordMaker.MakeNewLord(rp.faction, new LordJob_AssaultColony(rp.faction, false, false, true, true), map, null);
-            rp.pawnGroupKindDef = PawnGroupKindDefOf.Settlement;
-            rp.pawnGroupMakerParams = new PawnGroupMakerParms {
-                tile = map.Tile,
-                faction = rp.faction,
-                points = pointsCost,
-            };
-
-            BaseGen.symbolStack.Push("pawnGroup", rp);
         }
     }
     

@@ -162,8 +162,10 @@ Blueprint name, cost cap and raiders activity from `RuinedBaseComp`; `ForAbandon
 `BattleRoyaleForcesGenerator` unless the force multiplier is 0.
 
 ### `GenStep_ScatterMediumRealRuins` (caravan small ruins)
-Random blueprint via `ForCaravanSmallRuins` (min cost 15k, area 4000, capped by `ruinsCostCap`); no `ensureCanHoldRoof`. In `PushExtraSymbols`, with
-`0.5 × threatScale` chance pushes a `pawnGroup` raid of a random enemy faction (`|gaussian| × 500 × threatScale` points).
+Random blueprint via `ForCaravanSmallRuins` (min cost 15k, area 4000, capped by `caravanRuinsCostCap`); no `ensureCanHoldRoof`.
+`CaravanRuinsForcesGenerator` sets raiders of random enemy factions on the map once the ruin is placed: value / 40 points, plus
+`|gaussian| × 500` with `0.5 × threatScale` chance, at most 5,000 before threat scale and force multiplier. Below 200 points after
+scaling nobody comes.
 
 ### `GenStep_ScatterPOIRuins` (planetary POI)
 Context: `PlanetaryRuinsInitData.shared.startingPOI` (new-game settle flow) or the map parent's `RealRuinsPOIComp`.
