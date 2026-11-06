@@ -36,7 +36,9 @@ namespace RealRuins {
             options.hostileChance = 0.8f;
             options.itemCostLimit = 800;
 
-            options.minimumCostRequired = 25000;
+            options.costCap = (int)RealRuins_ModSettings.ruinsCostCap;
+            options.cutDismantlesWalls = true;
+            options.minimumCostRequired = (int)Math.Min(15000.0f, RealRuins_ModSettings.ruinsCostCap);
             options.minimumDensityRequired = 0.01f;
             options.minimumAreaRequired = 4000;
             options.deleteLowQuality = false; //do not delete since we have much higher requirements for base ruins

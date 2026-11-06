@@ -99,9 +99,9 @@ market value all chunks of a map may share. `RuinsWealthBudget` gives each chunk
 `min(500, limit / chunks / 2)` for every chunk still to come, and is charged with what the chunk actually transferred
 (`ScatterState.transferredCost`). `ScavengingProcessor.CutTo` runs after the normal raids when a blueprint is over its
 allowance: it takes the most valuable things first (by `OwnCost`, ignoring weight), with the same removal as raids (contents out
-of containers, cheap door/wall replacements). The same cut serves the abandoned base and ruined POI cost caps, which dismantle
-walls instead (see 03-blueprint-pipeline). Only regular scattered ruins are limited; abandoned bases, POIs and the main ruin
-of the caravan event are not.
+of containers, cheap door/wall replacements). The same cut serves the abandoned base, caravan ruin and ruined POI cost caps, which dismantle
+walls instead (see 03-blueprint-pipeline). Only regular scattered ruins are limited by this budget; abandoned bases, POIs and the
+main ruin of the caravan event have their own cost caps.
 
 Options next to the slider:
 - `ruinsWealthScaleWithProximity` (default off): the limit is multiplied by the proximity count multiplier, the same factor as the
@@ -162,7 +162,7 @@ Blueprint name, cost cap and raiders activity from `RuinedBaseComp`; `ForAbandon
 `BattleRoyaleForcesGenerator` unless the force multiplier is 0.
 
 ### `GenStep_ScatterMediumRealRuins` (caravan small ruins)
-Random blueprint via `ForCaravanSmallRuins` (min cost 25k, area 4000); no `ensureCanHoldRoof`. In `PushExtraSymbols`, with
+Random blueprint via `ForCaravanSmallRuins` (min cost 15k, area 4000, capped by `ruinsCostCap`); no `ensureCanHoldRoof`. In `PushExtraSymbols`, with
 `0.5 × threatScale` chance pushes a `pawnGroup` raid of a random enemy faction (`|gaussian| × 500 × threatScale` points).
 
 ### `GenStep_ScatterPOIRuins` (planetary POI)
