@@ -111,7 +111,8 @@ namespace RealRuins {
                 options.forceFullHitPoints = false;
                 options.enableDeterioration = true;
                 options.overwritesEverything = false;
-                options.costCap = (int)Math.Abs(Rand.Gaussian(0, Math.Max(5000, blueprint.width * blueprint.height)));
+                float rolledCap = Math.Abs(Rand.Gaussian(0, Math.Max(5000, blueprint.width * blueprint.height)));
+                options.costCap = RuinsWealthLimits.ToCostCap(Math.Min(rolledCap, RuinsWealthLimits.For(RuinsKind.AbandonedPOI)));
                 options.cutDismantlesWalls = true;
                 options.itemCostLimit = Rand.Range(50, 500);
             } else {

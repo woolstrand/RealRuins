@@ -14,8 +14,6 @@ namespace RealRuins.Settings
             "RealRuins.Reform.Manual"
         };
 
-        private const float exampleColonyWealth = 200000;
-
         // The page outlives settings import and reset, so each buffer remembers the setting value it was last synced with.
         private string spawnBlacklistBuffer, spawnBlacklistSynced;
         private string materialBlacklistBuffer, materialBlacklistSynced;
@@ -33,7 +31,7 @@ namespace RealRuins.Settings
 
         public override string TabLabel => "RealRuins.AdvancedSettings".Translate();
 
-        public override float ContentHeight => RealRuins_ModSettings.ruinsScaleWithColonyWealth ? 790f : 720f;
+        public override float ContentHeight => RealRuins_ModSettings.ruinsScaleWithColonyWealth ? 800f : 760f;
 
         public override void Draw(Rect rect)
         {
@@ -83,21 +81,15 @@ namespace RealRuins.Settings
                 "RealRuins.ScaleWithColonyWealthTT".Translate());
 
             if (RealRuins_ModSettings.ruinsScaleWithColonyWealth) {
-                Rect shareRect = listing.GetRect(25f);
+                Rect referenceRect = listing.GetRect(25f);
                 Widgets.Label(
-                    shareRect.LeftHalf().ContractedBy(0, 0),
-                    "RealRuins.ColonyWealthShare".Translate() + ": " + RealRuins_ModSettings.ruinsColonyWealthShare.ToStringPercent());
+                    referenceRect.LeftHalf().ContractedBy(0, 0),
+                    "RealRuins.ReferenceColonyWealth".Translate() + ": " + RealRuins_ModSettings.ruinsReferenceColonyWealth.ToString("#,0"));
 
-                RealRuins_ModSettings.ruinsColonyWealthShare =
-                    Mathf.Round(Widgets.HorizontalSlider(shareRect.RightHalf().ContractedBy(0, 3), RealRuins_ModSettings.ruinsColonyWealthShare, 0.01f, 0.5f) * 100.0f) / 100.0f;
+                RealRuins_ModSettings.ruinsReferenceColonyWealth =
+                    Mathf.Round(Widgets.HorizontalSlider(referenceRect.RightHalf().ContractedBy(0, 3), RealRuins_ModSettings.ruinsReferenceColonyWealth, 25000.0f, 500000.0f) / 5000.0f) * 5000.0f;
 
-                TooltipHandler.TipRegion(shareRect, "RealRuins.ColonyWealthShareTT".Translate());
-
-                listing.Label("RealRuins.ColonyWealthExample".Translate(
-                    exampleColonyWealth.ToString("#,0"),
-                    RuinsWealthLimits.ScaledLimit(RuinsKind.Regular, exampleColonyWealth).ToString("#,0"),
-                    RuinsWealthLimits.ScaledLimit(RuinsKind.Caravan, exampleColonyWealth).ToString("#,0"),
-                    RuinsWealthLimits.ScaledLimit(RuinsKind.AbandonedBase, exampleColonyWealth).ToString("#,0")));
+                TooltipHandler.TipRegion(referenceRect, "RealRuins.ReferenceColonyWealthTT".Translate());
                 listing.Gap(15);
             }
 
@@ -179,6 +171,24 @@ namespace RealRuins.Settings
                     RealRuins_ModSettings.caravanRuinsCostCapUnlimited) / 1000.0f) * 1000.0f;
 
             TooltipHandler.TipRegion(caravanCapRect, "RealRuins.CaravanRuinsCostCapTT".Translate());
+            listing.Gap(15);
+
+            string poiCapStr = RuinsWealthLimits.SettingCap(RuinsKind.AbandonedPOI) < RuinsWealthLimits.NoLimit
+                ? RealRuins_ModSettings.poiRuinsCostCap.ToString("#,0")
+                : (string)"RealRuins.Unlimited".Translate();
+            Rect poiCapRect = listing.GetRect(25f);
+            Widgets.Label(
+                poiCapRect.LeftHalf().ContractedBy(0, 0),
+                "RealRuins.POIRuinsCostCap".Translate() + ": " + poiCapStr);
+
+            RealRuins_ModSettings.poiRuinsCostCap =
+                Mathf.Round(Widgets.HorizontalSlider(
+                    poiCapRect.RightHalf().ContractedBy(0, 3),
+                    RealRuins_ModSettings.poiRuinsCostCap,
+                    0.0f,
+                    RealRuins_ModSettings.poiRuinsCostCapUnlimited) / 1000.0f) * 1000.0f;
+
+            TooltipHandler.TipRegion(poiCapRect, "RealRuins.POIRuinsCostCapTT".Translate());
             listing.Gap(15);
 
             Rect spawnBlacklistRect = listing.GetRect(25f);

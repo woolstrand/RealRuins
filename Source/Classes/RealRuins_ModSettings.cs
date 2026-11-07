@@ -18,10 +18,10 @@ namespace RealRuins
         public static bool preserveStandardRuins = false; //preservers standard ruins and adds real ruinson top of that.
         public static float forceMultiplier = 1.0f;
         public static float ruinsCostCap = 1.0e+9f; //absolute cost cap of each and every ruin
-        public static float ruinsWealthPerMap = 15000; //wealth all regular ruins of one map may share; ruinsWealthPerMapUnlimited and above means no limit
+        public static float ruinsWealthPerMap = 5000; //wealth all regular ruins of one map may share; ruinsWealthPerMapUnlimited and above means no limit
         public const float ruinsWealthPerMapUnlimited = 100000;
-        public static bool ruinsScaleWithColonyWealth = false; //all ruins wealth limits also follow colony wealth, see RuinsWealthLimits
-        public static float ruinsColonyWealthShare = 0.1f; //share of colony wealth regular ruins of a map may have; other ruins have a multiple of it
+        public static bool ruinsScaleWithColonyWealth = false; //wealth limits are multiplied by colony wealth / ruinsReferenceColonyWealth, see RuinsWealthLimits
+        public static float ruinsReferenceColonyWealth = 100000; //colony wealth the limits are set for
         public static bool ruinsWealthScaleWithProximity = false; //limit scales with the proximity chunk count multiplier: more ruins near settlements, more wealth
         public static bool ruinsWealthIgnoreStructure = true; //plain walls, doors and floors (Tile.IsBasicStructure) don't count toward the limit
         public static bool ruinsWealthCountDamage = false; //limit counts the actual value of spawned things (damage, quality) instead of full price
@@ -37,8 +37,10 @@ namespace RealRuins
         public static bool spawnRoofs = true; // if false, no ruins of any kind get roofs
         public static bool enableAbandonedRuinsFoundEvent = true; // enable/disable the abandoned ruins found event
         public static bool enableCaravanFoundRuinsEvent = true; // enable/disable the caravan spotted small ruins event
-        public static float caravanRuinsCostCap = 100000; //what the main ruin of the caravan event may be worth; caravanRuinsCostCapUnlimited and above means no limit
+        public static float caravanRuinsCostCap = 25000; //what the main ruin of the caravan event may be worth; caravanRuinsCostCapUnlimited and above means no limit
         public const float caravanRuinsCostCapUnlimited = 100000;
+        public static float poiRuinsCostCap = 15000; //what an abandoned POI may be worth; poiRuinsCostCapUnlimited and above means no limit
+        public const float poiRuinsCostCapUnlimited = 100000;
         public static string spawnBlacklist = ""; // newline-separated list of defs to exclude from spawning
         public static string materialBlacklist = ""; // newline-separated list of materials to exclude from spawning
         public static string fallbackMaterial = "Wood"; // material to use when blacklisted material is encountered
@@ -63,7 +65,7 @@ namespace RealRuins
             Scribe_Values.Look(ref preserveStandardRuins, "preserveStandardRuins", false, false);
             Scribe_Values.Look(ref forceMultiplier, "forceMultiplier", 1.0f, false);
             Scribe_Values.Look(ref ruinsCostCap, "ruinsCostCap", 1.0e+9f, false);
-            Scribe_Values.Look(ref ruinsWealthPerMap, "ruinsWealthPerMap", 15000, false);
+            Scribe_Values.Look(ref ruinsWealthPerMap, "ruinsWealthPerMap", 5000, false);
             Scribe_Values.Look(ref ruinsWealthScaleWithProximity, "ruinsWealthScaleWithProximity", false, false);
             Scribe_Values.Look(ref ruinsWealthIgnoreStructure, "ruinsWealthIgnoreStructure", true, false);
             Scribe_Values.Look(ref ruinsWealthCountDamage, "ruinsWealthCountDamage", false, false);
@@ -79,9 +81,10 @@ namespace RealRuins
             Scribe_Values.Look(ref spawnRoofs, "spawnRoofs", true, false);
             Scribe_Values.Look(ref enableAbandonedRuinsFoundEvent, "enableAbandonedRuinsFoundEvent", true, false);
             Scribe_Values.Look(ref enableCaravanFoundRuinsEvent, "enableCaravanFoundRuinsEvent", true, false);
-            Scribe_Values.Look(ref caravanRuinsCostCap, "caravanRuinsCostCap", 100000, false);
+            Scribe_Values.Look(ref caravanRuinsCostCap, "caravanRuinsCostCap", 25000, false);
+            Scribe_Values.Look(ref poiRuinsCostCap, "poiRuinsCostCap", 15000, false);
             Scribe_Values.Look(ref ruinsScaleWithColonyWealth, "ruinsScaleWithColonyWealth", false, false);
-            Scribe_Values.Look(ref ruinsColonyWealthShare, "ruinsColonyWealthShare", 0.1f, false);
+            Scribe_Values.Look(ref ruinsReferenceColonyWealth, "ruinsReferenceColonyWealth", 100000, false);
             Scribe_Values.Look(ref spawnBlacklist, "spawnBlacklist", "", false);
             Scribe_Values.Look(ref materialBlacklist, "materialBlacklist", "", false);
             Scribe_Values.Look(ref fallbackMaterial, "fallbackMaterial", "Wood", false);
@@ -125,7 +128,7 @@ namespace RealRuins
             preserveStandardRuins = false;
             forceMultiplier = 1.0f;
             ruinsCostCap = 1.0e+9f;
-            ruinsWealthPerMap = 15000;
+            ruinsWealthPerMap = 5000;
             ruinsWealthScaleWithProximity = false;
             ruinsWealthIgnoreStructure = true;
             ruinsWealthCountDamage = false;
@@ -139,9 +142,10 @@ namespace RealRuins
             spawnRoofs = true;
             enableAbandonedRuinsFoundEvent = true;
             enableCaravanFoundRuinsEvent = true;
-            caravanRuinsCostCap = 100000;
+            caravanRuinsCostCap = 25000;
+            poiRuinsCostCap = 15000;
             ruinsScaleWithColonyWealth = false;
-            ruinsColonyWealthShare = 0.1f;
+            ruinsReferenceColonyWealth = 100000;
             spawnBlacklist = "";
             materialBlacklist = "";
             fallbackMaterial = "Wood";
