@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -165,6 +165,7 @@ namespace RealRuins
                 if (wealthLimit >= 0 && RealRuins_ModSettings.ruinsWealthScaleWithProximity && options.enableProximity) wealthLimit *= countMultiplier;
                 RuinsWealthBudget wealthBudget = wealthLimit >= 0 ? new RuinsWealthBudget(wealthLimit, num) : null;
                 List<RuinsWealthReport> wealthReports = new List<RuinsWealthReport>();
+                bool startingMap = GameStartUtility.GeneratingStartingMap;
 
                 for (int i = 0; i < num; i++) {
                     try {
@@ -172,7 +173,8 @@ namespace RealRuins
                         ResolveParams rp = default(ResolveParams);
 
                         List<AbstractDefenderForcesGenerator> generators = new List<AbstractDefenderForcesGenerator>();
-                        if (Rand.Chance(options.hostileChance)) {
+                        //no animals or mechanoids on the starting map: a fresh colony can't handle them next door
+                        if (!startingMap && Rand.Chance(options.hostileChance)) {
                             if (Rand.Chance(0.8f)) {
                                 generators = new List<AbstractDefenderForcesGenerator> { new AnimalInhabitantsForcesGenerator() };
                             } else {
