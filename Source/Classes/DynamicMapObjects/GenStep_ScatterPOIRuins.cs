@@ -138,7 +138,7 @@ namespace RealRuins {
             Debug.Log(Debug.Scatter, "Selecting force generators");
             //override forces for any kind of POI if no faction selected
             //no animals or mechanoids on the starting map (attack start at a POI); the POI's own faction still defends it
-            bool startingMap = GameStartUtility.GeneratingStartingMap;
+            bool startingMap = SessionState.GeneratingStartingMap;
             if (faction == null || (POIType)poiComp.poiType == POIType.Ruins) {
                 if (Rand.Chance(0.2f)) {
                     if (!startingMap) result.Add(new AnimalInhabitantsForcesGenerator());

@@ -21,7 +21,12 @@ namespace RealRuins {
     // the player has there and puts the site back as it was before Explore. Saves keep no trace of them.
     static class DevSiteTools {
         // Site state before Explore, by world object ID. Not saved: after a reload Reset falls back to DevRestoreState(null).
+        // IDs repeat between games, so SessionState clears it whenever another game is loaded or started.
         private static readonly Dictionary<int, object> savedStates = new Dictionary<int, object>();
+
+        public static void Reset() {
+            savedStates.Clear();
+        }
 
         public static IEnumerable<Gizmo> Gizmos(MapParent site) {
             if (!Prefs.DevMode || !(site is IDevExplorableSite explorable)) yield break;

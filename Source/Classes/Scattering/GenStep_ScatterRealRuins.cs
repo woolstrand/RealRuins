@@ -166,7 +166,7 @@ namespace RealRuins
                 if (hasWealthLimit && RealRuins_ModSettings.ruinsWealthScaleWithProximity && options.enableProximity) wealthLimit *= countMultiplier;
                 RuinsWealthBudget wealthBudget = hasWealthLimit ? new RuinsWealthBudget(wealthLimit, num) : null;
                 List<RuinsWealthReport> wealthReports = new List<RuinsWealthReport>();
-                bool startingMap = GameStartUtility.GeneratingStartingMap;
+                bool startingMap = SessionState.GeneratingStartingMap;
 
                 for (int i = 0; i < num; i++) {
                     try {
