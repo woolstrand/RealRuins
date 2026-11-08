@@ -11,6 +11,9 @@ namespace RealRuins {
         public HashSet<string> materialBlacklist = new HashSet<string>();
         public string fallbackMaterialName;
         public float forceMultiplier = 1.0f;
+        public bool spawnRoofs = true;
+        public bool wealthIgnoreStructure = true; //plain walls, doors and floors don't count toward the map's ruins wealth limit
+        public bool wealthCountDamage = false; //the limit counts the actual value of spawned things instead of full price
 
         public static PipelineSettings FromModSettings() {
             return new PipelineSettings {
@@ -18,6 +21,9 @@ namespace RealRuins {
                 materialBlacklist = ParseList(RealRuins_ModSettings.materialBlacklist),
                 fallbackMaterialName = RealRuins_ModSettings.fallbackMaterial,
                 forceMultiplier = RealRuins_ModSettings.forceMultiplier,
+                spawnRoofs = RealRuins_ModSettings.spawnRoofs,
+                wealthIgnoreStructure = RealRuins_ModSettings.ruinsWealthIgnoreStructure,
+                wealthCountDamage = RealRuins_ModSettings.ruinsWealthCountDamage,
             };
         }
 

@@ -91,7 +91,7 @@ namespace RealRuins {
 
             Debug.Extra(Debug.Scatter, "Scavenging...");
             ScavengingProcessor sp = new ScavengingProcessor();
-            sp.RaidAndScavenge(bp, options, context.wealthAllowance); //scavenge remaining items according to scavenge options
+            sp.RaidAndScavenge(bp, options, context.settings, context.wealthAllowance); //scavenge remaining items according to scavenge options
 
             Debug.Extra(Debug.Scatter, "[{0} s] Prepared, about to start transferring.", DateTime.UtcNow.Subtract(start).TotalSeconds);
             try {

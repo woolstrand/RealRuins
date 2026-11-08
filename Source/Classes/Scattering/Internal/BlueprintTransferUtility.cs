@@ -724,7 +724,7 @@ namespace RealRuins
 
 
                         //construct roof everywhere where it exists in blueprint (for ruins ignoring outside: room with index 1), unless roofs are disabled in settings.
-                        if (RealRuins_ModSettings.spawnRoofs && blueprint.roofMap[x, z] == true && (options.overwritesEverything || blueprint.wallMap[x, z] != 1))
+                        if (context.settings.spawnRoofs && blueprint.roofMap[x, z] == true && (options.overwritesEverything || blueprint.wallMap[x, z] != 1))
                         {
                             // Only set roof if terrain allows it (not over water, etc.)
                             TerrainDef terrainAtLocation = map.terrainGrid?.TerrainAt(mapLocation);
@@ -867,10 +867,10 @@ namespace RealRuins
         }
 
         //What a transferred tile counts toward the map's ruins wealth limit: nothing for basic structure (if so set), the full price
-        //estimate, or (RealRuins_ModSettings.ruinsWealthCountDamage) the actual value of what spawned. Pawns are not loot.
-        private static float WealthLimitCost(Tile tile, Thing spawned) {
-            if (!tile.CountsForWealthLimit || spawned is Pawn) return 0;
-            if (!RealRuins_ModSettings.ruinsWealthCountDamage) return tile.cost;
+        //estimate, or (PipelineSettings.wealthCountDamage) the actual value of what spawned. Pawns are not loot.
+        private float WealthLimitCost(Tile tile, Thing spawned) {
+            if (!tile.CountsForWealthLimit(context.settings.wealthIgnoreStructure) || spawned is Pawn) return 0;
+            if (!context.settings.wealthCountDamage) return tile.cost;
             if (spawned != null) return WealthUtility.MarketValueWithContents(spawned);
             return tile.cost; //terrain has no damage
         }

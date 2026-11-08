@@ -10,6 +10,7 @@ namespace RealRuins {
 
         private List<Tile> tilesByCost = new List<Tile>();
         private ScatterOptions options;
+        private PipelineSettings settings;
         private Blueprint blueprint;
         float totalCost = 0;
 
@@ -24,12 +25,13 @@ namespace RealRuins {
 
         //wealthAllowance: what this blueprint may still be worth after scavenging (its share of the map's ruins wealth), -1 for no limit.
         //options.costCap is the other limit (abandoned base, ruined POI); the lower one applies.
-        public void RaidAndScavenge(Blueprint blueprint, ScatterOptions options, float wealthAllowance = -1) {
+        public void RaidAndScavenge(Blueprint blueprint, ScatterOptions options, PipelineSettings settings, float wealthAllowance = -1) {
             //remove the most precious things. smash some other things.
             //word is spread, so each next raid is more destructive than the previous ones
             //to make calculations a bit easier we're going to calculate value per cell, not per item.
 
             this.options = options;
+            this.settings = settings;
             this.blueprint = blueprint;
 
             Debug.active = false;
@@ -181,7 +183,7 @@ namespace RealRuins {
         //Walls and doors are replaced in regular ruins (a golden room in old ruins looks implausible, a hole breaks the ruin),
         //and dismantled where options.cutDismantlesWalls is set (a half-dismantled golden room fits a scavenged base).
         private void CutTo(float target, bool countAll) {
-            countAll |= !RealRuins_ModSettings.ruinsWealthIgnoreStructure;
+            countAll |= !settings.wealthIgnoreStructure;
             //candidates come from the blueprint, not from tilesByCost: raids pop tiles they don't take (the "too cheap per kg" one ending a raid),
             //and heavy expensive things like ship beams are exactly those
             var candidates = new List<Tile>(contents);
@@ -193,7 +195,7 @@ namespace RealRuins {
             }
 
             candidates.RemoveAll(tile => tile is ItemTile item && IsGone(item));
-            if (!countAll) candidates.RemoveAll(tile => !tile.CountsForWealthLimit);
+            if (!countAll) candidates.RemoveAll(tile => !tile.CountsForWealthLimit(settings.wealthIgnoreStructure));
             //what the target is compared with: everything (totalCost), or only what counts for the wealth limit
             float countedCost = countAll ? totalCost : candidates.Sum(tile => tile.OwnCost);
             if (countedCost <= target) return;

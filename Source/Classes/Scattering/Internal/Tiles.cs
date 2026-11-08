@@ -24,8 +24,8 @@ namespace RealRuins {
         public const float basicStructureMaxCost = 50;
         public bool IsBasicStructure => (this is TerrainTile || this is ItemTile item && (item.isWall || item.isDoor)) && OwnCost <= basicStructureMaxCost;
 
-        //Counts toward the map's ruins wealth limit (RealRuins_ModSettings.ruinsWealthIgnoreStructure)
-        public bool CountsForWealthLimit => !RealRuins_ModSettings.ruinsWealthIgnoreStructure || !IsBasicStructure;
+        //Counts toward the map's ruins wealth limit (PipelineSettings.wealthIgnoreStructure)
+        public bool CountsForWealthLimit(bool ignoreBasicStructure) => !ignoreBasicStructure || !IsBasicStructure;
     }
 
     class TerrainTile : Tile {
