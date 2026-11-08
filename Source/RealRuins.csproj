@@ -104,7 +104,10 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   
   <!-- The same assembly runs on 1.6 and 1.7: mirror the 1.7 build into 1.6 until 1.8 is out
-       (then retarget OutputPath and drop or repoint this). Runs before the copy to the mod folder. -->
+       (then retarget OutputPath and drop or repoint this). Runs before the copy to the mod folder.
+       This is deliberate and holds only for this pair: 1.6 and 1.7 differ in the graphics core, not in the game API
+       the mod uses, so a build against 1.7 references loads on 1.6. Any other version gets its own build against its
+       own references, since a member missing there fails the Harmony patching or a call with MissingMethodException. -->
   <Target Name="MirrorTo16" AfterTargets="Build">
     <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(ProjectDir)..\1.6\Assemblies\" />
   </Target>

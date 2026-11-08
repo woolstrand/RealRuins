@@ -341,6 +341,9 @@ namespace RealRuins
             return result;
         }
 
+        // Clearing the folder of the game that is currently loaded is allowed on purpose: the player asked for it and confirmed.
+        // POIs already on its world map keep only their blueprint names; entering one then generates an empty map
+        // (GenStep_ScatterPOIRuins logs a warning) instead of failing.
         public void ClearPlanetaryCacheFolder(string folderName) {
             try {
                 string path = Path.Combine(GetSnapshotsFolderPath(), folderName);
