@@ -45,6 +45,9 @@ namespace RealRuins
         }
 
         // Safe to call from a background thread: touches only the blueprint file and defs.
+        // Costs, weights and hit points come from abstract stat requests (def + stuff, no Thing). StatWorker caches only Thing
+        // requests (temporaryStatCache, immutableStatCache), so the abstract path reads def data and shares no mutable state with
+        // the main thread. Our own lazy tables (DefRoles, TechLevelFilter) are ConcurrentDictionary or Lazy<T>.
         public static PreparedPOI PreparePOI(PlanetTileInfo tileInfo, string gameName, IntVec3 initialMapSize, bool costStrict, bool aggressiveDiscard)
         {
             string filename = SnapshotStoreManager.SnapshotNameFor(tileInfo.mapId, gameName);

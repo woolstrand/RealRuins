@@ -32,23 +32,20 @@ namespace RealRuins {
         public const float armorSharpThreshold = 0.4f;
 
         private static readonly ConcurrentDictionary<ThingDef, DefRole> roles = new ConcurrentDictionary<ThingDef, DefRole>();
-        private static DesignationCategoryDef security, furniture, joy;
-        private static TerrainAffordanceDef substructure;
-        private static bool categoriesResolved;
+
+        //vanilla architect categories, mods put their buildings there too. Lazy<T> publishes the fields to every thread at once;
+        //a plain "resolved" flag could be seen set before the fields themselves on another thread.
+        private class Categories {
+            public readonly DesignationCategoryDef security = DefDatabase<DesignationCategoryDef>.GetNamedSilentFail("Security");
+            public readonly DesignationCategoryDef furniture = DefDatabase<DesignationCategoryDef>.GetNamedSilentFail("Furniture");
+            public readonly DesignationCategoryDef joy = DefDatabase<DesignationCategoryDef>.GetNamedSilentFail("Joy");
+            //what gravship substructure provides: gravship hull and gravship facilities can't be built anywhere else (Odyssey)
+            public readonly TerrainAffordanceDef substructure = DefDatabase<TerrainAffordanceDef>.GetNamedSilentFail("Substructure");
+        }
+        private static readonly Lazy<Categories> categories = new Lazy<Categories>(() => new Categories());
 
         public static DefRole Of(ThingDef def) {
             return roles.GetOrAdd(def, Calculate);
-        }
-
-        //vanilla architect categories, mods put their buildings there too
-        private static void ResolveCategories() {
-            if (categoriesResolved) return;
-            security = DefDatabase<DesignationCategoryDef>.GetNamedSilentFail("Security");
-            furniture = DefDatabase<DesignationCategoryDef>.GetNamedSilentFail("Furniture");
-            joy = DefDatabase<DesignationCategoryDef>.GetNamedSilentFail("Joy");
-            //what gravship substructure provides: gravship hull and gravship facilities can't be built anywhere else (Odyssey)
-            substructure = DefDatabase<TerrainAffordanceDef>.GetNamedSilentFail("Substructure");
-            categoriesResolved = true;
         }
 
         private static DefRole Calculate(ThingDef def) {
@@ -59,15 +56,15 @@ namespace RealRuins {
             role.isBuilding = isBuilding && !role.isStructure;
 
             if (isBuilding) {
-                ResolveCategories();
+                Categories c = categories.Value;
                 role.turret = def.building?.IsTurret ?? false;
                 role.mannable = HasComp(def, typeof(CompMannable));
                 //traps, sandbags, barricades, embrasures too
-                role.military = role.turret || (def.building?.isTrap ?? false) || (security != null && def.designationCategory == security && !role.isStructure);
-                role.gravshipPart = (substructure != null && def.terrainAffordanceNeeded == substructure)
+                role.military = role.turret || (def.building?.isTrap ?? false) || (c.security != null && def.designationCategory == c.security && !role.isStructure);
+                role.gravshipPart = (c.substructure != null && def.terrainAffordanceNeeded == c.substructure)
                     || typeof(Building_GravEngine).IsAssignableFrom(def.thingClass)
                     || HasCompProperties(def, typeof(CompProperties_GravshipFacility));
-                role.amenity = def.designationCategory != null && (def.designationCategory == furniture || def.designationCategory == joy);
+                role.amenity = def.designationCategory != null && (def.designationCategory == c.furniture || def.designationCategory == c.joy);
 
                 role.researchBench = typeof(Building_ResearchBench).IsAssignableFrom(def.thingClass);
                 role.researchFacility = IsResearchFacility(def);
