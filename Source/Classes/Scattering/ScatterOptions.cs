@@ -79,46 +79,10 @@ namespace RealRuins {
 
         }
 
+        //Every field is a value, a string or an enum, so a shallow copy is a full one. Keep it that way: a reference type field
+        //added here would be shared between the copies (a list or array needs to be copied by hand below).
         public ScatterOptions Copy() {
-            ScatterOptions copy = new ScatterOptions {
-                deteriorationMultiplier = deteriorationMultiplier,
-                decorationChance = decorationChance,
-                densityMultiplier = densityMultiplier,
-                hostileChance = hostileChance,
-                scavengingMultiplier = scavengingMultiplier,
-                trapChance = trapChance,
-                disableSpawnItems = disableSpawnItems,
-                itemCostLimit = itemCostLimit,
-                minRadius = minRadius,
-                maxRadius = maxRadius,
-                wallsDoorsOnly = wallsDoorsOnly,
-                enableProximity = enableProximity,
-                minimumAreaRequired = minimumAreaRequired,
-                minimumDensityRequired = minimumDensityRequired,
-                minimumCostRequired = minimumCostRequired,
-                costCap = costCap,
-                cutDismantlesWalls = cutDismantlesWalls,
-                startingPartyPoints = startingPartyPoints,
-                deleteLowQuality = deleteLowQuality,
-                shouldKeepDefencesAndPower = shouldKeepDefencesAndPower,
-                shouldLoadPartOnly = shouldLoadPartOnly,
-                shouldAddRaidTriggers = shouldAddRaidTriggers,
-                shouldAddFilth = shouldAddFilth,
-                allowFriendlyRaids = allowFriendlyRaids,
-                enableDeterioration = enableDeterioration,
-                forceFullHitPoints = forceFullHitPoints,
-                canHaveFood = canHaveFood,
-                blueprintFileName = blueprintFileName,
-                centerIfExceedsBounds = centerIfExceedsBounds,
-                overridePosition = overridePosition,
-                avoidUsedRects = avoidUsedRects,
-                overwritesEverything = overwritesEverything,
-                claimEverything = claimEverything,
-                doorOwnershipProbability = doorOwnershipProbability,
-                maxTechLevel = maxTechLevel,
-                techLimitStrict = techLimitStrict,
-            };
-            return copy;
+            return (ScatterOptions)MemberwiseClone();
         }
 
     }
