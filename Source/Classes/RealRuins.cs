@@ -75,10 +75,11 @@ namespace RealRuins
             public static void SaveGameOverSnapshot()
             {
                 if (!RealRuins_ModSettings.allowUploads && !RealRuins_ModSettings.offlineMode) return;
+                //a raided planetary POI is a player home too, but it is never uploaded (see UploadMapSnapshot), so skip it here
                 Map map = Find.CurrentMap;
-                if (map == null || !map.IsPlayerHome)
+                if (map == null || !map.IsPlayerHome || map.Parent is RealRuinsPOIWorldObject)
                 {
-                    map = Find.Maps.FirstOrDefault(m => m.IsPlayerHome);
+                    map = Find.Maps.FirstOrDefault(m => m.IsPlayerHome && !(m.Parent is RealRuinsPOIWorldObject));
                 }
                 if (map == null) return;
                 SnapshotManager.Instance.UploadMapSnapshot(map, force: true);

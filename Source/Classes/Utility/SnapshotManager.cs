@@ -223,7 +223,7 @@ namespace RealRuins {
 
             //a cleared planetary POI becomes player-owned (and so a player home) while it is only being raided.
             //Its map is someone else's blueprint, so it must not be uploaded. Settling replaces the POI with a Settlement, after which uploading is fine.
-            if (Find.CurrentMap.Parent is RealRuinsPOIWorldObject) {
+            if (map.Parent is RealRuinsPOIWorldObject) {
                 Debug.Log(Debug.Store, "Skipping snapshot of a planetary POI map");
                 return;
             }
