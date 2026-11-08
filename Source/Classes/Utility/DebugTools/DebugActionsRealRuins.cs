@@ -252,7 +252,7 @@ namespace RealRuins
             sb.AppendFormat("SAMPLE maps={0}/{1} failed={2} withRuins={3} actual/estimate={4:F2} limit={5:F0}",
                 samples.Count, requested, failed, withRuins.Count,
                 estimate > 0 ? withRuins.Sum(s => s.actual) / estimate : 0,
-                RealRuins_ModSettings.RuinsWealthPerMapLimit);
+                RuinsWealthLimits.For(RuinsKind.Regular));
             sb.AppendLine();
             sb.Append("  maps with ruins, min / p25 / median / p75 / p90 / max / mean:");
             AppendPercentiles(sb, "actual", withRuins.Select(s => s.actual));

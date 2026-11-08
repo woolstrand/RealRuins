@@ -93,8 +93,16 @@ produce dense "cities".
 Each chunk gets its own `ScatterContext`, a random `RandomNotEdgeCell(10)` position and, with `hostileChance`, animal (80%)
 or mechanoid (20%) defenders. The game is paused while scattering.
 
+### Ruins wealth limits
+`RuinsWealthLimits` is the only place that decides what ruins may be worth: `For(RuinsKind)` gives the limit of regular ruins (per map),
+a caravan ruin, an abandoned base or an abandoned POI, `NoLimit` if there is none. Nothing else reads the cap settings for generation.
+With `ruinsScaleWithColonyWealth` a limit is `setting × max(0.5, colony wealth / ruinsReferenceColonyWealth)`, so the settings are base
+values and the order between kinds holds at any wealth. Unlimited stays unlimited. Colony wealth is `PlayerWealthForStoryteller` of home
+maps and player caravans, without the map being generated, so the starting map gets the 0.5 multiplier. An abandoned base gets its limit
+when the quest is created, the others on map generation. A ruined POI still rolls its own cap by footprint; the limit only trims the roll.
+
 ### Ruins wealth per map
-`RealRuins_ModSettings.ruinsWealthPerMap` (default 15,000; slider on the map generation page, 100,000 = no limit) is the
+`RealRuins_ModSettings.ruinsWealthPerMap` (default 5,000; slider on the map generation page, 100,000 = no limit) is the
 market value all chunks of a map may share. `RuinsWealthBudget` gives each chunk, in order, what is left minus a reserve of
 `min(500, limit / chunks / 2)` for every chunk still to come, and is charged with what the chunk actually transferred
 (`ScatterState.transferredCost`). `ScavengingProcessor.CutTo` runs after the normal raids when a blueprint is over its

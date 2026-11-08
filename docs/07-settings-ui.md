@@ -43,7 +43,10 @@ All settings are `public static` fields — accessible from anywhere.
 | `allowUploads` | bool | true | Enable blueprint uploads |
 | `diskCacheLimit` | float | 256 | Local cache size limit (MB); -1 = unlimited |
 | `ruinsCostCap` | float | 1e9 | Max market value of an abandoned base |
-| `caravanRuinsCostCap` | float | 100000 | Max market value of the caravan event's main ruin; 100,000 = no limit |
+| `caravanRuinsCostCap` | float | 25000 | Max market value of the caravan event's main ruin; 100,000 = no limit |
+| `poiRuinsCostCap` | float | 15000 | Max market value of an abandoned POI; 100,000 = no limit |
+| `ruinsScaleWithColonyWealth` | bool | false | Multiply ruins wealth limits by colony wealth / reference (`RuinsWealthLimits`) |
+| `ruinsReferenceColonyWealth` | float | 100000 | Colony wealth the limits are set for; 25k–500k, shown only with scaling on |
 | `forceMultiplier` | float | 1.0 | Scale enemy forces |
 | `logLevel` | int | 2 | 0=all, 1=warnings, 2=errors |
 | `preserveStandardRuins` | bool | false | Keep vanilla ruins alongside mod ruins |
@@ -107,7 +110,7 @@ Below them, a **Planetary ruins cache** table: one row per planetary ruins subfo
 ---
 
 ### AdvancedSettingsPage
-Sliders for: `forceMultiplier` (0–2 linear), `ruinsCostCap` (logarithmic 1000–1e9 via `Math.Log`/`Math.Exp`), `caravanRuinsCostCap` (0–100,000, steps of 1,000). `caravanReformType` FloatMenu dropdown. Text fields for `spawnBlacklist`, `materialBlacklist`, `fallbackMaterial`. Export/Import buttons.
+Sliders for: `forceMultiplier` (0–2 linear), `ruinsCostCap` (logarithmic 1000–1e9 via `Math.Log`/`Math.Exp`), `caravanRuinsCostCap` and `poiRuinsCostCap` (0–100,000, steps of 1,000). `caravanReformType` FloatMenu dropdown. Text fields for `spawnBlacklist`, `materialBlacklist`, `fallbackMaterial`. Export/Import buttons.
 
 **Text field buffers**: `RealRuins_Mod` keeps the window and pages alive, so each text buffer remembers the setting value it was last synced with (`BufferedTextField` here, `ReadableLabeledTextInput(..., ref synced)` for the numeric fields on the Planetary Ruins page). If the setting changed elsewhere (import, reset), the buffer is refilled instead of being written back.
 

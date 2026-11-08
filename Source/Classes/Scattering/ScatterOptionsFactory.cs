@@ -36,10 +36,10 @@ namespace RealRuins {
             options.hostileChance = 0.8f;
             options.itemCostLimit = 800;
 
-            float costLimit = RealRuins_ModSettings.CaravanRuinsCostLimit;
-            options.costCap = costLimit >= 0 ? Math.Max(1, (int)costLimit) : -1; //a cap of 0 would mean no cap
+            float costLimit = RuinsWealthLimits.For(RuinsKind.Caravan);
+            options.costCap = RuinsWealthLimits.ToCostCap(costLimit);
             options.cutDismantlesWalls = true;
-            options.minimumCostRequired = costLimit >= 0 ? (int)Math.Min(15000.0f, costLimit) : 15000;
+            options.minimumCostRequired = (int)Math.Min(15000.0f, costLimit);
             options.minimumDensityRequired = 0.01f;
             options.minimumAreaRequired = 4000;
             options.deleteLowQuality = false; //do not delete since we have much higher requirements for base ruins
@@ -63,7 +63,7 @@ namespace RealRuins {
             options.costCap = costCap;
             options.cutDismantlesWalls = true; //scavenged base: a half-dismantled golden room fits the story
             options.startingPartyPoints = (int)raidersActivity;
-            options.minimumCostRequired = (int)Math.Min(100000.0f, RealRuins_ModSettings.ruinsCostCap);
+            options.minimumCostRequired = (int)Math.Min(100000.0f, RuinsWealthLimits.For(RuinsKind.AbandonedBase));
             options.minimumDensityRequired = 0.015f;
             options.minimumAreaRequired = 6400;
             options.deleteLowQuality = false; //do not delete since we have much higher requirements for base ruins
@@ -109,7 +109,8 @@ namespace RealRuins {
                 options.forceFullHitPoints = false;
                 options.enableDeterioration = true;
                 options.overwritesEverything = false;
-                options.costCap = (int)Math.Abs(Rand.Gaussian(0, Math.Max(5000, blueprint.width * blueprint.height)));
+                float rolledCap = Math.Abs(Rand.Gaussian(0, Math.Max(5000, blueprint.width * blueprint.height)));
+                options.costCap = RuinsWealthLimits.ToCostCap(Math.Min(rolledCap, RuinsWealthLimits.For(RuinsKind.AbandonedPOI)));
                 options.cutDismantlesWalls = true;
                 options.itemCostLimit = Rand.Range(50, 500);
             } else {

@@ -160,10 +160,11 @@ namespace RealRuins
                 }
 
                 CoverageMap coverageMap = CoverageMap.EmptyCoverageMap(map);
-                float wealthLimit = RealRuins_ModSettings.RuinsWealthPerMapLimit;
+                float wealthLimit = RuinsWealthLimits.For(RuinsKind.Regular);
                 //same factor as the chunk count, so each chunk keeps about the same share near and far from settlements
-                if (wealthLimit >= 0 && RealRuins_ModSettings.ruinsWealthScaleWithProximity && options.enableProximity) wealthLimit *= countMultiplier;
-                RuinsWealthBudget wealthBudget = wealthLimit >= 0 ? new RuinsWealthBudget(wealthLimit, num) : null;
+                bool hasWealthLimit = wealthLimit < RuinsWealthLimits.NoLimit;
+                if (hasWealthLimit && RealRuins_ModSettings.ruinsWealthScaleWithProximity && options.enableProximity) wealthLimit *= countMultiplier;
+                RuinsWealthBudget wealthBudget = hasWealthLimit ? new RuinsWealthBudget(wealthLimit, num) : null;
                 List<RuinsWealthReport> wealthReports = new List<RuinsWealthReport>();
                 bool startingMap = GameStartUtility.GeneratingStartingMap;
 

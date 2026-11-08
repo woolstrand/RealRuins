@@ -31,7 +31,7 @@ namespace RealRuins.Settings
 
         public override string TabLabel => "RealRuins.AdvancedSettings".Translate();
 
-        public override float ContentHeight => 655f;
+        public override float ContentHeight => RealRuins_ModSettings.ruinsScaleWithColonyWealth ? 800f : 760f;
 
         public override void Draw(Rect rect)
         {
@@ -57,7 +57,7 @@ namespace RealRuins.Settings
             listing.Gap(15);
 
             // Wealth Cost Cap
-            string wealthCapStr = RealRuins_ModSettings.ruinsCostCap < 9.9999e8 ? RealRuins_ModSettings.ruinsCostCap.ToString("#,0") : (string)"RealRuins.Unlimited".Translate();
+            string wealthCapStr = RuinsWealthLimits.SettingCap(RuinsKind.AbandonedBase) < RuinsWealthLimits.NoLimit ? RealRuins_ModSettings.ruinsCostCap.ToString("#,0") : (string)"RealRuins.Unlimited".Translate();
             
             Rect wealthCapRect = listing.GetRect(25f);
             Widgets.Label(
@@ -73,6 +73,25 @@ namespace RealRuins.Settings
 
             TooltipHandler.TipRegion(wealthCapRect, "RealRuins.AbsoluteWealthCapTT".Translate());
             listing.Gap(15);
+
+            // Scaling of all ruins wealth limits
+            listing.CheckboxLabeled(
+                "RealRuins.ScaleWithColonyWealth".Translate(),
+                ref RealRuins_ModSettings.ruinsScaleWithColonyWealth,
+                "RealRuins.ScaleWithColonyWealthTT".Translate());
+
+            if (RealRuins_ModSettings.ruinsScaleWithColonyWealth) {
+                Rect referenceRect = listing.GetRect(25f);
+                Widgets.Label(
+                    referenceRect.LeftHalf().ContractedBy(0, 0),
+                    "RealRuins.ReferenceColonyWealth".Translate() + ": " + RealRuins_ModSettings.ruinsReferenceColonyWealth.ToString("#,0"));
+
+                RealRuins_ModSettings.ruinsReferenceColonyWealth =
+                    Mathf.Round(Widgets.HorizontalSlider(referenceRect.RightHalf().ContractedBy(0, 3), RealRuins_ModSettings.ruinsReferenceColonyWealth, 25000.0f, 500000.0f) / 5000.0f) * 5000.0f;
+
+                TooltipHandler.TipRegion(referenceRect, "RealRuins.ReferenceColonyWealthTT".Translate());
+                listing.Gap(15);
+            }
 
             // Caravan Reform Type
             Rect caravanRect = listing.GetRect(25f);
@@ -136,7 +155,7 @@ namespace RealRuins.Settings
                 ref RealRuins_ModSettings.enableCaravanFoundRuinsEvent,
                 "RealRuins.EnableCaravanFoundRuinsEventTT".Translate());
 
-            string caravanCapStr = RealRuins_ModSettings.CaravanRuinsCostLimit >= 0
+            string caravanCapStr = RuinsWealthLimits.SettingCap(RuinsKind.Caravan) < RuinsWealthLimits.NoLimit
                 ? RealRuins_ModSettings.caravanRuinsCostCap.ToString("#,0")
                 : (string)"RealRuins.Unlimited".Translate();
             Rect caravanCapRect = listing.GetRect(25f);
@@ -152,6 +171,24 @@ namespace RealRuins.Settings
                     RealRuins_ModSettings.caravanRuinsCostCapUnlimited) / 1000.0f) * 1000.0f;
 
             TooltipHandler.TipRegion(caravanCapRect, "RealRuins.CaravanRuinsCostCapTT".Translate());
+            listing.Gap(15);
+
+            string poiCapStr = RuinsWealthLimits.SettingCap(RuinsKind.AbandonedPOI) < RuinsWealthLimits.NoLimit
+                ? RealRuins_ModSettings.poiRuinsCostCap.ToString("#,0")
+                : (string)"RealRuins.Unlimited".Translate();
+            Rect poiCapRect = listing.GetRect(25f);
+            Widgets.Label(
+                poiCapRect.LeftHalf().ContractedBy(0, 0),
+                "RealRuins.POIRuinsCostCap".Translate() + ": " + poiCapStr);
+
+            RealRuins_ModSettings.poiRuinsCostCap =
+                Mathf.Round(Widgets.HorizontalSlider(
+                    poiCapRect.RightHalf().ContractedBy(0, 3),
+                    RealRuins_ModSettings.poiRuinsCostCap,
+                    0.0f,
+                    RealRuins_ModSettings.poiRuinsCostCapUnlimited) / 1000.0f) * 1000.0f;
+
+            TooltipHandler.TipRegion(poiCapRect, "RealRuins.POIRuinsCostCapTT".Translate());
             listing.Gap(15);
 
             Rect spawnBlacklistRect = listing.GetRect(25f);
