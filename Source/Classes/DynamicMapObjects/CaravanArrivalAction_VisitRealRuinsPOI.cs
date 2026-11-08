@@ -11,9 +11,8 @@ namespace RealRuins {
 
         public override string Label {
             get {
-               
-                if (mapParent.Faction == null || mapParent.Faction == Faction.OfPlayer) {
-                    return "RealRuins.EnterPOI".Translate(mapParent.Label);
+                if (mapParent?.Faction == null || mapParent.Faction == Faction.OfPlayer) {
+                    return "RealRuins.EnterPOI".Translate(mapParent?.Label ?? "");
                 } else {
                     return "RealRuins.AttackPOI".Translate(mapParent.Label);
                 }
@@ -21,7 +20,7 @@ namespace RealRuins {
         }
 
 
-        public override string ReportString => "RealRuins.CaravanEnteringPOI".Translate(mapParent.Label);
+        public override string ReportString => "RealRuins.CaravanEnteringPOI".Translate(mapParent?.Label ?? "");
 
         public CaravanArrivalAction_VisitRealRuinsPOI() {
         }
