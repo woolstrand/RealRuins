@@ -101,7 +101,7 @@ namespace RealRuins.Settings
 
             bool caravanResult = Widgets.ButtonText(
                 caravanRect.RightHalf().ContractedBy(0, 3),
-                CaravanReformOptions[System.Math.Min(2, RealRuins_ModSettings.caravanReformType)].Translate());
+                CaravanReformOptions[(int)CaravanReformPolicy.Mode].Translate());
 
             if (caravanResult)
             {

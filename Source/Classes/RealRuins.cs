@@ -451,7 +451,7 @@ namespace RealRuins
         {
             static void Postfix(FormCaravanComp __instance, ref bool __result)
             {
-                if (__result && RealRuins_ModSettings.caravanReformType == 2 && (__instance.parent.GetComponent<RuinedBaseComp>()?.mapExitLocked ?? false))
+                if (__result && CaravanReformPolicy.ReformLocked(__instance.parent as MapParent))
                 {
                     __result = false;
                 }
@@ -479,7 +479,7 @@ namespace RealRuins
 
             static bool Prefix(Dialog_FormCaravan __instance, ref bool __result)
             {
-                if (RealRuins_ModSettings.caravanReformType == 1)
+                if (!CaravanReformPolicy.ReformSendsFormingCaravan)
                 {
                     return true; //instant reforming, vanilla (the button is disabled while hostiles are around)
                 }
