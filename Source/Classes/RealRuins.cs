@@ -452,10 +452,6 @@ namespace RealRuins
             }
         }
 
-        //RimWorld caravan forming dialog has two modes: reform and form. 
-        // * "Reform" shows all items including items which are currently in colonists' inventories, BUT reformed caravan leaves instantly.
-        // * "Form" makes colonists go through the map and pick up all items, but it shows only items which are stored in home area.
-        // I need this dialog to show all items, but without instant caravan reforming. Unfortunately, it can be done either with extensive copy-pasting of original code or via method swizzlilng via reflections.
         //Manual caravan reform mode: no reforming on a pristine ruins map until the raids are over. Vanilla turns ExitMapGrid on
         //whenever reforming is not possible, so the player can still leave by walking off the map edge with what pawns carry.
         [HarmonyPatch(typeof(FormCaravanComp), nameof(FormCaravanComp.CanFormOrReformCaravanNow), MethodType.Getter)]
@@ -470,37 +466,56 @@ namespace RealRuins
             }
         }
 
+        //RimWorld caravan forming dialog has two modes: reform and form.
+        // * "Reform" shows all items including items which are currently in colonists' inventories, BUT reformed caravan leaves instantly.
+        // * "Form" makes colonists go through the map and pick up all items, but it shows only items which are stored in home area.
+        //On a pristine ruins map the reform button (FormCaravanFromRuinsComp) opens the reform dialog, and in automatic and manual modes
+        //this patch sends it as a regular forming caravan instead: the chosen pawns haul the loot and leave via the map edge.
+        //In automatic mode this works under fire on purpose: caravaners haul in the middle of a fight while the others defend.
+        //Neither the dialog nor the forming lord (LordJob_FormAndSendCaravan) checks for hostiles, the same as forming at home during a raid.
         [HarmonyPatch(typeof(Dialog_FormCaravan), "TryReformCaravan")]
         class DialogFormCaravan_Patch
         {
+            private static readonly AccessTools.FieldRef<Dialog_FormCaravan, Map> mapRef =
+                AccessTools.FieldRefAccess<Dialog_FormCaravan, Map>("map");
+            private static readonly AccessTools.FieldRef<Dialog_FormCaravan, PlanetTile> destinationTileRef =
+                AccessTools.FieldRefAccess<Dialog_FormCaravan, PlanetTile>("destinationTile");
+            private static readonly Func<Dialog_FormCaravan, bool> tryFormAndSendCaravan =
+                AccessTools.MethodDelegate<Func<Dialog_FormCaravan, bool>>(AccessTools.Method(typeof(Dialog_FormCaravan), "TryFormAndSendCaravan"));
+            private static readonly Action<Dialog_FormCaravan> flashMass =
+                AccessTools.MethodDelegate<Action<Dialog_FormCaravan>>(AccessTools.Method(typeof(Dialog_FormCaravan), "FlashMass"));
+
             static bool Prefix(Dialog_FormCaravan __instance, ref bool __result)
             {
                 if (RealRuins_ModSettings.caravanReformType == 1)
                 {
-                    return true; //proceed with instant reforming if instant reforming is on
+                    return true; //instant reforming, vanilla (the button is disabled while hostiles are around)
                 }
-                else
-                {
-                    Map map = (Map)(typeof(Dialog_FormCaravan).GetField("map", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(__instance));
-                    if (map.Parent is AbandonedBaseWorldObject)
-                    {
-                        //if this is a pristine ruins event map, invoke regular caravan forming INSTEAD of instant caravan forming.
-                        PlanetTile destinationTile = (PlanetTile)(typeof(Dialog_FormCaravan).GetField("destinationTile", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(__instance));
-                        if (!destinationTile.Valid)
-                        {
-                            Messages.Message("MessageMustChooseRouteFirst".Translate(), MessageTypeDefOf.RejectInput, historical: false);
-                            return false;
-                        }
 
-                        bool result = (bool)(typeof(Dialog_FormCaravan).GetMethod("TryFormAndSendCaravan", BindingFlags.NonPublic | BindingFlags.Instance).Invoke(__instance, null));
-                        if (result)
-                        {
-                            __instance.Close(doCloseSound: false);
-                        }
-                        return false;
-                    }
+                Map map = mapRef(__instance);
+                if (!(map?.Parent is AbandonedBaseWorldObject))
+                {
+                    return true;
                 }
-                return true;
+
+                __result = false;
+                PlanetTile destinationTile = destinationTileRef(__instance);
+                if (!destinationTile.Valid)
+                {
+                    Messages.Message("MessageMustChooseRouteFirst".Translate(), MessageTypeDefOf.RejectInput, historical: false);
+                    return false;
+                }
+
+                //the reform dialog skips the mass check (reformed caravans get everything put into inventories), forming must not
+                if (__instance.MassUsage > __instance.MassCapacity)
+                {
+                    flashMass(__instance);
+                    Messages.Message("TooBigCaravanMassUsage".Translate(), MessageTypeDefOf.RejectInput, historical: false);
+                    return false;
+                }
+
+                __result = tryFormAndSendCaravan(__instance); //the dialog closes itself on success
+                return false;
             }
         }
 
