@@ -9,7 +9,6 @@
   <RealRuins_ModOptions_AllowUploadsTooltip>建议保持这个状态，以帮助用各种有趣的基本设计填充数据库。每个游戏会话的消耗量不应超过几兆字节。</RealRuins_ModOptions_AllowUploadsTooltip>
   <RealRuins_ModOptions_CacheSizeTooltip>如果达到限制大小，mod将继续下载新的蓝图，并依次删除旧的。</RealRuins_ModOptions_CacheSizeTooltip>
   <RealRuins_ModOptions_OfflineModeTooltip>此模式将删除从服务器下载的所有缓存数据，并阻止任何进一步的上载和下载。但是，你自己的基地仍然会被存储在本地，并用于在游戏中创建遗迹。</RealRuins_ModOptions_OfflineModeTooltip>
-  <RealRuins_ModOptions_OfflineModeConfirmation>你确定要继续吗？</RealRuins_ModOptions_OfflineModeConfirmation>
   <RealRuins_ModOptions_CurrentCacheSize>当前本地缓存大小：</RealRuins_ModOptions_CurrentCacheSize>
   <RealRuins_ModOptions_RemoveAll>清除缓存</RealRuins_ModOptions_RemoveAll>
   <RealRuins_ModOptions_DownloadMore>下载更多蓝图</RealRuins_ModOptions_DownloadMore>
@@ -22,10 +21,7 @@
   <RealRuins_MapOptions_CostLimit>限制最大项目成本</RealRuins_MapOptions_CostLimit>
   <RealRuins_MapOptions_DisableHaulables>禁用生成可运输物品</RealRuins_MapOptions_DisableHaulables>
   <RealRuins_MapOptions_WallsAndDoorsOnly>仅生成墙和门</RealRuins_MapOptions_WallsAndDoorsOnly>
-  <RealRuins_MapOptions_DisableDecoration>被动特价金额</RealRuins_MapOptions_DisableDecoration>
-  <RealRuins_MapOptions_DisableTraps>有效特价金额</RealRuins_MapOptions_DisableTraps>
   <RealRuins_MapOptions_DisableHostiles>敌方单位数量</RealRuins_MapOptions_DisableHostiles>
-  <RealRuins_MapOptions_Claimable>建筑物可计价</RealRuins_MapOptions_Claimable>
   <RealRuins_MapOptions_DensityTT>在100x100区域产生的平均遗迹数量</RealRuins_MapOptions_DensityTT>
   <RealRuins_MapOptions_SizeTT>遗迹面积在输入值的50%到150%之间随机选择</RealRuins_MapOptions_SizeTT>
   <RealRuins_MapOptions_DeteriorationTT>这个值决定了一个牌被摧毁的额外几率，并且不影响剩余的生命值。零是默认设置，最大值将导致没有任何遗迹。</RealRuins_MapOptions_DeteriorationTT>
@@ -33,10 +29,7 @@
   <RealRuins_MapOptions_CostLimitTT>总成本高于选定值的所有项目都将被销毁</RealRuins_MapOptions_CostLimitTT>
   <RealRuins_MapOptions_DisableHaulablesTT>所有可搬运的物品不会产生，但家具可能仍然会出现</RealRuins_MapOptions_DisableHaulablesTT>
   <RealRuins_MapOptions_WallsAndDoorsOnlyTT>这个设置是相当积极的，将删除一切不是基于原版墙或门。</RealRuins_MapOptions_WallsAndDoorsOnlyTT>
-  <RealRuins_MapOptions_DisableDecorationTT>现在只是枯骨而已</RealRuins_MapOptions_DisableDecorationTT>
-  <RealRuins_MapOptions_DisableTrapsTT>触发器和陷阱</RealRuins_MapOptions_DisableTrapsTT>
   <RealRuins_MapOptions_DisableHostilesTT>禁用敌对</RealRuins_MapOptions_DisableHostilesTT>
-  <RealRuins_MapOptions_ClaimableTT>无法修复或无法解构的结构</RealRuins_MapOptions_ClaimableTT>
   <RealRuins_MapOptions_EnableProximity>考虑邻近定居点</RealRuins_MapOptions_EnableProximity>
   <RealRuins_MapOptions_EnableProximityTT>聚落邻近性影响生成参数：遗迹在城市附近更密集，但物资数量更少。</RealRuins_MapOptions_EnableProximityTT>
   <RealRuins_MapOptions_StartWithoutRuins>起始地图上没有遗迹</RealRuins_MapOptions_StartWithoutRuins>
@@ -47,9 +40,6 @@
   <RealRuins.CaravanFoundRuins.Investigate>调查</RealRuins.CaravanFoundRuins.Investigate>
   <RealRuins.CaravanFoundRuinsTitle>附近有小遗迹</RealRuins.CaravanFoundRuinsTitle>
   <DeterioratedArtDescription>这件东西太破旧了。你可以肯定它曾经是一件美丽的艺术品，但现在你几乎猜不出它是关于什么的。</DeterioratedArtDescription>
-  <RealRuins_ModOptions_Reset>将设置重置为默认值</RealRuins_ModOptions_Reset>
-  <RealRuins_MapOptions_CaravanReforming>在两次突袭之间启用即时商队重整</RealRuins_MapOptions_CaravanReforming>
-  <RealRuins_MapOptions_CaravanReformingTT>通常情况下，在遗迹清理活动中，你不应该能够在最初的敌方被击败后立即进行商队编组。根据设计，你必须手动搜索战利品，拿起和离开使用地图边缘，即使现在没有敌对单位。但是，如果您更喜欢旧的方法和强大的即时编组功能，您可以启用此功能</RealRuins_MapOptions_CaravanReformingTT>
   <RealRuins.RuinsWealth>财富： </RealRuins.RuinsWealth>
   <RealRuins.RuinsActivity>突袭者的存在：</RealRuins.RuinsActivity>
   <RealRuins.RuinsWealth.0>几乎为零(&lt;10K)</RealRuins.RuinsWealth.0>
@@ -100,25 +90,23 @@
   <LetterTransportPodsAttackedPOI>空降已经到达目的地。攻击开始。</LetterTransportPodsAttackedPOI>
   <LetterLabelTransportPodsArrivedAtRuins>空降已经到达遗迹</LetterLabelTransportPodsArrivedAtRuins>
   <LetterTransportPodsArrivedAtRuins>空降已经到达遗迹</LetterTransportPodsArrivedAtRuins>
-  <RealRuins.LoadBlueprintsCaption>装载行星的蓝图</RealRuins.LoadBlueprintsCaption>
-  <RealRuins.LoadBlueprints>加载蓝图</RealRuins.LoadBlueprints>
-  <RealRuins.Close>关闭</RealRuins.Close>
-  <RealRuins.Idle>闲置</RealRuins.Idle>
-  <RealRuins.Searching>正在搜索蓝图。。。</RealRuins.Searching>
-  <RealRuins.Loading>正在加载蓝图：</RealRuins.Loading>
-  <RealRuins.Processing>处理蓝图：</RealRuins.Processing>
-  <RealRuins.Completed>完整的！</RealRuins.Completed>
-  <RealRuins.BiomeFiltering>生物过滤</RealRuins.BiomeFiltering>
-  <RealRuins.BiomeFilteringTT>排除缺少或不匹配生物群落的地图</RealRuins.BiomeFilteringTT>
-  <RealRuins.CostFiltering>成份筛选</RealRuins.CostFiltering>
-  <RealRuins.CostFilteringTT>排除成本太低的地图（低于平均“空”地图）</RealRuins.CostFilteringTT>
-  <RealRuins.AreaFiltering>区域和项目筛选</RealRuins.AreaFiltering>
-  <RealRuins.AreaFilteringTT>排除面积太小、项目数太低的地图</RealRuins.AreaFilteringTT>
-  <RealRuins.UsedMaps>使用的地图：</RealRuins.UsedMaps>
-  <RealRuins.DroppedMaps>删除的地图：</RealRuins.DroppedMaps>
-  <RealRuins.MapsModuleButton>导入这个星球的蓝图（测试版）</RealRuins.MapsModuleButton>
-  <RealRuins.PlanetarySettignsCaption>真实遗迹-行星遗迹设置</RealRuins.PlanetarySettignsCaption>
-  <RealRuins.NeedsGameInProgress>你必须在正在进行的游戏中才能使用此菜单</RealRuins.NeedsGameInProgress>
+  <RealRuins.PlanetaryLoader.LoadBlueprintsCaption>装载行星的蓝图</RealRuins.PlanetaryLoader.LoadBlueprintsCaption>
+  <RealRuins.PlanetaryLoader.LoadBlueprints>加载蓝图</RealRuins.PlanetaryLoader.LoadBlueprints>
+  <RealRuins.PlanetaryLoader.Close>关闭</RealRuins.PlanetaryLoader.Close>
+  <RealRuins.PlanetaryLoader.Searching>正在搜索蓝图。。。</RealRuins.PlanetaryLoader.Searching>
+  <RealRuins.PlanetaryLoader.Loading>正在加载蓝图：</RealRuins.PlanetaryLoader.Loading>
+  <RealRuins.PlanetaryLoader.Processing>处理蓝图：</RealRuins.PlanetaryLoader.Processing>
+  <RealRuins.PlanetaryLoader.Completed>完整的！</RealRuins.PlanetaryLoader.Completed>
+  <RealRuins.PlanetaryLoader.BiomeFiltering>生物过滤</RealRuins.PlanetaryLoader.BiomeFiltering>
+  <RealRuins.PlanetaryLoader.BiomeFilteringTT>排除缺少或不匹配生物群落的地图</RealRuins.PlanetaryLoader.BiomeFilteringTT>
+  <RealRuins.PlanetaryLoader.CostFiltering>成份筛选</RealRuins.PlanetaryLoader.CostFiltering>
+  <RealRuins.PlanetaryLoader.CostFilteringTT>排除成本太低的地图（低于平均“空”地图）</RealRuins.PlanetaryLoader.CostFilteringTT>
+  <RealRuins.PlanetaryLoader.AreaFiltering>区域和项目筛选</RealRuins.PlanetaryLoader.AreaFiltering>
+  <RealRuins.PlanetaryLoader.AreaFilteringTT>排除面积太小、项目数太低的地图</RealRuins.PlanetaryLoader.AreaFilteringTT>
+  <RealRuins.PlanetaryLoader.UsedMaps>使用的地图：</RealRuins.PlanetaryLoader.UsedMaps>
+  <RealRuins.PlanetaryLoader.DroppedMaps>删除的地图：</RealRuins.PlanetaryLoader.DroppedMaps>
+  <RealRuins.PlanetarySettings.MapsModuleButton>导入这个星球的蓝图（测试版）</RealRuins.PlanetarySettings.MapsModuleButton>
+  <RealRuins.PlanetaryLoader.NeedsGameInProgress>你必须在正在进行的游戏中才能使用此菜单</RealRuins.PlanetaryLoader.NeedsGameInProgress>
   <RealRuins.CaravanReformType>远征队改变</RealRuins.CaravanReformType>
   <RealRuins.Reform.Automatic>自动</RealRuins.Reform.Automatic>
   <RealRuins.Reform.Instant>立刻</RealRuins.Reform.Instant>
@@ -126,14 +114,8 @@
   <RealRuins.CaravanReformTooltip>在遗迹事件中改革商队的方式。”“自动”和你家地图上的商队是一样的即时”允许通过世界地图上的按钮进行即时改变“手动”用于通过地图边缘手动拾取和离开项目。</RealRuins.CaravanReformTooltip>
   <RealRuins.ForceMultiplier>事件威胁量表</RealRuins.ForceMultiplier>
   <RealRuins.AbsoluteWealthCap>波动的绝对财富值上限</RealRuins.AbsoluteWealthCap>
-  <RealRuins.LeaveVanillaRuins>留下原版遗迹</RealRuins.LeaveVanillaRuins>
   <RealRuins.ForceMultiplierTT>对此进行调整，使遗迹事件变得更加困难</RealRuins.ForceMultiplierTT>
   <RealRuins.AbsoluteWealthCapTT>确定遗迹事件的绝对财富上限。木墙和木门不计入总财富。</RealRuins.AbsoluteWealthCapTT>
-  <RealRuins.LeaveVanillaRuinsTT>如果选中，将生成真实遗迹和原版遗迹</RealRuins.LeaveVanillaRuinsTT>
-  <RealRuins.LogLevel>日志级别</RealRuins.LogLevel>
-  <RealRuins.LogLevel.All>记录一切</RealRuins.LogLevel.All>
-  <RealRuins.LogLevel.Warnings>警告和错误</RealRuins.LogLevel.Warnings>
-  <RealRuins.LogLevel.Errors>仅错误</RealRuins.LogLevel.Errors>
 
   <RealRuins.CacheSettings.TabCaption>常规、网络和缓存</RealRuins.CacheSettings.TabCaption>
   <RealRuins.CacheSettings.Caption>常规、网络和缓存设置</RealRuins.CacheSettings.Caption>
@@ -150,8 +132,8 @@
 
   <RealRuins.PlanetarySettings.DisableFriendly>不生成友好的位置</RealRuins.PlanetarySettings.DisableFriendly>
   <RealRuins.PlanetarySettings.DisableFriendlyTT>如果启用，世界位置将仅由敌对派系占据。</RealRuins.PlanetarySettings.DisableFriendlyTT>
-  <RealRuins.DisableFriendlyLocations>不生成友好的位置</RealRuins.DisableFriendlyLocations>
-  <RealRuins.DisableFriendlyLocationsTT>如果启用，世界位置将仅由敌对派系占据。</RealRuins.DisableFriendlyLocationsTT>
+  <RealRuins.PlanetaryLoader.DisableFriendlyLocations>不生成友好的位置</RealRuins.PlanetaryLoader.DisableFriendlyLocations>
+  <RealRuins.PlanetaryLoader.DisableFriendlyLocationsTT>如果启用，世界位置将仅由敌对派系占据。</RealRuins.PlanetaryLoader.DisableFriendlyLocationsTT>
   <RealRuins.PlanetarySettings.RemoveAll>删除所有位置</RealRuins.PlanetarySettings.RemoveAll>
   <RealRuins.PlanetarySettings.RemoveAllConfirm>您确定要删除真实遗迹生成的所有位置吗？</RealRuins.PlanetarySettings.RemoveAllConfirm>
 

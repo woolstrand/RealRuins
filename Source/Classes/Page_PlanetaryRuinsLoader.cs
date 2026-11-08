@@ -82,22 +82,22 @@ namespace RealRuins {
 
             if (standalone) {
                 Text.Font = GameFont.Medium;
-                list.Label("RealRuins.LoadBlueprintsCaption".Translate());
+                list.Label("RealRuins.PlanetaryLoader.LoadBlueprintsCaption".Translate());
                 Text.Font = GameFont.Small;
             }
 
             if (Find.World?.info?.Seed == null) {
                 Text.Font = GameFont.Medium;
-                list.Label("RealRuins.NeedsGameInProgress".Translate());
+                list.Label("RealRuins.PlanetaryLoader.NeedsGameInProgress".Translate());
                 list.End();
                 return;
             }
 
             if (showLoaderOptions && showTranferrerOptions) {
-                list.Label("RealRuins.OptionsDescription".Translate());
+                list.Label("RealRuins.PlanetaryLoader.OptionsDescription".Translate());
             } else {
-                list.Label("RealRuins.LoadBlueprintsDescription".Translate());
-                list.Label(new TaggedString("RealRuins.MapSizeChangeWarning".Translate().Colorize(Color.yellow)));
+                list.Label("RealRuins.PlanetaryLoader.LoadBlueprintsDescription".Translate());
+                list.Label(new TaggedString("RealRuins.PlanetaryLoader.MapSizeChangeWarning".Translate().Colorize(Color.yellow)));
             }
             list.Gap();
 
@@ -110,14 +110,14 @@ namespace RealRuins {
             bottomButtons.Begin(bottomRect);
 
             if (canRemove) {
-                if (bottomButtons.ButtonText("RealRuins.RemoveSites".Translate())) {
+                if (bottomButtons.ButtonText("RealRuins.PlanetaryLoader.RemoveSites".Translate())) {
                     RemoveSites();
                 }
             }
 
             if (standalone) {
                 GUI.color = pageState == RuinsPageState.Completed ? new Color(0.3f, 1f, 0.3f) : new Color(1f, 0.3f, 0.35f);
-                if (bottomButtons.ButtonText("RealRuins.Close".Translate())) {
+                if (bottomButtons.ButtonText("RealRuins.PlanetaryLoader.Close".Translate())) {
                     Find.WindowStack.TryRemove(this);
                 }
                 GUI.color = Color.white;
@@ -130,15 +130,15 @@ namespace RealRuins {
 
         public void DrawLoader(Listing_Standard list) {
             Text.Font = GameFont.Small;
-            string blueprintStats = "RealRuins.Loading".Translate();
-            string skipped = "RealRuins.DroppedMaps".Translate() + " --- ";
-            string used = "RealRuins.UsedMaps".Translate() + " --- ";
+            string blueprintStats = "RealRuins.PlanetaryLoader.Loading".Translate();
+            string skipped = "RealRuins.PlanetaryLoader.DroppedMaps".Translate() + " --- ";
+            string used = "RealRuins.PlanetaryLoader.UsedMaps".Translate() + " --- ";
 
             switch (pageState) {
                 case RuinsPageState.Idle:
                     if (showLoaderOptions) {
                         DrawLoadingOptions(list);
-                        if (list.ButtonText("RealRuins.GetCount".Translate())) {
+                        if (list.ButtonText("RealRuins.PlanetaryLoader.GetCount".Translate())) {
                             StartLoadingList();
                         }
                     } else {
@@ -146,13 +146,13 @@ namespace RealRuins {
                         sublist.Gap(4);
                         sublist.maxOneColumn = false;
                         sublist.ColumnWidth = (list.ColumnWidth - 20) / 2;
-                        if (sublist.ButtonText("RealRuins.StartAuto".Translate())) {
+                        if (sublist.ButtonText("RealRuins.PlanetaryLoader.StartAuto".Translate())) {
                             mode = RuinsPageMode.Default;
                             StartLoadingList();
                         }
                         sublist.NewColumn();
                         sublist.Gap(4);
-                        if (sublist.ButtonText("RealRuins.MoreOptions".Translate())) {
+                        if (sublist.ButtonText("RealRuins.PlanetaryLoader.MoreOptions".Translate())) {
                             showLoaderOptions = true;
                             showTranferrerOptions = true;
                             mode = RuinsPageMode.Manual;
@@ -163,30 +163,30 @@ namespace RealRuins {
                     break;
 
                 case RuinsPageState.LoadingHeader:
-                    blueprintStats = "RealRuins.Searching".Translate();
+                    blueprintStats = "RealRuins.PlanetaryLoader.Searching".Translate();
                     list.Label(blueprintStats);
                     break;
 
                 case RuinsPageState.LoadedHeader:
                     if (showLoaderOptions) {
-                        string loadedText = string.Format("RealRuins.LoadedAmount".Translate(), blueprintsTotalCount);
+                        string loadedText = string.Format("RealRuins.PlanetaryLoader.LoadedAmount".Translate(), blueprintsTotalCount);
                         list.Label(loadedText);
                         DrawLoadingOptions(list);
                         if (blueprintsTotalCount < 30) {
-                            list.Label(new TaggedString("RealRuins.LowCountWarning".Translate().Colorize(Color.yellow)));
+                            list.Label(new TaggedString("RealRuins.PlanetaryLoader.LowCountWarning".Translate().Colorize(Color.yellow)));
                         }
-                        if (list.ButtonText("RealRuins.LoadBlueprints".Translate())) {
+                        if (list.ButtonText("RealRuins.PlanetaryLoader.LoadBlueprints".Translate())) {
                             LoadItems();
                         }
                     }
                     break;
 
                 case RuinsPageState.LoadingBlueprints:
-                    blueprintStats = "RealRuins.Loading".Translate() + blueprintsLoadedCount + " / " + blueprintsToLoadCount;
+                    blueprintStats = "RealRuins.PlanetaryLoader.Loading".Translate() + blueprintsLoadedCount + " / " + blueprintsToLoadCount;
                     list.Label(blueprintStats);
-                    string buttonTitle = "RealRuins.StopButtonTitle1".Translate();
-                    if (blueprintsLoadedCount > 500) { buttonTitle = "RealRuins.StopButtonTitle2".Translate(); }
-                    if (blueprintsLoadedCount > 1300) { buttonTitle = "RealRuins.StopButtonTitle3".Translate(); }
+                    string buttonTitle = "RealRuins.PlanetaryLoader.StopButtonTitle1".Translate();
+                    if (blueprintsLoadedCount > 500) { buttonTitle = "RealRuins.PlanetaryLoader.StopButtonTitle2".Translate(); }
+                    if (blueprintsLoadedCount > 1300) { buttonTitle = "RealRuins.PlanetaryLoader.StopButtonTitle3".Translate(); }
                     if (list.ButtonText(buttonTitle)) {
                         forceStopLoading = true;
                     }
@@ -195,7 +195,7 @@ namespace RealRuins {
                 case RuinsPageState.LoadedBlueprints:
                 case RuinsPageState.ProcessingBlueprints:
                 case RuinsPageState.Completed:
-                    blueprintStats = "RealRuins.Loading".Translate() + "RealRuins.Completed".Translate();
+                    blueprintStats = "RealRuins.PlanetaryLoader.Loading".Translate() + "RealRuins.PlanetaryLoader.Completed".Translate();
                     list.Label(blueprintStats);
                     break;
             }
@@ -206,20 +206,20 @@ namespace RealRuins {
 
             if (showLoaderOptions || mode == RuinsPageMode.Manual || pageState > RuinsPageState.LoadingBlueprints) {
                 Text.Font = GameFont.Medium;
-                list.Label("RealRuins.TransferringOptions".Translate());
+                list.Label("RealRuins.PlanetaryLoader.TransferringOptions".Translate());
                 Text.Font = GameFont.Small;
             }
 
-            string blueprintStats = "RealRuins.Loading".Translate();
-            string skipped = "RealRuins.DroppedMaps".Translate() + " --- ";
-            string used = "RealRuins.UsedMaps".Translate() + " --- ";
+            string blueprintStats = "RealRuins.PlanetaryLoader.Loading".Translate();
+            string skipped = "RealRuins.PlanetaryLoader.DroppedMaps".Translate() + " --- ";
+            string used = "RealRuins.PlanetaryLoader.UsedMaps".Translate() + " --- ";
 
             switch (pageState) {
                 case RuinsPageState.Idle:
                 case RuinsPageState.LoadedHeader:
                     if (showTranferrerOptions) {
                         DrawTransferOptions(list);
-                        if (list.ButtonText("RealRuins.LoadAndSpawnBlueprints".Translate())) {
+                        if (list.ButtonText("RealRuins.PlanetaryLoader.LoadAndSpawnBlueprints".Translate())) {
                             mode = RuinsPageMode.FullAuto;
                             if (pageState == RuinsPageState.Idle) {
                                 StartLoadingList();
@@ -239,48 +239,48 @@ namespace RealRuins {
                 case RuinsPageState.LoadedBlueprints:
                     if (showTranferrerOptions) {
                         DrawTransferOptions(list);
-                        if (list.ButtonText("RealRuins.TransferBlueprints".Translate())) {
+                        if (list.ButtonText("RealRuins.PlanetaryLoader.TransferBlueprints".Translate())) {
                             CreateSites();
                         }
                     }
 
                     break;
                 case RuinsPageState.ProcessingBlueprints:
-                    blueprintStats = "RealRuins.Processing".Translate() + blueprintsProcessedCount + " / " + blueprintsToProcessCount;
-                    skipped = "RealRuins.DroppedMaps".Translate() + (blueprintsProcessedCount - blueprintsUsed);
-                    used = "RealRuins.UsedMaps".Translate() + blueprintsUsed;
+                    blueprintStats = "RealRuins.PlanetaryLoader.Processing".Translate() + blueprintsProcessedCount + " / " + blueprintsToProcessCount;
+                    skipped = "RealRuins.PlanetaryLoader.DroppedMaps".Translate() + (blueprintsProcessedCount - blueprintsUsed);
+                    used = "RealRuins.PlanetaryLoader.UsedMaps".Translate() + blueprintsUsed;
                     list.Label(blueprintStats);
                     list.Label(skipped);
                     list.Label(used);
                     break;
 
                 case RuinsPageState.Completed:
-                    blueprintStats = "RealRuins.Transferring".Translate() + "RealRuins.Completed".Translate();
+                    blueprintStats = "RealRuins.PlanetaryLoader.Transferring".Translate() + "RealRuins.PlanetaryLoader.Completed".Translate();
                     list.Label(blueprintStats);
                     break;
             }
         }
 
         private void DrawLoadingOptions(Listing_Standard list) {
-            downloadLimitString = list.TextEntryLabeled("RealRuins.DownloadLimit".Translate(), downloadLimitString);
+            downloadLimitString = list.TextEntryLabeled("RealRuins.PlanetaryLoader.DownloadLimit".Translate(), downloadLimitString);
             if (int.TryParse(downloadLimitString, out int number)) {
                 this.downloadLimit = number;
             }
         }
 
         private void DrawTransferOptions(Listing_Standard list) {
-            transferLimitString = list.TextEntryLabeled("RealRuins.TransferLimit".Translate(), transferLimitString);
+            transferLimitString = list.TextEntryLabeled("RealRuins.PlanetaryLoader.TransferLimit".Translate(), transferLimitString);
             if (int.TryParse(transferLimitString, out int number)) {
                 this.transferLimit = number;
             }
 
-            abandonedPercentage = (int)list.SliderLabeled("RealRuins.AbandonedPercentage".Translate(), (float)abandonedPercentage, 0, 100);
+            abandonedPercentage = (int)list.SliderLabeled("RealRuins.PlanetaryLoader.AbandonedPercentage".Translate(), (float)abandonedPercentage, 0, 100);
 
-            list.CheckboxLabeled("RealRuins.BiomeFiltering".Translate(), ref biomeStrict, "RealRuins.BiomeFilteringTT".Translate());
-            list.CheckboxLabeled("RealRuins.CostFiltering".Translate(), ref costStrict, "RealRuins.CostFilteringTT".Translate());
-            list.CheckboxLabeled("RealRuins.AreaFiltering".Translate(), ref areaStrict, "RealRuins.AreaFilteringTT".Translate());
-            list.CheckboxLabeled("RealRuins.DiscardAbandoned".Translate(), ref aggressiveDiscard, "RealRuins.DiscardAbandonedTT".Translate());
-            list.CheckboxLabeled("RealRuins.DisableFriendlyLocations".Translate(), ref disableFriendlyLocations, "RealRuins.DisableFriendlyLocationsTT".Translate());
+            list.CheckboxLabeled("RealRuins.PlanetaryLoader.BiomeFiltering".Translate(), ref biomeStrict, "RealRuins.PlanetaryLoader.BiomeFilteringTT".Translate());
+            list.CheckboxLabeled("RealRuins.PlanetaryLoader.CostFiltering".Translate(), ref costStrict, "RealRuins.PlanetaryLoader.CostFilteringTT".Translate());
+            list.CheckboxLabeled("RealRuins.PlanetaryLoader.AreaFiltering".Translate(), ref areaStrict, "RealRuins.PlanetaryLoader.AreaFilteringTT".Translate());
+            list.CheckboxLabeled("RealRuins.PlanetaryLoader.DiscardAbandoned".Translate(), ref aggressiveDiscard, "RealRuins.PlanetaryLoader.DiscardAbandonedTT".Translate());
+            list.CheckboxLabeled("RealRuins.PlanetaryLoader.DisableFriendlyLocations".Translate(), ref disableFriendlyLocations, "RealRuins.PlanetaryLoader.DisableFriendlyLocationsTT".Translate());
         }
 
         public override void DoWindowContents(Rect rect) {
@@ -305,9 +305,9 @@ namespace RealRuins {
                 if (success) {
                     if (mapTiles.Count == 0) {
                         this.Close();
-                        SmallQuestionDialog q = new SmallQuestionDialog("RealRuins.NoBlueprintsWarning.Caption".Translate(),
-                            "RealRuins.NoBlueprintsWarning.Text".Translate(),
-                            new string[] { "RealRuins.Close".Translate() },
+                        SmallQuestionDialog q = new SmallQuestionDialog("RealRuins.PlanetaryLoader.NoBlueprintsWarning.Caption".Translate(),
+                            "RealRuins.PlanetaryLoader.NoBlueprintsWarning.Text".Translate(),
+                            new string[] { "RealRuins.PlanetaryLoader.Close".Translate() },
                             null);
                         Find.WindowStack.Add(q);
                     }
@@ -326,12 +326,12 @@ namespace RealRuins {
                     if (blueprintsTotalCount > 500 && mode == RuinsPageMode.Default) {
                         // If no options shown -> display alert. Otherwise do nothing: user with options on screen knows what to do.
                         if (mode == RuinsPageMode.Default) {
-                            var text = string.Format("RealRuins.TooManyBlueprints.Load.Text".Translate(), blueprintsTotalCount);
-                            var dialog = new SmallQuestionDialog("RealRuins.TooManyBlueprints.Load.Title".Translate(),
+                            var text = string.Format("RealRuins.PlanetaryLoader.TooManyBlueprints.Load.Text".Translate(), blueprintsTotalCount);
+                            var dialog = new SmallQuestionDialog("RealRuins.PlanetaryLoader.TooManyBlueprints.Load.Title".Translate(),
                                 text,
-                                new string[] { "RealRuins.TooManyBlueprints.Get500".Translate(),
-                                           "RealRuins.TooManyBlueprints.GetAll".Translate(),
-                                           "RealRuins.TooManyBlueprints.ShowOptions".Translate() },
+                                new string[] { "RealRuins.PlanetaryLoader.TooManyBlueprints.Get500".Translate(),
+                                           "RealRuins.PlanetaryLoader.TooManyBlueprints.GetAll".Translate(),
+                                           "RealRuins.PlanetaryLoader.TooManyBlueprints.ShowOptions".Translate() },
                                 delegate (int selection) {
                                     switch (selection) {
                                         case 0:

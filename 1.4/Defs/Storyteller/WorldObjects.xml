@@ -17,7 +17,7 @@
   <WorldObjectDef Name="RealRuinsPOI">
     <defName>RealRuinsPOI</defName>
     <label>A group of buildings</label>
-    <description>A group of buildings. Deserves an investigation.</description>
+    <description>A group of buildings. Worth investigating.</description>
     <worldObjectClass>RealRuins.RealRuinsPOIWorldObject</worldObjectClass>
     <mapGenerator>RealRuinsPOI</mapGenerator>
     <expandingIcon>true</expandingIcon>

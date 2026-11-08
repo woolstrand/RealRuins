@@ -2,28 +2,28 @@
 <LanguageData>
 
     <!-- EN: low wealth ruins -->
-    <ScavengingRuins.stages.low_wealth_ruins.label>бедные руины</ScavengingRuins.stages.low_wealth_ruins.label>
+    <ScavengingRuins.stages.low_wealth_ruins.label>Р±РµРґРЅС‹Рµ СЂСѓРёРЅС‹</ScavengingRuins.stages.low_wealth_ruins.label>
     <!-- EN: Did we really have to go that far just for stones and trash? -->
-    <ScavengingRuins.stages.low_wealth_ruins.description>Мы действительно тащились в такую даль только ради камней и мусора?</ScavengingRuins.stages.low_wealth_ruins.description>
+    <ScavengingRuins.stages.low_wealth_ruins.description>РњС‹ РґРµР№СЃС‚РІРёС‚РµР»СЊРЅРѕ С‚Р°С‰РёР»РёСЃСЊ РІ С‚Р°РєСѓСЋ РґР°Р»СЊ С‚РѕР»СЊРєРѕ СЂР°РґРё РєР°РјРЅРµР№ Рё РјСѓСЃРѕСЂР°?</ScavengingRuins.stages.low_wealth_ruins.description>
 
     <!-- EN: medium wealth ruins -->
-    <ScavengingRuins.stages.medium_wealth_ruins.label>посредственные руины</ScavengingRuins.stages.medium_wealth_ruins.label>
+    <ScavengingRuins.stages.medium_wealth_ruins.label>РїРѕСЃСЂРµРґСЃС‚РІРµРЅРЅС‹Рµ СЂСѓРёРЅС‹</ScavengingRuins.stages.medium_wealth_ruins.label>
     <!-- EN: Looks like we can find some really useful things here -->
-    <ScavengingRuins.stages.medium_wealth_ruins.description>Возможно, мы найдем тут пару нужных вещей</ScavengingRuins.stages.medium_wealth_ruins.description>
+    <ScavengingRuins.stages.medium_wealth_ruins.description>Р’РѕР·РјРѕР¶РЅРѕ, РјС‹ РЅР°Р№РґРµРј С‚СѓС‚ РїР°СЂСѓ РЅСѓР¶РЅС‹С… РІРµС‰РµР№</ScavengingRuins.stages.medium_wealth_ruins.description>
 
     <!-- EN: high wealth ruins -->
-    <ScavengingRuins.stages.high_wealth_ruins.label>богатые руины</ScavengingRuins.stages.high_wealth_ruins.label>
+    <ScavengingRuins.stages.high_wealth_ruins.label>Р±РѕРіР°С‚С‹Рµ СЂСѓРёРЅС‹</ScavengingRuins.stages.high_wealth_ruins.label>
     <!-- EN: This journey was definitely worth it. -->
-    <ScavengingRuins.stages.high_wealth_ruins.description>Путешествие сюда определенно стоило затраченных усилий!</ScavengingRuins.stages.high_wealth_ruins.description>
+    <ScavengingRuins.stages.high_wealth_ruins.description>РџСѓС‚РµС€РµСЃС‚РІРёРµ СЃСЋРґР° РѕРїСЂРµРґРµР»РµРЅРЅРѕ СЃС‚РѕРёР»Рѕ Р·Р°С‚СЂР°С‡РµРЅРЅС‹С… СѓСЃРёР»РёР№!</ScavengingRuins.stages.high_wealth_ruins.description>
 
     <!-- EN: very high wealth ruins -->
-    <ScavengingRuins.stages.very_high_wealth_ruins.label>очень богатые руины</ScavengingRuins.stages.very_high_wealth_ruins.label>
+    <ScavengingRuins.stages.very_high_wealth_ruins.label>РѕС‡РµРЅСЊ Р±РѕРіР°С‚С‹Рµ СЂСѓРёРЅС‹</ScavengingRuins.stages.very_high_wealth_ruins.label>
     <!-- EN: There is a whole fortune here! We should take everything and I will fight for it! -->
-    <ScavengingRuins.stages.very_high_wealth_ruins.description>Здесь целое состояние! Мы должны забрать отсюда все, и я готов драться за это! </ScavengingRuins.stages.very_high_wealth_ruins.description>
+    <ScavengingRuins.stages.very_high_wealth_ruins.description>Р—РґРµСЃСЊ С†РµР»РѕРµ СЃРѕСЃС‚РѕСЏРЅРёРµ! РњС‹ РґРѕР»Р¶РЅС‹ Р·Р°Р±СЂР°С‚СЊ РѕС‚СЃСЋРґР° РІСЃРµ, Рё СЏ РіРѕС‚РѕРІ РґСЂР°С‚СЊСЃСЏ Р·Р° СЌС‚Рѕ! </ScavengingRuins.stages.very_high_wealth_ruins.description>
 
     <!-- EN: insanely wealthy ruins -->
-    <ScavengingRuins.stages.insanely_wealthy_ruins.label>безумно богатые руины</ScavengingRuins.stages.insanely_wealthy_ruins.label>
+    <ScavengingRuins.stages.insanely_wealthy_ruins.label>Р±РµР·СѓРјРЅРѕ Р±РѕРіР°С‚С‹Рµ СЂСѓРёРЅС‹</ScavengingRuins.stages.insanely_wealthy_ruins.label>
     <!-- EN: OH MY THAT'S INSANE SUCH WEALTH MUCH MONEY -->
-    <ScavengingRuins.stages.insanely_wealthy_ruins.description>ОХ ВАУ ЭТО ВООБЩЕ СТОЛЬКО БОГАСТВО ТАКОЕ ДЕНЬГИ!11</ScavengingRuins.stages.insanely_wealthy_ruins.description>
+    <ScavengingRuins.stages.insanely_wealthy_ruins.description>РћРҐ Р’РђРЈ Р­РўРћ Р’РћРћР‘Р©Р• РЎРўРћР›Р¬РљРћ Р‘РћР“РђРЎРўР’Рћ РўРђРљРћР• Р”Р•РќР¬Р“Р!11</ScavengingRuins.stages.insanely_wealthy_ruins.description>
 
 </LanguageData>

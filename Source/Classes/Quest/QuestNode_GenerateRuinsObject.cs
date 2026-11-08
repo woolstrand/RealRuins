@@ -50,7 +50,7 @@ namespace RealRuins
                     startingCap = int.MaxValue - 1; //not sure why StartScavenging takes int as input, but don't want to change it now.
                 }
 
-                Debug.Log(Debug.Event, "Initial cost set to {0} (blueprint cost {1} OR {3}, settings cap {2}", startingCap, cachedCost, costCap, cachedCost2);
+                Debug.Log(Debug.Event, "Initial cost set to {0} (blueprint cost {1} OR {3}, settings cap {2})", startingCap, cachedCost, costCap, cachedCost2);
                 Debug.Extra(Debug.QuestNode_GenerateRuinsObject, "TryGenerateWorldObject: Calling StartScavenging with startingCap={0}", startingCap);
                 comp.StartScavenging((int)startingCap); //passing initial cost to calculate coefficients without need to load bp one more time
 
@@ -65,7 +65,7 @@ namespace RealRuins
         }
 
         protected override bool TestRunInt(Slate slate) {
-            Debug.Log(Debug.QuestNode_GenerateRuinsNode, "TestRun Launched for RealRuins_AbandonedBase quest");
+            Debug.Log(Debug.QuestNode_GenerateRuinsNode, "TestRun launched for RealRuins_AbandonedBase quest");
             
             // Check if blueprintFilename exists in slate (set by previous node)
             var testFilename = blueprintFilename.GetValue(slate);

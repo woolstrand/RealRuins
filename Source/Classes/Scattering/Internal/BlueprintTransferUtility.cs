@@ -600,7 +600,7 @@ namespace RealRuins
 
                 Debug.Extra(Debug.BlueprintTransfer, "Finished check, recalculating stats");
                 blueprint.UpdateBlueprintStats(true);
-                Debug.Log(Debug.BlueprintTransfer, "Blueprint transfer utility did remove {0}/{1} incompatible items. New cost: {2}", removedItems, totalItems, blueprint.totalCost);
+                Debug.Log(Debug.BlueprintTransfer, "Blueprint transfer utility removed {0}/{1} incompatible items. New cost: {2}", removedItems, totalItems, blueprint.totalCost);
             }
             catch (Exception e)
             {
@@ -806,7 +806,7 @@ namespace RealRuins
                                         }
                                         catch (Exception)
                                         {
-                                            Debug.Log(Debug.BlueprintTransfer, "Exception while tried to perform tick for {0} of cost {1}, retrhrowing...", thing.def.defName, itemTile.cost);
+                                            Debug.Log(Debug.BlueprintTransfer, "Exception while trying to perform tick for {0} of cost {1}, rethrowing...", thing.def.defName, itemTile.cost);
                                             thing.Destroy();
                                             throw;
                                         }

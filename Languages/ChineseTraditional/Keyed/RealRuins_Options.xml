@@ -12,7 +12,6 @@
   <RealRuins_ModOptions_AllowUploadsTooltip>建議開啟此選項以協助豐富資料庫，取得更多有趣的基地設計。每次遊戲周期上傳的資料量應該不會超過 MB(megabytes) 等級。</RealRuins_ModOptions_AllowUploadsTooltip>
   <RealRuins_ModOptions_CacheSizeTooltip>當達到限制的容量時，模此會繼續下載新的遺跡藍圖，並移除舊有的。</RealRuins_ModOptions_CacheSizeTooltip>
   <RealRuins_ModOptions_OfflineModeTooltip>此模式會刪除所有從遠端下載的資料，且將不會再進行任何上傳及下載的動作。然而，你曾經創建過的基地仍然會儲存在本地端，用以生成你遊戲中的遺跡.</RealRuins_ModOptions_OfflineModeTooltip>
-  <RealRuins_ModOptions_OfflineModeConfirmation>確定要繼續嗎？</RealRuins_ModOptions_OfflineModeConfirmation>
 
   <RealRuins_ModOptions_CurrentCacheSize>目前本地端快取大小: </RealRuins_ModOptions_CurrentCacheSize>
   <RealRuins_ModOptions_RemoveAll>清除快取</RealRuins_ModOptions_RemoveAll>
@@ -28,10 +27,7 @@
   <RealRuins_MapOptions_CostLimit>限制物品最高價值</RealRuins_MapOptions_CostLimit>
   <RealRuins_MapOptions_DisableHaulables>禁止生成可運輸物品</RealRuins_MapOptions_DisableHaulables>
   <RealRuins_MapOptions_WallsAndDoorsOnly>僅生成牆和門</RealRuins_MapOptions_WallsAndDoorsOnly>
-  <RealRuins_MapOptions_DisableDecoration>靜態裝飾物</RealRuins_MapOptions_DisableDecoration>
-  <RealRuins_MapOptions_DisableTraps>動態裝飾物</RealRuins_MapOptions_DisableTraps>
   <RealRuins_MapOptions_DisableHostiles>敵對單位數量</RealRuins_MapOptions_DisableHostiles>
-  <RealRuins_MapOptions_Claimable>令結構可被佔領</RealRuins_MapOptions_Claimable>
   
   <RealRuins_MapOptions_DensityTT>在 100x100 的單位內平均可生成的遺跡數量</RealRuins_MapOptions_DensityTT>
   <RealRuins_MapOptions_SizeTT>遺跡大小在輸入值的 50% ~ 150% 之間隨機選擇</RealRuins_MapOptions_SizeTT>
@@ -40,10 +36,7 @@
   <RealRuins_MapOptions_CostLimitTT>所有高於設定價格的物品都會被尋寶者奪走</RealRuins_MapOptions_CostLimitTT>
   <RealRuins_MapOptions_DisableHaulablesTT>所有可搬運的物資都不會出現，但是仍然可以找到家具</RealRuins_MapOptions_DisableHaulablesTT>
   <RealRuins_MapOptions_WallsAndDoorsOnlyTT>將會移除所有意義上不是牆或門的物件，且金子打造的建築也會被移除，不會有奇蹟</RealRuins_MapOptions_WallsAndDoorsOnlyTT>
-  <RealRuins_MapOptions_DisableDecorationTT>目前只會生成骸骨</RealRuins_MapOptions_DisableDecorationTT>
-  <RealRuins_MapOptions_DisableTrapsTT>陷阱，地雷跟其它驚喜</RealRuins_MapOptions_DisableTrapsTT>
   <RealRuins_MapOptions_DisableHostilesTT></RealRuins_MapOptions_DisableHostilesTT>
-  <RealRuins_MapOptions_ClaimableTT>不可佔領的結構無法修復或拆除</RealRuins_MapOptions_ClaimableTT>
 
   <RealRuins_MapOptions_EnableProximity>考慮與定居點的距離</RealRuins_MapOptions_EnableProximity>
   <RealRuins_MapOptions_EnableProximityTT>到定居點的距離會影響生成參數：離定居點越近，廢墟越密集，但被掠奪的越多</RealRuins_MapOptions_EnableProximityTT>
@@ -60,9 +53,6 @@
   <RealRuins.CaravanFoundRuins.Investigate>進入調查</RealRuins.CaravanFoundRuins.Investigate>
   <RealRuins.CaravanFoundRuinsTitle>發現老舊建築群</RealRuins.CaravanFoundRuinsTitle>
 
-  <RealRuins_ModOptions_Reset>回復初始化設定</RealRuins_ModOptions_Reset>
-  <RealRuins_MapOptions_CaravanReforming>允許即時重組商隊</RealRuins_MapOptions_CaravanReforming>
-  <RealRuins_MapOptions_CaravanReformingTT>通常，在探索遺跡時，即時商隊重組功能會被關閉。你需要手動的探索遺跡並將你想要的物品主動拾起或放置到馱畜身上，然後往邊境移動來進入大地圖，即使現在地圖上已經是安全的。但如果你希望允許即時重組商隊，請啟用此設定</RealRuins_MapOptions_CaravanReformingTT>
 
   <!-- Art -->
   <DeterioratedArtDescription>這件物品已經太過老舊且損壞。你可以肯定它曾經是一件美麗的藝術品，但現在已經無法辨別它究竟是什麼了。</DeterioratedArtDescription>
@@ -112,8 +102,8 @@
 
   <RealRuins.PlanetarySettings.DisableFriendly>不生成友善位置</RealRuins.PlanetarySettings.DisableFriendly>
   <RealRuins.PlanetarySettings.DisableFriendlyTT>若啟用，世界位置將僅由敵對勢力占據。</RealRuins.PlanetarySettings.DisableFriendlyTT>
-  <RealRuins.DisableFriendlyLocations>不生成友善位置</RealRuins.DisableFriendlyLocations>
-  <RealRuins.DisableFriendlyLocationsTT>若啟用，世界位置將僅由敵對勢力占據。</RealRuins.DisableFriendlyLocationsTT>
+  <RealRuins.PlanetaryLoader.DisableFriendlyLocations>不生成友善位置</RealRuins.PlanetaryLoader.DisableFriendlyLocations>
+  <RealRuins.PlanetaryLoader.DisableFriendlyLocationsTT>若啟用，世界位置將僅由敵對勢力占據。</RealRuins.PlanetaryLoader.DisableFriendlyLocationsTT>
   <RealRuins.PlanetarySettings.RemoveAll>刪除所有位置</RealRuins.PlanetarySettings.RemoveAll>
   <RealRuins.PlanetarySettings.RemoveAllConfirm>您確定要刪除由真實遺跡生成的所有位置嗎？</RealRuins.PlanetarySettings.RemoveAllConfirm>
 
@@ -175,26 +165,24 @@
   <LetterTransportPodsArrivedAtRuins>運輸艙已抵達遺跡</LetterTransportPodsArrivedAtRuins>
 
   <!-- POI load dialog -->
-  <RealRuins.LoadBlueprintsCaption>載入整個行星的藍圖</RealRuins.LoadBlueprintsCaption>
-  <RealRuins.LoadBlueprints>載入藍圖</RealRuins.LoadBlueprints>
-  <RealRuins.Close>關閉</RealRuins.Close>
-  <RealRuins.Idle>待機</RealRuins.Idle>
-  <RealRuins.Searching>搜尋藍圖...</RealRuins.Searching>
-  <RealRuins.Loading>載入藍圖: </RealRuins.Loading>
-  <RealRuins.Processing>分析藍圖: </RealRuins.Processing>
-  <RealRuins.Completed>完成!</RealRuins.Completed>
-  <RealRuins.BiomeFiltering>過濾生物群系</RealRuins.BiomeFiltering>
-  <RealRuins.BiomeFilteringTT>排除與地圖不符合或不相容的生物群系。</RealRuins.BiomeFilteringTT>
-  <RealRuins.CostFiltering>過濾價值</RealRuins.CostFiltering>
-  <RealRuins.CostFilteringTT>排除價值過低的地圖。(低於平均被認定為 "廢墟" 的價值)</RealRuins.CostFilteringTT>
-  <RealRuins.AreaFiltering>過濾區域及物品</RealRuins.AreaFiltering>
-  <RealRuins.AreaFilteringTT>排除太小或物品太少的地圖。</RealRuins.AreaFilteringTT>
-  <RealRuins.UsedMaps>被使用的地圖: </RealRuins.UsedMaps>
-  <RealRuins.DroppedMaps>被丟棄的地圖: </RealRuins.DroppedMaps>
+  <RealRuins.PlanetaryLoader.LoadBlueprintsCaption>載入整個行星的藍圖</RealRuins.PlanetaryLoader.LoadBlueprintsCaption>
+  <RealRuins.PlanetaryLoader.LoadBlueprints>載入藍圖</RealRuins.PlanetaryLoader.LoadBlueprints>
+  <RealRuins.PlanetaryLoader.Close>關閉</RealRuins.PlanetaryLoader.Close>
+  <RealRuins.PlanetaryLoader.Searching>搜尋藍圖...</RealRuins.PlanetaryLoader.Searching>
+  <RealRuins.PlanetaryLoader.Loading>載入藍圖: </RealRuins.PlanetaryLoader.Loading>
+  <RealRuins.PlanetaryLoader.Processing>分析藍圖: </RealRuins.PlanetaryLoader.Processing>
+  <RealRuins.PlanetaryLoader.Completed>完成!</RealRuins.PlanetaryLoader.Completed>
+  <RealRuins.PlanetaryLoader.BiomeFiltering>過濾生物群系</RealRuins.PlanetaryLoader.BiomeFiltering>
+  <RealRuins.PlanetaryLoader.BiomeFilteringTT>排除與地圖不符合或不相容的生物群系。</RealRuins.PlanetaryLoader.BiomeFilteringTT>
+  <RealRuins.PlanetaryLoader.CostFiltering>過濾價值</RealRuins.PlanetaryLoader.CostFiltering>
+  <RealRuins.PlanetaryLoader.CostFilteringTT>排除價值過低的地圖。(低於平均被認定為 "廢墟" 的價值)</RealRuins.PlanetaryLoader.CostFilteringTT>
+  <RealRuins.PlanetaryLoader.AreaFiltering>過濾區域及物品</RealRuins.PlanetaryLoader.AreaFiltering>
+  <RealRuins.PlanetaryLoader.AreaFilteringTT>排除太小或物品太少的地圖。</RealRuins.PlanetaryLoader.AreaFilteringTT>
+  <RealRuins.PlanetaryLoader.UsedMaps>被使用的地圖: </RealRuins.PlanetaryLoader.UsedMaps>
+  <RealRuins.PlanetaryLoader.DroppedMaps>被丟棄的地圖: </RealRuins.PlanetaryLoader.DroppedMaps>
 
-  <RealRuins.MapsModuleButton>匯入藍圖到行星(BETA)</RealRuins.MapsModuleButton>
-  <RealRuins.PlanetarySettignsCaption>真實遺跡 - 星球遺跡設定</RealRuins.PlanetarySettignsCaption>
-  <RealRuins.NeedsGameInProgress>必須在遊戲中才能使用此設定。</RealRuins.NeedsGameInProgress>
+  <RealRuins.PlanetarySettings.MapsModuleButton>匯入藍圖到行星(BETA)</RealRuins.PlanetarySettings.MapsModuleButton>
+  <RealRuins.PlanetaryLoader.NeedsGameInProgress>必須在遊戲中才能使用此設定。</RealRuins.PlanetaryLoader.NeedsGameInProgress>
 
   <RealRuins.CaravanReformType>商隊重組形式</RealRuins.CaravanReformType>
   <RealRuins.Reform.Automatic>自動</RealRuins.Reform.Automatic>
@@ -204,17 +192,11 @@
 
   <RealRuins.ForceMultiplier>事件難度係數</RealRuins.ForceMultiplier>
   <RealRuins.AbsoluteWealthCap>事件總價值硬上限</RealRuins.AbsoluteWealthCap>
-  <RealRuins.LeaveVanillaRuins>留下原版遺跡</RealRuins.LeaveVanillaRuins>
   <RealRuins.ForceMultiplierTT>改變此參數來調整事件的難度。</RealRuins.ForceMultiplierTT>
   <RealRuins.AbsoluteWealthCapTT>設定事件的總價值上限。木牆和木門不列入計算。</RealRuins.AbsoluteWealthCapTT>
-  <RealRuins.LeaveVanillaRuinsTT>如果啟用，原版遺跡及真實遺跡事件都會出現。</RealRuins.LeaveVanillaRuinsTT>
 
   <!-- -->
-  <RealRuins.LogLevel>日誌等級</RealRuins.LogLevel>
   <!-- -->
-  <RealRuins.LogLevel.All>所有資料</RealRuins.LogLevel.All>
   <!-- -->
-  <RealRuins.LogLevel.Warnings>錯誤(errors)及警告(warnings)</RealRuins.LogLevel.Warnings>
   <!-- -->
-  <RealRuins.LogLevel.Errors>僅錯誤(errors)</RealRuins.LogLevel.Errors>
 </LanguageData>

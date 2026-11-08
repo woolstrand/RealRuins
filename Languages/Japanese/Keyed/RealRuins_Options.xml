@@ -10,7 +10,6 @@
   <RealRuins_ModOptions_AllowUploadsTooltip>色々と面白い拠点デザインを使用したデータベースを作成するために,これをオンにすることをお勧めします.これは,1ゲームあたり数Mb(メガバイト)以上を割り当てるべきではありません.</RealRuins_ModOptions_AllowUploadsTooltip>
   <RealRuins_ModOptions_CacheSizeTooltip>この上限に達しても,MODは新しい拠点設計画像をダウンロードし続け,古い設計画像を削除します.</RealRuins_ModOptions_CacheSizeTooltip>
   <RealRuins_ModOptions_OfflineModeTooltip>このモードでは,サーバーからダウンロードされてローカルキャッシュされたすべてのデータが削除され,それ以上アップロードやダウンロードができなくなります.しかし,自分の拠点はローカルに保存され続けて,ゲームで遺跡を作るために使用されます.</RealRuins_ModOptions_OfflineModeTooltip>
-  <RealRuins_ModOptions_OfflineModeConfirmation>続行しますか？</RealRuins_ModOptions_OfflineModeConfirmation>
 
   <RealRuins_ModOptions_CurrentCacheSize>現在のローカルキャッシュ容量：</RealRuins_ModOptions_CurrentCacheSize>
   <RealRuins_ModOptions_RemoveAll>キャッシュを削除</RealRuins_ModOptions_RemoveAll>
@@ -26,10 +25,7 @@
   <RealRuins_MapOptions_CostLimit>アイテム価値の上限を制限</RealRuins_MapOptions_CostLimit>
   <RealRuins_MapOptions_DisableHaulables>再設置可能なアイテムを無効</RealRuins_MapOptions_DisableHaulables>
   <RealRuins_MapOptions_WallsAndDoorsOnly>壁と扉だけ配置</RealRuins_MapOptions_WallsAndDoorsOnly>
-  <RealRuins_MapOptions_DisableDecoration>特殊アイテム(骨)を無効</RealRuins_MapOptions_DisableDecoration>
-  <RealRuins_MapOptions_DisableTraps>特殊アイテム(罠)を無効</RealRuins_MapOptions_DisableTraps>
   <RealRuins_MapOptions_DisableHostiles>敵対アイテム(タレット)を無効</RealRuins_MapOptions_DisableHostiles>
-  <RealRuins_MapOptions_Claimable>建築物を領土主張可能にする</RealRuins_MapOptions_Claimable>
 
   <RealRuins_MapOptions_DensityTT>100x100の範囲に存在する平均的な遺跡数</RealRuins_MapOptions_DensityTT>
   <RealRuins_MapOptions_SizeTT>遺跡の範囲は,入力値の50％〜150％の範囲でランダムに選択されます</RealRuins_MapOptions_SizeTT>
@@ -38,10 +34,7 @@
   <RealRuins_MapOptions_CostLimitTT>選択した値よりも価値が高いアイテムはすべて盗まれて存在しません</RealRuins_MapOptions_CostLimitTT>
   <RealRuins_MapOptions_DisableHaulablesTT>移動可能なアイテムは全く出現しませんが,家具は引き続き配置されます</RealRuins_MapOptions_DisableHaulablesTT>
   <RealRuins_MapOptions_WallsAndDoorsOnlyTT>この設定はかなり強制的で,バニラの壁や扉に基づいていないものはすべて削除されます.</RealRuins_MapOptions_WallsAndDoorsOnlyTT>
-  <RealRuins_MapOptions_DisableDecorationTT>今は動物や人の骨だけです</RealRuins_MapOptions_DisableDecorationTT>
-  <RealRuins_MapOptions_DisableTrapsTT>スパイクトラップやIEDトラップなどです</RealRuins_MapOptions_DisableTrapsTT>
   <RealRuins_MapOptions_DisableHostilesTT>入植者と敵対的なアイテム(タレット)が存在します</RealRuins_MapOptions_DisableHostilesTT>
-  <RealRuins_MapOptions_ClaimableTT>領土を主張していない構造物は修理や分解することができません</RealRuins_MapOptions_ClaimableTT>
 
   <RealRuins_MapOptions_EnableProximity>入植地からの距離による影響</RealRuins_MapOptions_EnableProximity>
   <RealRuins_MapOptions_EnableProximityTT>コロニーや派閥拠点からの距離は,遺跡の作成条件に影響を及ぼします.遺跡は都市の近くではより密集していますが,荒らされていて何も残っていない率が高くなります.</RealRuins_MapOptions_EnableProximityTT>
@@ -63,7 +56,7 @@
   <RealRuins.KeepVanillaRuinsTT>有効にすると、RimWorldのバニラ遺跡がReal Ruinsの横に保持されます。</RealRuins.KeepVanillaRuinsTT>
 
   <!-- Planetary ruins section -->
-  <RealRuins.PlanetaryRuinsSettings.Caption>惑星の遺跡とロケーション</RealRuins.PlanetaryRuinsSettings.Caption>
+  <RealRuins.PlanetarySettings.Caption>惑星の遺跡とロケーション</RealRuins.PlanetarySettings.Caption>
   <RealRuins.PlanetarySettings.Enable>ゲーム開始時の遺跡生成を有効化</RealRuins.PlanetarySettings.Enable>
   <RealRuins.PlanetarySettings.DownloadLimit>ダウンロードする設計図の最大数</RealRuins.PlanetarySettings.DownloadLimit>
   <RealRuins.PlanetarySettings.TransferLimit>生成するロケーションの最大数</RealRuins.PlanetarySettings.TransferLimit>
@@ -73,8 +66,8 @@
   <RealRuins.PlanetarySettings.DisableFriendlyTT>有効にすると、ワールドロケーションは敵対派閥によってのみ占有されます。</RealRuins.PlanetarySettings.DisableFriendlyTT>
   <RealRuins.PlanetarySettings.RemoveAll>すべてのロケーションを削除</RealRuins.PlanetarySettings.RemoveAll>
   <RealRuins.PlanetarySettings.RemoveAllConfirm>Real Ruinsで生成されたすべてのロケーションを削除してもよろしいですか？</RealRuins.PlanetarySettings.RemoveAllConfirm>
-  <RealRuins.DisableFriendlyLocations>友好的なロケーションを生成しない</RealRuins.DisableFriendlyLocations>
-  <RealRuins.DisableFriendlyLocationsTT>有効にすると、ワールドロケーションは敵対派閥によってのみ占有されます。</RealRuins.DisableFriendlyLocationsTT>
+  <RealRuins.PlanetaryLoader.DisableFriendlyLocations>友好的なロケーションを生成しない</RealRuins.PlanetaryLoader.DisableFriendlyLocations>
+  <RealRuins.PlanetaryLoader.DisableFriendlyLocationsTT>有効にすると、ワールドロケーションは敵対派閥によってのみ占有されます。</RealRuins.PlanetaryLoader.DisableFriendlyLocationsTT>
 
   <!-- Caravan entered map -->
   <LetterLabelCaravanEnteredRuins>キャラバンは遺跡に到着した</LetterLabelCaravanEnteredRuins>
@@ -84,9 +77,6 @@
   <RealRuins.CaravanFoundRuins.Investigate>調査する</RealRuins.CaravanFoundRuins.Investigate>
   <RealRuins.CaravanFoundRuinsTitle>小さな遺跡が近くで見つかった</RealRuins.CaravanFoundRuinsTitle>
 
-  <RealRuins_ModOptions_Reset>Mod設定を初期化</RealRuins_ModOptions_Reset>
-  <RealRuins_MapOptions_CaravanReforming>襲撃中でもキャラバン隊の編成可能</RealRuins_MapOptions_CaravanReforming>
-  <RealRuins_MapOptions_CaravanReformingTT>通常,未調査の遺跡を発見イベント中は,最初の敵対勢力が敗北した直後にはキャラバン隊を即座に編成することはできません.これは意図的に戦利品を手動で検索して,敵対的なポーンを殲滅しても,アイテムを拾ってマップの隅に移動してマップから出なければなりません.ただし,強力な即時編成機能を使用した古い方法を好む場合は,この設定を有効にできます.</RealRuins_MapOptions_CaravanReformingTT>
 
   <!-- Art -->
   <DeterioratedArtDescription>このアイテムはあまりにもすり減っており,所どころ壊れています.あなたはそれが美しい芸術品であったと確かに確信できますが,しかし現在,あなたはそれに何があったのか全く推測することもできません.</DeterioratedArtDescription>
@@ -157,68 +147,59 @@
   <LetterTransportPodsArrivedAtRuins>輸送ポッドが遺跡に到着しました.</LetterTransportPodsArrivedAtRuins>
 
   <!-- POI load dialog -->
-  <RealRuins.LoadBlueprintsCaption>この惑星に遺跡を読込む</RealRuins.LoadBlueprintsCaption>
+  <RealRuins.PlanetaryLoader.LoadBlueprintsCaption>この惑星に遺跡を読込む</RealRuins.PlanetaryLoader.LoadBlueprintsCaption>
 
-  <RealRuins.LoadBlueprintsDescription>この機能は,同じ惑星にコロニーを持っていた他プレイヤーのマップを読み込みます.それらのコロニーは他派閥の拠点やアウトポスト,または放棄された遺跡として生成されます.ランダムな遺跡とは異なり,これらは元の場所に配置されます.</RealRuins.LoadBlueprintsDescription>
-  <RealRuins.OptionsDescription>このモードではすべてのステップを制御できます.まず惑星の設計図の数だけを読み込み,そのうちいくつを設計図としてダウンロードするか調整できます.読み込み後,いくつ転送するか,どのようにフィルタリングするかを調整できます.各ステップで停止してすべてを削除し,やり直すことも可能です.</RealRuins.OptionsDescription>
-  <RealRuins.PlanetaryRuinsNote>注記：これはすべてのマップ上のランダムな遺跡や特別な遺跡イベントとは独立して動作する個別の機能です.</RealRuins.PlanetaryRuinsNote>
-  <RealRuins.MapSizeChangeWarning>警告：マップサイズを変更する場合は,今すぐ「閉じる」を押し,マップサイズを変更した後に設計図をダウンロードしてください.</RealRuins.MapSizeChangeWarning>
-  <RealRuins.LowCountWarning>設計図の数が少なすぎます.もし気になる場合は,別のシード値やマップ設定を選択してみてください.もっとも人口の多いワールドはhttps://woolstrand.art/view/maps/topseedsで確認できます.</RealRuins.LowCountWarning>
-  <RealRuins.NoBlueprintsWarning.Caption>申し訳ありません</RealRuins.NoBlueprintsWarning.Caption>
-  <RealRuins.NoBlueprintsWarning.Text>このワールドにはマップが含まれていません.これは,同じシード値,被覆率,マップサイズでプレイした人がまだ誰もいないことを意味します.ワールドマップ上にロケーションを表示させたい場合は,より一般的なシード値を選択してみてください.もっとも人口の多いワールドはhttps://woolstrand.art/view/maps/topseedsで確認できます.</RealRuins.NoBlueprintsWarning.Text>
-  <RealRuins.StartAuto>自動で読み込む</RealRuins.StartAuto>
-  <RealRuins.GetCount>リストを読み込む</RealRuins.GetCount>
-  <RealRuins.MoreOptions>詳細設定...</RealRuins.MoreOptions>
-  <RealRuins.SkipButtonTitle>スキップ</RealRuins.SkipButtonTitle>
-  <RealRuins.StopButtonTitle1>停止</RealRuins.StopButtonTitle1>
-  <RealRuins.StopButtonTitle2>十分です！</RealRuins.StopButtonTitle2>
-  <RealRuins.StopButtonTitle3>止まれ,魔法の鍋よ,止まれ！！！</RealRuins.StopButtonTitle3>
-  <RealRuins.ClearPOIs>マップオブジェクトを削除する</RealRuins.ClearPOIs>
-  <RealRuins.DownloadLimit>ダウンロード制限(0で無制限)：</RealRuins.DownloadLimit>
-  <RealRuins.TransferLimit>転送制限(0で無制限)：</RealRuins.TransferLimit>
-  <RealRuins.AbandonedPercentage>放棄されたロケーションの割合</RealRuins.AbandonedPercentage>
+  <RealRuins.PlanetaryLoader.LoadBlueprintsDescription>この機能は,同じ惑星にコロニーを持っていた他プレイヤーのマップを読み込みます.それらのコロニーは他派閥の拠点やアウトポスト,または放棄された遺跡として生成されます.ランダムな遺跡とは異なり,これらは元の場所に配置されます.</RealRuins.PlanetaryLoader.LoadBlueprintsDescription>
+  <RealRuins.PlanetaryLoader.OptionsDescription>このモードではすべてのステップを制御できます.まず惑星の設計図の数だけを読み込み,そのうちいくつを設計図としてダウンロードするか調整できます.読み込み後,いくつ転送するか,どのようにフィルタリングするかを調整できます.各ステップで停止してすべてを削除し,やり直すことも可能です.</RealRuins.PlanetaryLoader.OptionsDescription>
+  <RealRuins.PlanetaryLoader.MapSizeChangeWarning>警告：マップサイズを変更する場合は,今すぐ「閉じる」を押し,マップサイズを変更した後に設計図をダウンロードしてください.</RealRuins.PlanetaryLoader.MapSizeChangeWarning>
+  <RealRuins.PlanetaryLoader.LowCountWarning>設計図の数が少なすぎます.もし気になる場合は,別のシード値やマップ設定を選択してみてください.もっとも人口の多いワールドはhttps://woolstrand.art/view/maps/topseedsで確認できます.</RealRuins.PlanetaryLoader.LowCountWarning>
+  <RealRuins.PlanetaryLoader.NoBlueprintsWarning.Caption>申し訳ありません</RealRuins.PlanetaryLoader.NoBlueprintsWarning.Caption>
+  <RealRuins.PlanetaryLoader.NoBlueprintsWarning.Text>このワールドにはマップが含まれていません.これは,同じシード値,被覆率,マップサイズでプレイした人がまだ誰もいないことを意味します.ワールドマップ上にロケーションを表示させたい場合は,より一般的なシード値を選択してみてください.もっとも人口の多いワールドはhttps://woolstrand.art/view/maps/topseedsで確認できます.</RealRuins.PlanetaryLoader.NoBlueprintsWarning.Text>
+  <RealRuins.PlanetaryLoader.StartAuto>自動で読み込む</RealRuins.PlanetaryLoader.StartAuto>
+  <RealRuins.PlanetaryLoader.GetCount>リストを読み込む</RealRuins.PlanetaryLoader.GetCount>
+  <RealRuins.PlanetaryLoader.MoreOptions>詳細設定...</RealRuins.PlanetaryLoader.MoreOptions>
+  <RealRuins.PlanetaryLoader.StopButtonTitle1>停止</RealRuins.PlanetaryLoader.StopButtonTitle1>
+  <RealRuins.PlanetaryLoader.StopButtonTitle2>十分です！</RealRuins.PlanetaryLoader.StopButtonTitle2>
+  <RealRuins.PlanetaryLoader.StopButtonTitle3>止まれ,魔法の鍋よ,止まれ！！！</RealRuins.PlanetaryLoader.StopButtonTitle3>
+  <RealRuins.PlanetaryLoader.DownloadLimit>ダウンロード制限(0で無制限)：</RealRuins.PlanetaryLoader.DownloadLimit>
+  <RealRuins.PlanetaryLoader.TransferLimit>転送制限(0で無制限)：</RealRuins.PlanetaryLoader.TransferLimit>
+  <RealRuins.PlanetaryLoader.AbandonedPercentage>放棄されたロケーションの割合</RealRuins.PlanetaryLoader.AbandonedPercentage>
 
-  <RealRuins.TransferringOptions>転送オプション</RealRuins.TransferringOptions>
-  <RealRuins.LoadingOptions>読み込み</RealRuins.LoadingOptions>
-  <RealRuins.LoadBlueprintsFirst>先に設計図を読み込む必要があります.</RealRuins.LoadBlueprintsFirst>
-  <RealRuins.LoadBlueprints>遺跡を読み込む</RealRuins.LoadBlueprints>
-  <RealRuins.LoadAndSpawnBlueprints>読み込みと生成</RealRuins.LoadAndSpawnBlueprints>
-  <RealRuins.TransferBlueprints>アウトポストを作成する</RealRuins.TransferBlueprints>
-  <RealRuins.RemoveSites>すべての生成済みロケーションを削除する</RealRuins.RemoveSites>
-  <RealRuins.Close>閉じる</RealRuins.Close>
-  <RealRuins.Idle>待機中</RealRuins.Idle>
-  <RealRuins.Searching>遺跡を検索中...</RealRuins.Searching>
-  <RealRuins.Loading>遺跡を読み込み中:</RealRuins.Loading>
-  <RealRuins.Transferring>遺跡を転送中:</RealRuins.Transferring>
-  <RealRuins.Processing>遺跡を処理中:</RealRuins.Processing>
-  <RealRuins.Completed>完了！</RealRuins.Completed>
-  <RealRuins.LoadedAmount>サーバーにはこの惑星用の遺跡が{0}個あります.</RealRuins.LoadedAmount>
+  <RealRuins.PlanetaryLoader.TransferringOptions>転送オプション</RealRuins.PlanetaryLoader.TransferringOptions>
+  <RealRuins.PlanetaryLoader.LoadBlueprints>遺跡を読み込む</RealRuins.PlanetaryLoader.LoadBlueprints>
+  <RealRuins.PlanetaryLoader.LoadAndSpawnBlueprints>読み込みと生成</RealRuins.PlanetaryLoader.LoadAndSpawnBlueprints>
+  <RealRuins.PlanetaryLoader.TransferBlueprints>アウトポストを作成する</RealRuins.PlanetaryLoader.TransferBlueprints>
+  <RealRuins.PlanetaryLoader.RemoveSites>すべての生成済みロケーションを削除する</RealRuins.PlanetaryLoader.RemoveSites>
+  <RealRuins.PlanetaryLoader.Close>閉じる</RealRuins.PlanetaryLoader.Close>
+  <RealRuins.PlanetaryLoader.Searching>遺跡を検索中...</RealRuins.PlanetaryLoader.Searching>
+  <RealRuins.PlanetaryLoader.Loading>遺跡を読み込み中:</RealRuins.PlanetaryLoader.Loading>
+  <RealRuins.PlanetaryLoader.Transferring>遺跡を転送中:</RealRuins.PlanetaryLoader.Transferring>
+  <RealRuins.PlanetaryLoader.Processing>遺跡を処理中:</RealRuins.PlanetaryLoader.Processing>
+  <RealRuins.PlanetaryLoader.Completed>完了！</RealRuins.PlanetaryLoader.Completed>
+  <RealRuins.PlanetaryLoader.LoadedAmount>サーバーにはこの惑星用の遺跡が{0}個あります.</RealRuins.PlanetaryLoader.LoadedAmount>
 
-  <RealRuins.TooManyBlueprints.Load.Title>非常に多くの設計図があるようです！</RealRuins.TooManyBlueprints.Load.Title>
-  <RealRuins.TooManyBlueprints.Load.Text>サーバーによると,このワールドには{0}個の設計図があります.ダウンロードと処理に時間がかかる可能性があり,ワールドマップが乱雑になる恐れがあります.このゲームモードを初めて使用する場合は,設計図の数を制限することをお勧めします.</RealRuins.TooManyBlueprints.Load.Text>
+  <RealRuins.PlanetaryLoader.TooManyBlueprints.Load.Title>非常に多くの設計図があるようです！</RealRuins.PlanetaryLoader.TooManyBlueprints.Load.Title>
+  <RealRuins.PlanetaryLoader.TooManyBlueprints.Load.Text>サーバーによると,このワールドには{0}個の設計図があります.ダウンロードと処理に時間がかかる可能性があり,ワールドマップが乱雑になる恐れがあります.このゲームモードを初めて使用する場合は,設計図の数を制限することをお勧めします.</RealRuins.PlanetaryLoader.TooManyBlueprints.Load.Text>
 
-  <RealRuins.TooManyBlueprints.Transfer.Title>処理する設計図が大量にあります！</RealRuins.TooManyBlueprints.Transfer.Title>
-  <RealRuins.TooManyBlueprints.Transfer.Text>{0}個の設計図が読み込まれています.それらすべてを処理して転送するには多くの時間がかかる可能性があり,過密状態になる恐れがあります.</RealRuins.TooManyBlueprints.Transfer.Text>
-  <RealRuins.TooManyBlueprints.GetAll>とにかくすべての設計図を取得します</RealRuins.TooManyBlueprints.GetAll>
-  <RealRuins.TooManyBlueprints.ShowOptions>詳細設定を表示して自分で決定します</RealRuins.TooManyBlueprints.ShowOptions>
-  <RealRuins.TooManyBlueprints.Get500>500個の設計図のみ取得します</RealRuins.TooManyBlueprints.Get500>
+  <RealRuins.PlanetaryLoader.TooManyBlueprints.GetAll>とにかくすべての設計図を取得します</RealRuins.PlanetaryLoader.TooManyBlueprints.GetAll>
+  <RealRuins.PlanetaryLoader.TooManyBlueprints.ShowOptions>詳細設定を表示して自分で決定します</RealRuins.PlanetaryLoader.TooManyBlueprints.ShowOptions>
+  <RealRuins.PlanetaryLoader.TooManyBlueprints.Get500>500個の設計図のみ取得します</RealRuins.PlanetaryLoader.TooManyBlueprints.Get500>
 
-  <!-- Duplicate <RealRuins.TransferringOptions>転送オプション</RealRuins.TransferringOptions> -->
-  <RealRuins.BiomeFiltering>気候フィルタリング</RealRuins.BiomeFiltering>
-  <RealRuins.BiomeFilteringTT>気候が存在しないか一致しないマップを排除します</RealRuins.BiomeFilteringTT>
-  <RealRuins.CostFiltering>価値フィルタリング</RealRuins.CostFiltering>
-  <RealRuins.CostFilteringTT>価値が低すぎるマップ(平均的な「空の」マップより低いもの)を除外します</RealRuins.CostFilteringTT>
-  <RealRuins.AreaFiltering>面積とアイテムのフィルタリング</RealRuins.AreaFiltering>
-  <RealRuins.AreaFilteringTT>面積が小さすぎたり,アイテム数が少なすぎたりするマップを除外します</RealRuins.AreaFilteringTT>
-  <RealRuins.DiscardAbandoned>積極的な破棄</RealRuins.DiscardAbandoned>
-  <RealRuins.DiscardAbandonedTT>特定の種類のPOIとして適格ではないすべてのマップを破棄します(これにより,通常すべてのマップの約半分が削除されます)</RealRuins.DiscardAbandonedTT>
+  <!-- Duplicate <RealRuins.PlanetaryLoader.TransferringOptions>転送オプション</RealRuins.PlanetaryLoader.TransferringOptions> -->
+  <RealRuins.PlanetaryLoader.BiomeFiltering>気候フィルタリング</RealRuins.PlanetaryLoader.BiomeFiltering>
+  <RealRuins.PlanetaryLoader.BiomeFilteringTT>気候が存在しないか一致しないマップを排除します</RealRuins.PlanetaryLoader.BiomeFilteringTT>
+  <RealRuins.PlanetaryLoader.CostFiltering>価値フィルタリング</RealRuins.PlanetaryLoader.CostFiltering>
+  <RealRuins.PlanetaryLoader.CostFilteringTT>価値が低すぎるマップ(平均的な「空の」マップより低いもの)を除外します</RealRuins.PlanetaryLoader.CostFilteringTT>
+  <RealRuins.PlanetaryLoader.AreaFiltering>面積とアイテムのフィルタリング</RealRuins.PlanetaryLoader.AreaFiltering>
+  <RealRuins.PlanetaryLoader.AreaFilteringTT>面積が小さすぎたり,アイテム数が少なすぎたりするマップを除外します</RealRuins.PlanetaryLoader.AreaFilteringTT>
+  <RealRuins.PlanetaryLoader.DiscardAbandoned>積極的な破棄</RealRuins.PlanetaryLoader.DiscardAbandoned>
+  <RealRuins.PlanetaryLoader.DiscardAbandonedTT>特定の種類のPOIとして適格ではないすべてのマップを破棄します(これにより,通常すべてのマップの約半分が削除されます)</RealRuins.PlanetaryLoader.DiscardAbandonedTT>
 
-  <RealRuins.UsedMaps>使用中のマップ：</RealRuins.UsedMaps>
-  <RealRuins.DroppedMaps>排除されたマップ：</RealRuins.DroppedMaps>
+  <RealRuins.PlanetaryLoader.UsedMaps>使用中のマップ：</RealRuins.PlanetaryLoader.UsedMaps>
+  <RealRuins.PlanetaryLoader.DroppedMaps>排除されたマップ：</RealRuins.PlanetaryLoader.DroppedMaps>
 
-  <RealRuins.MapsModuleButton>今すぐダウンロードして生成</RealRuins.MapsModuleButton>
-  <RealRuins.PlanetarySettignsCaption>Real&#160;Ruins&#160;-&#160;惑星上の遺跡設定</RealRuins.PlanetarySettignsCaption>
-  <RealRuins.NeedsGameInProgress>このメニューを使用するには進行中のゲーム内である必要があります.</RealRuins.NeedsGameInProgress>
+  <RealRuins.PlanetarySettings.MapsModuleButton>今すぐダウンロードして生成</RealRuins.PlanetarySettings.MapsModuleButton>
+  <RealRuins.PlanetaryLoader.NeedsGameInProgress>このメニューを使用するには進行中のゲーム内である必要があります.</RealRuins.PlanetaryLoader.NeedsGameInProgress>
 
   <RealRuins.CaravanReformType>キャラバン編成方法</RealRuins.CaravanReformType>
   <RealRuins.Reform.Automatic>自動</RealRuins.Reform.Automatic>
@@ -228,10 +209,8 @@
 
   <RealRuins.ForceMultiplier>イベント:脅威の規模</RealRuins.ForceMultiplier>
   <RealRuins.AbsoluteWealthCap>イベント:資産の絶対値上限</RealRuins.AbsoluteWealthCap>
-  <RealRuins.LeaveVanillaRuins>バニラの遺跡を残す</RealRuins.LeaveVanillaRuins>
   <RealRuins.ForceMultiplierTT>これを調整すると廃墟イベントの難易度を多くしたり少くしたりできる</RealRuins.ForceMultiplierTT>
   <RealRuins.AbsoluteWealthCapTT>廃墟イベントで資産価値の絶対値上限を指定します.木製の壁と木製ドアは総資産に含みません.</RealRuins.AbsoluteWealthCapTT>
-  <RealRuins.LeaveVanillaRuinsTT>チェックすると,Modの遺跡とバニラの遺跡の両方が生成されます</RealRuins.LeaveVanillaRuinsTT>
 
   <RealRuins.UseForcesGenerationV2>イベントに新しい襲撃システムを使用する</RealRuins.UseForcesGenerationV2>
   <RealRuins.UseForcesGenerationV2TT>以前のバージョンでは,遺跡発見イベント中に数回の大きな襲撃がありました.現在はそれらに加え,プレイヤーに小さく継続的な圧力をかけるため,敵の小規模なグループが絶えずマップに流入します.以前の方法を好む場合は,これを無効にできます.</RealRuins.UseForcesGenerationV2TT>
@@ -260,10 +239,6 @@
   <RealRuins.FactionOwnedStartTile.Attack>初期の仲間で攻撃する</RealRuins.FactionOwnedStartTile.Attack>
   <RealRuins.FactionOwnedStartTile.Cancel>キャンセル</RealRuins.FactionOwnedStartTile.Cancel>
 
-  <RealRuins.LogLevel>ログレベル</RealRuins.LogLevel>
-  <RealRuins.LogLevel.All>全て記録する</RealRuins.LogLevel.All>
-  <RealRuins.LogLevel.Warnings>警告とエラーを記録</RealRuins.LogLevel.Warnings>
-  <RealRuins.LogLevel.Errors>エラーのみ記録</RealRuins.LogLevel.Errors>
 
   <!-- Debug settings (dev mode only) -->
   <RealRuins.DebugSettings.Caption>デバッグ設定</RealRuins.DebugSettings.Caption>

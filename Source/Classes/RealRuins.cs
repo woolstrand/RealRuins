@@ -237,7 +237,7 @@ namespace RealRuins
 
                             Find.WindowStack.Add(dialog);
                             // and we DO NOT need to call original DoNext, we will call it later when everything is settled
-                            Debug.Log("StartGame", "Skpping original");
+                            Debug.Log("StartGame", "Skipping original");
                             return false;
                         }
                         else

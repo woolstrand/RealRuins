@@ -10,7 +10,6 @@
   <RealRuins_ModOptions_AllowUploadsTooltip>Лучше оставить это включенным. Вся суть мода - в картах, загруженных пользователями. Это потребует не больше пары мегабайт за вечер игры.</RealRuins_ModOptions_AllowUploadsTooltip>
   <RealRuins_ModOptions_CacheSizeTooltip>При превышении максимального размера кэша новые карты все равно будут загружаться, но старые будут удалены.</RealRuins_ModOptions_CacheSizeTooltip>
   <RealRuins_ModOptions_OfflineModeTooltip>Этот режим полностью удалит все загруженные данные и полностью отключит любое общение с сервером. Тем не менее, мод будет хранить локально снимки ваших баз и добавлять руины на их основе.</RealRuins_ModOptions_OfflineModeTooltip>
-  <RealRuins_ModOptions_OfflineModeConfirmation>Продолжить?</RealRuins_ModOptions_OfflineModeConfirmation>
 
   <RealRuins_ModOptions_CurrentCacheSize>Текущий размер локального кэша: </RealRuins_ModOptions_CurrentCacheSize>
   <RealRuins_ModOptions_RemoveAll>Удалить загруженные данные</RealRuins_ModOptions_RemoveAll>
@@ -20,42 +19,42 @@
 
   <RealRuins_MapOptions_Density>Плотность руин</RealRuins_MapOptions_Density>
   <RealRuins_MapOptions_Size>Минимальный размер фрагмента</RealRuins_MapOptions_Size>
-  <RealRuins_MapOptions_Size_Max>Максималный размер фрагмента</RealRuins_MapOptions_Size_Max>
+  <RealRuins_MapOptions_Size_Max>Максимальный размер фрагмента</RealRuins_MapOptions_Size_Max>
   <RealRuins_MapOptions_Deterioration>Дополнительная степень разрушения</RealRuins_MapOptions_Deterioration>
   <RealRuins_MapOptions_Scavengers>Активность мародеров</RealRuins_MapOptions_Scavengers>
   <RealRuins_MapOptions_CostLimit>Установить лимит максимальной стоимости находок</RealRuins_MapOptions_CostLimit>
   <RealRuins_MapOptions_DisableHaulables>Убрать все предметы</RealRuins_MapOptions_DisableHaulables>
   <RealRuins_MapOptions_WallsAndDoorsOnly>Оставить только стены и двери</RealRuins_MapOptions_WallsAndDoorsOnly>
-  <RealRuins_MapOptions_DisableDecoration>Количество пассивных декораций</RealRuins_MapOptions_DisableDecoration>
-  <RealRuins_MapOptions_DisableTraps>Количество активных предметов</RealRuins_MapOptions_DisableTraps>
   <RealRuins_MapOptions_DisableHostiles>Количество враждебных созданий</RealRuins_MapOptions_DisableHostiles>
-  <RealRuins_MapOptions_Claimable>Руины можно захватывать</RealRuins_MapOptions_Claimable>
 
   <RealRuins_MapOptions_DensityTT>Среднее количество отдельных руин на области 100х100 клеток</RealRuins_MapOptions_DensityTT>
   <RealRuins_MapOptions_SizeTT>Пределы, в которых будет лежать размер каждой отдельной области руин</RealRuins_MapOptions_SizeTT>
-  <RealRuins_MapOptions_DeteriorationTT>Это значение определяет ДОПОЛНИТЕЛЬНЫЙ шанс быть уничтоженным для каждого объекта. При значении 0 руины будут как в прошлой версии, при значении 1 от руин вообще ничего не останется. Это значение не влияет на количество хит-поинтов.</RealRuins_MapOptions_DeteriorationTT>
+  <RealRuins_MapOptions_DeteriorationTT>Это значение определяет ДОПОЛНИТЕЛЬНЫЙ шанс быть уничтоженным для каждого объекта. При значении 0 руины уже будут как руины, но если вам этого мало - увеличьте значение. При значении 1 от руин вообще ничего не останется. Это значение не влияет на количество хит-поинтов.</RealRuins_MapOptions_DeteriorationTT>
   <RealRuins_MapOptions_ScavengersTT>Выставите 0, чтобы получить совершенно нетронутые руины со всем содержимым.</RealRuins_MapOptions_ScavengersTT>
-  <RealRuins_MapOptions_CostLimitTT>Все, что дороже указаной суммы, будет уничтожено искателями сокровищ.</RealRuins_MapOptions_CostLimitTT>
+  <RealRuins_MapOptions_WealthPerMap>Общее богатство руин на карте</RealRuins_MapOptions_WealthPerMap>
+  <RealRuins_MapOptions_WealthPerMapTT>Максимальная общая рыночная стоимость (включая предметы, стены и полы), которую могут иметь суммарно все руины сгенерированные на одной карте. Большинство карт намного беднее значения по умолчанию, но если вдруг на карте попались необычно богатые руины, из них убираются самые ценные вещи, пока руины не уложатся в ограничение. Крайнее правое положение: без ограничений. Не влияет на заброшенные базы, планетарные руины и основные руины события каравана.</RealRuins_MapOptions_WealthPerMapTT>
+  <RealRuins_MapOptions_WealthScaleWithProximity>Повышенный лимит богатства вблизи поселений</RealRuins_MapOptions_WealthScaleWithProximity>
+  <RealRuins_MapOptions_WealthScaleWithProximityTT>Руины могут быть богаче вблизи поселений. Могут, но не обязательно будут - вблизи поселений они гораздо сильнее разграблены.</RealRuins_MapOptions_WealthScaleWithProximityTT>
+  <RealRuins_MapOptions_WealthIgnoreStructure>Не учитывать стены и полы</RealRuins_MapOptions_WealthIgnoreStructure>
+  <RealRuins_MapOptions_WealthIgnoreStructureTT>Обычные стены, двери и полы (до 50 серебра за клетку) не учитываются в ограничении и никогда не убираются ради него: их много, и это не добыча. Золотые стены, серебряные полы, автодвери и тому подобное по-прежнему учитываются.</RealRuins_MapOptions_WealthIgnoreStructureTT>
+  <RealRuins_MapOptions_WealthCountDamage>Учитывать повреждённые вещи по сниженной стоимости</RealRuins_MapOptions_WealthCountDamage>
+  <RealRuins_MapOptions_WealthCountDamageTT>Если выключено: всё учитывается по полной цене, поскольку ремонт её восстанавливает, а повреждённая вещь часто работает не хуже целой. Если включено: учитывается фактическая рыночная стоимость появившихся вещей (повреждения её снижают, качество меняет), поэтому в ограничение помещается больше.</RealRuins_MapOptions_WealthCountDamageTT>
+  <RealRuins_MapOptions_CostLimitTT>Все, что дороже указанной суммы, будет уничтожено искателями сокровищ.</RealRuins_MapOptions_CostLimitTT>
   <RealRuins_MapOptions_DisableHaulablesTT>Переносимые вещи появляться не будут, но мебель по-прежнему может встречаться.</RealRuins_MapOptions_DisableHaulablesTT>
   <RealRuins_MapOptions_WallsAndDoorsOnlyTT>Будет разрушено все, что не является строго дверью или стеной. Или полом. И золотой пол все равно украдут, не надейтесь.</RealRuins_MapOptions_WallsAndDoorsOnlyTT>
-  <RealRuins_MapOptions_DisableDecorationTT>Пока что это только скелеты.</RealRuins_MapOptions_DisableDecorationTT>
-  <RealRuins_MapOptions_DisableTrapsTT>Ловушки, мины и прочие сюрпризы.</RealRuins_MapOptions_DisableTrapsTT>
   <RealRuins_MapOptions_DisableHostilesTT></RealRuins_MapOptions_DisableHostilesTT>
-  <RealRuins_MapOptions_ClaimableTT>Unclaimable structures can't be repaired or deconstructed</RealRuins_MapOptions_ClaimableTT>
 
   <RealRuins_MapOptions_EnableProximity>Учитывать близость поселений</RealRuins_MapOptions_EnableProximity>
-  <RealRuins_MapOptions_EnableProximityTT>Расстояние до поселения влияет на параметры генерации: чем ближе к городу, тем плотнее руины, но тем сильнее они разграблены.</RealRuins_MapOptions_EnableProximityTT>
+  <RealRuins_MapOptions_EnableProximityTT>Расстояние до поселения влияет на параметры генерации: чем ближе к городу, тем руины больше, плотнее и в лучшей сохранности, но тем сильнее они разграблены - ценнх вещей и материалов там меньше.</RealRuins_MapOptions_EnableProximityTT>
   <RealRuins_MapOptions_StartWithoutRuins>Отключить руины на стартовой локации</RealRuins_MapOptions_StartWithoutRuins>
   <RealRuins_MapOptions_StartWithoutRuinsTT>Игра начинается без руин на стартовой локации. В дальнейшем руины генерируются обычным образом согласно настройкам.</RealRuins_MapOptions_StartWithoutRuinsTT>
 
     <!-- Captions -->
-  <RealRuins.PlanetaryRuinsSettings.Caption>Планетарные руины и локации</RealRuins.PlanetaryRuinsSettings.Caption>
-  <RealRuins.CacheSettings.Caption>Настройки кэша</RealRuins.CacheSettings.Caption>
-  <RealRuins.SpawnSettings.Caption>Настройки генерации</RealRuins.SpawnSettings.Caption>
+  <RealRuins.PlanetarySettings.Caption>Планетарные руины и локации</RealRuins.PlanetarySettings.Caption>
 
   <!-- Planetary ruins section -->
   <RealRuins.PlanetarySettings.Enable>Предлагать загрузку планетарных локаций при старте</RealRuins.PlanetarySettings.Enable>
-  <RealRuins.PlanetarySettings.DownloadLimit>Маскимум карт для загрузки</RealRuins.PlanetarySettings.DownloadLimit>
+  <RealRuins.PlanetarySettings.DownloadLimit>Максимум карт для загрузки</RealRuins.PlanetarySettings.DownloadLimit>
   <RealRuins.PlanetarySettings.TransferLimit>Максимум локаций для генерации</RealRuins.PlanetarySettings.TransferLimit>
   <RealRuins.PlanetarySettings.ExcludePlain>Выкидывать совсем пустые руины (без категории)</RealRuins.PlanetarySettings.ExcludePlain>
   <RealRuins.PlanetarySettings.AbandonedPercentage>Процент покинутых локаций (без фракций)</RealRuins.PlanetarySettings.AbandonedPercentage>
@@ -64,24 +63,22 @@
   <LetterLabelCaravanEnteredRuins>Караван прибыл в руины</LetterLabelCaravanEnteredRuins>
   <LetterCaravanEnteredRuins>{0} прибыл к руинам заброшенной базы и готов сражаться за сокровища.</LetterCaravanEnteredRuins>
 
-  <RealRuins.CaravanFoundRuins>Во время путешествия, {0} обнаружил несколько неплохо сохранившихся строений неподалеку. Вероятно, там остались какие-то ценности. С другой стороны, там может быть гнездо механоидов, логово диких зверей или база рейдеров: должна же быть причина, по которой эти здания до сих пор не разграблены.</RealRuins.CaravanFoundRuins>
+  <RealRuins.CaravanFoundRuins>Во время путешествия {0} обнаружил несколько неплохо сохранившихся строений неподалеку. Вероятно, там остались какие-то ценности. С другой стороны, там может быть гнездо механоидов, логово диких зверей или база рейдеров: должна же быть причина, по которой эти здания до сих пор не разграблены.</RealRuins.CaravanFoundRuins>
   <RealRuins.CaravanFoundRuins.Investigate>Исследовать</RealRuins.CaravanFoundRuins.Investigate>
   <RealRuins.CaravanFoundRuinsTitle>Несколько заброшенных зданий</RealRuins.CaravanFoundRuinsTitle>
+  <RealRuins.SmallRuinsInspectString>Небольшие заброшенные постройки. Внутри может остаться что-то ценное.</RealRuins.SmallRuinsInspectString>
 
-  <RealRuins_ModOptions_Reset>Сбросить настройки</RealRuins_ModOptions_Reset>
-  <RealRuins_MapOptions_CaravanReforming>Разрешить моментальное формирование каравана</RealRuins_MapOptions_CaravanReforming>
-  <RealRuins_MapOptions_CaravanReformingTT>Обычно по время исследования руин возможность моментально сформировать караван заблокирована. Вам необходимо вручную исследовать руины и складывать понравившиеся вещи в инвентарь колонистов или вьючных животных, а затем покидать карту, доходя до ее границы. Даже в случае, если на карте прямо сейчас нет врагов. Тем не менее, если вы предпочитаете разрешить моментальное переформирование, включите эту настройку.</RealRuins_MapOptions_CaravanReformingTT>
 
   <!-- Art -->
   <DeterioratedArtDescription>Эта вещь сильно повреждена. Вы можете с определенностью сказать, что когда-то это было прекрасное произведение искусства, но сейчас вы едва ли сможете определить, что конкретно оно изображало.</DeterioratedArtDescription>
 
   <!-- Ruins info -->
   <RealRuins.RuinsWealth>Богатство: </RealRuins.RuinsWealth>
-  <RealRuins.RuinsActivity>Присуствие рейдеров: </RealRuins.RuinsActivity>
+  <RealRuins.RuinsActivity>Присутствие рейдеров: </RealRuins.RuinsActivity>
 
   <RealRuins.RuinsWealth.0>почти нулевое (&lt;10K)</RealRuins.RuinsWealth.0>
   <RealRuins.RuinsWealth.1>низкое</RealRuins.RuinsWealth.1>
-  <RealRuins.RuinsWealth.2>посредственное</RealRuins.RuinsWealth.2>
+  <RealRuins.RuinsWealth.2>среднее</RealRuins.RuinsWealth.2>
   <RealRuins.RuinsWealth.3>высокое (&gt;1M)</RealRuins.RuinsWealth.3>
   <RealRuins.RuinsWealth.4>крайне высокое (&gt;10M)</RealRuins.RuinsWealth.4>
 
@@ -93,6 +90,8 @@
   
   <!-- Ruins messages -->
   <RealRuins.NoMoreEnemies>Кажется, сюда больше никто не придет. Можно спокойно собрать караван и отправиться дальше.</RealRuins.NoMoreEnemies>
+  <RealRuins.PristineRuinsIncidentRetired.Label>Событие «нетронутые руины» удалено</RealRuins.PristineRuinsIncidentRetired.Label>
+  <RealRuins.PristineRuinsIncidentRetired.Text>Событие «найдены руины поблизости» удалено, ничего не создано. Нетронутые руины теперь появляются как задание. Чтобы создать его вручную, используйте Debug actions -> Generate quest -> RealRuins_AbandonedBase.</RealRuins.PristineRuinsIncidentRetired.Text>
   <RealRuins.ReformLockedManual>Сюда ещё могут прийти рейдеры. Заберите то, что могут унести поселенцы, и уходите через край карты, или дождитесь, пока всё утихнет.</RealRuins.ReformLockedManual>
 
   <!-- POI captions and descriptions -->
@@ -115,17 +114,17 @@
 
 
   <RealRuins.DescPOI0>Небольшая группа строений, похоже на что-то военное. Склад боеприпасов или небольшая перевалочная военная база. Здесь может быть несколько стационарных орудий и десяток-другой солдат.</RealRuins.DescPOI0>
-  <RealRuins.DescPOI1>Очень маленькое военное поселение. Пара комнат, пара туррелей, пара охранников.</RealRuins.DescPOI1>
+  <RealRuins.DescPOI1>Очень маленькое военное поселение. Пара комнат, пара турелей, пара охранников.</RealRuins.DescPOI1>
   <RealRuins.DescPOI2>Временный лагерь, установленный для охоты или добычи ресурсов. Возможно, промежуточный пункт для транспортировки припасов.</RealRuins.DescPOI2>                                            
-  <RealRuins.DescPOI3>Большой процветающий город. Хоть у таких поселений обычно не бывает стен, сплошь утыканных охранными сооружениями, оно все равно непллохо защищено, и в случае нападения может запросить мощное подкрепление.</RealRuins.DescPOI3>
+  <RealRuins.DescPOI3>Большой процветающий город. Хоть у таких поселений обычно не бывает стен, сплошь утыканных охранными сооружениями, оно все равно неплохо защищено, и в случае нападения может запросить мощное подкрепление.</RealRuins.DescPOI3>
   <RealRuins.DescPOI4>В этих зданиях расположены верстаки и склады продукции и сырья. Скорее всего, фабрика хорошо охраняется.</RealRuins.DescPOI4>
-  <RealRuins.DescPOI5>Производственно-исследовательский центр. Основная цель - производство, но продукция, как правило, более сложная и дорогая, чем на обычной фабрике. Скорее всего хошо охраняется и запросит подкрепление при попытке захвата.</RealRuins.DescPOI5>
+  <RealRuins.DescPOI5>Производственно-исследовательский центр. Основная цель - производство, но продукция, как правило, более сложная и дорогая, чем на обычной фабрике. Скорее всего, хорошо охраняется и запросит подкрепление при попытке захвата.</RealRuins.DescPOI5>
   <RealRuins.DescPOI6>Группа зданий преимущественно для производства энергии.</RealRuins.DescPOI6>
   <RealRuins.DescPOI7>Большая военная база с множеством стационарных орудий, несколькими десятками персонала и подкреплением, готовым показаться в любой момент.</RealRuins.DescPOI7>
   <RealRuins.DescPOI8>Издалека это место выглядит как ангар, набитый какими-то припасами. И охраной.</RealRuins.DescPOI8>
   <RealRuins.DescPOI9>Небольшое здание, похожее на центр связи. Возможно, просто временный военный лагерь с несколькими охранниками.</RealRuins.DescPOI9>
   <RealRuins.DescPOI10>Остатки каких-то строений, куски мебели, сломанные верстаки, обломки труб и арматуры. Невозможно определить, что здесь было раньше, сейчас это просто разграбленные руины.</RealRuins.DescPOI10>
-  <RealRuins.DescPOI11>Отлично охраняемая до зубов вооруженная цитадель, с массой стационарных орудий, толпами солдат, несметными волнами подкреплений и чем-то ужасно ценным внутри.</RealRuins.DescPOI11>
+  <RealRuins.DescPOI11>Отлично охраняемая, до зубов вооруженная цитадель, с массой стационарных орудий, толпами солдат, несметными волнами подкреплений и чем-то ужасно ценным внутри.</RealRuins.DescPOI11>
   <RealRuins.DescPOI12>Деревня земледельцев и ремесленников. Дома простые, но жители будут их защищать.</RealRuins.DescPOI12>
   <RealRuins.DescPOI13>Замок за толстыми стенами. Его охраняет вооруженный гарнизон, и без боя хозяин его не отдаст.</RealRuins.DescPOI13>
   <RealRuins.DescPOI14>Мастерские, полные верстаков, инструментов и товаров ручной работы. Ремесленники держат немного охраны, чтобы беречь своё добро.</RealRuins.DescPOI14>
@@ -140,7 +139,7 @@
   <RealRuins.CaravanEnteringPOI>Следует в локацию: {0}</RealRuins.CaravanEnteringPOI>
 
   <LetterLabelCaravanEnteredUnownedPOI>Караван прибыл</LetterLabelCaravanEnteredUnownedPOI>
-  <LetterCaravanEnteredUnownedPOI>{0} Прибыл в пункт назначения. Будьте осторожны.</LetterCaravanEnteredUnownedPOI>
+  <LetterCaravanEnteredUnownedPOI>{0} прибыл в пункт назначения. Будьте осторожны.</LetterCaravanEnteredUnownedPOI>
   <LetterLabelCaravanAttackedPOI>Караван атакует</LetterLabelCaravanAttackedPOI>
   <LetterCaravanAttackedPOI>{0} атакует собственность другой фракции.</LetterCaravanAttackedPOI>
   <LetterTransportPodsArrivedInUnownedPOI>Транспортные капсулы прибыли.</LetterTransportPodsArrivedInUnownedPOI>
@@ -150,68 +149,58 @@
   <LetterTransportPodsArrivedAtRuins>Транспортные капсулы прибыли в руины.</LetterTransportPodsArrivedAtRuins>
 
   <!-- POI load dialog -->
-  <RealRuins.LoadBlueprintsCaption>Загрузить схемы для всей планеты</RealRuins.LoadBlueprintsCaption>
+  <RealRuins.PlanetaryLoader.LoadBlueprintsCaption>Загрузить схемы для всей планеты</RealRuins.PlanetaryLoader.LoadBlueprintsCaption>
 
-  <RealRuins.LoadBlueprintsDescription>Вы можете загрузить схемы всех баз других игроков, которые играли на этой планете. Их колонии будут размещены на карте мира и станут базами других фракций или превратятся в заброшенные руины. В отличие от случайных руин, эти базы будут расположены в точности на тех же местах, где играли их создатели.</RealRuins.LoadBlueprintsDescription>
-  <RealRuins.OptionsDescription>В этом режиме вы можете контролировать каждый шаг процесса. Сначала вы загрузите список всех карт, сможете настроить, сколько именно схем нужно загрузить. Затем, после загрузки, вы сможете указать, сколько локаций нужно будет создать на карте и каким образом надо будет фильтровать контент. При желании вы сможете остановиться в середине процесса, удалить все и наачть заново.</RealRuins.OptionsDescription>
-  <RealRuins.MapSizeChangeWarning>ВНИМАНИЕ: Если вы собираетесь изменить размер карты, нажмите "Закрыть" прямо сейчас. После изменения размера карты это окно появится снова и вы сможете загрузить схемы для нового размера карты.</RealRuins.MapSizeChangeWarning>
-  <RealRuins.PlanetaryRuinsNote>ВАЖНО: Это отдельная функция, независимая от случайных руин на игровых картах и от особых событий.</RealRuins.PlanetaryRuinsNote>
-  <RealRuins.LowCountWarning>Для этой планеты слишком мало схем. Если это вас не беспокоит, то просто продолжайте. Если хотите больше схем, то можете найти более популярное зерно вот по этому адресу: https://woolstrand.art/view/maps/topseeds</RealRuins.LowCountWarning>
-  <RealRuins.NoBlueprintsWarning.Caption>Упс</RealRuins.NoBlueprintsWarning.Caption>
-  <RealRuins.NoBlueprintsWarning.Text>Для этой планеты нет схем. Это означает, что никто не играл с таким же зерном, покрытием и размером карты. Если вы хотите получить хоть какие-нибудь схемы для своей игры, поменяйте настройки генерации мира. Наиболее популярные зерна можете найти здесь: https://woolstrand.art/view/maps/topseeds</RealRuins.NoBlueprintsWarning.Text>
-  <RealRuins.StartAuto>Автоматическая загрузка</RealRuins.StartAuto>
-  <RealRuins.GetCount>Загрузить список</RealRuins.GetCount>
-  <RealRuins.MoreOptions>Больше настроек...</RealRuins.MoreOptions>
-  <RealRuins.SkipButtonTitle>Пропустить</RealRuins.SkipButtonTitle>
-  <RealRuins.StopButtonTitle1>Стоп</RealRuins.StopButtonTitle1>
-  <RealRuins.StopButtonTitle2>Хватит!</RealRuins.StopButtonTitle2>
-  <RealRuins.StopButtonTitle3>ГОРШОЧЕК, НЕ ВАРИ!!!</RealRuins.StopButtonTitle3>
-  <RealRuins.ClearPOIs>Убрать все добавленные локации</RealRuins.ClearPOIs>
-  <RealRuins.DownloadLimit>Загрузить не более (0 - неограничено): </RealRuins.DownloadLimit>
-  <RealRuins.TransferLimit>Создать локаций не более (0 - неограничено): </RealRuins.TransferLimit>
-  <RealRuins.AbandonedPercentage>Доля покинутых локаций (без фракции)</RealRuins.AbandonedPercentage>
+  <RealRuins.PlanetaryLoader.LoadBlueprintsDescription>Вы можете загрузить схемы всех баз других игроков, которые играли на этой планете. Их колонии будут размещены на карте мира и станут базами других фракций или превратятся в заброшенные руины. В отличие от случайных руин, эти базы будут расположены в точности на тех же местах, где играли их создатели.</RealRuins.PlanetaryLoader.LoadBlueprintsDescription>
+  <RealRuins.PlanetaryLoader.OptionsDescription>В этом режиме вы можете контролировать каждый шаг процесса. Сначала вы загрузите список всех карт и сможете настроить, сколько именно схем нужно загрузить. Затем, после загрузки, вы сможете указать, сколько локаций нужно будет создать на карте и каким образом надо будет фильтровать контент. При желании вы сможете остановиться в середине процесса, удалить все и начать заново.</RealRuins.PlanetaryLoader.OptionsDescription>
+  <RealRuins.PlanetaryLoader.MapSizeChangeWarning>ВНИМАНИЕ: Если вы собираетесь изменить размер карты, нажмите "Закрыть" прямо сейчас. После изменения размера карты это окно появится снова и вы сможете загрузить схемы для нового размера карты.</RealRuins.PlanetaryLoader.MapSizeChangeWarning>
+  <RealRuins.PlanetaryLoader.LowCountWarning>Для этой планеты слишком мало схем. Если это вас не беспокоит, то просто продолжайте. Если хотите больше схем, то можете найти более популярное зерно вот по этому адресу: https://woolstrand.art/view/maps/topseeds</RealRuins.PlanetaryLoader.LowCountWarning>
+  <RealRuins.PlanetaryLoader.NoBlueprintsWarning.Caption>Упс</RealRuins.PlanetaryLoader.NoBlueprintsWarning.Caption>
+  <RealRuins.PlanetaryLoader.NoBlueprintsWarning.Text>Для этой планеты нет схем. Это означает, что никто не играл с таким же зерном, покрытием и размером карты. Если вы хотите получить хоть какие-нибудь схемы для своей игры, поменяйте настройки генерации мира. Наиболее популярные зерна можете найти здесь: https://woolstrand.art/view/maps/topseeds</RealRuins.PlanetaryLoader.NoBlueprintsWarning.Text>
+  <RealRuins.PlanetaryLoader.StartAuto>Автоматическая загрузка</RealRuins.PlanetaryLoader.StartAuto>
+  <RealRuins.PlanetaryLoader.GetCount>Загрузить список</RealRuins.PlanetaryLoader.GetCount>
+  <RealRuins.PlanetaryLoader.MoreOptions>Больше настроек...</RealRuins.PlanetaryLoader.MoreOptions>
+  <RealRuins.PlanetaryLoader.StopButtonTitle1>Стоп</RealRuins.PlanetaryLoader.StopButtonTitle1>
+  <RealRuins.PlanetaryLoader.StopButtonTitle2>Хватит!</RealRuins.PlanetaryLoader.StopButtonTitle2>
+  <RealRuins.PlanetaryLoader.StopButtonTitle3>ГОРШОЧЕК, НЕ ВАРИ!!!</RealRuins.PlanetaryLoader.StopButtonTitle3>
+  <RealRuins.PlanetaryLoader.DownloadLimit>Загрузить не более (0 - без ограничений): </RealRuins.PlanetaryLoader.DownloadLimit>
+  <RealRuins.PlanetaryLoader.TransferLimit>Создать локаций не более (0 - без ограничений): </RealRuins.PlanetaryLoader.TransferLimit>
+  <RealRuins.PlanetaryLoader.AbandonedPercentage>Доля покинутых локаций (без фракции)</RealRuins.PlanetaryLoader.AbandonedPercentage>
 
-  <RealRuins.TransferringOptions>Создание локаций</RealRuins.TransferringOptions>
-  <RealRuins.LoadingOptions>Загрузка</RealRuins.LoadingOptions>
-  <RealRuins.LoadBlueprintsFirst>Вам нужно сначала загрузить схемы.</RealRuins.LoadBlueprintsFirst>
-  <RealRuins.LoadBlueprints>Только загрузить</RealRuins.LoadBlueprints>
-  <RealRuins.LoadAndSpawnBlueprints>Загрузить и создать</RealRuins.LoadAndSpawnBlueprints>
-  <RealRuins.TransferBlueprints>Создать объекты на карте мира</RealRuins.TransferBlueprints>
-  <RealRuins.RemoveSites>Удалить все созданные локации</RealRuins.RemoveSites>
-  <RealRuins.Close>Закрыть</RealRuins.Close>
-  <RealRuins.Idle>Ожидание</RealRuins.Idle>
-  <RealRuins.Searching>Поиск схем...</RealRuins.Searching>
-  <RealRuins.Loading>Загрузка схем: </RealRuins.Loading>
-  <RealRuins.Transferring>Создание локаций: </RealRuins.Transferring>
-  <RealRuins.Processing>Обработка схем: </RealRuins.Processing>
-  <RealRuins.Completed>Завершено</RealRuins.Completed>
-  <RealRuins.LoadedAmount>На сервере есть {0} схем для этой планеты.</RealRuins.LoadedAmount>
+  <RealRuins.PlanetaryLoader.TransferringOptions>Создание локаций</RealRuins.PlanetaryLoader.TransferringOptions>
+  <RealRuins.PlanetaryLoader.LoadBlueprints>Только загрузить</RealRuins.PlanetaryLoader.LoadBlueprints>
+  <RealRuins.PlanetaryLoader.LoadAndSpawnBlueprints>Загрузить и создать</RealRuins.PlanetaryLoader.LoadAndSpawnBlueprints>
+  <RealRuins.PlanetaryLoader.TransferBlueprints>Создать объекты на карте мира</RealRuins.PlanetaryLoader.TransferBlueprints>
+  <RealRuins.PlanetaryLoader.RemoveSites>Удалить все созданные локации</RealRuins.PlanetaryLoader.RemoveSites>
+  <RealRuins.PlanetaryLoader.Close>Закрыть</RealRuins.PlanetaryLoader.Close>
+  <RealRuins.PlanetaryLoader.Searching>Поиск схем...</RealRuins.PlanetaryLoader.Searching>
+  <RealRuins.PlanetaryLoader.Loading>Загрузка схем: </RealRuins.PlanetaryLoader.Loading>
+  <RealRuins.PlanetaryLoader.Transferring>Создание локаций: </RealRuins.PlanetaryLoader.Transferring>
+  <RealRuins.PlanetaryLoader.Processing>Обработка схем: </RealRuins.PlanetaryLoader.Processing>
+  <RealRuins.PlanetaryLoader.Completed>Завершено</RealRuins.PlanetaryLoader.Completed>
+  <RealRuins.PlanetaryLoader.LoadedAmount>На сервере есть {0} схем для этой планеты.</RealRuins.PlanetaryLoader.LoadedAmount>
 
-  <RealRuins.TooManyBlueprints.Load.Title>Что-то многовато схем!</RealRuins.TooManyBlueprints.Load.Title>
-  <RealRuins.TooManyBlueprints.Load.Text>Сервер сообщил, что для этой планеты есть аж {0} схем. Чтобы загрузить и обработать их все, может потребоваться много времени, а на планете после генерации локаций может стать тесновато. Если вы пользуетесь этой функцией впервые, рекомендуется ограничить число схем.</RealRuins.TooManyBlueprints.Load.Text>
+  <RealRuins.PlanetaryLoader.TooManyBlueprints.Load.Title>Что-то многовато схем!</RealRuins.PlanetaryLoader.TooManyBlueprints.Load.Title>
+  <RealRuins.PlanetaryLoader.TooManyBlueprints.Load.Text>Сервер сообщил, что для этой планеты есть аж {0} схем. Чтобы загрузить и обработать их все, может потребоваться много времени, а на планете после генерации локаций может стать тесновато. Если вы пользуетесь этой функцией впервые, рекомендуется ограничить число схем.</RealRuins.PlanetaryLoader.TooManyBlueprints.Load.Text>
 
-  <RealRuins.TooManyBlueprints.Transfer.Title>A lot of blueprints to process!</RealRuins.TooManyBlueprints.Transfer.Title>
-  <RealRuins.TooManyBlueprints.Transfer.Text>You have {0} blueprints loaded. It may take a lot of time to process and transfer each one of them and it may overpopulate </RealRuins.TooManyBlueprints.Transfer.Text>
-  <RealRuins.TooManyBlueprints.GetAll>Загрузить всё, я знаю что делаю.</RealRuins.TooManyBlueprints.GetAll>
-  <RealRuins.TooManyBlueprints.ShowOptions>Покажите все настройки и я решу что делать.</RealRuins.TooManyBlueprints.ShowOptions>
-  <RealRuins.TooManyBlueprints.Get500>Загрузить 500 схем</RealRuins.TooManyBlueprints.Get500>
+  <RealRuins.PlanetaryLoader.TooManyBlueprints.GetAll>Загрузить всё, я знаю, что делаю.</RealRuins.PlanetaryLoader.TooManyBlueprints.GetAll>
+  <RealRuins.PlanetaryLoader.TooManyBlueprints.ShowOptions>Покажите все настройки, и я решу, что делать.</RealRuins.PlanetaryLoader.TooManyBlueprints.ShowOptions>
+  <RealRuins.PlanetaryLoader.TooManyBlueprints.Get500>Загрузить 500 схем</RealRuins.PlanetaryLoader.TooManyBlueprints.Get500>
 
-  <RealRuins.TransferringOptions>Настройки генерации</RealRuins.TransferringOptions>
-  <RealRuins.BiomeFiltering>Фильтрация по биому</RealRuins.BiomeFiltering>
-  <RealRuins.BiomeFilteringTT>Выкинуть схемы, биом которых отличается от биома ячейки, на которую эта схема должна быть перенесена. Обычно такие схемы появляются, если оригинальный игрок (или вы) пользуется модами на генерацию планеты.</RealRuins.BiomeFilteringTT>
-  <RealRuins.CostFiltering>Фильтрация по стоимости</RealRuins.CostFiltering>
-  <RealRuins.CostFilteringTT>Выкинуть схемы, стоимость которых слишком низка (меньше, чем у обычной пустой карты)</RealRuins.CostFilteringTT>
-  <RealRuins.AreaFiltering>Фильтр по площади и предметам</RealRuins.AreaFiltering>
-  <RealRuins.AreaFilteringTT>Выкинуть схемы, у которых слишком маленький размер или которые включают слишком мало предметов и построек</RealRuins.AreaFilteringTT>
-  <RealRuins.DiscardAbandoned>Агрессивная фильтрация</RealRuins.DiscardAbandoned>
-  <RealRuins.DiscardAbandonedTT>Выкинуть все схемы, которым не была присвоена категория (это может убрать до половины всех схем)</RealRuins.DiscardAbandonedTT>
+  <RealRuins.PlanetaryLoader.BiomeFiltering>Фильтрация по биому</RealRuins.PlanetaryLoader.BiomeFiltering>
+  <RealRuins.PlanetaryLoader.BiomeFilteringTT>Выкинуть схемы, биом которых отличается от биома ячейки, на которую эта схема должна быть перенесена. Обычно такие схемы появляются, если оригинальный игрок (или вы) пользуется модами на генерацию планеты.</RealRuins.PlanetaryLoader.BiomeFilteringTT>
+  <RealRuins.PlanetaryLoader.CostFiltering>Фильтрация по стоимости</RealRuins.PlanetaryLoader.CostFiltering>
+  <RealRuins.PlanetaryLoader.CostFilteringTT>Выкинуть схемы, стоимость которых слишком низка (меньше, чем у обычной пустой карты)</RealRuins.PlanetaryLoader.CostFilteringTT>
+  <RealRuins.PlanetaryLoader.AreaFiltering>Фильтр по площади и предметам</RealRuins.PlanetaryLoader.AreaFiltering>
+  <RealRuins.PlanetaryLoader.AreaFilteringTT>Выкинуть схемы, у которых слишком маленький размер или которые включают слишком мало предметов и построек</RealRuins.PlanetaryLoader.AreaFilteringTT>
+  <RealRuins.PlanetaryLoader.DiscardAbandoned>Агрессивная фильтрация</RealRuins.PlanetaryLoader.DiscardAbandoned>
+  <RealRuins.PlanetaryLoader.DiscardAbandonedTT>Выкинуть все схемы, которым не была присвоена категория (это может убрать до половины всех схем)</RealRuins.PlanetaryLoader.DiscardAbandonedTT>
 
-  <RealRuins.UsedMaps>Схем использовано: </RealRuins.UsedMaps>
-  <RealRuins.DroppedMaps>Схем отбраковано: </RealRuins.DroppedMaps>
+  <RealRuins.PlanetaryLoader.UsedMaps>Схем использовано: </RealRuins.PlanetaryLoader.UsedMaps>
+  <RealRuins.PlanetaryLoader.DroppedMaps>Схем отбраковано: </RealRuins.PlanetaryLoader.DroppedMaps>
 
-  <RealRuins.MapsModuleButton>Загрузить и создать локации прямо сейчас</RealRuins.MapsModuleButton>
-  <RealRuins.PlanetarySettignsCaption>Real Ruins - Руины на карте мира</RealRuins.PlanetarySettignsCaption>
-  <RealRuins.NeedsGameInProgress>Вам необходимо загрузить или начать новую игру, чтобы воспользоваться этой функцией.</RealRuins.NeedsGameInProgress>
+  <RealRuins.PlanetarySettings.MapsModuleButton>Загрузить и создать локации прямо сейчас</RealRuins.PlanetarySettings.MapsModuleButton>
+  <RealRuins.PlanetaryLoader.NeedsGameInProgress>Вам необходимо загрузить или начать новую игру, чтобы воспользоваться этой функцией.</RealRuins.PlanetaryLoader.NeedsGameInProgress>
 
   <RealRuins.CaravanReformType>Переформирование каравана</RealRuins.CaravanReformType>
   <RealRuins.Reform.Automatic>Автоматическое</RealRuins.Reform.Automatic>
@@ -221,10 +210,8 @@
 
   <RealRuins.ForceMultiplier>Множитель сложности событий</RealRuins.ForceMultiplier>
   <RealRuins.AbsoluteWealthCap>Абсолютное ограничение богатства руин</RealRuins.AbsoluteWealthCap>
-  <RealRuins.LeaveVanillaRuins>Оставить стандартные руины</RealRuins.LeaveVanillaRuins>
   <RealRuins.ForceMultiplierTT>Позволяет управлять количеством и силой противников в событиях этого мода (не влияет на планетарные руины!)</RealRuins.ForceMultiplierTT>
-  <RealRuins.AbsoluteWealthCapTT>Максимальная стоимость, которой будет ограничено богатство руин в событиях. При определении стоимости деревянные стены и двери не учитываются. Не влияет на планетарные руины.</RealRuins.AbsoluteWealthCapTT>
-  <RealRuins.LeaveVanillaRuinsTT>Если включено, то на карте будут появляться вперемешку и руины из мода, и стандартные руины</RealRuins.LeaveVanillaRuinsTT>
+  <RealRuins.AbsoluteWealthCapTT>Максимальная стоимость, которой будет ограничено богатство заброшенных баз в событиях и заданиях. У руин, найденных караваном, своё ограничение. При определении стоимости деревянные стены и двери не учитываются. Не влияет на планетарные руины.</RealRuins.AbsoluteWealthCapTT>
 
   <RealRuins.UseForcesGenerationV2>Включить новый метод генерации врагов для событий</RealRuins.UseForcesGenerationV2>
   <RealRuins.UseForcesGenerationV2TT>Раньше во время рейдов на древние руины искатели сокровищ из других фракций приходили несколькими огромными группами. Теперь вдобавок к этим большим группам добавлен постоянный приток врагов маленькими отрядами, чтобы постоянно держать игрока в напряжении. Если вам не нравится такой подход, эту функцию можно отключить и все будет как раньше.</RealRuins.UseForcesGenerationV2TT>
@@ -236,14 +223,10 @@
   <RealRuins.FactionOwnedStartTile.Attack>Атаковать стартовой группой</RealRuins.FactionOwnedStartTile.Attack>
   <RealRuins.FactionOwnedStartTile.Cancel>Отмена</RealRuins.FactionOwnedStartTile.Cancel>
 
-  <RealRuins.LogLevel>Подробность логов</RealRuins.LogLevel>
-  <RealRuins.LogLevel.All>Записывать всё</RealRuins.LogLevel.All>
-  <RealRuins.LogLevel.Warnings>Записывать предупреждения и ошибки</RealRuins.LogLevel.Warnings>
-  <RealRuins.LogLevel.Errors>Записывать только ошибки</RealRuins.LogLevel.Errors>
 
   <RealRuins.CacheSettings.TabCaption>Общие, сеть и кэш</RealRuins.CacheSettings.TabCaption>
-  <RealRuins.CacheSettings.Caption>Общие, сетевые и настройки кэша</RealRuins.CacheSettings.Caption>
-  <RealRuins.CacheSettings.Description>Управление настройками кэша. Отрегулируйте лимит хранилища и опции загрузки.</RealRuins.CacheSettings.Description>
+  <RealRuins.CacheSettings.Caption>Общие настройки, сеть и кэш</RealRuins.CacheSettings.Caption>
+  <RealRuins.CacheSettings.Description>Управление настройками кэша. Отрегулируйте лимит хранилища и опции загрузки. Другие настройки — на остальных вкладках.</RealRuins.CacheSettings.Description>
   <RealRuins_ModOptions_NoLimit>Без ограничений</RealRuins_ModOptions_NoLimit>
   <RealRuins_ModOptions_ClearCacheConfirm>Вы уверены, что хотите очистить весь кэш? Это действие невозможно отменить.</RealRuins_ModOptions_ClearCacheConfirm>
   <RealRuins.CacheSettings.PlanetaryCaption>Кэш планетарных руин</RealRuins.CacheSettings.PlanetaryCaption>
@@ -260,14 +243,14 @@
 
   <RealRuins.SpawnSettings.TabCaption>Настройки генерации</RealRuins.SpawnSettings.TabCaption>
   <RealRuins.SpawnSettings.Caption>Настройки генерации</RealRuins.SpawnSettings.Caption>
-  <RealRuins.SpawnSettings.Description>Конфигурация появления руин на карте, их размер, плотность и содержимое.</RealRuins.SpawnSettings.Description>
+  <RealRuins.SpawnSettings.Description>Конфигурация появления руин на карте, их размер, плотность и содержимое. Эти настройки влияют только на руины, естественным образом появляющиеся на карте, и не действуют на события и планетарные руины.</RealRuins.SpawnSettings.Description>
   <RealRuins.KeepVanillaRuins>Сохранять стандартные руины</RealRuins.KeepVanillaRuins>
   <RealRuins.KeepVanillaRuinsTT>Если включено, стандартные руины RimWorld будут сохранены вместе с Real Ruins.</RealRuins.KeepVanillaRuinsTT>
 
   <RealRuins.PlanetarySettings.DisableFriendly>Не порождать дружественные локации</RealRuins.PlanetarySettings.DisableFriendly>
   <RealRuins.PlanetarySettings.DisableFriendlyTT>Если включено, мировые локации будут заняты только враждебными фракциями.</RealRuins.PlanetarySettings.DisableFriendlyTT>
-  <RealRuins.DisableFriendlyLocations>Не порождать дружественные локации</RealRuins.DisableFriendlyLocations>
-  <RealRuins.DisableFriendlyLocationsTT>Если включено, мировые локации будут заняты только враждебными фракциями.</RealRuins.DisableFriendlyLocationsTT>
+  <RealRuins.PlanetaryLoader.DisableFriendlyLocations>Не порождать дружественные локации</RealRuins.PlanetaryLoader.DisableFriendlyLocations>
+  <RealRuins.PlanetaryLoader.DisableFriendlyLocationsTT>Если включено, мировые локации будут заняты только враждебными фракциями.</RealRuins.PlanetaryLoader.DisableFriendlyLocationsTT>
   <RealRuins.PlanetarySettings.RemoveAll>Удалить все локации</RealRuins.PlanetarySettings.RemoveAll>
   <RealRuins.PlanetarySettings.RemoveAllConfirm>Вы уверены, что хотите удалить все локации, созданные Real Ruins?</RealRuins.PlanetarySettings.RemoveAllConfirm>
 
@@ -277,13 +260,13 @@
   <RealRuins.SpawnRoofsTT>Если выключено, все виды руин (включая точки интереса и заброшенные базы) создаются без крыш. Крыши, обрушившиеся от разрушения, в любом случае не восстанавливаются.</RealRuins.SpawnRoofsTT>
 
   <RealRuins.SpawnBlacklist>Чёрный список предметов</RealRuins.SpawnBlacklist>
-  <RealRuins.SpawnBlacklistTT>Список, разделённый запятыми. Идентификаторы предметов, которые не должны появляться.</RealRuins.SpawnBlacklistTT>
+  <RealRuins.SpawnBlacklistTT>Список идентификаторов предметов через запятую, которые не должны появляться.</RealRuins.SpawnBlacklistTT>
 
   <RealRuins.MaterialBlacklist>Чёрный список материалов</RealRuins.MaterialBlacklist>
-  <RealRuins.MaterialBlacklistTT>Список, разделённый запятыми, материалы, которые не должны использоваться. Когда встречается предмет из чёрного списка материалов, он будет заменён на запасной материал.</RealRuins.MaterialBlacklistTT>
+  <RealRuins.MaterialBlacklistTT>Список материалов через запятую, которые не должны использоваться. Когда встречается предмет из чёрного списка материалов, он будет заменён на запасной материал.</RealRuins.MaterialBlacklistTT>
 
   <RealRuins.FallbackMaterial>Материал для замены</RealRuins.FallbackMaterial>
-  <RealRuins.FallbackMaterialTT>Если установлен, то материалы из черного списка будут заменены на этот материал. Если пуст, то предметы сделанные из запрещенных материалов будут удалены.</RealRuins.FallbackMaterialTT>
+  <RealRuins.FallbackMaterialTT>Если установлен, то материалы из черного списка будут заменены на этот материал. Если пуст, то предметы, сделанные из запрещенных материалов будут удалены.</RealRuins.FallbackMaterialTT>
 
   <RealRuins.Unlimited>Без ограничений</RealRuins.Unlimited>
   <RealRuins.AdvancedSettings>Продвинутые и событийные настройки</RealRuins.AdvancedSettings>
@@ -312,4 +295,36 @@
   <RealRuins.DebugSettings.DebugCategories>Категории отладки</RealRuins.DebugSettings.DebugCategories>
   <RealRuins.DebugSettings.ResetSettings>Сбросить все настройки</RealRuins.DebugSettings.ResetSettings>
   <RealRuins.DebugSettings.ResetSettingsConfirm>Вы уверены, что хотите сбросить все настройки на значения по умолчанию?</RealRuins.DebugSettings.ResetSettingsConfirm>
+
+  <!-- Debug settings (dev mode only) -->
+  <RealRuins.DebugSettings.Caption>Настройки отладки</RealRuins.DebugSettings.Caption>
+  <RealRuins.DebugSettings.KeepSnapshotsAfterUpload>Сохранять файлы снимков после выгрузки</RealRuins.DebugSettings.KeepSnapshotsAfterUpload>
+  <RealRuins.DebugSettings.KeepSnapshotsAfterUploadTooltip>Если включено, файлы снимков после выгрузки остаются во временной папке, а не удаляются. Полезно для отладки проблем с выгрузкой.</RealRuins.DebugSettings.KeepSnapshotsAfterUploadTooltip>
+  <RealRuins.DebugSettings.LogRuinsWealth>Записывать в лог богатство руин</RealRuins.DebugSettings.LogRuinsWealth>
+  <RealRuins.DebugSettings.LogRuinsWealthTooltip>Если включено, все сгенерированные руины записывают в лог свою оценочную стоимость (по новой и старой схемам расчёта) и фактическую рыночную стоимость появившихся вещей, а каждая карта с разбросанными руинами — сводку. Записывается независимо от уровня логирования. Также переключается в меню отладочных действий режима разработчика (RealRuins).</RealRuins.DebugSettings.LogRuinsWealthTooltip>
+  <RealRuins.DebugSettings.UseStagingEnvironment>Использовать тестовый сервер</RealRuins.DebugSettings.UseStagingEnvironment>
+  <RealRuins.DebugSettings.UseStagingEnvironmentTooltip>Если включено, все запросы к API идут на staging.woolstrand.art, а чертежи хранятся в тестовом хранилище (realruins-staging, sfo3). Для обычной игры выключите.</RealRuins.DebugSettings.UseStagingEnvironmentTooltip>
+  <RealRuins.DebugSettings.ManualUpload>Снять чертёж вручную</RealRuins.DebugSettings.ManualUpload>
+  <RealRuins.DebugSettings.ManualUploadTooltip>Вручную снять чертёж текущей карты и выгрузить его. Полезно для проверки выгрузки.</RealRuins.DebugSettings.ManualUploadTooltip>
+  <RealRuins.DebugSettings.UploadTriggered>Снятие чертежа запущено. Подробности в логе.</RealRuins.DebugSettings.UploadTriggered>
+  <RealRuins.DebugSettings.NoMap>Нет доступной карты. Сначала загрузите игру.</RealRuins.DebugSettings.NoMap>
+
+  <!-- Event toggles -->
+  <RealRuins.EnableAbandonedRuinsFoundEvent>Включить событие «найдены заброшенные руины»</RealRuins.EnableAbandonedRuinsFoundEvent>
+  <RealRuins.EnableAbandonedRuinsFoundEventTT>Если включено, может произойти крупное событие «найдены заброшенные руины», отмечающее на карте мира место с большими руинами.</RealRuins.EnableAbandonedRuinsFoundEventTT>
+  <RealRuins.EnableCaravanFoundRuinsEvent>Включить событие «караван заметил небольшие руины»</RealRuins.EnableCaravanFoundRuinsEvent>
+  <RealRuins.EnableCaravanFoundRuinsEventTT>Если включено, караваны в пути могут заметить неподалёку небольшие руины и предложить вам их исследовать.</RealRuins.EnableCaravanFoundRuinsEventTT>
+  <RealRuins.CaravanRuinsCostCap>Ограничение богатства руин, найденных караваном</RealRuins.CaravanRuinsCostCap>
+  <RealRuins.CaravanRuinsCostCapTT>Максимальная стоимость руин, замеченных караваном. Самые ценные вещи из них убираются, пока руины не уложатся в ограничение. Сила рейдеров зависит от того, что осталось.</RealRuins.CaravanRuinsCostCapTT>
+
+  <!-- Import/Export settings -->
+  <RealRuins.Settings.ExportSettings>Экспорт настроек</RealRuins.Settings.ExportSettings>
+  <RealRuins.Settings.ImportSettings>Импорт настроек</RealRuins.Settings.ImportSettings>
+  <RealRuins.Settings.ExportTitle>Экспорт настроек</RealRuins.Settings.ExportTitle>
+  <RealRuins.Settings.ImportTitle>Импорт настроек</RealRuins.Settings.ImportTitle>
+  <RealRuins.Settings.CopyToClipboard>Скопировать в буфер обмена</RealRuins.Settings.CopyToClipboard>
+  <RealRuins.Settings.CopiedToClipboard>Строка настроек скопирована в буфер обмена.</RealRuins.Settings.CopiedToClipboard>
+  <RealRuins.Settings.ImportApply>Импортировать</RealRuins.Settings.ImportApply>
+  <RealRuins.Settings.ImportSuccess>Настройки успешно импортированы.</RealRuins.Settings.ImportSuccess>
+  <RealRuins.Settings.ImportFailed>Не удалось импортировать настройки. Возможно, строка неверна или повреждена.</RealRuins.Settings.ImportFailed>
 </LanguageData>

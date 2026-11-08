@@ -70,7 +70,6 @@ namespace RealRuins {
             options.shouldKeepDefencesAndPower = true;
             options.shouldLoadPartOnly = false;
             options.shouldAddRaidTriggers = Find.Storyteller.difficulty.allowBigThreats && RealRuins_ModSettings.forceMultiplier != 0;
-            options.claimableBlocks = false;
             options.enableDeterioration = false;
             options.allowFriendlyRaids = !RealRuins_ModSettings.disableFriendlyRaids;
             return options;
@@ -99,7 +98,6 @@ namespace RealRuins {
             options.shouldKeepDefencesAndPower = true;
             options.shouldLoadPartOnly = false;
             options.shouldAddRaidTriggers = false;
-            options.claimableBlocks = false;
 
             bool spawnAsRuins = poiType == POIType.Ruins || !hasFaction || forceSpawnAsRuins;
             if (spawnAsRuins) {
@@ -160,7 +158,6 @@ namespace RealRuins {
                 deteriorationMultiplier = mod.deteriorationMultiplier,
                 scavengingMultiplier = mod.scavengingMultiplier,
                 itemCostLimit = mod.itemCostLimit,
-                claimableBlocks = mod.claimableBlocks,
                 enableProximity = mod.enableProximity,
                 decorationChance = mod.decorationChance,
                 trapChance = mod.trapChance,

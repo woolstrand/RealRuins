@@ -9,7 +9,6 @@
   <RealRuins_ModOptions_AllowUploadsTooltip>Il est recommandé de conserver cette optionpour aider à remplir la base de données avec diverses conceptions de base intéressantes. Cela ne devrait pas prendre plusieurs Mégabytes par session de jeu. </RealRuins_ModOptions_AllowUploadsTooltip>
   <RealRuins_ModOptions_CacheSizeTooltip>Même si vous atteignez cette limite, vous pouvez télécharger les nouveaux plans, et les supprimer.</RealRuins_ModOptions_CacheSizeTooltip>
   <RealRuins_ModOptions_OfflineModeTooltip>Ce mode supprime toutes les données mises en cache qui ont été téléchargées depuis le serveur et empêcher tout téléchargement ultérieur. Vos bases personnelles seront toujours stockées et utilisées pour créer des ruines dans votre jeu. .</RealRuins_ModOptions_OfflineModeTooltip>
-  <RealRuins_ModOptions_OfflineModeConfirmation>Êtes-vous sûr de continuer ?</RealRuins_ModOptions_OfflineModeConfirmation>
   <RealRuins_ModOptions_CurrentCacheSize>Taille du cache local actuel: </RealRuins_ModOptions_CurrentCacheSize>
   <RealRuins_ModOptions_RemoveAll>Vider le cache</RealRuins_ModOptions_RemoveAll>
   <RealRuins_ModOptions_DownloadMore>Téléchargez davantage de plans</RealRuins_ModOptions_DownloadMore>
@@ -22,10 +21,7 @@
   <RealRuins_MapOptions_CostLimit>Limiter le coût maximum des items </RealRuins_MapOptions_CostLimit>
   <RealRuins_MapOptions_DisableHaulables>Désactiver les éléments générés </RealRuins_MapOptions_DisableHaulables>
   <RealRuins_MapOptions_WallsAndDoorsOnly>Créer desmurs et des portes uniquement </RealRuins_MapOptions_WallsAndDoorsOnly>
-  <RealRuins_MapOptions_DisableDecoration>Montant spéciaux passif</RealRuins_MapOptions_DisableDecoration>
-  <RealRuins_MapOptions_DisableTraps>Montant spéciaux actifs</RealRuins_MapOptions_DisableTraps>
   <RealRuins_MapOptions_DisableHostiles>Quantité d'unités hostiles</RealRuins_MapOptions_DisableHostiles>
-  <RealRuins_MapOptions_Claimable>Rendre les structures revendicables </RealRuins_MapOptions_Claimable>
   <RealRuins_MapOptions_DensityTT>Nombre moyen de ruines apparaissant sur une zone de 100x100 </RealRuins_MapOptions_DensityTT>
   <RealRuins_MapOptions_SizeTT>La zone des ruines est sélectionnée de manière aléatoire dans une plage allant de 50% to 150% de la valeur entrée </RealRuins_MapOptions_SizeTT>
   <RealRuins_MapOptions_DeteriorationTT>Cette valeur détermine les chances supplémentaires pour une tuile d'être détruite et n'influence pas le nombre de points de vie restants. Zéro est le réglage par défaut, MAX n'aboutira à aucune ruine. .</RealRuins_MapOptions_DeteriorationTT>
@@ -33,10 +29,7 @@
   <RealRuins_MapOptions_CostLimitTT>Tous les articles avec un coût total plus haut que la valeur choisie seront détruits</RealRuins_MapOptions_CostLimitTT>
   <RealRuins_MapOptions_DisableHaulablesTT>Tous les objets transportables ne vont pas apparaître, mais des meubles peuvent éventuellement encore apparaître</RealRuins_MapOptions_DisableHaulablesTT>
   <RealRuins_MapOptions_WallsAndDoorsOnlyTT>Ce paramètre est assez agressif et supprime tout ce qui n’est pas basé sur un mur ou une porte du jeu original ( Vanilla ).</RealRuins_MapOptions_WallsAndDoorsOnlyTT>
-  <RealRuins_MapOptions_DisableDecorationTT>Seulement des squelettes pour l'instant </RealRuins_MapOptions_DisableDecorationTT>
-  <RealRuins_MapOptions_DisableTrapsTT>Pièges et déclencheurs </RealRuins_MapOptions_DisableTrapsTT>
   <RealRuins_MapOptions_DisableHostilesTT></RealRuins_MapOptions_DisableHostilesTT>
-  <RealRuins_MapOptions_ClaimableTT>Les structures non exigibles ne peuvent pas être réparées ou déconstruites </RealRuins_MapOptions_ClaimableTT>
 
   <RealRuins_MapOptions_EnableProximity>Considération de proximité des colonies</RealRuins_MapOptions_EnableProximity>
   <RealRuins_MapOptions_EnableProximityTT>La proximité de peuplement influence les paramètres de génération: les ruines sont plus denses près des villes, mais aussi plus désertes.</RealRuins_MapOptions_EnableProximityTT>
@@ -53,9 +46,6 @@
   <DeterioratedArtDescription>Cet article est trop usé et endommagé. Vous pouvez dire avec certitude que c'était un bel objet d'art autrefois, mais maintenant vous pouvez à peine deviner de quoi il s'agissait.</DeterioratedArtDescription>
 
 
-  <RealRuins_ModOptions_Reset>Réinitialiser les paramètres aux valeurs par défaut</RealRuins_ModOptions_Reset>
-  <RealRuins_MapOptions_CaravanReforming>Activer la reformation instantanée de la caravane entre les raids</RealRuins_MapOptions_CaravanReforming>
-  <RealRuins_MapOptions_CaravanReformingTT>Normalement, pendant les événements de récupération de ruines, vous ne devriez pas être en mesure de reformer la caravane instantanément juste après la défaite du groupe hostile initial. De par sa conception, vous deviez rechercher manuellement le butin, ramasser et partir en utilisant le bord de la carte même s'il n'y a pas d'unités hostiles pour le moment. Cependant, si vous préférez l'ancienne méthode avec une fonction de refonte instantanée de la caravane, vous pouvez activer cette fonction.</RealRuins_MapOptions_CaravanReformingTT>
 
   <RealRuins.CacheSettings.TabCaption>Général, réseau et cache</RealRuins.CacheSettings.TabCaption>
   <RealRuins.CacheSettings.Caption>Paramètres généraux, réseau et cache</RealRuins.CacheSettings.Caption>
@@ -72,8 +62,8 @@
 
   <RealRuins.PlanetarySettings.DisableFriendly>Ne pas créer de lieux amicaux</RealRuins.PlanetarySettings.DisableFriendly>
   <RealRuins.PlanetarySettings.DisableFriendlyTT>Si activé, les lieux mondiaux seront occupés uniquement par des factions ennemies.</RealRuins.PlanetarySettings.DisableFriendlyTT>
-  <RealRuins.DisableFriendlyLocations>Ne pas créer de lieux amicaux</RealRuins.DisableFriendlyLocations>
-  <RealRuins.DisableFriendlyLocationsTT>Si activé, les lieux mondiaux seront occupés uniquement par des factions ennemies.</RealRuins.DisableFriendlyLocationsTT>
+  <RealRuins.PlanetaryLoader.DisableFriendlyLocations>Ne pas créer de lieux amicaux</RealRuins.PlanetaryLoader.DisableFriendlyLocations>
+  <RealRuins.PlanetaryLoader.DisableFriendlyLocationsTT>Si activé, les lieux mondiaux seront occupés uniquement par des factions ennemies.</RealRuins.PlanetaryLoader.DisableFriendlyLocationsTT>
   <RealRuins.PlanetarySettings.RemoveAll>Supprimer tous les lieux</RealRuins.PlanetarySettings.RemoveAll>
   <RealRuins.PlanetarySettings.RemoveAllConfirm>Êtes-vous sûr de vouloir supprimer tous les lieux créés par Real Ruins?</RealRuins.PlanetarySettings.RemoveAllConfirm>
 
@@ -164,36 +154,28 @@
   <LetterTransportPodsArrivedAtRuins>Les nacelles de transport sont arrivées aux ruines</LetterTransportPodsArrivedAtRuins>
 
   <!-- POI load dialog -->
-  <RealRuins.LoadBlueprintsCaption>Charger des plans pour la planète</RealRuins.LoadBlueprintsCaption>
-  <RealRuins.LoadBlueprints>Charger les plans</RealRuins.LoadBlueprints>
-  <RealRuins.Close>Fermer</RealRuins.Close>
-  <RealRuins.Idle>Inactif</RealRuins.Idle>
-  <RealRuins.Searching>Recherche de plans...</RealRuins.Searching>
-  <RealRuins.Loading>Chargement des plans :</RealRuins.Loading>
-  <RealRuins.Processing>Traitement des plans :</RealRuins.Processing>
-  <RealRuins.Completed>Complété!</RealRuins.Completed>
-  <RealRuins.BiomeFiltering>Filtrage des biomes</RealRuins.BiomeFiltering>
-  <RealRuins.BiomeFilteringTT>Exclure les cartes avec un biome manquant ou incompatible</RealRuins.BiomeFilteringTT>
-  <RealRuins.CostFiltering>Filtrage des coûts</RealRuins.CostFiltering>
-  <RealRuins.CostFilteringTT>Exclure les cartes dont le coût est trop faible (carte « vide » inférieure à la moyenne)</RealRuins.CostFilteringTT>
-  <RealRuins.AreaFiltering>Filtrage des zones et des éléments</RealRuins.AreaFiltering>
-  <RealRuins.AreaFilteringTT>Exclure les cartes avec une zone trop petite et un nombre d'éléments trop faible</RealRuins.AreaFilteringTT>
-  <RealRuins.UsedMaps>Cartes utilisées :</RealRuins.UsedMaps>
-  <RealRuins.DroppedMaps>Cartes supprimées :</RealRuins.DroppedMaps>
+  <RealRuins.PlanetaryLoader.LoadBlueprintsCaption>Charger des plans pour la planète</RealRuins.PlanetaryLoader.LoadBlueprintsCaption>
+  <RealRuins.PlanetaryLoader.LoadBlueprints>Charger les plans</RealRuins.PlanetaryLoader.LoadBlueprints>
+  <RealRuins.PlanetaryLoader.Close>Fermer</RealRuins.PlanetaryLoader.Close>
+  <RealRuins.PlanetaryLoader.Searching>Recherche de plans...</RealRuins.PlanetaryLoader.Searching>
+  <RealRuins.PlanetaryLoader.Loading>Chargement des plans :</RealRuins.PlanetaryLoader.Loading>
+  <RealRuins.PlanetaryLoader.Processing>Traitement des plans :</RealRuins.PlanetaryLoader.Processing>
+  <RealRuins.PlanetaryLoader.Completed>Complété!</RealRuins.PlanetaryLoader.Completed>
+  <RealRuins.PlanetaryLoader.BiomeFiltering>Filtrage des biomes</RealRuins.PlanetaryLoader.BiomeFiltering>
+  <RealRuins.PlanetaryLoader.BiomeFilteringTT>Exclure les cartes avec un biome manquant ou incompatible</RealRuins.PlanetaryLoader.BiomeFilteringTT>
+  <RealRuins.PlanetaryLoader.CostFiltering>Filtrage des coûts</RealRuins.PlanetaryLoader.CostFiltering>
+  <RealRuins.PlanetaryLoader.CostFilteringTT>Exclure les cartes dont le coût est trop faible (carte « vide » inférieure à la moyenne)</RealRuins.PlanetaryLoader.CostFilteringTT>
+  <RealRuins.PlanetaryLoader.AreaFiltering>Filtrage des zones et des éléments</RealRuins.PlanetaryLoader.AreaFiltering>
+  <RealRuins.PlanetaryLoader.AreaFilteringTT>Exclure les cartes avec une zone trop petite et un nombre d'éléments trop faible</RealRuins.PlanetaryLoader.AreaFilteringTT>
+  <RealRuins.PlanetaryLoader.UsedMaps>Cartes utilisées :</RealRuins.PlanetaryLoader.UsedMaps>
+  <RealRuins.PlanetaryLoader.DroppedMaps>Cartes supprimées :</RealRuins.PlanetaryLoader.DroppedMaps>
 
-  <RealRuins.MapsModuleButton>Importer des plans pour cette planète (BÊTA)</RealRuins.MapsModuleButton>
-  <RealRuins.PlanetarySettignsCaption>Real Ruins - Paramètres des Ruines Planétaires</RealRuins.PlanetarySettignsCaption>
-  <RealRuins.NeedsGameInProgress>Vous devez être dans une partie en cours pour utiliser ce menu</RealRuins.NeedsGameInProgress>
+  <RealRuins.PlanetarySettings.MapsModuleButton>Importer des plans pour cette planète (BÊTA)</RealRuins.PlanetarySettings.MapsModuleButton>
+  <RealRuins.PlanetaryLoader.NeedsGameInProgress>Vous devez être dans une partie en cours pour utiliser ce menu</RealRuins.PlanetaryLoader.NeedsGameInProgress>
 
   <RealRuins.ForceMultiplier>Échelle de la menace des événements</RealRuins.ForceMultiplier>
   <RealRuins.AbsoluteWealthCap>Plafond de richesse absolu pour les événements</RealRuins.AbsoluteWealthCap>
-  <RealRuins.LeaveVanillaRuins>Supprimer les ruines vanilla</RealRuins.LeaveVanillaRuins>
   <RealRuins.ForceMultiplierTT>Réglez ceci pour rendre l'événement des ruines plus ou moins difficile</RealRuins.ForceMultiplierTT>
   <RealRuins.AbsoluteWealthCapTT>Détermine le plafond de richesse absolu pour les événements de ruines. Les murs et les portes en bois ne sont pas comptés dans la richesse totale.</RealRuins.AbsoluteWealthCapTT>
-  <RealRuins.LeaveVanillaRuinsTT>Si coché, les vraies ruines et les ruines vanille seront générées</RealRuins.LeaveVanillaRuinsTT>
 
-  <RealRuins.LogLevel>Log level</RealRuins.LogLevel>
-  <RealRuins.LogLevel.All>Log everything</RealRuins.LogLevel.All>
-  <RealRuins.LogLevel.Warnings>Avertissements et erreurs</RealRuins.LogLevel.Warnings>
-  <RealRuins.LogLevel.Errors>Erreurs uniquement</RealRuins.LogLevel.Errors>
 </LanguageData>

@@ -20,7 +20,6 @@ namespace RealRuins {
         public int itemCostLimit = 1000;
         public bool disableSpawnItems = false;
         public bool wallsDoorsOnly = false;
-        public bool claimableBlocks = true;
         public bool enableProximity = true;
 
         public float decorationChance = 0.0001f; //probability PER CELL
@@ -72,7 +71,6 @@ namespace RealRuins {
             Scribe_Values.Look(ref itemCostLimit, "itemCostLimit", 1000, false);
             Scribe_Values.Look(ref disableSpawnItems, "disableSpawnItems", false, false);
             Scribe_Values.Look(ref wallsDoorsOnly, "wallsDoorsOnly", false, false);
-            Scribe_Values.Look(ref claimableBlocks, "claimableBlocks", true, false);
             Scribe_Values.Look(ref enableProximity, "enableProximity", true, false);
 
             Scribe_Values.Look(ref decorationChance, "decorationChance", 0.0001f, false);
@@ -84,7 +82,6 @@ namespace RealRuins {
         public ScatterOptions Copy() {
             ScatterOptions copy = new ScatterOptions {
                 deteriorationMultiplier = deteriorationMultiplier,
-                claimableBlocks = claimableBlocks,
                 decorationChance = decorationChance,
                 densityMultiplier = densityMultiplier,
                 hostileChance = hostileChance,

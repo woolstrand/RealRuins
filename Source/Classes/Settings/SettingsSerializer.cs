@@ -62,7 +62,6 @@ namespace RealRuins.Settings
                 Add("so.itemCostLimit",              so.itemCostLimit.ToString());
                 Add("so.disableSpawnItems",          so.disableSpawnItems.ToString());
                 Add("so.wallsDoorsOnly",             so.wallsDoorsOnly.ToString());
-                Add("so.claimableBlocks",            so.claimableBlocks.ToString());
                 Add("so.enableProximity",            so.enableProximity.ToString());
                 Add("so.decorationChance",           so.decorationChance.ToString("R"));
                 Add("so.trapChance",                 so.trapChance.ToString("R"));
@@ -139,7 +138,6 @@ namespace RealRuins.Settings
                         case "so.itemCostLimit":            TryParseInt(val, ref RealRuins_ModSettings.defaultScatterOptions.itemCostLimit); break;
                         case "so.disableSpawnItems":        TryParseBool(val, ref RealRuins_ModSettings.defaultScatterOptions.disableSpawnItems); break;
                         case "so.wallsDoorsOnly":           TryParseBool(val, ref RealRuins_ModSettings.defaultScatterOptions.wallsDoorsOnly); break;
-                        case "so.claimableBlocks":          TryParseBool(val, ref RealRuins_ModSettings.defaultScatterOptions.claimableBlocks); break;
                         case "so.enableProximity":          TryParseBool(val, ref RealRuins_ModSettings.defaultScatterOptions.enableProximity); break;
                         case "so.decorationChance":         TryParseFloat(val, ref RealRuins_ModSettings.defaultScatterOptions.decorationChance); break;
                         case "so.trapChance":               TryParseFloat(val, ref RealRuins_ModSettings.defaultScatterOptions.trapChance); break;

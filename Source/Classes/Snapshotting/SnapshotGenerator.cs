@@ -329,13 +329,13 @@ namespace RealRuins
             if (density < 0.01)
             {
                 //too low density of user generated things.
-                Debug.Log(Debug.BlueprintGen, "Too low ruins density: {0}. Ignoring.", density);
+                Debug.Log(Debug.BlueprintGen, "Ruins density too low: {0}. Ignoring.", density);
                 return null;
             }
             if (maxHPItemsCount < itemsCount * 0.25f)
             {
                 //items count with maxhp less than 25% means VERY worn base. It's very likely this base is just a bunch of claimed ruins, and we want to prevent recycling ruins as is
-                Debug.Log(Debug.BlueprintGen, "Too low ruins average HP. Ignoring.");
+                Debug.Log(Debug.BlueprintGen, "Ruins average HP too low. Ignoring.");
                 return null;
             }
 

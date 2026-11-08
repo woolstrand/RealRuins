@@ -11,7 +11,7 @@ namespace RealRuins.Settings
         private string buf1, buf2;
         private int synced1, synced2;
 
-        public override string TabLabel => "RealRuins.PlanetaryRuinsSettings.Caption".Translate();
+        public override string TabLabel => "RealRuins.PlanetarySettings.Caption".Translate();
 
         public override float ContentHeight => 390f;
 
@@ -22,7 +22,7 @@ namespace RealRuins.Settings
 
             GameFont font = Text.Font;
             Text.Font = GameFont.Medium;
-            listing.Label("RealRuins.PlanetaryRuinsSettings.Caption".Translate());
+            listing.Label("RealRuins.PlanetarySettings.Caption".Translate());
             Text.Font = font;
             listing.GapLine();
 
@@ -78,7 +78,7 @@ namespace RealRuins.Settings
             
             // Spawn button - Green
             GUI.color = new Color(0.3f, 1f, 0.3f);
-            if (Widgets.ButtonText(spawnButtonRect, "RealRuins.MapsModuleButton".Translate()))
+            if (Widgets.ButtonText(spawnButtonRect, "RealRuins.PlanetarySettings.MapsModuleButton".Translate()))
             {
                 Page_PlanetaryRuinsLoader page = new Page_PlanetaryRuinsLoader();
                 Find.WindowStack.Add(page);

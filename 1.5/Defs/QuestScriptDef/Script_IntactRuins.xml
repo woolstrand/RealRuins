@@ -26,13 +26,13 @@
     </questNameRules>
     <questDescriptionRules>
       <rulesStrings>
-        <li>questDescription->[source] a group of ancient buildings. Looks like the complex is very old and empty, but doors are sealed and all inventory and machinery is still inside. Word spreads fast, and all nearby settlements are already preparing to fight for whatever lies inside this ruins. The treasure could be enormous, so be prepared for a real massacre, not like all usual carefully balanced encounters you had before. And not waste time: I see someone already [stealing]. Ruins won't last long.</li>
+        <li>questDescription->[source] a group of ancient buildings. Looks like the complex is very old and abandoned, but the doors are sealed and all inventory and machinery is still inside. Word spreads fast, and all nearby settlements are already preparing to fight for whatever lies inside these ruins. The treasure could be enormous, so be prepared for a real massacre, not like the usual carefully balanced encounters you've had before. And don't waste time: I see someone already [stealing]. Ruins won't last long.</li>
         <li>source->Your scouts discovered</li>
-        <li>source->Trader told you, he found</li>
-        <li>source->After a powerful explosion nearby mountain uncovered</li>
+        <li>source->A trader told you he found</li>
+        <li>source->A powerful explosion in a nearby mountain uncovered</li>
         <li>stealing->dismantling golden floor tiles across all rooms</li>
-        <li>stealing->hauling stack of advanced components from there</li>
-        <li>stealing->loading drop pod launcher with ten vanometric cells</li>
+        <li>stealing->hauling a stack of advanced components from there</li>
+        <li>stealing->loading a drop pod launcher with ten vanometric cells</li>
         <li>stealing->trying to capture five stacks of antigrain warheads</li>
       </rulesStrings>
     </questDescriptionRules>
