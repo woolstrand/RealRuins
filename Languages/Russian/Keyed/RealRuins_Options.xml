@@ -316,6 +316,12 @@
   <RealRuins.EnableCaravanFoundRuinsEventTT>Если включено, караваны в пути могут заметить неподалёку небольшие руины и предложить вам их исследовать.</RealRuins.EnableCaravanFoundRuinsEventTT>
   <RealRuins.CaravanRuinsCostCap>Ограничение богатства руин, найденных караваном</RealRuins.CaravanRuinsCostCap>
   <RealRuins.CaravanRuinsCostCapTT>Максимальная стоимость руин, замеченных караваном. Самые ценные вещи из них убираются, пока руины не уложатся в ограничение. Сила рейдеров зависит от того, что осталось.</RealRuins.CaravanRuinsCostCapTT>
+  <RealRuins.ScaleWithColonyWealth>Масштабировать ограничения богатства руин по богатству колонии</RealRuins.ScaleWithColonyWealth>
+  <RealRuins.ScaleWithColonyWealthTT>Все ограничения богатства руин умножаются на богатство вашей колонии, делённое на значение ниже: богатая колония находит более богатые руины, бедная — более бедные, но не меньше половины каждого ограничения. Так ограничения могут оказаться выше заданных вами. Неограниченные руины остаются неограниченными. Богатство колонии считается так же, как его считает рассказчик: по вашим домашним картам и караванам.</RealRuins.ScaleWithColonyWealthTT>
+  <RealRuins.ReferenceColonyWealth>Богатство колонии, для которого заданы ограничения</RealRuins.ReferenceColonyWealth>
+  <RealRuins.ReferenceColonyWealthTT>При таком богатстве колонии все ограничения богатства руин в точности равны заданным. При вдвое большем богатстве они удваиваются.</RealRuins.ReferenceColonyWealthTT>
+  <RealRuins.POIRuinsCostCap>Ограничение богатства покинутых локаций</RealRuins.POIRuinsCostCap>
+  <RealRuins.POIRuinsCostCapTT>Максимальная стоимость покинутой локации на планете. Большинство из них стоят меньше.</RealRuins.POIRuinsCostCapTT>
 
   <!-- Import/Export settings -->
   <RealRuins.Settings.ExportSettings>Экспорт настроек</RealRuins.Settings.ExportSettings>
