@@ -230,6 +230,7 @@
   <RealRuins.CacheSettings.Description>Управление настройками кэша. Отрегулируйте лимит хранилища и опции загрузки. Другие настройки — на остальных вкладках.</RealRuins.CacheSettings.Description>
   <RealRuins_ModOptions_NoLimit>Без ограничений</RealRuins_ModOptions_NoLimit>
   <RealRuins_ModOptions_ClearCacheConfirm>Вы уверены, что хотите очистить весь кэш? Это действие невозможно отменить.</RealRuins_ModOptions_ClearCacheConfirm>
+  <RealRuins_ModOptions_OfflineModeConfirm>Оффлайн-режим удалит все чертежи руин, загруженные с сервера, сразу после закрытия настроек. Сохранятся только снимки ваших собственных баз и чертежи планетарных руин.\n\nЕсли вы передумаете, придётся выключить оффлайн-режим и загрузить чертежи заново, а это может занять несколько минут. До тех пор руины будут строиться только из ваших собственных баз.\n\nВключить оффлайн-режим?</RealRuins_ModOptions_OfflineModeConfirm>
   <RealRuins.CacheSettings.PlanetaryCaption>Кэш планетарных руин</RealRuins.CacheSettings.PlanetaryCaption>
   <RealRuins.CacheSettings.PlanetaryDescription>Чертежи, загруженные для планетарных руин, хранятся отдельно для каждого зерна мира, покрытия и размера карты.</RealRuins.CacheSettings.PlanetaryDescription>
   <RealRuins.CacheSettings.PlanetaryEmpty>Сохранённых чертежей планетарных руин нет.</RealRuins.CacheSettings.PlanetaryEmpty>

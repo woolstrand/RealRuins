@@ -84,10 +84,25 @@ namespace RealRuins.Settings
 
             listing.Gap(15f);
 
+            // Switching offline mode on deletes every downloaded blueprint once the settings are saved
+            // (RealRuins_Mod.WriteSettings -> CheckCacheContents), so it is confirmed first. Switching it off needs no confirmation.
+            bool offlineMode = RealRuins_ModSettings.offlineMode;
             listing.CheckboxLabeled(
                 "RealRuins_ModOptions_OfflineMode".Translate(),
-                ref RealRuins_ModSettings.offlineMode,
+                ref offlineMode,
                 "RealRuins_ModOptions_OfflineModeTooltip".Translate());
+            if (offlineMode && !RealRuins_ModSettings.offlineMode)
+            {
+                Find.WindowStack.Add(Dialog_MessageBox.CreateConfirmation(
+                    "RealRuins_ModOptions_OfflineModeConfirm".Translate(),
+                    () => RealRuins_ModSettings.offlineMode = true,
+                    true,
+                    null));
+            }
+            else if (!offlineMode)
+            {
+                RealRuins_ModSettings.offlineMode = false;
+            }
 
             listing.CheckboxLabeled(
                 "RealRuins_ModOptions_AllowDownloads".Translate(),
