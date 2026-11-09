@@ -324,6 +324,8 @@ namespace RealRuins
             }
 
             writer.WriteEndElement();
+            //the writer buffers (the 1.7 runtime more than Mono did): without this the builder is empty or cut off at the last pawn
+            writer.Close();
 
             float density = ((float)(itemsCount + terrainCount)) / ((xmax - xmin) * (zmax - zmin));
             if (density < 0.01)

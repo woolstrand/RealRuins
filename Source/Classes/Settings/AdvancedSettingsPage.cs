@@ -160,7 +160,7 @@ namespace RealRuins.Settings
                 "RealRuins.EnableCaravanFoundRuinsEventTT".Translate());
 
             string caravanCapStr = RuinsWealthLimits.SettingCap(RuinsKind.Caravan) < RuinsWealthLimits.NoLimit
-                ? RealRuins_ModSettings.caravanRuinsCostCap.ToString("#,0")
+                ? RuinsWealthLimits.SettingCap(RuinsKind.Caravan).ToString("#,0")
                 : (string)"RealRuins.Unlimited".Translate();
             Rect caravanCapRect = listing.GetRect(25f);
             Widgets.Label(
@@ -170,7 +170,7 @@ namespace RealRuins.Settings
             RealRuins_ModSettings.caravanRuinsCostCap =
                 Mathf.Round(Widgets.HorizontalSlider(
                     caravanCapRect.RightHalf().ContractedBy(0, 3),
-                    RealRuins_ModSettings.caravanRuinsCostCap,
+                    Mathf.Max(RealRuins_ModSettings.caravanRuinsCostCapMin, RealRuins_ModSettings.caravanRuinsCostCap),
                     RealRuins_ModSettings.caravanRuinsCostCapMin,
                     RealRuins_ModSettings.caravanRuinsCostCapUnlimited) / 1000.0f) * 1000.0f;
 
