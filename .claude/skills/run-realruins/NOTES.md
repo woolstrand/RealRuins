@@ -28,6 +28,15 @@ searching to figure out. Keep entries short; no screen coordinates (they change 
   site's starting value at it. The old incident `Quest_PristineRuins` is retired
   (`baseChance` 0); firing it via Do incident (World) only sends a letter pointing to the quest.
   **RealRuins → Simulate random quest rolls** counts how often the random quest slot would give it.
+- **Manual ruins search (`Source/Classes/RuinsScan`):** two methods, each a `RuinsScanDef`: research benches **Search records for
+  ruins**, comms console / long range scanner **Radio-locate ruins**. Spawn a `SimpleResearchBench` (Debug actions → Spawn
+  unminified thing...; no power needed) → select it → toggle. The comms console is not in that list (not minifiable): turn on
+  **God Mode** in debug Settings, place it from Architect → Misc, then its **DEV: Toggle power on** gizmo. Quicktest colonists usually have Intellectual below the minimum (6):
+  Debug actions → **Set Skill...** → Intellectual → level → click the pawn (the colonist bar portrait is the reliable click), and
+  tick **Research** for that pawn in the Work tab, else vanilla says "Not assigned to researching". Then the pawn starts on its
+  own; **RealRuins → Ruins scan: find signal now** makes the next roll succeed. Log: `[RuinsScan]: X found a signal` →
+  `[Store]: Acceptable blueprint` → `[RuinsScan]: Blueprint search finished` → quest. A pending signal is saved
+  (`RealRuins.RuinsScanTracker` / `signalPending` in the .rws): setting it to True in a copy of a save tests the restart-on-load path.
 - **Force one blueprint everywhere (debug):** set `RealRuins.SingleFileName` (`Source/Classes/RealRuins.cs`)
   to a full path of a cached `.bp`; `SnapshotStoreManager` then returns it for every random pick (scatter
   *and* quests). Mark the edit `// TEMP-TEST` and revert + rebuild after. Cached blueprints are gzipped XML
@@ -52,6 +61,8 @@ searching to figure out. Keep entries short; no screen coordinates (they change 
 
 ## Traps
 
+- **An auto-accepted quest's letter sits in the letter stack as "Quest active: <name>"** on the right edge, looking like an
+  alert. Clicking it opens the Quests tab and dismisses the letter; its text stays in History → Messages.
 - Every entry in the Do incident list is shown `[NO]` (even vanilla). Clicking still fires it.
 - `esc` closes the world view as well as windows - you land back on the colony map.
 - Hovering a DLC icon on the main menu covers the menu buttons with a big panel; `move` away first.

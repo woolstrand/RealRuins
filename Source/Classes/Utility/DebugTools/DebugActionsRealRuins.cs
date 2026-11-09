@@ -63,6 +63,14 @@ namespace RealRuins
             }
         }
 
+        // Skips the wait of the manual ruins scan: the next work interval of any pawn scanning for ruins finds the signal.
+        [DebugAction("RealRuins", "Ruins scan: find signal now", allowedGameStates = AllowedGameStates.PlayingOnMap)]
+        public static void ForceRuinsScanDiscovery()
+        {
+            RuinsScanTracker.debugForceDiscovery = true;
+            Messages.Message("RealRuins: the next pawn scanning for ruins finds a signal", MessageTypeDefOf.NeutralEvent, historical: false);
+        }
+
         // Generates maps on random tiles, measures the scattered ruins (see RuinsWealthReport) and logs the distribution.
         [DebugAction("RealRuins", "Sample ruins wealth", allowedGameStates = AllowedGameStates.PlayingOnMap)]
         public static List<DebugActionNode> SampleRuinsWealth()

@@ -7,6 +7,7 @@
     <affectedByPoints>false</affectedByPoints>
     <canGiveRoyalFavor>false</canGiveRoyalFavor>
     <autoAccept>true</autoAccept>
+    <questAvailableLetterTextIsDescription>true</questAvailableLetterTextIsDescription>
     <questNameRules>
       <rulesStrings>
         <li>questName->[abandoned] [base]</li>

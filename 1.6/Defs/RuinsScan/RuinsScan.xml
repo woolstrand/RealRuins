@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+  <!-- Ways of searching for ruins. Which building uses which is set in Patches/RuinsScanner_Patch.xml.
+       label is the toggle label, description its tooltip: {0} min skill, {1} / {2} mean days at max / min skill.
+       foundMessage: {PAWN} the pawn, {BUILDING} the building. -->
+
+  <!-- Research benches: slow, from old records -->
+  <RealRuins.RuinsScanDef>
+    <defName>RealRuins_RuinsScan_Records</defName>
+    <label>search records for ruins</label>
+    <description>Have researchers comb through old books, maps, journals and trade ledgers for traces of sealed ancient ruins. Requires Intellectual {0}.\n\nThere is no telling how long it takes: a skilled researcher pieces something together after about {1} days of study on average, a novice after about {2}. The same records exist elsewhere, so once you find the ruins, others will too.</description>
+    <foundMessage>{PAWN_nameDef} found references to sealed ruins in old records at the {BUILDING}. Working out where they are...</foundMessage>
+    <job>RealRuins_SearchRecordsForRuins</job>
+    <workGiver>RealRuins_SearchRecordsForRuins</workGiver>
+    <questScript>RealRuins_ScannedRuins_Records</questScript>
+    <minIntellectualSkill>6</minIntellectualSkill>
+    <!-- Mean days of work until a discovery: at minIntellectualSkill / at maxSkill, linear in between -->
+    <mtbDaysAtMinSkill>8</mtbDaysAtMinSkill>
+    <mtbDaysAtMaxSkill>4</mtbDaysAtMaxSkill>
+    <maxSkill>20</maxSkill>
+    <xpPerTick>0.1</xpPerTick>
+    <minimumWealth>50000</minimumWealth>
+    <minimumArea>6000</minimumArea>
+    <maxBlueprintAttempts>50</maxBlueprintAttempts>
+  </RealRuins.RuinsScanDef>
+
+  <!-- Comms console, long range scanner: faster, radio location -->
+  <RealRuins.RuinsScanDef>
+    <defName>RealRuins_RuinsScan_Radio</defName>
+    <label>radio-locate ruins</label>
+    <description>Have researchers sweep old frequencies, ping dormant transponders and hack into derelict relays to locate sealed ancient ruins. Requires Intellectual {0}.\n\nThere is no telling how long it takes: a skilled operator finds something after about {1} days of scanning on average, a novice after about {2}. Active pinging is never quiet, so once you find the ruins, others will too.</description>
+    <foundMessage>{PAWN_nameDef} picked up a signal at the {BUILDING}. Triangulating the location...</foundMessage>
+    <job>RealRuins_RadioLocateRuins</job>
+    <workGiver>RealRuins_RadioLocateRuins</workGiver>
+    <questScript>RealRuins_ScannedRuins_Radio</questScript>
+    <minIntellectualSkill>6</minIntellectualSkill>
+    <mtbDaysAtMinSkill>5</mtbDaysAtMinSkill>
+    <mtbDaysAtMaxSkill>2</mtbDaysAtMaxSkill>
+    <maxSkill>20</maxSkill>
+    <xpPerTick>0.1</xpPerTick>
+    <minimumWealth>50000</minimumWealth>
+    <minimumArea>6000</minimumArea>
+    <maxBlueprintAttempts>50</maxBlueprintAttempts>
+  </RealRuins.RuinsScanDef>
+
+  <JobDef>
+    <defName>RealRuins_SearchRecordsForRuins</defName>
+    <driverClass>RealRuins.JobDriver_ScanForRuins</driverClass>
+    <reportString>searching old records for ruins at TargetA.</reportString>
+    <allowOpportunisticPrefix>true</allowOpportunisticPrefix>
+  </JobDef>
+
+  <JobDef>
+    <defName>RealRuins_RadioLocateRuins</defName>
+    <driverClass>RealRuins.JobDriver_ScanForRuins</driverClass>
+    <reportString>radio-locating ruins at TargetA.</reportString>
+    <allowOpportunisticPrefix>true</allowOpportunisticPrefix>
+  </JobDef>
+
+  <!-- Above research (100) and scanners (50): a station switched to the ruins search is used for it -->
+  <WorkGiverDef>
+    <defName>RealRuins_SearchRecordsForRuins</defName>
+    <label>search records for ruins</label>
+    <giverClass>RealRuins.WorkGiver_ScanForRuins</giverClass>
+    <workType>Research</workType>
+    <verb>search records for ruins at</verb>
+    <gerund>searching records for ruins at</gerund>
+    <priorityInType>110</priorityInType>
+    <requiredCapacities>
+      <li>Manipulation</li>
+    </requiredCapacities>
+    <canBeDoneByMechs>false</canBeDoneByMechs>
+  </WorkGiverDef>
+
+  <WorkGiverDef>
+    <defName>RealRuins_RadioLocateRuins</defName>
+    <label>radio-locate ruins</label>
+    <giverClass>RealRuins.WorkGiver_ScanForRuins</giverClass>
+    <workType>Research</workType>
+    <verb>radio-locate ruins at</verb>
+    <gerund>radio-locating ruins at</gerund>
+    <priorityInType>110</priorityInType>
+    <requiredCapacities>
+      <li>Manipulation</li>
+    </requiredCapacities>
+    <canBeDoneByMechs>false</canBeDoneByMechs>
+  </WorkGiverDef>
+</Defs>

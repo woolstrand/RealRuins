@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+  <!-- Pristine ruins found by the player's own search (RealRuins.RuinsScanTracker), one quest per RealRuins.RuinsScanDef.
+       Never picked by the storyteller. The tracker fills the slate: map, scannerName, scanBuilding, blueprintName,
+       blueprintCachedCost. Children only add questDescriptionRules (inherited lists would be merged). -->
+  <QuestScriptDef Abstract="True" Name="RealRuins_ScannedRuinsBase">
+    <rootSelectionWeight>0</rootSelectionWeight>
+    <affectedByPoints>false</affectedByPoints>
+    <canGiveRoyalFavor>false</canGiveRoyalFavor>
+    <autoAccept>true</autoAccept>
+    <questAvailableLetterTextIsDescription>true</questAvailableLetterTextIsDescription>
+    <questNameRules>
+      <rulesStrings>
+        <li>questName->[intact] [base]</li>
+        <li>questName->[lost] [ruins]</li>
+        <li>intact->Pristine</li>
+        <li>intact->Sealed</li>
+        <li>intact->Untouched</li>
+        <li>base->Ruins</li>
+        <li>base->Complex</li>
+        <li>base->Outpost</li>
+        <li>lost->Trail to the</li>
+        <li>lost->Echo of the</li>
+        <li>ruins->Ancient Complex</li>
+        <li>ruins->Sealed Vault</li>
+        <li>ruins->Lost Outpost</li>
+      </rulesStrings>
+    </questNameRules>
+    <root Class="QuestNode_Sequence">
+      <nodes>
+        <li Class="QuestNode_GetSiteTile">
+          <storeAs>worldTile</storeAs>
+          <preferCloserTiles>false</preferCloserTiles>
+        </li>
+
+        <li Class="RealRuins.QuestNode_GenerateRuinsObject">
+          <blueprintFilename>$blueprintName</blueprintFilename>
+          <tile>$worldTile</tile>
+          <storeAs>ruins</storeAs>
+        </li>
+
+        <li Class="QuestNode_SpawnWorldObjects">
+          <worldObjects>$ruins</worldObjects>
+        </li>
+
+        <li Class="QuestNode_Signal">
+          <inSignal>ruins.Scavenged</inSignal>
+          <node Class="QuestNode_Sequence">
+            <nodes>
+              <li Class="QuestNode_Letter">
+                <label TKey="LetterLabelQuestExpired">Quest expired: [resolvedQuestName]</label>
+                <text TKey="LetterTextQuestExpired">The ruins you found were looted and scavenged. The quest [resolvedQuestName] has expired.</text>
+              </li>
+              <li Class="QuestNode_End">
+                <outcome>Unknown</outcome>
+              </li>
+            </nodes>
+          </node>
+        </li>
+
+        <li Class="QuestNode_End">
+          <inSignal>ruins.LeftAlive</inSignal>
+          <outcome>Unknown</outcome>
+        </li>
+      </nodes>
+    </root>
+  </QuestScriptDef>
+
+  <!-- Found at a research bench: books, maps and other old sources -->
+  <QuestScriptDef ParentName="RealRuins_ScannedRuinsBase">
+    <defName>RealRuins_ScannedRuins_Records</defName>
+    <questDescriptionRules>
+      <rulesStrings>
+        <li>questDescription->[scannerName] spent days at the [scanBuilding] going through [sources], and finally [clue]. Checked against old maps, it all points to one spot: a group of ancient buildings, very old and abandoned, but with doors still sealed and all inventory and machinery still inside.\n\nUnfortunately, those sources were never yours alone. [leak] All nearby settlements are already preparing to fight for whatever lies inside these ruins. The treasure could be enormous, so be prepared for a real massacre, not like the usual carefully balanced encounters you've had before. And don't waste time: scavengers are already on their way, and the ruins won't last long.</li>
+        <li>sources->a crate of water-damaged books from before the collapse</li>
+        <li>sources->old survey records bought from a trader for a handful of silver</li>
+        <li>sources->the journals of a long-dead exploration party</li>
+        <li>sources->a dozen folk tales that contradict each other in every detail but one</li>
+        <li>sources->the ledgers of a trading company that no longer exists</li>
+        <li>clue->found the same unmarked depot mentioned in three unrelated sources</li>
+        <li>clue->noticed that an old supply route ends at a place no map bothers to name</li>
+        <li>clue->matched a hand-drawn sketch in a margin to the shape of a nearby valley</li>
+        <li>clue->decoded a quartermaster's notes about a stockpile that was never collected</li>
+        <li>leak->Other settlements keep copies of the same books, and someone else was reading them at the same time.</li>
+        <li>leak->The trader who sold you the records had sold the same bundle to every settlement around.</li>
+        <li>leak->Asking passing caravans about old landmarks was a mistake: they put two and two together faster than you did.</li>
+        <li>leak->The scouts you sent to confirm the location were seen, and followed.</li>
+      </rulesStrings>
+    </questDescriptionRules>
+  </QuestScriptDef>
+
+  <!-- Found at a comms console or scanner: radio location -->
+  <QuestScriptDef ParentName="RealRuins_ScannedRuinsBase">
+    <defName>RealRuins_ScannedRuins_Radio</defName>
+    <questDescriptionRules>
+      <rulesStrings>
+        <li>questDescription->After days of [listening] at the [scanBuilding], [scannerName] finally picked out [signal]. Triangulation points to a group of ancient buildings: the complex is very old and abandoned, but its doors are still sealed and all inventory and machinery is still inside.\n\nUnfortunately, you weren't the only ones listening. [leak] All nearby settlements are already preparing to fight for whatever lies inside these ruins. The treasure could be enormous, so be prepared for a real massacre, not like the usual carefully balanced encounters you've had before. And don't waste time: scavengers are already on their way, and the ruins won't last long.</li>
+        <li>listening->sweeping old frequencies</li>
+        <li>listening->pinging long-silent transponder codes</li>
+        <li>listening->hacking into a derelict satellite relay</li>
+        <li>listening->triangulating stray transmissions</li>
+        <li>signal->a faint automated beacon repeating the same distress code it has been sending for centuries</li>
+        <li>signal->a cluster of shielded power signatures where there should be nothing at all</li>
+        <li>signal->a dormant security network quietly answering each of your pings</li>
+        <li>signal->an encrypted maintenance channel that finally cracked open on the hundredth try</li>
+        <li>leak->Your active pings woke up the complex's own beacon, and it is now broadcasting its position on every band.</li>
+        <li>leak->Your triangulation pings were loud enough for every comms array in the region to trace them to the same spot.</li>
+        <li>leak->A passing trader intercepted your comms traffic and is selling the coordinates to anyone willing to pay.</li>
+        <li>leak->The moment you narrowed it down, the old security network started answering everyone, not just you.</li>
+      </rulesStrings>
+    </questDescriptionRules>
+  </QuestScriptDef>
+</Defs>
