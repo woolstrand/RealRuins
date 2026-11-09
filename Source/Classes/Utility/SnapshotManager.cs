@@ -236,11 +236,12 @@ namespace RealRuins {
                 return; //skip upload if we're trying to do it more frequent than once per three hours.
             }
 
-            //we actually don't care if something goes wrong. big data, y'know
-            snapshotTimestamps[snapshotId] = DateTime.Now;
-
             SnapshotGenerator generator = new SnapshotGenerator(map);
             if (!generator.CanGenerate()) return; //skip if generation is not allowed on some reason (too small area, empty area, whatever)
+
+            //set only once a snapshot is really taken: a skipped one must not use up the three hours
+            //we actually don't care if something goes wrong. big data, y'know
+            snapshotTimestamps[snapshotId] = DateTime.Now;
 
             string tmpFilename = generator.Generate();
 

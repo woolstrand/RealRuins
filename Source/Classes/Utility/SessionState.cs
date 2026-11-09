@@ -1,4 +1,5 @@
 using HarmonyLib;
+using RimWorld;
 using Verse;
 
 namespace RealRuins {
@@ -13,6 +14,7 @@ namespace RealRuins {
         private static void Reset() {
             PlanetaryRuinsInitData.Reset();
             DevSiteTools.Reset();
+            DuplicateLoadIds.Reset();
         }
 
         // A loaded game never uses the start context of a game setup that was abandoned before it.
@@ -30,6 +32,12 @@ namespace RealRuins {
                 GeneratingStartingMap = false;
                 Reset();
             }
+        }
+
+        // A new game setup starts from the scenario page. Backing out of a setup to the main menu doesn't go through GoToMainMenu.
+        [HarmonyPatch(typeof(Page_SelectScenario), MethodType.Constructor)]
+        static class Page_SelectScenario_Ctor_Patch {
+            static void Postfix() => Reset();
         }
 
         [HarmonyPatch(typeof(GenScene), nameof(GenScene.GoToMainMenu))]

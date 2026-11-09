@@ -23,7 +23,7 @@ namespace RealRuins {
     }
 
     // Global context used to create new planetary-ruins enabled game. Lives from game setup until the game starts;
-    // SessionState drops it when a game is loaded, a new game has started, or the player goes back to the main menu.
+    // SessionState drops it when a setup starts, a game is loaded, a new game has started, or the player goes back to the main menu.
     class PlanetaryRuinsInitData {
         public static PlanetaryRuinsInitData shared = new PlanetaryRuinsInitData();
 

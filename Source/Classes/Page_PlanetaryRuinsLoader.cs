@@ -104,7 +104,8 @@ namespace RealRuins {
             DrawLoader(list);
             DrawTransferrer(list);
 
-            bool canRemove = blueprintsUsed > 0 && pageState == RuinsPageState.Completed;
+            //also for sites spawned before this window was opened (reopened from the starting site page)
+            bool canRemove = (pageState == RuinsPageState.Idle || pageState == RuinsPageState.Completed) && AnySites();
             Rect bottomRect = rect.BottomPartPixels(canRemove ? 65 : 30);
             Listing_Standard bottomButtons = new Listing_Standard();
             bottomButtons.Begin(bottomRect);
@@ -430,6 +431,10 @@ namespace RealRuins {
             } else {
                 // do nothing for now, just wait for the user to adjust options.
             }
+        }
+
+        public static bool AnySites() {
+            return Find.World != null && Find.WorldObjects.AllWorldObjects.Any(obj => obj is RealRuinsPOIWorldObject);
         }
 
         private void RemoveSites() {

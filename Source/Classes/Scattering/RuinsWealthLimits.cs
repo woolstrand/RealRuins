@@ -31,7 +31,7 @@ namespace RealRuins {
                 case RuinsKind.Regular:
                     return RealRuins_ModSettings.ruinsWealthPerMap < RealRuins_ModSettings.ruinsWealthPerMapUnlimited ? RealRuins_ModSettings.ruinsWealthPerMap : NoLimit;
                 case RuinsKind.Caravan:
-                    return RealRuins_ModSettings.caravanRuinsCostCap < RealRuins_ModSettings.caravanRuinsCostCapUnlimited ? RealRuins_ModSettings.caravanRuinsCostCap : NoLimit;
+                    return RealRuins_ModSettings.caravanRuinsCostCap < RealRuins_ModSettings.caravanRuinsCostCapUnlimited ? Math.Max(RealRuins_ModSettings.caravanRuinsCostCapMin, RealRuins_ModSettings.caravanRuinsCostCap) : NoLimit;
                 case RuinsKind.AbandonedPOI:
                     return RealRuins_ModSettings.poiRuinsCostCap < RealRuins_ModSettings.poiRuinsCostCapUnlimited ? RealRuins_ModSettings.poiRuinsCostCap : NoLimit;
                 default:

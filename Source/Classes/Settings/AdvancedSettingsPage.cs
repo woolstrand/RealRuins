@@ -64,12 +64,16 @@ namespace RealRuins.Settings
                 wealthCapRect.LeftHalf().ContractedBy(0, 0),
                 "RealRuins.AbsoluteWealthCap".Translate() + ": " + wealthCapStr);
 
-            RealRuins_ModSettings.ruinsCostCap =
-                (float)System.Math.Exp(Widgets.HorizontalSlider(
-                    wealthCapRect.RightHalf().ContractedBy(0, 3),
-                    (float)System.Math.Log(RealRuins_ModSettings.ruinsCostCap),
-                    6.908f,
-                    (float)System.Math.Log(1.0e9)));
+            //the log/exp round trip isn't exact: write the value back only when the slider was moved
+            float wealthCapLog = (float)System.Math.Log(RealRuins_ModSettings.ruinsCostCap);
+            float newWealthCapLog = Widgets.HorizontalSlider(
+                wealthCapRect.RightHalf().ContractedBy(0, 3),
+                wealthCapLog,
+                6.908f,
+                (float)System.Math.Log(1.0e9));
+            if (newWealthCapLog != wealthCapLog) {
+                RealRuins_ModSettings.ruinsCostCap = (float)System.Math.Exp(newWealthCapLog);
+            }
 
             TooltipHandler.TipRegion(wealthCapRect, "RealRuins.AbsoluteWealthCapTT".Translate());
             listing.Gap(15);
@@ -167,7 +171,7 @@ namespace RealRuins.Settings
                 Mathf.Round(Widgets.HorizontalSlider(
                     caravanCapRect.RightHalf().ContractedBy(0, 3),
                     RealRuins_ModSettings.caravanRuinsCostCap,
-                    0.0f,
+                    RealRuins_ModSettings.caravanRuinsCostCapMin,
                     RealRuins_ModSettings.caravanRuinsCostCapUnlimited) / 1000.0f) * 1000.0f;
 
             TooltipHandler.TipRegion(caravanCapRect, "RealRuins.CaravanRuinsCostCapTT".Translate());

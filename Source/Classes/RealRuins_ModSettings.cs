@@ -39,6 +39,7 @@ namespace RealRuins
         public static bool enableCaravanFoundRuinsEvent = true; // enable/disable the caravan spotted small ruins event
         public static float caravanRuinsCostCap = 25000; //what the main ruin of the caravan event may be worth; caravanRuinsCostCapUnlimited and above means no limit
         public const float caravanRuinsCostCapUnlimited = 100000;
+        public const float caravanRuinsCostCapMin = 1000; //a lower cap leaves the main ruin empty while its raiders still come
         public static float poiRuinsCostCap = 15000; //what an abandoned POI may be worth; poiRuinsCostCapUnlimited and above means no limit
         public const float poiRuinsCostCapUnlimited = 100000;
         public static string spawnBlacklist = ""; // newline-separated list of defs to exclude from spawning

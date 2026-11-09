@@ -201,6 +201,7 @@
   <RealRuins.PlanetaryLoader.TransferBlueprints>Create outposts</RealRuins.PlanetaryLoader.TransferBlueprints>
   <RealRuins.PlanetaryLoader.RemoveSites>Remove all spawned locations</RealRuins.PlanetaryLoader.RemoveSites>
   <RealRuins.PlanetaryLoader.Close>Close</RealRuins.PlanetaryLoader.Close>
+  <RealRuins.PlanetaryLoader.OpenButton>Planetary ruins</RealRuins.PlanetaryLoader.OpenButton>
   <RealRuins.PlanetaryLoader.Searching>Searching for blueprints...</RealRuins.PlanetaryLoader.Searching>
   <RealRuins.PlanetaryLoader.Loading>Loading blueprints: </RealRuins.PlanetaryLoader.Loading>
   <RealRuins.PlanetaryLoader.Transferring>Transferring blueprints: </RealRuins.PlanetaryLoader.Transferring>

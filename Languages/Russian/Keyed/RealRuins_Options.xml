@@ -173,6 +173,7 @@
   <RealRuins.PlanetaryLoader.TransferBlueprints>Создать объекты на карте мира</RealRuins.PlanetaryLoader.TransferBlueprints>
   <RealRuins.PlanetaryLoader.RemoveSites>Удалить все созданные локации</RealRuins.PlanetaryLoader.RemoveSites>
   <RealRuins.PlanetaryLoader.Close>Закрыть</RealRuins.PlanetaryLoader.Close>
+  <RealRuins.PlanetaryLoader.OpenButton>Планетарные руины</RealRuins.PlanetaryLoader.OpenButton>
   <RealRuins.PlanetaryLoader.Searching>Поиск схем...</RealRuins.PlanetaryLoader.Searching>
   <RealRuins.PlanetaryLoader.Loading>Загрузка схем: </RealRuins.PlanetaryLoader.Loading>
   <RealRuins.PlanetaryLoader.Transferring>Создание локаций: </RealRuins.PlanetaryLoader.Transferring>
