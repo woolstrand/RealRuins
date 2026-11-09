@@ -251,3 +251,19 @@ blueprint id) - that file also states the spawn philosophy: spawn what can be sp
   vanilla "Used only X / Y points generating for <faction>" and Ratkin "tried to wear RK_*" from pawn-group generation.
 - 2026-11-01 (Windows, 1.7): planetary cache table in General/Network/Cache settings: 13 real seed folders listed with correct
   coverage/size/count; test folders (dashed seed, folder added from outside) cleared via Clear + confirmation, table refreshed, 0 errors.
+
+## Learned in the 2026-11-09 playtest
+
+- **Offline mode deletes every downloaded blueprint at startup** (`CheckCacheContents`): generic ruins are then skipped
+  ("low blueprints count"). Refill with online mode + Download more blueprints (500), several minutes.
+- **Staging has only ~9 blueprints**: don't fill the cache from staging. Use staging only for uploads (with
+  `debugKeepSnapshotsAfterUpload`, the uploaded file stays in `%TEMP%` - `gzip -dc` it to check the XML).
+- An upload needs a home area of ≥ 300 cells: Architect → Zone → Expand home area, then `driver.sh drag`.
+- **`T: Spawn Random Caravan` on an ocean tile fails** with "Incident target is null or not allowed" in a popup. Look at
+  the world view first and pick a land hex.
+- After loading a save, the first error pops the debug log and swallows the next clicks: a scripted save right after a
+  load silently doesn't happen. Screenshot after loads before scripting further.
+- Starting-site page: the bottom bar is Back / Select random site / Factions / Planetary ruins / Next (the RealRuins
+  button only with "load on start" on). The start-at-POI dialog: abandoned / take over / attack / cancel, then a confirm.
+- Old saves restored by the old build log "had a beard. Removed." and "Hediff_Injury has null part after loading" on
+  every first load: old-build pawn data, vanilla removes it, a re-saved game is clean.

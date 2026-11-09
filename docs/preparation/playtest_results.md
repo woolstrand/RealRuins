@@ -1,4 +1,4 @@
-# Playtest results (in progress, 2026-11-09; paused, fixes in `8709136`)
+# Playtest results (in progress, 2026-11-09; second run done, fixes in `8709136` and `4d3ad0b`)
 
 Build: `development` @ `a50b298` (DLL), Windows, RimWorld 1.7.5000. Mods: Harmony, Core, all DLCs, RealRuins.
 Old build: the baseline `b3124b5` DLL committed in `1.6/Assemblies`, deployed with a `v1.7 → 1.6` load folder. The Workshop copy wasn't used: it's an in-between build without `MapRuinsStore`.
@@ -31,7 +31,7 @@ Screenshots are in `%TEMP%\realruins-run\` (overwritten per run). Only the ones 
 | **S — Settings UI** | | |
 | S-01 | PASS | All tabs scroll to the bottom; the reference-wealth row appears with colony scaling on; the planetary table is in one column |
 | S-02 | PASS | Reset clears the blacklist fields at once |
-| S-03 | NOT RUN | |
+| S-03 | PASS | Export has 50 keys incl. the 6 tech level and 9 wealth settings. Changed the tech toggles, imported: "Settings imported successfully", toggles back to the exported values |
 | S-04 | PARTIAL | Slider clicks at the ends didn't move the caravan and POI caps (clicks on the track, not drags). → H-5 |
 | S-05 | NOT RUN | |
 | S-06 | → H-5 | |
@@ -65,13 +65,14 @@ Screenshots are in `%TEMP%\realruins-run\` (overwritten per run). Only the ones 
 | W-07 | RECORDED | Caravan cap 0: the main ruin is completely empty (0 things, not even walls), yet a 693-point raider party spawns from the random bonus. Fixed: minimum 1,000 → RT-04 |
 | W-08 | PASS | Cap 50k: inspect string "low (49851)"; map wealth 25k counted; site cap 49,851 |
 | W-09 | PASS | Abandoned 100%: three POIs at 14,825 / 9,377 / 1,732 (blueprints 49k / 24.6k / 17k), all ≤ 15k |
-| W-10 | PASS | (a) starting map limit 2,500 (×0.5). (b) After spawning gold: limit 5,594 (×1.12 at about 112k colony wealth). The first sample still used the old wealth: vanilla recounts wealth only every 5,000 ticks |
+| W-10 | PASS (×3 not reached) | (a) starting map limit 2,500 (×0.5). (b) After spawning gold: limit 5,594 (×1.12 at about 112k colony wealth). The first sample still used the old wealth: vanilla recounts wealth only every 5,000 ticks |
 | W-11, W-12 | → H-6 | |
 | **D — Threats** | | |
 | D-01 | PASS | Hostile chance 1.0: no force generation on the starting map |
 | D-01b | PASS | Camp map in the same game: animal generation on all 10 chunks |
 | D-02 | NOT VERIFIED | Ran about 2 days at fast speed; no `Releasing … animal inhabitants` line seen in the window watched |
-| D-03, D-04 | NOT RUN | |
+| D-03 | NOT RUN | |
+| D-04 | PASS | Force multiplier 0: caravan ruins "0 points of raiders"; abandoned base generated with no `ForceGen` lines, no triggers; the ruins are still there |
 | D-07, D-08 | → H-3, H-2 | |
 | D-05 | PASS* | Points = value/40 plus a 50% chance of up to about 1,500 random points; the random part dominates cheap ruins (2.5k ruin → 1,218 points, 7.5k ruin → 294) |
 | D-06 | PASS | Trigger expected at about tick 3453, fired at 3210 |
@@ -80,8 +81,8 @@ Screenshots are in `%TEMP%\realruins-run\` (overwritten per run). Only the ones 
 | R-02 | PASS | Proximity off: dist=0 logged, flat count 7–12 |
 | R-03 | NOT RUN | |
 | R-04 | → H-4 | Preserve on: map generated, but vanilla ruins don't log and weren't checked visually |
-| R-05 | NOT RUN | |
-| R-06 | PASS (off) | Roofs off: no roof inside ruin rooms (overlay check). "On" part not checked |
+| R-05 | PASS | Start without ruins: the starting map had no `Spawning N ruin chunks`; the next map (caravan event) had regular ruins |
+| R-06 | PASS (off) / → H-4 (on) | Roofs off: no roof inside ruin rooms. On: 10 sampled maps logged no `Removed N roof cells` line (nothing to remove, or nothing floating); whether a floating roof collapses needs play → H-4 |
 | R-07 | PASS | Walls & doors only: generic ruins have only walls and doors; the abandoned base keeps its full contents (multi-analyzer, fabrication bench, autocannon) |
 | R-08 | PASS | Density 0.1: every map has ≥ 1 chunk (250×250 maps, not a small map) |
 | **E — Events** | | |
@@ -113,11 +114,16 @@ Screenshots are in `%TEMP%\realruins-run\` (overwritten per run). Only the ones 
 | X-06 | → H-4 | |
 | X-05 | PASS (new build) | Fresh pristine ruins save/reload: 0 errors. Old saves: see finding 1 |
 | **G — Debug** | | |
-| G-01 | PARTIAL | Used: Generate pristine ruins quest, Sample ruins wealth, Sample POI types, Simulate random quest rolls — all worked, 0 errors. Config check after the samplers not done |
+| G-01 | PASS | All samplers worked, 0 errors. After a 10-map sample and opening/closing the settings, the config still has `logLevel` 0 and `debugLogRuinsWealth` True |
 | G-02 | NOTE | After a reload, DEV: Reset says "not entered with Explore: reverted as far as known" |
 | G-03 | PASS | Staging on: planetary list goes to `staging.woolstrand.art`, pending upload retried there |
 | **RT — Retests** | | |
-| RT-01 … RT-06 | NOT RUN | Fixes in `8709136`, not yet run in the game |
+| RT-01 | PASS | (a) Back out to the menu with an attack POI, quicktest: `Discarding starting POI of another game or tile`, normal map, no `null relation` errors (one unrelated popup, see popups #1). (b) Same, then New colony on the same tile: `Game start context is empty`, normal start. (c) Attack start still works (POI map, `Found starting poi`, citizen defenders + triggers for the POI faction, 0 errors); takeover start works (0 errors); L-06 `Discarding starting POI chosen for another tile`. L-07 load part: S2 loaded after backing out with a stored POI, but no enemy base was attacked afterwards |
+| RT-02 | PASS | S2, S3, S5 load with **0** duplicate-ID errors (first run: 1 / 146 / 218). Remaining on first load: S3 5× beard, S5 12× beard + 24× null part (old-build pawn data, vanilla removes it: popups #2, #3). Re-saved S2/S3/S5 reload with 0 errors; 1/145/253 log entries and 0/18/39 hediffs got negative ids. New build: abandoned base with 65 baked log entries, all with own ids, save/reload 0 errors |
+| RT-03 | PASS (+ new bug, fixed) | Offline: save with home < 300 cells made nothing; painted home, saved at once → snapshot made (slot not used up). But the file was **0 bytes**: new finding 8, fixed in `4d3ad0b`, re-checked on staging: valid XML (132 cells, 19 items), upload successful |
+| RT-04 | PASS | Config 0 → caravan event used `needed 1000` and the cap; label now shows 1,000 (fix in `4d3ad0b`, before it showed 0). With cap 1,000 the main ruin was tiny (worth 2) and got 0.06 raider points — no longer "empty with raiders". Slider drag → H-5 |
+| RT-05 | PASS | `ruinsCostCap` 50000 in the config: tab drawn, settings closed → still `50000`. Drag → H-5 |
+| RT-06 | PASS | "Planetary ruins" between Factions and Next; opens the loader with "Remove all spawned locations". Next → Back: loader doesn't reopen. "Allow on start" off: vanilla 4 buttons, no loader. Map-size change with cleanup not re-checked (changing it would have dropped the RT-01 context; the code path is unchanged). No `layout not recognized` warning |
 | **H — Hand tests** | | |
 | H-1 … H-8 | FOR THE USER | See the plan |
 
@@ -131,15 +137,21 @@ Screenshots are in `%TEMP%\realruins-run\` (overwritten per run). Only the ones 
 6. **Fixed in `8709136` (RT-06).** Minor UX: the planetary loader window opens again every time the site-selection page opens, even with POIs already placed.
 7. **Fixed in `8709136` (RT-05).** Minor: the `ruinsCostCap` log slider writes 50000.0078 for 50000 just by being drawn (pre-existing).
 
+8. **New, fixed in `4d3ad0b`: snapshots were truncated XML.** `SnapshotGenerator` read its `StringBuilder` while the `XmlWriter` still held buffered output. On 1.7 the output came out **empty or cut off** at whatever had been flushed so far (only `EncodePawn` flushes). Seen in this run: `local-….bp` 0 bytes; the first run's U-01/U-07 files also end mid-element. Every upload from 1.7 so far (incl. the one to production in U-01) is broken data. Pre-existing logic, but the baseline on 1.6/Mono may have behaved the same: worth a server-side check of recent uploads.
+9. **Offline mode deletes all downloaded blueprints at startup** (`SnapshotStoreManager.CheckCacheContents`, same in the baseline). With offline mode on and no local snapshots, generic ruins are skipped ("low blueprints count"). Intended by design ("offline" = only your own bases) but surprising: switching offline on wipes a 700-blueprint cache. Decision needed; not changed.
+10. Caravan ruins at the 1,000 cap: the main ruin is nearly empty (a 13k blueprint cut to ~2). Raiders scale with value, so ~0 raiders. Fine, but the minimum could be higher if a near-empty ruin should not happen.
+
+Error-log popups of the run are listed in `playtest_popups.md` (one still needs a check without the mod).
+
 ## Tooling changes during the run
 
-- `driver.sh drag X1 Y1 X2 Y2` (Windows): left-drag, used to paint a home area. Added to `win-input.cs`, `platform/win.sh`, `driver.sh`, documented in `SKILL.md`.
+- `driver.sh drag X1 Y1 X2 Y2` (Windows): left-drag, used to paint a home area. Added to `win-input.cs`, `platform/win.sh`, `driver.sh`, documented in `SKILL.md` (commit `d5e6c8a`).
 
 ## Not run yet
 
-By the driver: RT-01–RT-06, M-09, S-03, S-05, C-02–C-05, U-06, U-08, W-10 (×3 part), D-02 (release), D-03, D-04, R-03, R-05, R-06 (on), E-03 (expiry), E-08, L-02, X-03, G-01 (config check), G-02.
+By the driver: RT-07, RT-08 (popup #1 without the mod), M-09, S-05, C-02–C-05, U-06, U-08, W-10 (×3 part), D-02 (release), D-03, R-03, E-03 (expiry), E-08, L-02, L-07 (attack after the load), RT-06 (map-size change), X-03, G-02.
 By the user: H-1–H-8.
 
-## Current environment state (paused)
+## Current environment state
 
-The game was closed after the fixes were built and deployed (`Mods/RealRuins` has the `8709136` build). The test config is still in place: `offlineMode` on, wealth log on, log level all. `ModsConfig.xml` is the minimal list, `Prefs.xml` has `logVerbose` off and `runInBackground` on. The originals of all three are backed up in the session scratchpad (`backup/Config`) and need restoring when testing ends. The blueprint cache was not changed by C-04 (paused before it).
+Game closed. `Config/ModsConfig.xml`, `Prefs.xml` and `Mod_RealRuins_RealRuins_Mod.xml` restored from the backup. `Mods/RealRuins` has the `4d3ad0b` build. The blueprint cache was refilled from production (~650 blueprints; offline mode had wiped it, finding 9). Test saves `PT-rt02-*`, `PT-rt03`, `PT-snap` and the `PT-old-*` fixtures are in the Saves folder. One test snapshot went to **staging** (RT-03).
