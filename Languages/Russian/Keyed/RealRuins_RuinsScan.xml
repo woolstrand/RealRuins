@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<LanguageData>
+  <RealRuins_RuinsScan_Enabled>Активно: {0}</RealRuins_RuinsScan_Enabled>
+  <RealRuins_RuinsScan_Locating>Уточняем местоположение найденных руин</RealRuins_RuinsScan_Locating>
+  <RealRuins_RuinsScan_NotEnoughBlueprints>Ещё не загружено достаточно чертежей руин</RealRuins_RuinsScan_NotEnoughBlueprints>
+  <RealRuins_RuinsScan_SkillTooLow>Требуется «Умственный труд» не ниже {0}</RealRuins_RuinsScan_SkillTooLow>
+  <RealRuins_RuinsScan_IncapableOfIntellectual>{PAWN_nameDef} не {PAWN_gender ? способен : способна} к умственному труду</RealRuins_RuinsScan_IncapableOfIntellectual>
+  <RealRuins_RuinsScan_SignalLost>След руин потерялся раньше, чем удалось определить их местоположение.</RealRuins_RuinsScan_SignalLost>
+  <RealRuins_RuinsScan_UnknownScanner>ваш исследователь</RealRuins_RuinsScan_UnknownScanner>
+  <RealRuins_RuinsScan_UnknownBuilding>рабочее место</RealRuins_RuinsScan_UnknownBuilding>
+</LanguageData>

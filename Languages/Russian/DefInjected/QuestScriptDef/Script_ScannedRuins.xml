@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<LanguageData>
+  <!-- Found in old records at a research bench -->
+  <RealRuins_ScannedRuins_Records.questNameRules.rulesStrings>
+    <li>questName->Нетронутые руины</li>
+    <li>questName->Запечатанный комплекс</li>
+    <li>questName->Забытый аванпост</li>
+    <li>questName->Запечатанное хранилище</li>
+    <li>questName->Эхо древнего комплекса</li>
+    <li>questName->След забытого аванпоста</li>
+    <li>questName->Тайна запечатанного хранилища</li>
+  </RealRuins_ScannedRuins_Records.questNameRules.rulesStrings>
+
+  <RealRuins_ScannedRuins_Records.questDescriptionRules.rulesStrings>
+    <li>questDescription->Несколько дней ушло на то, чтобы разобрать [sources] (рабочее место: «[scanBuilding]»), и наконец исследователю по имени [scannerName] удалось [clue]. Если сверить всё со старыми картами, следы ведут в одно место: к группе древних строений. Комплекс очень старый и давно заброшен, но двери до сих пор запечатаны, а всё имущество и оборудование осталось внутри.\n\nК сожалению, эти источники были не только у вас. [leak] Все окрестные поселения уже готовятся сражаться за то, что скрыто в этих руинах. Сокровища могут оказаться огромными, так что готовьтесь к настоящей бойне, а не к привычным тщательно сбалансированным стычкам. И не теряйте времени: мародёры уже в пути, и руины долго не продержатся.</li>
+    <li>sources->ящик подмоченных книг, написанных ещё до катастрофы</li>
+    <li>sources->старые геодезические отчёты, купленные у торговца за горсть серебра</li>
+    <li>sources->дневники давно погибшей экспедиции</li>
+    <li>sources->дюжину народных преданий, которые противоречат друг другу во всём, кроме одной детали</li>
+    <li>sources->учётные книги торговой компании, которой давно нет</li>
+    <li>clue->найти один и тот же безымянный склад в трёх не связанных между собой источниках</li>
+    <li>clue->заметить, что старый путь снабжения обрывается в месте, которое ни одна карта не удосужилась назвать</li>
+    <li>clue->узнать в наброске на полях очертания соседней долины</li>
+    <li>clue->расшифровать записи интенданта о запасах, которые так никто и не забрал</li>
+    <li>leak->В других поселениях хранятся копии тех же книг, и кто-то читал их одновременно с вами.</li>
+    <li>leak->Торговец, продавший вам записи, продал такую же пачку каждому поселению в округе.</li>
+    <li>leak->Расспрашивать проходящие караваны о старых ориентирах было ошибкой: они сложили два и два быстрее вас.</li>
+    <li>leak->Разведчиков, которых вы отправили проверить место, заметили и проследили за ними.</li>
+  </RealRuins_ScannedRuins_Records.questDescriptionRules.rulesStrings>
+
+  <RealRuins_ScannedRuins_Records.LetterLabelQuestExpired.slateRef>Квест истёк: [resolvedQuestName]</RealRuins_ScannedRuins_Records.LetterLabelQuestExpired.slateRef>
+  <RealRuins_ScannedRuins_Records.LetterTextQuestExpired.slateRef>Найденные вами руины разграбили подчистую. Квест [resolvedQuestName] истёк.</RealRuins_ScannedRuins_Records.LetterTextQuestExpired.slateRef>
+
+  <!-- Found by radio location at a comms console or scanner -->
+  <RealRuins_ScannedRuins_Radio.questNameRules.rulesStrings>
+    <li>questName->Нетронутые руины</li>
+    <li>questName->Запечатанный комплекс</li>
+    <li>questName->Забытый аванпост</li>
+    <li>questName->Запечатанное хранилище</li>
+    <li>questName->Эхо древнего комплекса</li>
+    <li>questName->След забытого аванпоста</li>
+    <li>questName->Сигнал запечатанного хранилища</li>
+  </RealRuins_ScannedRuins_Radio.questNameRules.rulesStrings>
+
+  <RealRuins_ScannedRuins_Radio.questDescriptionRules.rulesStrings>
+    <li>questDescription->После нескольких дней [listening] (рабочее место: «[scanBuilding]») исследователю по имени [scannerName] наконец удалось выделить [signal]. Триангуляция указывает на группу древних строений: комплекс очень старый и давно заброшен, но его двери до сих пор запечатаны, а всё имущество и оборудование осталось внутри.\n\nК сожалению, слушали не только вы. [leak] Все окрестные поселения уже готовятся сражаться за то, что скрыто в этих руинах. Сокровища могут оказаться огромными, так что готовьтесь к настоящей бойне, а не к привычным тщательно сбалансированным стычкам. И не теряйте времени: мародёры уже в пути, и руины долго не продержатся.</li>
+    <li>listening->прослушивания старых частот</li>
+    <li>listening->запросов к давно замолчавшим транспондерам</li>
+    <li>listening->взлома заброшенного спутникового ретранслятора</li>
+    <li>listening->триангуляции случайных передач</li>
+    <li>signal->слабый автоматический маяк, который веками повторяет один и тот же сигнал бедствия</li>
+    <li>signal->скопление экранированных энергетических сигнатур там, где не должно быть ничего</li>
+    <li>signal->спящую охранную сеть, которая тихо отвечает на каждый ваш запрос</li>
+    <li>signal->зашифрованный служебный канал, который наконец поддался с сотой попытки</li>
+    <li>leak->Ваши запросы разбудили собственный маяк комплекса, и теперь он передаёт своё местоположение на всех частотах.</li>
+    <li>leak->Ваши сигналы триангуляции были такими громкими, что любая станция связи в округе смогла отследить их до одной точки.</li>
+    <li>leak->Проходивший мимо торговец перехватил ваши переговоры и теперь продаёт координаты всем желающим.</li>
+    <li>leak->Как только вы сузили район поиска, старая охранная сеть начала отвечать всем, а не только вам.</li>
+  </RealRuins_ScannedRuins_Radio.questDescriptionRules.rulesStrings>
+
+  <RealRuins_ScannedRuins_Radio.LetterLabelQuestExpired.slateRef>Квест истёк: [resolvedQuestName]</RealRuins_ScannedRuins_Radio.LetterLabelQuestExpired.slateRef>
+  <RealRuins_ScannedRuins_Radio.LetterTextQuestExpired.slateRef>Найденные вами руины разграбили подчистую. Квест [resolvedQuestName] истёк.</RealRuins_ScannedRuins_Radio.LetterTextQuestExpired.slateRef>
+</LanguageData>

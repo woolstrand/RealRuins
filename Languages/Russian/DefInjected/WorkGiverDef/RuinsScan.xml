@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<LanguageData>
+  <RealRuins_SearchRecordsForRuins.label>искать руины в записях</RealRuins_SearchRecordsForRuins.label>
+  <RealRuins_SearchRecordsForRuins.verb>искать руины в записях за</RealRuins_SearchRecordsForRuins.verb>
+  <RealRuins_SearchRecordsForRuins.gerund>поиск руин в записях за</RealRuins_SearchRecordsForRuins.gerund>
+  <RealRuins_RadioLocateRuins.label>радиопоиск руин</RealRuins_RadioLocateRuins.label>
+  <RealRuins_RadioLocateRuins.verb>вести радиопоиск руин за</RealRuins_RadioLocateRuins.verb>
+  <RealRuins_RadioLocateRuins.gerund>радиопоиск руин за</RealRuins_RadioLocateRuins.gerund>
+</LanguageData>

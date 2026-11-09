@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<LanguageData>
+  <RealRuins_RuinsScan_Records.label>искать руины в записях</RealRuins_RuinsScan_Records.label>
+  <RealRuins_RuinsScan_Records.description>Исследователи будут изучать старые книги, карты, дневники и торговые книги в поисках следов запечатанных древних руин. Требуется «Умственный труд» не ниже {0}.\n\nНевозможно сказать, сколько это займёт: опытный исследователь в среднем находит что-нибудь примерно за {1} дн. работы, новичок — примерно за {2}. Те же записи есть и у других, поэтому как только вы найдёте руины, о них узнают и остальные.</RealRuins_RuinsScan_Records.description>
+  <RealRuins_RuinsScan_Records.foundMessage>{PAWN_nameDef} {PAWN_gender ? нашёл : нашла} в старых записях («{BUILDING}») упоминания о запечатанных руинах. Выясняем, где они...</RealRuins_RuinsScan_Records.foundMessage>
+
+  <RealRuins_RuinsScan_Radio.label>радиопоиск руин</RealRuins_RuinsScan_Radio.label>
+  <RealRuins_RuinsScan_Radio.description>Исследователи будут прослушивать старые частоты, посылать запросы спящим транспондерам и взламывать заброшенные ретрансляторы, чтобы найти запечатанные древние руины. Требуется «Умственный труд» не ниже {0}.\n\nНевозможно сказать, сколько это займёт: опытный оператор в среднем находит что-нибудь примерно за {1} дн. поиска, новичок — примерно за {2}. Активный поиск никогда не бывает тихим, поэтому как только вы найдёте руины, о них узнают и остальные.</RealRuins_RuinsScan_Radio.description>
+  <RealRuins_RuinsScan_Radio.foundMessage>{PAWN_nameDef} {PAWN_gender ? поймал : поймала} сигнал («{BUILDING}»). Определяем местоположение...</RealRuins_RuinsScan_Radio.foundMessage>
+</LanguageData>
