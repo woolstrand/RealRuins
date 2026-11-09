@@ -58,6 +58,7 @@ plat_focus()  { plat_input focus "$1"; }
 # Captures the game window's client area only (multi-monitor safe); coords are window-relative.
 plat_ss()     { plat_input ss "$(plat_pid)" "$SS_MAXW" "$(cygpath -w "$1")" >/dev/null; }
 plat_mouse()  { plat_input "$1" "$(plat_pid)" "$SS_MAXW" "$2" "$3"; }
+plat_drag()   { plat_input drag "$(plat_pid)" "$SS_MAXW" "$1" "$2" "$3" "$4"; }
 plat_scroll() { plat_input scroll "$1"; }
 plat_type()   { plat_input type "$1"; }
 
