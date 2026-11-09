@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Text;
 
 namespace RealRuins.Settings
@@ -12,11 +13,22 @@ namespace RealRuins.Settings
         public static string Export()
         {
             var sb = new StringBuilder();
+            foreach (KeyValuePair<string, string> pair in CurrentValues())
+            {
+                if (sb.Length > 0) sb.Append('|');
+                sb.Append(pair.Key).Append('=').Append(pair.Value);
+            }
+            return Convert.ToBase64String(Encoding.UTF8.GetBytes(sb.ToString()));
+        }
+
+        /// <summary>Every exported setting as key and serialized value, in the export string format.</summary>
+        public static List<KeyValuePair<string, string>> CurrentValues()
+        {
+            var values = new List<KeyValuePair<string, string>>();
 
             void Add(string key, string value)
             {
-                if (sb.Length > 0) sb.Append('|');
-                sb.Append(key).Append('=').Append(value);
+                values.Add(new KeyValuePair<string, string>(key, value));
             }
 
             // Flat settings
@@ -83,7 +95,7 @@ namespace RealRuins.Settings
                 Add("po.disableSpawnFriendlyLocations", po.disableSpawnFriendlyLocations.ToString());
             }
 
-            return Convert.ToBase64String(Encoding.UTF8.GetBytes(sb.ToString()));
+            return values;
         }
 
         public static bool TryImport(string encoded)
@@ -101,67 +113,73 @@ namespace RealRuins.Settings
                     string key = pair.Substring(0, sep).Trim();
                     string val = pair.Substring(sep + 1).Trim();
 
-                    switch (key)
-                    {
-                        case "offlineMode":                     TryParseBool(val, ref RealRuins_ModSettings.offlineMode); break;
-                        case "allowDownloads":                  TryParseBool(val, ref RealRuins_ModSettings.allowDownloads); break;
-                        case "allowUploads":                    TryParseBool(val, ref RealRuins_ModSettings.allowUploads); break;
-                        case "caravanReformType":               TryParseInt(val, ref RealRuins_ModSettings.caravanReformType); break;
-                        case "startWithoutRuins":               TryParseBool(val, ref RealRuins_ModSettings.startWithoutRuins); break;
-                        case "preserveStandardRuins":           TryParseBool(val, ref RealRuins_ModSettings.preserveStandardRuins); break;
-                        case "forceMultiplier":                 TryParseFloat(val, ref RealRuins_ModSettings.forceMultiplier); break;
-                        case "ruinsCostCap":                    TryParseFloat(val, ref RealRuins_ModSettings.ruinsCostCap); break;
-                        case "ruinsWealthPerMap":               TryParseFloat(val, ref RealRuins_ModSettings.ruinsWealthPerMap); break;
-                        case "ruinsWealthScaleWithProximity":   TryParseBool(val, ref RealRuins_ModSettings.ruinsWealthScaleWithProximity); break;
-                        case "ruinsWealthIgnoreStructure":      TryParseBool(val, ref RealRuins_ModSettings.ruinsWealthIgnoreStructure); break;
-                        case "ruinsWealthCountDamage":          TryParseBool(val, ref RealRuins_ModSettings.ruinsWealthCountDamage); break;
-                        case "diskCacheLimit":                  TryParseFloat(val, ref RealRuins_ModSettings.diskCacheLimit); break;
-                        case "useRuinsForcesGenerationV2":      TryParseBool(val, ref RealRuins_ModSettings.useRuinsForcesGenerationV2); break;
-                        case "logLevel":                        TryParseInt(val, ref RealRuins_ModSettings.logLevel); break;
-                        case "disableFriendlyRaids":            TryParseBool(val, ref RealRuins_ModSettings.disableFriendlyRaids); break;
-                        case "spawnRoofs":                      TryParseBool(val, ref RealRuins_ModSettings.spawnRoofs); break;
-                        case "enableAbandonedRuinsFoundEvent":  TryParseBool(val, ref RealRuins_ModSettings.enableAbandonedRuinsFoundEvent); break;
-                        case "enableCaravanFoundRuinsEvent":    TryParseBool(val, ref RealRuins_ModSettings.enableCaravanFoundRuinsEvent); break;
-                        case "caravanRuinsCostCap":             TryParseFloat(val, ref RealRuins_ModSettings.caravanRuinsCostCap); break;
-                        case "ruinsScaleWithColonyWealth":      TryParseBool(val, ref RealRuins_ModSettings.ruinsScaleWithColonyWealth); break;
-                        case "ruinsReferenceColonyWealth":      TryParseFloat(val, ref RealRuins_ModSettings.ruinsReferenceColonyWealth); break;
-                        case "poiRuinsCostCap":                 TryParseFloat(val, ref RealRuins_ModSettings.poiRuinsCostCap); break;
-                        case "spawnBlacklist":                  RealRuins_ModSettings.spawnBlacklist = Uri.UnescapeDataString(val); break;
-                        case "materialBlacklist":               RealRuins_ModSettings.materialBlacklist = Uri.UnescapeDataString(val); break;
-                        case "fallbackMaterial":                RealRuins_ModSettings.fallbackMaterial = Uri.UnescapeDataString(val); break;
-                        case "techLimitEnabled":                TryParseBool(val, ref RealRuins_ModSettings.techLimitEnabled); break;
-                        case "techLimitMaxLevel":               TryParseTechLevel(val, ref RealRuins_ModSettings.techLimitMaxLevel); break;
-                        case "techLimitStrict":                 TryParseBool(val, ref RealRuins_ModSettings.techLimitStrict); break;
-                        case "techLimitRuins":                  TryParseBool(val, ref RealRuins_ModSettings.techLimitRuins); break;
-                        case "techLimitPOIs":                   TryParseBool(val, ref RealRuins_ModSettings.techLimitPOIs); break;
-                        case "techLimitEvents":                 TryParseBool(val, ref RealRuins_ModSettings.techLimitEvents); break;
-
-                        case "so.densityMultiplier":        TryParseFloat(val, ref RealRuins_ModSettings.defaultScatterOptions.densityMultiplier); break;
-                        case "so.minRadius":                TryParseInt(val, ref RealRuins_ModSettings.defaultScatterOptions.minRadius); break;
-                        case "so.maxRadius":                TryParseInt(val, ref RealRuins_ModSettings.defaultScatterOptions.maxRadius); break;
-                        case "so.deteriorationMultiplier":  TryParseFloat(val, ref RealRuins_ModSettings.defaultScatterOptions.deteriorationMultiplier); break;
-                        case "so.scavengingMultiplier":     TryParseFloat(val, ref RealRuins_ModSettings.defaultScatterOptions.scavengingMultiplier); break;
-                        case "so.itemCostLimit":            TryParseInt(val, ref RealRuins_ModSettings.defaultScatterOptions.itemCostLimit); break;
-                        case "so.disableSpawnItems":        TryParseBool(val, ref RealRuins_ModSettings.defaultScatterOptions.disableSpawnItems); break;
-                        case "so.wallsDoorsOnly":           TryParseBool(val, ref RealRuins_ModSettings.defaultScatterOptions.wallsDoorsOnly); break;
-                        case "so.enableProximity":          TryParseBool(val, ref RealRuins_ModSettings.defaultScatterOptions.enableProximity); break;
-                        case "so.decorationChance":         TryParseFloat(val, ref RealRuins_ModSettings.defaultScatterOptions.decorationChance); break;
-                        case "so.trapChance":               TryParseFloat(val, ref RealRuins_ModSettings.defaultScatterOptions.trapChance); break;
-                        case "so.hostileChance":            TryParseFloat(val, ref RealRuins_ModSettings.defaultScatterOptions.hostileChance); break;
-
-                        case "po.allowOnStart":             TryParseBool(val, ref RealRuins_ModSettings.planetaryRuinsOptions.allowOnStart); break;
-                        case "po.downloadLimit":            TryParseInt(val, ref RealRuins_ModSettings.planetaryRuinsOptions.downloadLimit); break;
-                        case "po.transferLimit":            TryParseInt(val, ref RealRuins_ModSettings.planetaryRuinsOptions.transferLimit); break;
-                        case "po.excludePlainRuins":        TryParseBool(val, ref RealRuins_ModSettings.planetaryRuinsOptions.excludePlainRuins); break;
-                        case "po.abandonedLocations":       TryParseFloat(val, ref RealRuins_ModSettings.planetaryRuinsOptions.abandonedLocations); break;
-                        case "po.disableSpawnFriendlyLocations": TryParseBool(val, ref RealRuins_ModSettings.planetaryRuinsOptions.disableSpawnFriendlyLocations); break;
-                    }
+                    ApplyValue(key, val);
                 }
                 return true;
             }
             catch
             {
                 return false;
+            }
+        }
+
+        /// <summary>Sets one setting from its serialized value. Unknown keys and unparsable values are ignored.</summary>
+        public static void ApplyValue(string key, string val)
+        {
+            switch (key)
+            {
+                case "offlineMode":                     TryParseBool(val, ref RealRuins_ModSettings.offlineMode); break;
+                case "allowDownloads":                  TryParseBool(val, ref RealRuins_ModSettings.allowDownloads); break;
+                case "allowUploads":                    TryParseBool(val, ref RealRuins_ModSettings.allowUploads); break;
+                case "caravanReformType":               TryParseInt(val, ref RealRuins_ModSettings.caravanReformType); break;
+                case "startWithoutRuins":               TryParseBool(val, ref RealRuins_ModSettings.startWithoutRuins); break;
+                case "preserveStandardRuins":           TryParseBool(val, ref RealRuins_ModSettings.preserveStandardRuins); break;
+                case "forceMultiplier":                 TryParseFloat(val, ref RealRuins_ModSettings.forceMultiplier); break;
+                case "ruinsCostCap":                    TryParseFloat(val, ref RealRuins_ModSettings.ruinsCostCap); break;
+                case "ruinsWealthPerMap":               TryParseFloat(val, ref RealRuins_ModSettings.ruinsWealthPerMap); break;
+                case "ruinsWealthScaleWithProximity":   TryParseBool(val, ref RealRuins_ModSettings.ruinsWealthScaleWithProximity); break;
+                case "ruinsWealthIgnoreStructure":      TryParseBool(val, ref RealRuins_ModSettings.ruinsWealthIgnoreStructure); break;
+                case "ruinsWealthCountDamage":          TryParseBool(val, ref RealRuins_ModSettings.ruinsWealthCountDamage); break;
+                case "diskCacheLimit":                  TryParseFloat(val, ref RealRuins_ModSettings.diskCacheLimit); break;
+                case "useRuinsForcesGenerationV2":      TryParseBool(val, ref RealRuins_ModSettings.useRuinsForcesGenerationV2); break;
+                case "logLevel":                        TryParseInt(val, ref RealRuins_ModSettings.logLevel); break;
+                case "disableFriendlyRaids":            TryParseBool(val, ref RealRuins_ModSettings.disableFriendlyRaids); break;
+                case "spawnRoofs":                      TryParseBool(val, ref RealRuins_ModSettings.spawnRoofs); break;
+                case "enableAbandonedRuinsFoundEvent":  TryParseBool(val, ref RealRuins_ModSettings.enableAbandonedRuinsFoundEvent); break;
+                case "enableCaravanFoundRuinsEvent":    TryParseBool(val, ref RealRuins_ModSettings.enableCaravanFoundRuinsEvent); break;
+                case "caravanRuinsCostCap":             TryParseFloat(val, ref RealRuins_ModSettings.caravanRuinsCostCap); break;
+                case "ruinsScaleWithColonyWealth":      TryParseBool(val, ref RealRuins_ModSettings.ruinsScaleWithColonyWealth); break;
+                case "ruinsReferenceColonyWealth":      TryParseFloat(val, ref RealRuins_ModSettings.ruinsReferenceColonyWealth); break;
+                case "poiRuinsCostCap":                 TryParseFloat(val, ref RealRuins_ModSettings.poiRuinsCostCap); break;
+                case "spawnBlacklist":                  RealRuins_ModSettings.spawnBlacklist = Uri.UnescapeDataString(val); break;
+                case "materialBlacklist":               RealRuins_ModSettings.materialBlacklist = Uri.UnescapeDataString(val); break;
+                case "fallbackMaterial":                RealRuins_ModSettings.fallbackMaterial = Uri.UnescapeDataString(val); break;
+                case "techLimitEnabled":                TryParseBool(val, ref RealRuins_ModSettings.techLimitEnabled); break;
+                case "techLimitMaxLevel":               TryParseTechLevel(val, ref RealRuins_ModSettings.techLimitMaxLevel); break;
+                case "techLimitStrict":                 TryParseBool(val, ref RealRuins_ModSettings.techLimitStrict); break;
+                case "techLimitRuins":                  TryParseBool(val, ref RealRuins_ModSettings.techLimitRuins); break;
+                case "techLimitPOIs":                   TryParseBool(val, ref RealRuins_ModSettings.techLimitPOIs); break;
+                case "techLimitEvents":                 TryParseBool(val, ref RealRuins_ModSettings.techLimitEvents); break;
+    
+                case "so.densityMultiplier":        TryParseFloat(val, ref RealRuins_ModSettings.defaultScatterOptions.densityMultiplier); break;
+                case "so.minRadius":                TryParseInt(val, ref RealRuins_ModSettings.defaultScatterOptions.minRadius); break;
+                case "so.maxRadius":                TryParseInt(val, ref RealRuins_ModSettings.defaultScatterOptions.maxRadius); break;
+                case "so.deteriorationMultiplier":  TryParseFloat(val, ref RealRuins_ModSettings.defaultScatterOptions.deteriorationMultiplier); break;
+                case "so.scavengingMultiplier":     TryParseFloat(val, ref RealRuins_ModSettings.defaultScatterOptions.scavengingMultiplier); break;
+                case "so.itemCostLimit":            TryParseInt(val, ref RealRuins_ModSettings.defaultScatterOptions.itemCostLimit); break;
+                case "so.disableSpawnItems":        TryParseBool(val, ref RealRuins_ModSettings.defaultScatterOptions.disableSpawnItems); break;
+                case "so.wallsDoorsOnly":           TryParseBool(val, ref RealRuins_ModSettings.defaultScatterOptions.wallsDoorsOnly); break;
+                case "so.enableProximity":          TryParseBool(val, ref RealRuins_ModSettings.defaultScatterOptions.enableProximity); break;
+                case "so.decorationChance":         TryParseFloat(val, ref RealRuins_ModSettings.defaultScatterOptions.decorationChance); break;
+                case "so.trapChance":               TryParseFloat(val, ref RealRuins_ModSettings.defaultScatterOptions.trapChance); break;
+                case "so.hostileChance":            TryParseFloat(val, ref RealRuins_ModSettings.defaultScatterOptions.hostileChance); break;
+    
+                case "po.allowOnStart":             TryParseBool(val, ref RealRuins_ModSettings.planetaryRuinsOptions.allowOnStart); break;
+                case "po.downloadLimit":            TryParseInt(val, ref RealRuins_ModSettings.planetaryRuinsOptions.downloadLimit); break;
+                case "po.transferLimit":            TryParseInt(val, ref RealRuins_ModSettings.planetaryRuinsOptions.transferLimit); break;
+                case "po.excludePlainRuins":        TryParseBool(val, ref RealRuins_ModSettings.planetaryRuinsOptions.excludePlainRuins); break;
+                case "po.abandonedLocations":       TryParseFloat(val, ref RealRuins_ModSettings.planetaryRuinsOptions.abandonedLocations); break;
+                case "po.disableSpawnFriendlyLocations": TryParseBool(val, ref RealRuins_ModSettings.planetaryRuinsOptions.disableSpawnFriendlyLocations); break;
             }
         }
 

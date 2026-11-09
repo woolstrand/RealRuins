@@ -10,18 +10,9 @@ namespace RealRuins.Settings
     {
         public override string TabLabel => "RealRuins.DebugSettings.Caption".Translate();
 
-        public override float ContentHeight => 510f;
-
-        public override void Draw(Rect rect)
+        protected override void DrawContents(Listing_Standard listing)
         {
-            Listing_Standard listing = new Listing_Standard();
-            listing.Begin(rect);
-
-            GameFont font = Text.Font;
-            Text.Font = GameFont.Medium;
-            listing.Label("RealRuins.DebugSettings.Caption".Translate());
-            Text.Font = font;
-            listing.GapLine();
+            SettingsControls.PageHeader(listing, "RealRuins.DebugSettings.Caption", "RealRuins.DebugSettings.Description");
 
             // Log Level Selector
             Rect logLevelRect = listing.GetRect(25f);
@@ -67,21 +58,28 @@ namespace RealRuins.Settings
 
             listing.Gap(15f);
 
-            // Reset Settings Button
-            Rect resetButtonRect = listing.GetRect(35f);
+            // Manual blueprint capture
+            Rect uploadRect = listing.GetRect(35f);
             Color prevColor = GUI.color;
-            GUI.color = new Color(1f, 0.3f, 0.3f);
-            if (Widgets.ButtonText(resetButtonRect, "RealRuins.DebugSettings.ResetSettings".Translate()))
+            GUI.color = new Color(0.3f, 0.8f, 0.3f);
+            if (Widgets.ButtonText(uploadRect, "RealRuins.DebugSettings.ManualUpload".Translate()))
             {
-                Find.WindowStack.Add(Dialog_MessageBox.CreateConfirmation(
-                    "RealRuins.DebugSettings.ResetSettingsConfirm".Translate(),
-                    () => RealRuins_ModSettings.Reset(),
-                    true,
-                    null));
+                if (Find.CurrentMap != null)
+                {
+                    SnapshotManager.Instance.UploadCurrentMapSnapshot();
+                    Messages.Message(
+                        "RealRuins.DebugSettings.UploadTriggered".Translate(),
+                        MessageTypeDefOf.NeutralEvent);
+                }
+                else
+                {
+                    Messages.Message(
+                        "RealRuins.DebugSettings.NoMap".Translate(),
+                        MessageTypeDefOf.RejectInput);
+                }
             }
             GUI.color = prevColor;
-
-            listing.End();
+            TooltipHandler.TipRegion(uploadRect, "RealRuins.DebugSettings.ManualUploadTooltip".Translate());
         }
 
         private string GetLogLevelLabel()

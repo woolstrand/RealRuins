@@ -22,27 +22,27 @@
   <RealRuins_MapOptions_Size_Max>Maximum fragment size</RealRuins_MapOptions_Size_Max>
   <RealRuins_MapOptions_Deterioration>Additional deterioration degree</RealRuins_MapOptions_Deterioration>
   <RealRuins_MapOptions_Scavengers>Scavengers activity multiplier</RealRuins_MapOptions_Scavengers>
-  <RealRuins_MapOptions_CostLimit>Limit maximum item cost</RealRuins_MapOptions_CostLimit>
-  <RealRuins_MapOptions_DisableHaulables>Disable spawning haulable items</RealRuins_MapOptions_DisableHaulables>
-  <RealRuins_MapOptions_WallsAndDoorsOnly>Spawn walls and doors only</RealRuins_MapOptions_WallsAndDoorsOnly>
-  <RealRuins_MapOptions_DisableHostiles>Hostile units amount</RealRuins_MapOptions_DisableHostiles>
+  <RealRuins_MapOptions_CostLimit>Single item cost limit (regular ruins)</RealRuins_MapOptions_CostLimit>
+  <RealRuins_MapOptions_DisableHaulables>No haulable items</RealRuins_MapOptions_DisableHaulables>
+  <RealRuins_MapOptions_WallsAndDoorsOnly>Walls and doors only</RealRuins_MapOptions_WallsAndDoorsOnly>
+  <RealRuins_MapOptions_DisableHostiles>Inhabitants in regular ruins</RealRuins_MapOptions_DisableHostiles>
   
   <RealRuins_MapOptions_DensityTT>Average number of ruins spawned on 100x100 area</RealRuins_MapOptions_DensityTT>
   <RealRuins_MapOptions_SizeTT>Ruins area is selected randomly in the range from 50% to 150% of the entered value</RealRuins_MapOptions_SizeTT>
   <RealRuins_MapOptions_DeteriorationTT>This value determines additional chance for a tile to be destroyed and does not influence the remaining hit points. Zero is the default setting, max will result in no ruins at all.</RealRuins_MapOptions_DeteriorationTT>
   <RealRuins_MapOptions_ScavengersTT>Zero means pristine blueprints.</RealRuins_MapOptions_ScavengersTT>
-  <RealRuins_MapOptions_WealthPerMap>Ruins wealth per map</RealRuins_MapOptions_WealthPerMap>
-  <RealRuins_MapOptions_WealthPerMapTT>Total market value that all scattered ruins of one map may have together (things and floors). Most maps stay well below the default; on a map with an unusually rich ruin its most valuable things are taken away until the ruins fit. Rightmost position: no limit. Does not affect abandoned bases, planetary ruins and the main ruin of a caravan event.</RealRuins_MapOptions_WealthPerMapTT>
-  <RealRuins_MapOptions_WealthScaleWithProximity>Scale wealth with proximity</RealRuins_MapOptions_WealthScaleWithProximity>
+  <RealRuins_MapOptions_WealthPerMap>Regular ruins, per map</RealRuins_MapOptions_WealthPerMap>
+  <RealRuins_MapOptions_WealthPerMapTT>Total market value that all scattered ruins of one map may have together (things and floors). Most maps stay well below the default; on a map with an unusually rich ruin its most valuable things are taken away until the ruins fit. Rightmost position: no limit. Does not affect pristine ruins, planetary locations and the main ruin of a caravan event.</RealRuins_MapOptions_WealthPerMapTT>
+  <RealRuins_MapOptions_WealthScaleWithProximity>Scale with settlement proximity</RealRuins_MapOptions_WealthScaleWithProximity>
   <RealRuins_MapOptions_WealthScaleWithProximityTT>Raise the limit near settlements and lower it far from them, the same way the number of ruins changes with proximity, so each ruin keeps about the same share. Off: ruins near settlements share one limit, so the dense ruins there are more picked over. Needs proximity to be enabled.</RealRuins_MapOptions_WealthScaleWithProximityTT>
   <RealRuins_MapOptions_WealthIgnoreStructure>Don't count walls and floors</RealRuins_MapOptions_WealthIgnoreStructure>
   <RealRuins_MapOptions_WealthIgnoreStructureTT>Plain walls, doors and floors (up to 50 silver per tile) don't count toward the limit and are never removed for it: there are lots of them and they are not loot. Golden walls, silver floors, autodoors and the like still count.</RealRuins_MapOptions_WealthIgnoreStructureTT>
   <RealRuins_MapOptions_WealthCountDamage>Count damaged things at lower value</RealRuins_MapOptions_WealthCountDamage>
   <RealRuins_MapOptions_WealthCountDamageTT>Off: everything counts at full price, since repairing restores it and a damaged thing often works just as well. On: the actual market value of what spawned is counted (damage lowers it, quality changes it), so more fits into the limit.</RealRuins_MapOptions_WealthCountDamageTT>
-  <RealRuins_MapOptions_CostLimitTT>All items with a total cost higher than the selected value will be destroyed</RealRuins_MapOptions_CostLimitTT>
-  <RealRuins_MapOptions_DisableHaulablesTT>No haulable items will spawn, but furniture may still appear</RealRuins_MapOptions_DisableHaulablesTT>
-  <RealRuins_MapOptions_WallsAndDoorsOnlyTT>This setting is pretty aggressive and will remove everything that is not based on a vanilla wall or a door.</RealRuins_MapOptions_WallsAndDoorsOnlyTT>
-  <RealRuins_MapOptions_DisableHostilesTT></RealRuins_MapOptions_DisableHostilesTT>
+  <RealRuins_MapOptions_CostLimitTT>Things worth more than this are removed from regular ruins. Caravan ruins and planetary locations have their own fixed limits. Rightmost position: no limit.</RealRuins_MapOptions_CostLimitTT>
+  <RealRuins_MapOptions_DisableHaulablesTT>No haulable items will spawn, but furniture may still appear. Applies to regular ruins, caravan ruins and ruined planetary locations, not to pristine ruins and intact locations.</RealRuins_MapOptions_DisableHaulablesTT>
+  <RealRuins_MapOptions_WallsAndDoorsOnlyTT>This setting is pretty aggressive and will remove everything that is not based on a vanilla wall or a door. Applies to regular ruins, caravan ruins and ruined planetary locations, not to pristine ruins and intact locations.</RealRuins_MapOptions_WallsAndDoorsOnlyTT>
+  <RealRuins_MapOptions_DisableHostilesTT>Chance for every ruin fragment that animals (80%) or mechanoids (20%) live in it. Other ruins have fixed values: caravan ruins 80%, pristine ruins always, planetary locations never. Threat scale still applies to all of them.</RealRuins_MapOptions_DisableHostilesTT>
 
   <RealRuins_MapOptions_EnableProximity>Consider settlement proximity</RealRuins_MapOptions_EnableProximity>
   <RealRuins_MapOptions_EnableProximityTT>Settlement proximity influences generation parameters: ruins are denser near cities, but also emptier.</RealRuins_MapOptions_EnableProximityTT>
@@ -50,9 +50,9 @@
   <RealRuins_MapOptions_StartWithoutRuinsTT>No ruins will be generated on the starting map. Later ruins will be generated normally according to settings.</RealRuins_MapOptions_StartWithoutRuinsTT>
 
   <!-- Captions -->
-  <RealRuins.CacheSettings.TabCaption>General, Network and Cache</RealRuins.CacheSettings.TabCaption>
-  <RealRuins.CacheSettings.Caption>General, Network and Cache settings</RealRuins.CacheSettings.Caption>
-  <RealRuins.CacheSettings.Description>Manage your snapshot cache settings. Adjust the storage limit and download options. You can find more options on the other tabs.</RealRuins.CacheSettings.Description>
+  <RealRuins.CacheSettings.TabCaption>Cache and storage</RealRuins.CacheSettings.TabCaption>
+  <RealRuins.CacheSettings.Caption>Cache and storage</RealRuins.CacheSettings.Caption>
+  <RealRuins.CacheSettings.Description>Where blueprints come from and where they are stored on your disk.</RealRuins.CacheSettings.Description>
   <RealRuins_ModOptions_NoLimit>No limit</RealRuins_ModOptions_NoLimit>
   <RealRuins_ModOptions_ClearCacheConfirm>Are you sure you want to clear all cached snapshots, including planetary ruins blueprints? This action cannot be undone.</RealRuins_ModOptions_ClearCacheConfirm>
   <RealRuins_ModOptions_OfflineModeConfirm>Local mode deletes all ruins blueprints downloaded from the server as soon as you close the settings. Only your own bases and the blueprints of planetary ruins are kept.\n\nIf you change your mind later, you will have to switch local mode off and download the blueprints again, which can take several minutes. Until then, ruins are built from your own bases only.\n\nSwitch to local mode?</RealRuins_ModOptions_OfflineModeConfirm>
@@ -68,9 +68,9 @@
   <RealRuins.CacheSettings.ClearFolderConfirm>Remove all {1} planetary ruins blueprints ({2}) stored for seed "{0}"? Worlds with this seed will download them again when needed.</RealRuins.CacheSettings.ClearFolderConfirm>
   <RealRuins_ModOptions_DownloadMoreTooltip>Download additional blueprints from the server.</RealRuins_ModOptions_DownloadMoreTooltip>
 
-  <RealRuins.SpawnSettings.TabCaption>Spawn Settings</RealRuins.SpawnSettings.TabCaption>
-  <RealRuins.SpawnSettings.Caption>Spawn Settings</RealRuins.SpawnSettings.Caption>
-  <RealRuins.SpawnSettings.Description>Configure how ruins spawn on the map, their size, density, and contents. These settings affect only ruins naturally appearing on the map. They have no effect on events and planetary ruins.</RealRuins.SpawnSettings.Description>
+  <RealRuins.SpawnSettings.TabCaption>Spawn and tech level</RealRuins.SpawnSettings.TabCaption>
+  <RealRuins.SpawnSettings.Caption>Spawn and tech level</RealRuins.SpawnSettings.Caption>
+  <RealRuins.SpawnSettings.Description>What the ruins look like: how many, how big, how worn, and what may appear in them. The wealth limits are on the Wealth and balance tab.</RealRuins.SpawnSettings.Description>
   <RealRuins.KeepVanillaRuins>Keep vanilla ruins</RealRuins.KeepVanillaRuins>
   <RealRuins.KeepVanillaRuinsTT>If enabled, vanilla RimWorld ruins will be preserved alongside Real Ruins.</RealRuins.KeepVanillaRuinsTT>
 
@@ -232,19 +232,19 @@
   <RealRuins.PlanetarySettings.MapsModuleButton>Download and spawn now</RealRuins.PlanetarySettings.MapsModuleButton>
   <RealRuins.PlanetaryLoader.NeedsGameInProgress>You have to be in an ongoing game to use this menu</RealRuins.PlanetaryLoader.NeedsGameInProgress>
 
-  <RealRuins.CaravanReformType>Caravan reform type</RealRuins.CaravanReformType>
+  <RealRuins.CaravanReformType>Caravan reform at pristine ruins</RealRuins.CaravanReformType>
   <RealRuins.Reform.Automatic>Automatic</RealRuins.Reform.Automatic>
   <RealRuins.Reform.Instant>Instant</RealRuins.Reform.Instant>
   <RealRuins.Reform.Manual>Manual</RealRuins.Reform.Manual>
-  <RealRuins.CaravanReformTooltip>How the caravan is reformed in Real Ruins events. "Automatic" works the same way as forming a caravan on your home map. "Instant" allows an instant reform via a button on the world map. "Manual" means picking up items by hand and leaving via the map edge until the raids are over.</RealRuins.CaravanReformTooltip>
+  <RealRuins.CaravanReformTooltip>How you leave pristine ruins.\n\nAutomatic: works the same way as forming a caravan on your home map.\n\nInstant: a button on the world map reforms the caravan at once, when no enemies are around.\n\nManual: no reforming until the raids are over. Pick up the items by hand and leave via the map edge.</RealRuins.CaravanReformTooltip>
 
-  <RealRuins.ForceMultiplier>Events threat scale</RealRuins.ForceMultiplier>
-  <RealRuins.AbsoluteWealthCap>Absolute wealth cap for events</RealRuins.AbsoluteWealthCap>
-  <RealRuins.ForceMultiplierTT>Tune this to make ruins events more or less difficult</RealRuins.ForceMultiplierTT>
-  <RealRuins.AbsoluteWealthCapTT>Determines absolute wealth cap for abandoned base events and quests. Caravan ruins have their own cap. Wooden walls and doors are not counted against total wealth.</RealRuins.AbsoluteWealthCapTT>
+  <RealRuins.ForceMultiplier>Threat scale (all ruins)</RealRuins.ForceMultiplier>
+  <RealRuins.AbsoluteWealthCap>Pristine ruins</RealRuins.AbsoluteWealthCap>
+  <RealRuins.ForceMultiplierTT>Scales every threat Real Ruins creates: the animals and mechanoids in regular ruins, the raiders at caravan ruins, the raids and raid triggers at pristine ruins, and the starting parties. 0 means no inhabitants, raiders or raid triggers at all.</RealRuins.ForceMultiplierTT>
+  <RealRuins.AbsoluteWealthCapTT>The most pristine ruins (the quest) may be worth. Caravan ruins have their own limit. Wooden walls and doors are not counted.</RealRuins.AbsoluteWealthCapTT>
 
-  <RealRuins.UseForcesGenerationV2>Use new raids system for events</RealRuins.UseForcesGenerationV2>
-  <RealRuins.UseForcesGenerationV2TT>In previous versions, there were several large raids during the ruins found event. Now, besides those several large raids, there is also a constant inflow of smaller groups of enemies. This puts the player under a little but constant pressure. You can disable this if you liked the previous approach more.</RealRuins.UseForcesGenerationV2TT>
+  <RealRuins.UseForcesGenerationV2>Small raids keep coming (pristine ruins)</RealRuins.UseForcesGenerationV2>
+  <RealRuins.UseForcesGenerationV2TT>While you're at pristine ruins, small groups of enemies keep arriving, a few at a time, on top of the big raids. The more loot is still left, the more of them come. As you carry it off, they thin out. Turn this off to get only the big raids.</RealRuins.UseForcesGenerationV2TT>
 
   <RealRuins.DisableFriendlyRaids>Disable friendly raids</RealRuins.DisableFriendlyRaids>
   <RealRuins.DisableFriendlyRaidsTT>If enabled, only hostile factions will spawn raids during ruins events. Friendly faction raids will be prevented.</RealRuins.DisableFriendlyRaidsTT>
@@ -264,7 +264,7 @@
   <RealRuins.AdvancedSettings>Events and Advanced Settings</RealRuins.AdvancedSettings>
 
   <RealRuins.TechLimit.Caption>Tech Level</RealRuins.TechLimit.Caption>
-  <RealRuins.TechLimit.Enabled>Limit tech level of ruins</RealRuins.TechLimit.Enabled>
+  <RealRuins.TechLimit.Enabled>Limit tech level</RealRuins.TechLimit.Enabled>
   <RealRuins.TechLimit.EnabledTT>Things more advanced than the selected tech level are removed from ruins. A thing's tech level comes from its own tech level, the research needed to build or craft it and its ingredients. Walls and doors above the limit are replaced with plain stone walls and wooden doors. Things with no tech level at all always stay.</RealRuins.TechLimit.EnabledTT>
   <RealRuins.TechLimit.MaxLevel>Maximum tech level</RealRuins.TechLimit.MaxLevel>
   <RealRuins.TechLimit.MaxLevelTT>The most advanced tech level of things which can spawn in ruins.</RealRuins.TechLimit.MaxLevelTT>
@@ -278,7 +278,7 @@
   <RealRuins.TechLimit.POIs>Planetary locations</RealRuins.TechLimit.POIs>
   <RealRuins.TechLimit.POIsTT>Locations created from other players' bases when a new game starts, ruined or inhabited. The location type is decided after the limit is applied, and inhabitants come from factions of the allowed tech level. Type and inhabitants are picked when a location is created, so for existing locations only their contents change.</RealRuins.TechLimit.POIsTT>
   <RealRuins.TechLimit.Events>Events and quests</RealRuins.TechLimit.Events>
-  <RealRuins.TechLimit.EventsTT>Abandoned bases (event and quest) and small ruins spotted by caravans.</RealRuins.TechLimit.EventsTT>
+  <RealRuins.TechLimit.EventsTT>Pristine ruins and small ruins spotted by caravans.</RealRuins.TechLimit.EventsTT>
 
   <RealRuins.FactionOwnedStartTile>Tile is occupied</RealRuins.FactionOwnedStartTile>
   <RealRuins.FactionOwnedStartTileDesc>You're about to enter a tile with a settlement on it, and this settlement belongs to another faction. You can either make it abandoned and settle in the ruins, make it yours, or you can attack it with your starting party.</RealRuins.FactionOwnedStartTileDesc>
@@ -309,17 +309,17 @@
   <RealRuins.DebugSettings.NoMap>No map available. Please load a game first.</RealRuins.DebugSettings.NoMap>
 
   <!-- Event toggles -->
-  <RealRuins.EnableAbandonedRuinsFoundEvent>Enable "abandoned ruins found" event</RealRuins.EnableAbandonedRuinsFoundEvent>
-  <RealRuins.EnableAbandonedRuinsFoundEventTT>When enabled, the large "abandoned ruins found" world event can fire, marking a location with sizeable ruins on the world map.</RealRuins.EnableAbandonedRuinsFoundEventTT>
+  <RealRuins.EnableAbandonedRuinsFoundEvent>Pristine ruins quest</RealRuins.EnableAbandonedRuinsFoundEvent>
+  <RealRuins.EnableAbandonedRuinsFoundEventTT>When enabled, you can get a quest to large pristine ruins nearby: rich and untouched, but contested by raiders.</RealRuins.EnableAbandonedRuinsFoundEventTT>
   <RealRuins.EnableCaravanFoundRuinsEvent>Enable "caravan spotted small ruins" event</RealRuins.EnableCaravanFoundRuinsEvent>
   <RealRuins.EnableCaravanFoundRuinsEventTT>When enabled, travelling caravans can spot a small ruin nearby and give you the option to investigate it.</RealRuins.EnableCaravanFoundRuinsEventTT>
-  <RealRuins.ScaleWithColonyWealth>Scale ruins wealth limits with colony wealth</RealRuins.ScaleWithColonyWealth>
+  <RealRuins.ScaleWithColonyWealth>Scale all limits with colony wealth</RealRuins.ScaleWithColonyWealth>
   <RealRuins.ScaleWithColonyWealthTT>All ruins wealth limits are multiplied by your colony wealth divided by the value below: a richer colony finds richer ruins, a poorer one poorer ruins, but at least half of each limit. Limits can go above what you set this way. Unlimited ruins stay unlimited. Colony wealth is counted the way the storyteller does, over your home maps and caravans.</RealRuins.ScaleWithColonyWealthTT>
   <RealRuins.ReferenceColonyWealth>Colony wealth the limits are set for</RealRuins.ReferenceColonyWealth>
   <RealRuins.ReferenceColonyWealthTT>At this colony wealth all ruins wealth limits are exactly what you set. At twice this wealth they are doubled.</RealRuins.ReferenceColonyWealthTT>
-  <RealRuins.POIRuinsCostCap>Abandoned locations wealth cap</RealRuins.POIRuinsCostCap>
+  <RealRuins.POIRuinsCostCap>Abandoned planetary locations</RealRuins.POIRuinsCostCap>
   <RealRuins.POIRuinsCostCapTT>The most an abandoned location on the planet may be worth. Most of them are worth less than this.</RealRuins.POIRuinsCostCapTT>
-  <RealRuins.CaravanRuinsCostCap>Caravan ruins wealth cap</RealRuins.CaravanRuinsCostCap>
+  <RealRuins.CaravanRuinsCostCap>Caravan ruins</RealRuins.CaravanRuinsCostCap>
   <RealRuins.CaravanRuinsCostCapTT>The most a ruin spotted by a caravan may be worth. Its most valuable things are taken away until it fits. Raiders at the ruin scale with what is left.</RealRuins.CaravanRuinsCostCapTT>
 
   <!-- Import/Export settings -->
@@ -332,4 +332,53 @@
   <RealRuins.Settings.ImportApply>Import</RealRuins.Settings.ImportApply>
   <RealRuins.Settings.ImportSuccess>Settings imported successfully.</RealRuins.Settings.ImportSuccess>
   <RealRuins.Settings.ImportFailed>Failed to import settings. The string may be invalid or corrupted.</RealRuins.Settings.ImportFailed>
+
+  <!-- Settings layout: presets -->
+  <RealRuins.Presets.TabCaption>Presets</RealRuins.Presets.TabCaption>
+  <RealRuins.Presets.Caption>Presets</RealRuins.Presets.Caption>
+  <RealRuins.Presets.Description>Quick setups for common ways to play. A preset changes only the settings it is about: your cache, network and debug settings and your item blacklist are never touched. Play style and tech level presets don't affect each other.</RealRuins.Presets.Description>
+  <RealRuins.Presets.PlayStyle>Play style</RealRuins.Presets.PlayStyle>
+  <RealRuins.Presets.TechLevel>Tech level</RealRuins.Presets.TechLevel>
+  <RealRuins.Presets.SettingsSection>All settings</RealRuins.Presets.SettingsSection>
+  <RealRuins.Presets.Current>Current</RealRuins.Presets.Current>
+  <RealRuins.Presets.Custom>Custom</RealRuins.Presets.Custom>
+  <RealRuins.Presets.Default>Default</RealRuins.Presets.Default>
+  <RealRuins.Presets.DefaultTT>Ruins the way the mod comes out of the box. Resets wealth, threats, spawn and event settings, but not the tech level.</RealRuins.Presets.DefaultTT>
+  <RealRuins.Presets.TechNormal>Normal</RealRuins.Presets.TechNormal>
+  <RealRuins.Presets.TechNormalTT>No tech level limit: anything the original base had may spawn.</RealRuins.Presets.TechNormalTT>
+  <RealRuins.Presets.TechNeolithic>True neolithic</RealRuins.Presets.TechNeolithic>
+  <RealRuins.Presets.TechNeolithicTT>Nothing above the neolithic level ever spawns, in any ruins or locations.</RealRuins.Presets.TechNeolithicTT>
+  <RealRuins.Presets.TechMedieval>True medieval</RealRuins.Presets.TechMedieval>
+  <RealRuins.Presets.TechMedievalTT>A medieval or fantasy world: nothing above the medieval level ever spawns, in any ruins or locations.</RealRuins.Presets.TechMedievalTT>
+  <RealRuins.Presets.TechPostApocalyptic>Post-apocalyptic</RealRuins.Presets.TechPostApocalyptic>
+  <RealRuins.Presets.TechPostApocalypticTT>A medieval world after a cataclysm: most things are medieval or older, but rare relics of the industrial and spacer past still turn up.</RealRuins.Presets.TechPostApocalypticTT>
+  <RealRuins.Presets.ResetAllTT>Resets every Real Ruins setting to its default, including cache, network and debug settings. The Default play style preset resets only the play style settings.</RealRuins.Presets.ResetAllTT>
+
+  <!-- Settings layout: wealth and balance -->
+  <RealRuins.WealthSettings.TabCaption>Wealth and balance</RealRuins.WealthSettings.TabCaption>
+  <RealRuins.WealthSettings.Caption>Wealth and balance</RealRuins.WealthSettings.Caption>
+  <RealRuins.WealthSettings.Description>How much the ruins on your map may be worth, and how dangerous they are. The limits are the main balance tool: whatever else you set, ruins never exceed them.</RealRuins.WealthSettings.Description>
+  <RealRuins.WealthSettings.Limits>Limits</RealRuins.WealthSettings.Limits>
+  <RealRuins.WealthSettings.Scaling>Scaling</RealRuins.WealthSettings.Scaling>
+  <RealRuins.WealthSettings.Threats>Threats and difficulty</RealRuins.WealthSettings.Threats>
+  <RealRuins.Settings.RegularLimitCounting>Regular ruins: how the limit counts</RealRuins.Settings.RegularLimitCounting>
+
+  <!-- Settings layout: spawn and tech level -->
+  <RealRuins.SpawnSettings.Common>All ruins and locations</RealRuins.SpawnSettings.Common>
+  <RealRuins.SpawnSettings.Regular>Regular ruins</RealRuins.SpawnSettings.Regular>
+  <RealRuins.SpawnSettings.Events>Events (pristine ruins, caravan ruins)</RealRuins.SpawnSettings.Events>
+  <RealRuins.SpawnSettings.Planetary>Planetary locations</RealRuins.SpawnSettings.Planetary>
+  <RealRuins.TechLimit.AppliesHere>Tech level limit applies here</RealRuins.TechLimit.AppliesHere>
+  <RealRuins.TechLimit.AppliesHereTT>Part of the tech level limit at the top of this page: it only works while the limit is on.</RealRuins.TechLimit.AppliesHereTT>
+
+  <!-- Settings layout: gameplay -->
+  <RealRuins.GameplaySettings.TabCaption>Gameplay</RealRuins.GameplaySettings.TabCaption>
+  <RealRuins.GameplaySettings.Caption>Gameplay</RealRuins.GameplaySettings.Caption>
+  <RealRuins.GameplaySettings.Description>Which special sites exist in your game and how you interact with them.</RealRuins.GameplaySettings.Description>
+  <RealRuins.GameplaySettings.Events>Events and quests</RealRuins.GameplaySettings.Events>
+  <RealRuins.GameplaySettings.Planetary>Planetary locations</RealRuins.GameplaySettings.Planetary>
+
+  <!-- Settings layout: cache and debug -->
+  <RealRuins.CacheSettings.StagingWarning>Staging server is on (Debug tab). Turn it off for normal play.</RealRuins.CacheSettings.StagingWarning>
+  <RealRuins.DebugSettings.Description>Logging and developer tools. You only need these when you report a bug.</RealRuins.DebugSettings.Description>
 </LanguageData>

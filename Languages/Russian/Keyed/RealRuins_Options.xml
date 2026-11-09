@@ -22,27 +22,27 @@
   <RealRuins_MapOptions_Size_Max>Максимальный размер фрагмента</RealRuins_MapOptions_Size_Max>
   <RealRuins_MapOptions_Deterioration>Дополнительная степень разрушения</RealRuins_MapOptions_Deterioration>
   <RealRuins_MapOptions_Scavengers>Активность мародеров</RealRuins_MapOptions_Scavengers>
-  <RealRuins_MapOptions_CostLimit>Установить лимит максимальной стоимости находок</RealRuins_MapOptions_CostLimit>
-  <RealRuins_MapOptions_DisableHaulables>Убрать все предметы</RealRuins_MapOptions_DisableHaulables>
-  <RealRuins_MapOptions_WallsAndDoorsOnly>Оставить только стены и двери</RealRuins_MapOptions_WallsAndDoorsOnly>
-  <RealRuins_MapOptions_DisableHostiles>Количество враждебных созданий</RealRuins_MapOptions_DisableHostiles>
+  <RealRuins_MapOptions_CostLimit>Лимит стоимости одной вещи (обычные руины)</RealRuins_MapOptions_CostLimit>
+  <RealRuins_MapOptions_DisableHaulables>Без переносимых предметов</RealRuins_MapOptions_DisableHaulables>
+  <RealRuins_MapOptions_WallsAndDoorsOnly>Только стены и двери</RealRuins_MapOptions_WallsAndDoorsOnly>
+  <RealRuins_MapOptions_DisableHostiles>Обитатели обычных руин</RealRuins_MapOptions_DisableHostiles>
 
   <RealRuins_MapOptions_DensityTT>Среднее количество отдельных руин на области 100х100 клеток</RealRuins_MapOptions_DensityTT>
   <RealRuins_MapOptions_SizeTT>Пределы, в которых будет лежать размер каждой отдельной области руин</RealRuins_MapOptions_SizeTT>
   <RealRuins_MapOptions_DeteriorationTT>Это значение определяет ДОПОЛНИТЕЛЬНЫЙ шанс быть уничтоженным для каждого объекта. При значении 0 руины уже будут как руины, но если вам этого мало - увеличьте значение. При значении 1 от руин вообще ничего не останется. Это значение не влияет на количество хит-поинтов.</RealRuins_MapOptions_DeteriorationTT>
   <RealRuins_MapOptions_ScavengersTT>Выставите 0, чтобы получить совершенно нетронутые руины со всем содержимым.</RealRuins_MapOptions_ScavengersTT>
-  <RealRuins_MapOptions_WealthPerMap>Общее богатство руин на карте</RealRuins_MapOptions_WealthPerMap>
-  <RealRuins_MapOptions_WealthPerMapTT>Максимальная общая рыночная стоимость (включая предметы, стены и полы), которую могут иметь суммарно все руины сгенерированные на одной карте. Большинство карт намного беднее значения по умолчанию, но если вдруг на карте попались необычно богатые руины, из них убираются самые ценные вещи, пока руины не уложатся в ограничение. Крайнее правое положение: без ограничений. Не влияет на заброшенные базы, планетарные руины и основные руины события каравана.</RealRuins_MapOptions_WealthPerMapTT>
-  <RealRuins_MapOptions_WealthScaleWithProximity>Повышенный лимит богатства вблизи поселений</RealRuins_MapOptions_WealthScaleWithProximity>
+  <RealRuins_MapOptions_WealthPerMap>Обычные руины, на карту</RealRuins_MapOptions_WealthPerMap>
+  <RealRuins_MapOptions_WealthPerMapTT>Максимальная общая рыночная стоимость (включая предметы, стены и полы), которую могут иметь суммарно все руины сгенерированные на одной карте. Большинство карт намного беднее значения по умолчанию, но если вдруг на карте попались необычно богатые руины, из них убираются самые ценные вещи, пока руины не уложатся в ограничение. Крайнее правое положение: без ограничений. Не влияет на нетронутые руины, планетарные локации и основные руины события каравана.</RealRuins_MapOptions_WealthPerMapTT>
+  <RealRuins_MapOptions_WealthScaleWithProximity>Учитывать близость поселений</RealRuins_MapOptions_WealthScaleWithProximity>
   <RealRuins_MapOptions_WealthScaleWithProximityTT>Руины могут быть богаче вблизи поселений. Могут, но не обязательно будут - вблизи поселений они гораздо сильнее разграблены.</RealRuins_MapOptions_WealthScaleWithProximityTT>
   <RealRuins_MapOptions_WealthIgnoreStructure>Не учитывать стены и полы</RealRuins_MapOptions_WealthIgnoreStructure>
   <RealRuins_MapOptions_WealthIgnoreStructureTT>Обычные стены, двери и полы (до 50 серебра за клетку) не учитываются в ограничении и никогда не убираются ради него: их много, и это не добыча. Золотые стены, серебряные полы, автодвери и тому подобное по-прежнему учитываются.</RealRuins_MapOptions_WealthIgnoreStructureTT>
   <RealRuins_MapOptions_WealthCountDamage>Учитывать повреждённые вещи по сниженной стоимости</RealRuins_MapOptions_WealthCountDamage>
   <RealRuins_MapOptions_WealthCountDamageTT>Если выключено: всё учитывается по полной цене, поскольку ремонт её восстанавливает, а повреждённая вещь часто работает не хуже целой. Если включено: учитывается фактическая рыночная стоимость появившихся вещей (повреждения её снижают, качество меняет), поэтому в ограничение помещается больше.</RealRuins_MapOptions_WealthCountDamageTT>
-  <RealRuins_MapOptions_CostLimitTT>Все, что дороже указанной суммы, будет уничтожено искателями сокровищ.</RealRuins_MapOptions_CostLimitTT>
-  <RealRuins_MapOptions_DisableHaulablesTT>Переносимые вещи появляться не будут, но мебель по-прежнему может встречаться.</RealRuins_MapOptions_DisableHaulablesTT>
-  <RealRuins_MapOptions_WallsAndDoorsOnlyTT>Будет разрушено все, что не является строго дверью или стеной. Или полом. И золотой пол все равно украдут, не надейтесь.</RealRuins_MapOptions_WallsAndDoorsOnlyTT>
-  <RealRuins_MapOptions_DisableHostilesTT></RealRuins_MapOptions_DisableHostilesTT>
+  <RealRuins_MapOptions_CostLimitTT>Все, что дороже указанной суммы, убирается из обычных руин. У руин, найденных караваном, и планетарных локаций свои фиксированные лимиты. Крайнее правое положение: без ограничений.</RealRuins_MapOptions_CostLimitTT>
+  <RealRuins_MapOptions_DisableHaulablesTT>Переносимые вещи появляться не будут, но мебель по-прежнему может встречаться. Действует на обычные руины, руины, найденные караваном, и разрушенные планетарные локации. Не действует на нетронутые руины и обитаемые локации.</RealRuins_MapOptions_DisableHaulablesTT>
+  <RealRuins_MapOptions_WallsAndDoorsOnlyTT>Будет разрушено все, что не является строго дверью или стеной. Или полом. И золотой пол все равно украдут, не надейтесь. Действует на обычные руины, руины, найденные караваном, и разрушенные планетарные локации. Не действует на нетронутые руины и обитаемые локации.</RealRuins_MapOptions_WallsAndDoorsOnlyTT>
+  <RealRuins_MapOptions_DisableHostilesTT>Вероятность того, что в фрагменте руин кто-то живет: животные (80%) или механоиды (20%). У остальных руин значения фиксированные: руины, найденные караваном, 80%, нетронутые руины всегда, планетарные локации никогда. Множитель угрозы действует на все из них.</RealRuins_MapOptions_DisableHostilesTT>
 
   <RealRuins_MapOptions_EnableProximity>Учитывать близость поселений</RealRuins_MapOptions_EnableProximity>
   <RealRuins_MapOptions_EnableProximityTT>Расстояние до поселения влияет на параметры генерации: чем ближе к городу, тем руины больше, плотнее и в лучшей сохранности, но тем сильнее они разграблены - ценнх вещей и материалов там меньше.</RealRuins_MapOptions_EnableProximityTT>
@@ -203,19 +203,19 @@
   <RealRuins.PlanetarySettings.MapsModuleButton>Загрузить и создать локации прямо сейчас</RealRuins.PlanetarySettings.MapsModuleButton>
   <RealRuins.PlanetaryLoader.NeedsGameInProgress>Вам необходимо загрузить или начать новую игру, чтобы воспользоваться этой функцией.</RealRuins.PlanetaryLoader.NeedsGameInProgress>
 
-  <RealRuins.CaravanReformType>Переформирование каравана</RealRuins.CaravanReformType>
+  <RealRuins.CaravanReformType>Переформирование каравана в нетронутых руинах</RealRuins.CaravanReformType>
   <RealRuins.Reform.Automatic>Автоматическое</RealRuins.Reform.Automatic>
   <RealRuins.Reform.Instant>Моментальное</RealRuins.Reform.Instant>
   <RealRuins.Reform.Manual>Ручное</RealRuins.Reform.Manual>
-  <RealRuins.CaravanReformTooltip>Способ переформирования каравана при покидании локации события из Real Ruins. "Автоматическое" - точно такое же формирование, как на домашней карте. "Моментальное" позволяет моментально переформировать караван по кнопке на карте мира. "Ручное" - все вещи необходимо поднять вручную и покинуть карту через зеленую область на границе.</RealRuins.CaravanReformTooltip>
+  <RealRuins.CaravanReformTooltip>Как покинуть нетронутые руины.\n\nАвтоматическое: точно такое же формирование каравана, как на домашней карте.\n\nМоментальное: кнопка на карте мира сразу переформирует караван, если поблизости нет врагов.\n\nРучное: переформировать караван нельзя, пока не закончатся рейды. Все вещи нужно поднять вручную и покинуть карту через край.</RealRuins.CaravanReformTooltip>
 
-  <RealRuins.ForceMultiplier>Множитель сложности событий</RealRuins.ForceMultiplier>
-  <RealRuins.AbsoluteWealthCap>Абсолютное ограничение богатства руин</RealRuins.AbsoluteWealthCap>
-  <RealRuins.ForceMultiplierTT>Позволяет управлять количеством и силой противников в событиях этого мода (не влияет на планетарные руины!)</RealRuins.ForceMultiplierTT>
-  <RealRuins.AbsoluteWealthCapTT>Максимальная стоимость, которой будет ограничено богатство заброшенных баз в событиях и заданиях. У руин, найденных караваном, своё ограничение. При определении стоимости деревянные стены и двери не учитываются. Не влияет на планетарные руины.</RealRuins.AbsoluteWealthCapTT>
+  <RealRuins.ForceMultiplier>Множитель угрозы (все руины)</RealRuins.ForceMultiplier>
+  <RealRuins.AbsoluteWealthCap>Нетронутые руины</RealRuins.AbsoluteWealthCap>
+  <RealRuins.ForceMultiplierTT>Масштабирует все угрозы, которые создает Real Ruins: животных и механоидов в обычных руинах, рейдеров у руин, найденных караваном, рейды и ловушки-триггеры рейдов в нетронутых руинах, а также стартовые отряды. 0 означает никаких обитателей, рейдеров и триггеров.</RealRuins.ForceMultiplierTT>
+  <RealRuins.AbsoluteWealthCapTT>Максимальная стоимость нетронутых руин (задание). У руин, найденных караваном, своё ограничение. Деревянные стены и двери не учитываются.</RealRuins.AbsoluteWealthCapTT>
 
-  <RealRuins.UseForcesGenerationV2>Включить новый метод генерации врагов для событий</RealRuins.UseForcesGenerationV2>
-  <RealRuins.UseForcesGenerationV2TT>Раньше во время рейдов на древние руины искатели сокровищ из других фракций приходили несколькими огромными группами. Теперь вдобавок к этим большим группам добавлен постоянный приток врагов маленькими отрядами, чтобы постоянно держать игрока в напряжении. Если вам не нравится такой подход, эту функцию можно отключить и все будет как раньше.</RealRuins.UseForcesGenerationV2TT>
+  <RealRuins.UseForcesGenerationV2>Постоянный приток мелких рейдов (нетронутые руины)</RealRuins.UseForcesGenerationV2>
+  <RealRuins.UseForcesGenerationV2TT>Пока вы в нетронутых руинах, вдобавок к большим рейдам постоянно подходят небольшие группы врагов, по несколько человек. Чем больше добычи еще осталось, тем их больше. По мере того как вы выносите добычу, их становится меньше. Отключите, чтобы остались только большие рейды.</RealRuins.UseForcesGenerationV2TT>
 
   <RealRuins.FactionOwnedStartTile>Ячейка занята</RealRuins.FactionOwnedStartTile>
   <RealRuins.FactionOwnedStartTileDesc>Вы собираетесь высадиться на ячейке, где уже есть поселение, принадлежащее другой фракции. Вы можете превратить его в руины и поселиться там, можете присвоить его себе в первозданном виде, либо вы можете атаковать это поселение своей стартовой группой.</RealRuins.FactionOwnedStartTileDesc>
@@ -225,9 +225,9 @@
   <RealRuins.FactionOwnedStartTile.Cancel>Отмена</RealRuins.FactionOwnedStartTile.Cancel>
 
 
-  <RealRuins.CacheSettings.TabCaption>Общие, сеть и кэш</RealRuins.CacheSettings.TabCaption>
-  <RealRuins.CacheSettings.Caption>Общие настройки, сеть и кэш</RealRuins.CacheSettings.Caption>
-  <RealRuins.CacheSettings.Description>Управление настройками кэша. Отрегулируйте лимит хранилища и опции загрузки. Другие настройки — на остальных вкладках.</RealRuins.CacheSettings.Description>
+  <RealRuins.CacheSettings.TabCaption>Кэш и хранилище</RealRuins.CacheSettings.TabCaption>
+  <RealRuins.CacheSettings.Caption>Кэш и хранилище</RealRuins.CacheSettings.Caption>
+  <RealRuins.CacheSettings.Description>Откуда берутся чертежи и где они хранятся на вашем диске.</RealRuins.CacheSettings.Description>
   <RealRuins_ModOptions_NoLimit>Без ограничений</RealRuins_ModOptions_NoLimit>
   <RealRuins_ModOptions_ClearCacheConfirm>Вы уверены, что хотите очистить весь кэш? Это действие невозможно отменить.</RealRuins_ModOptions_ClearCacheConfirm>
   <RealRuins_ModOptions_OfflineModeConfirm>Оффлайн-режим удалит все чертежи руин, загруженные с сервера, сразу после закрытия настроек. Сохранятся только снимки ваших собственных баз и чертежи планетарных руин.\n\nЕсли вы передумаете, придётся выключить оффлайн-режим и загрузить чертежи заново, а это может занять несколько минут. До тех пор руины будут строиться только из ваших собственных баз.\n\nВключить оффлайн-режим?</RealRuins_ModOptions_OfflineModeConfirm>
@@ -243,9 +243,9 @@
   <RealRuins.CacheSettings.ClearFolderConfirm>Удалить все чертежи планетарных руин ({1} шт., {2}) для зерна «{0}»? Миры с этим зерном загрузят их заново при необходимости.</RealRuins.CacheSettings.ClearFolderConfirm>
   <RealRuins_ModOptions_DownloadMoreTooltip>Загрузить дополнительные планы из базы данных.</RealRuins_ModOptions_DownloadMoreTooltip>
 
-  <RealRuins.SpawnSettings.TabCaption>Настройки генерации</RealRuins.SpawnSettings.TabCaption>
-  <RealRuins.SpawnSettings.Caption>Настройки генерации</RealRuins.SpawnSettings.Caption>
-  <RealRuins.SpawnSettings.Description>Конфигурация появления руин на карте, их размер, плотность и содержимое. Эти настройки влияют только на руины, естественным образом появляющиеся на карте, и не действуют на события и планетарные руины.</RealRuins.SpawnSettings.Description>
+  <RealRuins.SpawnSettings.TabCaption>Генерация и тех. уровень</RealRuins.SpawnSettings.TabCaption>
+  <RealRuins.SpawnSettings.Caption>Генерация и технологический уровень</RealRuins.SpawnSettings.Caption>
+  <RealRuins.SpawnSettings.Description>Какими получаются руины: сколько их, какого размера, насколько разрушены и что в них может оказаться. Ограничения богатства находятся на вкладке «Богатство и баланс».</RealRuins.SpawnSettings.Description>
   <RealRuins.KeepVanillaRuins>Сохранять стандартные руины</RealRuins.KeepVanillaRuins>
   <RealRuins.KeepVanillaRuinsTT>Если включено, стандартные руины RimWorld будут сохранены вместе с Real Ruins.</RealRuins.KeepVanillaRuinsTT>
 
@@ -274,7 +274,7 @@
   <RealRuins.AdvancedSettings>Продвинутые и событийные настройки</RealRuins.AdvancedSettings>
 
   <RealRuins.TechLimit.Caption>Технологический уровень</RealRuins.TechLimit.Caption>
-  <RealRuins.TechLimit.Enabled>Ограничить технологический уровень руин</RealRuins.TechLimit.Enabled>
+  <RealRuins.TechLimit.Enabled>Ограничить технологический уровень</RealRuins.TechLimit.Enabled>
   <RealRuins.TechLimit.EnabledTT>Вещи более продвинутые, чем выбранный уровень, убираются из руин. Уровень вещи определяется её собственным уровнем, исследованиями, нужными для её постройки или изготовления, и её ингредиентами. Стены и двери выше уровня заменяются простыми каменными стенами и деревянными дверями. Вещи без технологического уровня остаются всегда.</RealRuins.TechLimit.EnabledTT>
   <RealRuins.TechLimit.MaxLevel>Максимальный уровень</RealRuins.TechLimit.MaxLevel>
   <RealRuins.TechLimit.MaxLevelTT>Самый продвинутый технологический уровень вещей, которые могут появиться в руинах.</RealRuins.TechLimit.MaxLevelTT>
@@ -288,7 +288,7 @@
   <RealRuins.TechLimit.POIs>Планетарным локациям</RealRuins.TechLimit.POIs>
   <RealRuins.TechLimit.POIsTT>Локации из баз других игроков, создаваемые в начале новой игры, разрушенные или обитаемые. Тип локации определяется после применения ограничения, а её жители - из фракций допустимого уровня. Тип и жители выбираются при создании локации, поэтому у существующих локаций меняется только содержимое.</RealRuins.TechLimit.POIsTT>
   <RealRuins.TechLimit.Events>Событиям и заданиям</RealRuins.TechLimit.Events>
-  <RealRuins.TechLimit.EventsTT>Заброшенные базы (событие и задание) и небольшие руины, найденные караванами.</RealRuins.TechLimit.EventsTT>
+  <RealRuins.TechLimit.EventsTT>Нетронутые руины и небольшие руины, найденные караванами.</RealRuins.TechLimit.EventsTT>
 
   <RealRuins.DebugSettings.LogLevel>Уровень логирования</RealRuins.DebugSettings.LogLevel>
   <RealRuins.DebugSettings.LogLevelAll>Все сообщения</RealRuins.DebugSettings.LogLevelAll>
@@ -312,17 +312,17 @@
   <RealRuins.DebugSettings.NoMap>Нет доступной карты. Сначала загрузите игру.</RealRuins.DebugSettings.NoMap>
 
   <!-- Event toggles -->
-  <RealRuins.EnableAbandonedRuinsFoundEvent>Включить событие «найдены заброшенные руины»</RealRuins.EnableAbandonedRuinsFoundEvent>
-  <RealRuins.EnableAbandonedRuinsFoundEventTT>Если включено, может произойти крупное событие «найдены заброшенные руины», отмечающее на карте мира место с большими руинами.</RealRuins.EnableAbandonedRuinsFoundEventTT>
+  <RealRuins.EnableAbandonedRuinsFoundEvent>Задание «нетронутые руины»</RealRuins.EnableAbandonedRuinsFoundEvent>
+  <RealRuins.EnableAbandonedRuinsFoundEventTT>Если включено, вы можете получить задание к большим нетронутым руинам поблизости: богатым и почти не разграбленным, но за них придется побороться с рейдерами.</RealRuins.EnableAbandonedRuinsFoundEventTT>
   <RealRuins.EnableCaravanFoundRuinsEvent>Включить событие «караван заметил небольшие руины»</RealRuins.EnableCaravanFoundRuinsEvent>
   <RealRuins.EnableCaravanFoundRuinsEventTT>Если включено, караваны в пути могут заметить неподалёку небольшие руины и предложить вам их исследовать.</RealRuins.EnableCaravanFoundRuinsEventTT>
-  <RealRuins.CaravanRuinsCostCap>Ограничение богатства руин, найденных караваном</RealRuins.CaravanRuinsCostCap>
+  <RealRuins.CaravanRuinsCostCap>Руины, найденные караваном</RealRuins.CaravanRuinsCostCap>
   <RealRuins.CaravanRuinsCostCapTT>Максимальная стоимость руин, замеченных караваном. Самые ценные вещи из них убираются, пока руины не уложатся в ограничение. Сила рейдеров зависит от того, что осталось.</RealRuins.CaravanRuinsCostCapTT>
-  <RealRuins.ScaleWithColonyWealth>Балансировка руин по колонии</RealRuins.ScaleWithColonyWealth>
+  <RealRuins.ScaleWithColonyWealth>Масштабировать все ограничения по богатству колонии</RealRuins.ScaleWithColonyWealth>
   <RealRuins.ScaleWithColonyWealthTT>Вместе с ростом богатства вашей колонии растет и богатство исследуемых руин. Важно: если какой-то тип руин имеет неограниченное богатство, то оно остается неограниченным независимо от этой настройки.</RealRuins.ScaleWithColonyWealthTT>
   <RealRuins.ReferenceColonyWealth>Калибровочная точка богатства колонии</RealRuins.ReferenceColonyWealth>
   <RealRuins.ReferenceColonyWealthTT>При таком значениа богатства колонии все ограничения богатства руин в точности равны заданным. При вдвое большем богатстве они удваиваются.</RealRuins.ReferenceColonyWealthTT>
-  <RealRuins.POIRuinsCostCap>Ограничение богатства покинутых локаций</RealRuins.POIRuinsCostCap>
+  <RealRuins.POIRuinsCostCap>Покинутые планетарные локации</RealRuins.POIRuinsCostCap>
   <RealRuins.POIRuinsCostCapTT>Максимальная стоимость покинутой локации на планете. Большинство из них беднее.</RealRuins.POIRuinsCostCapTT>
 
   <!-- Import/Export settings -->
@@ -335,4 +335,53 @@
   <RealRuins.Settings.ImportApply>Импортировать</RealRuins.Settings.ImportApply>
   <RealRuins.Settings.ImportSuccess>Настройки успешно импортированы.</RealRuins.Settings.ImportSuccess>
   <RealRuins.Settings.ImportFailed>Не удалось импортировать настройки. Возможно, строка неверна или повреждена.</RealRuins.Settings.ImportFailed>
+
+  <!-- Settings layout: presets -->
+  <RealRuins.Presets.TabCaption>Пресеты</RealRuins.Presets.TabCaption>
+  <RealRuins.Presets.Caption>Пресеты</RealRuins.Presets.Caption>
+  <RealRuins.Presets.Description>Готовые наборы настроек для разных стилей игры. Пресет меняет только относящиеся к нему настройки: кэш, сеть, отладка и ваш черный список предметов не затрагиваются. Пресеты стиля игры и технологического уровня не влияют друг на друга.</RealRuins.Presets.Description>
+  <RealRuins.Presets.PlayStyle>Стиль игры</RealRuins.Presets.PlayStyle>
+  <RealRuins.Presets.TechLevel>Технологический уровень</RealRuins.Presets.TechLevel>
+  <RealRuins.Presets.SettingsSection>Все настройки</RealRuins.Presets.SettingsSection>
+  <RealRuins.Presets.Current>Сейчас</RealRuins.Presets.Current>
+  <RealRuins.Presets.Custom>Свои настройки</RealRuins.Presets.Custom>
+  <RealRuins.Presets.Default>По умолчанию</RealRuins.Presets.Default>
+  <RealRuins.Presets.DefaultTT>Руины такими, какими мод задуман изначально. Сбрасывает настройки богатства, угроз, генерации и событий, но не технологический уровень.</RealRuins.Presets.DefaultTT>
+  <RealRuins.Presets.TechNormal>Обычный</RealRuins.Presets.TechNormal>
+  <RealRuins.Presets.TechNormalTT>Без ограничения технологического уровня: может появиться все, что было в исходной базе.</RealRuins.Presets.TechNormalTT>
+  <RealRuins.Presets.TechNeolithic>Настоящий неолит</RealRuins.Presets.TechNeolithic>
+  <RealRuins.Presets.TechNeolithicTT>Ничего выше неолита не появляется ни в каких руинах и локациях.</RealRuins.Presets.TechNeolithicTT>
+  <RealRuins.Presets.TechMedieval>Настоящее средневековье</RealRuins.Presets.TechMedieval>
+  <RealRuins.Presets.TechMedievalTT>Средневековый или фэнтезийный мир: ничего выше средневековья не появляется ни в каких руинах и локациях.</RealRuins.Presets.TechMedievalTT>
+  <RealRuins.Presets.TechPostApocalyptic>Постапокалипсис</RealRuins.Presets.TechPostApocalyptic>
+  <RealRuins.Presets.TechPostApocalypticTT>Средневековый мир после катастрофы: почти все вещи средневековые или древнее, но редкие реликвии индустриального и космического прошлого все еще встречаются.</RealRuins.Presets.TechPostApocalypticTT>
+  <RealRuins.Presets.ResetAllTT>Сбрасывает все настройки Real Ruins, включая кэш, сеть и отладку. Пресет стиля игры «По умолчанию» сбрасывает только настройки стиля игры.</RealRuins.Presets.ResetAllTT>
+
+  <!-- Settings layout: wealth and balance -->
+  <RealRuins.WealthSettings.TabCaption>Богатство и баланс</RealRuins.WealthSettings.TabCaption>
+  <RealRuins.WealthSettings.Caption>Богатство и баланс</RealRuins.WealthSettings.Caption>
+  <RealRuins.WealthSettings.Description>Сколько могут стоить руины на вашей карте и насколько они опасны. Ограничения - главный инструмент баланса: что бы вы ни настроили, руины их не превысят.</RealRuins.WealthSettings.Description>
+  <RealRuins.WealthSettings.Limits>Ограничения</RealRuins.WealthSettings.Limits>
+  <RealRuins.WealthSettings.Scaling>Масштабирование</RealRuins.WealthSettings.Scaling>
+  <RealRuins.WealthSettings.Threats>Угрозы и сложность</RealRuins.WealthSettings.Threats>
+  <RealRuins.Settings.RegularLimitCounting>Обычные руины: как считается ограничение</RealRuins.Settings.RegularLimitCounting>
+
+  <!-- Settings layout: spawn and tech level -->
+  <RealRuins.SpawnSettings.Common>Все руины и локации</RealRuins.SpawnSettings.Common>
+  <RealRuins.SpawnSettings.Regular>Обычные руины</RealRuins.SpawnSettings.Regular>
+  <RealRuins.SpawnSettings.Events>События (нетронутые руины, руины каравана)</RealRuins.SpawnSettings.Events>
+  <RealRuins.SpawnSettings.Planetary>Планетарные локации</RealRuins.SpawnSettings.Planetary>
+  <RealRuins.TechLimit.AppliesHere>Ограничение тех. уровня действует здесь</RealRuins.TechLimit.AppliesHere>
+  <RealRuins.TechLimit.AppliesHereTT>Часть ограничения технологического уровня вверху страницы: работает, только пока ограничение включено.</RealRuins.TechLimit.AppliesHereTT>
+
+  <!-- Settings layout: gameplay -->
+  <RealRuins.GameplaySettings.TabCaption>Игровой процесс</RealRuins.GameplaySettings.TabCaption>
+  <RealRuins.GameplaySettings.Caption>Игровой процесс</RealRuins.GameplaySettings.Caption>
+  <RealRuins.GameplaySettings.Description>Какие особые места есть в вашей игре и как вы с ними взаимодействуете.</RealRuins.GameplaySettings.Description>
+  <RealRuins.GameplaySettings.Events>События и задания</RealRuins.GameplaySettings.Events>
+  <RealRuins.GameplaySettings.Planetary>Планетарные локации</RealRuins.GameplaySettings.Planetary>
+
+  <!-- Settings layout: cache and debug -->
+  <RealRuins.CacheSettings.StagingWarning>Включен тестовый сервер (вкладка «Настройки отладки»). Отключите его для обычной игры.</RealRuins.CacheSettings.StagingWarning>
+  <RealRuins.DebugSettings.Description>Логи и инструменты разработчика. Нужны только для отчетов об ошибках.</RealRuins.DebugSettings.Description>
 </LanguageData>

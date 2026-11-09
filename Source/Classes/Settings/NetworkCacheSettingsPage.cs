@@ -10,10 +10,6 @@ namespace RealRuins.Settings
     {
         public override string TabLabel => "RealRuins.CacheSettings.TabCaption".Translate();
 
-        public override float ContentHeight => contentHeight;
-
-        private float contentHeight = 525f;
-
         // Planetary folders are scanned on disk only when the cache has changed since the last scan (at most once per
         // RescanInterval, so downloads running in the background don't cause a rescan every frame), and whenever the page
         // is shown again after not being drawn for a while (the files could have been touched from outside the game).
@@ -27,30 +23,16 @@ namespace RealRuins.Settings
         private const float ColumnWidth = 95f;
         private const float ClearButtonWidth = 80f;
 
-        public override void Draw(Rect rect)
+        protected override void DrawContents(Listing_Standard listing)
         {
-            Listing_Standard listing = new Listing_Standard();
-            
-            float contentWidth = rect.width;
-            Rect contentRect = rect;
-            contentRect.width = contentWidth;
-            
-            // the planetary table grows the page, so it must not wrap into a second (invisible) column
-            listing.maxOneColumn = true;
-            listing.Begin(contentRect);
+            SettingsControls.PageHeader(listing, "RealRuins.CacheSettings.Caption", "RealRuins.CacheSettings.Description");
 
-            GameFont font = Text.Font;
-            Text.Font = GameFont.Medium;
-            listing.Label("RealRuins.CacheSettings.Caption".Translate());
-            Text.Font = font;
-            
-            float descHeight = Text.CalcHeight("RealRuins.CacheSettings.Description".Translate(), rect.width);
-            Rect descRect = listing.GetRect(descHeight);
-            string description = "RealRuins.CacheSettings.Description".Translate();
-            Widgets.Label(descRect, description);
-            listing.Gap(5f);
-            
-            listing.GapLine();
+            if (RealRuins_ModSettings.useStagingEnvironment)
+            {
+                GUI.color = new Color(1f, 0.3f, 0.3f);
+                listing.Label("RealRuins.CacheSettings.StagingWarning".Translate());
+                GUI.color = Color.white;
+            }
 
             listing.Label(
                 "RealRuins_ModOptions_CurrentCacheSize".Translate() + " " +
@@ -116,9 +98,9 @@ namespace RealRuins.Settings
 
             listing.Gap(15f);
 
-            // Three-column button layout
-            Rect buttonRowRect = listing.GetRect(100f);
-            float colWidth = buttonRowRect.width / 3f;
+            // Two-column button layout
+            Rect buttonRowRect = listing.GetRect(90f);
+            float colWidth = buttonRowRect.width / 2f;
 
             // Column 1: Download buttons (50 and 500)
             Rect col1Rect = new Rect(buttonRowRect.x, buttonRowRect.y, colWidth - 5f, buttonRowRect.height);
@@ -152,57 +134,14 @@ namespace RealRuins.Settings
             }
             GUI.color = prevColor;
 
-            // Column 3: Manual upload (double height, green)
-            Rect col3Rect = new Rect(buttonRowRect.x + colWidth * 2f, buttonRowRect.y, colWidth - 5f, buttonRowRect.height);
-            Rect uploadRect = new Rect(col3Rect.x, col3Rect.y, col3Rect.width, 85f);
-            GUI.color = new Color(0.3f, 0.8f, 0.3f);
-            if (Widgets.ButtonText(uploadRect, "RealRuins.DebugSettings.ManualUpload".Translate()))
-            {
-                if (Find.CurrentMap != null)
-                {
-                    SnapshotManager.Instance.UploadCurrentMapSnapshot();
-                    Messages.Message(
-                        "RealRuins.DebugSettings.UploadTriggered".Translate(),
-                        MessageTypeDefOf.NeutralEvent);
-                }
-                else
-                {
-                    Messages.Message(
-                        "RealRuins.DebugSettings.NoMap".Translate(),
-                        MessageTypeDefOf.RejectInput);
-                }
-            }
-            GUI.color = prevColor;
-
             TooltipHandler.TipRegion(download50Rect, "RealRuins_ModOptions_DownloadMoreTooltip".Translate());
             TooltipHandler.TipRegion(clearCacheRect, "RealRuins_ModOptions_CacheSizeTooltip".Translate());
-            TooltipHandler.TipRegion(uploadRect, "RealRuins.DebugSettings.ManualUploadTooltip".Translate());
 
             listing.Gap(15f);
 
-            // Export / Import settings buttons
-            Rect importExportRect = listing.GetRect(30f);
-            float halfW = (importExportRect.width - 10f) / 2f;
-            Rect exportRect = new Rect(importExportRect.x, importExportRect.y, halfW, importExportRect.height);
-            Rect importRect = new Rect(importExportRect.x + halfW + 10f, importExportRect.y, halfW, importExportRect.height);
-
-            if (Widgets.ButtonText(exportRect, "RealRuins.Settings.ExportSettings".Translate()))
-            {
-                Find.WindowStack.Add(new Dialog_ImportExportSettings(true));
-            }
-
-            if (Widgets.ButtonText(importRect, "RealRuins.Settings.ImportSettings".Translate()))
-            {
-                Find.WindowStack.Add(new Dialog_ImportExportSettings(false));
-            }
-
-            listing.Gap(15f);
             listing.GapLine();
 
             DrawPlanetaryCache(listing);
-
-            contentHeight = listing.CurHeight;
-            listing.End();
         }
 
         private void RefreshPlanetaryFoldersIfNeeded()

@@ -17,11 +17,11 @@ namespace RealRuins.Settings
         // Tab styling colors - each tab has a distinct color
         private static readonly Color[] TabAccentColors = new Color[]
         {
-            new Color(0.2f, 0.35f, 0.5f),   // Network & Cache - Blue
-            new Color(0.2f, 0.45f, 0.3f),   // Map Generation - Green
-            new Color(0.4f, 0.3f, 0.45f),   // Events & Advanced - Purple
-            new Color(0.2f, 0.4f, 0.45f),   // Tech Level - Teal
-            new Color(0.45f, 0.35f, 0.2f),  // Planetary Ruins - Orange
+            new Color(0.4f, 0.3f, 0.45f),   // Presets - Purple
+            new Color(0.2f, 0.35f, 0.5f),   // Cache and storage - Blue
+            new Color(0.5f, 0.42f, 0.15f),  // Wealth and balance - Gold
+            new Color(0.2f, 0.45f, 0.3f),   // Spawn and tech level - Green
+            new Color(0.45f, 0.35f, 0.2f),  // Gameplay - Orange
             new Color(0.55f, 0.2f, 0.2f)    // Debug - Red
         };
 
@@ -37,11 +37,11 @@ namespace RealRuins.Settings
         {
             pages = new List<SettingsPage>
             {
+                new PresetsSettingsPage(),
                 new NetworkCacheSettingsPage(),
-                new MapGenerationSettingsPage(),
-                new AdvancedSettingsPage(),
-                new TechLevelSettingsPage(),
-                new PlanetaryRuinsSettingsPage(),
+                new WealthBalanceSettingsPage(),
+                new SpawnSettingsPage(),
+                new GameplaySettingsPage(),
                 new DebugSettingsPage()
             };
         }

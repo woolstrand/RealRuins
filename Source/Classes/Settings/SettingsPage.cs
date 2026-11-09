@@ -11,30 +11,25 @@ namespace RealRuins.Settings
     {
         public abstract string TabLabel { get; }
 
+        // Measured on every draw: greyed and expanding controls change the height, and the scroll view uses last frame's value
+        private float contentHeight = 900f;
+
         /// <summary>
         /// Height of this page's content in pixels. Used by the scroll view.
-        /// Override in subclasses to avoid unnecessary scrollbars.
         /// </summary>
-        public virtual float ContentHeight => 900f;
+        public float ContentHeight => contentHeight;
 
-        public abstract void Draw(Rect rect);
-        
-        // synced is the value the buffer was last filled from. Pages outlive settings import and reset, so a changed value
-        // means it was set elsewhere and the buffer has to be refilled (vanilla fills it only when it is null).
-        protected void ReadableLabeledTextInput(Rect rect, string title, ref int value, ref string buffer, ref int synced)
+        public void Draw(Rect rect)
         {
-            if (buffer == null || value != synced)
-            {
-                buffer = value.ToString();
-            }
-            Rect rect2 = rect.LeftHalf().Rounded();
-            Rect rect3 = rect.RightPartPixels(100);
-            TextAnchor anchor = Text.Anchor;
-            Text.Anchor = TextAnchor.MiddleLeft;
-            Widgets.Label(rect2, title);
-            Text.Anchor = anchor;
-            Widgets.TextFieldNumeric(rect3, ref value, ref buffer);
-            synced = value;
+            Listing_Standard listing = new Listing_Standard();
+            // a page taller than the view must not wrap into a second (invisible) column
+            listing.maxOneColumn = true;
+            listing.Begin(rect);
+            DrawContents(listing);
+            contentHeight = listing.CurHeight + 10f;
+            listing.End();
         }
+
+        protected abstract void DrawContents(Listing_Standard listing);
     }
 }

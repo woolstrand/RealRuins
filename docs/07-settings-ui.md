@@ -11,10 +11,13 @@ The settings system consists of a tabbed window rendered inside RimWorld's mod s
 - `Source/Classes/RealRuins_ModSettings.cs` — static settings fields + `ExposeData`
 - `Source/Classes/Settings/SettingsPage.cs` — abstract base for tab pages
 - `Source/Classes/Settings/RealRuinsSettingsWindow.cs` — tabbed container
-- `Source/Classes/Settings/MapGenerationSettingsPage.cs`
+- `Source/Classes/Settings/SettingsControls.cs` — one draw method per setting, shared by all tabs
+- `Source/Classes/Settings/SettingsPresets.cs` — play style and tech level presets
+- `Source/Classes/Settings/PresetsSettingsPage.cs`
 - `Source/Classes/Settings/NetworkCacheSettingsPage.cs`
-- `Source/Classes/Settings/AdvancedSettingsPage.cs`
-- `Source/Classes/Settings/PlanetaryRuinsSettingsPage.cs`
+- `Source/Classes/Settings/WealthBalanceSettingsPage.cs`
+- `Source/Classes/Settings/SpawnSettingsPage.cs`
+- `Source/Classes/Settings/GameplaySettingsPage.cs`
 - `Source/Classes/Settings/DebugSettingsPage.cs`
 - `Source/Classes/Settings/SettingsSerializer.cs`
 - `Source/Classes/Settings/Dialog_ImportExportSettings.cs`
@@ -68,73 +71,70 @@ All settings are `public static` fields — accessible from anywhere.
 
 Manages tab navigation and rendering. Not a `Window` — renders into the rect from `DoSettingsWindowContents`.
 
-**Tabs** (5 total):
+**Tabs** (6 total, layout reasoning in `docs/preparation/settings_layout_proposal.md`):
 | Index | Label | Accent Color |
 |-------|-------|-------------|
-| 0 | Map Generation | Blue |
-| 1 | Network & Cache | Green |
-| 2 | Advanced | Purple |
-| 3 | Planetary Ruins | Orange |
-| 4 | Debug | Red |
+| 0 | Presets | Purple |
+| 1 | Cache and storage | Blue |
+| 2 | Wealth and balance | Gold |
+| 3 | Spawn and tech level | Green |
+| 4 | Gameplay | Orange |
+| 5 | Debug (always visible) | Red |
 
 **`DrawTabs(Rect)`**: tab background brightness = 40% (unselected), 60% (hovered), 100% (selected).
 
 **Known issue**: Tab width calculation double-counts spacing — `tabSpacing` is subtracted from total width, then also from each individual tab width.
 
-**Known issue**: Accent color array hardcoded to 5 entries. A 6th tab would silently cycle back to color 0.
-
 ---
 
 ## Tab Pages
 
-### MapGenerationSettingsPage
-Sliders for: density multiplier, min/max radius, deterioration, scavenging multiplier, item cost limit (1000 = "∞"), hostile chance. Checkboxes for: disable items, walls-only, proximity system, start-without-ruins, preserve vanilla ruins.
+### SettingsPage
+`Draw` opens a `Listing_Standard` with `maxOneColumn` (otherwise overflow wraps into an invisible second column), calls the page's `DrawContents` and stores `listing.CurHeight` as `ContentHeight`. The scroll view uses last frame's height, so pages never hard-code it.
 
-**Min/Max Radius enforcement**: After setting `maxRadius`, clamps `minRadius` if `min > max`. Only `minRadius` is auto-corrected — `maxRadius` can be dragged below `minRadius` causing UI jitter.
+### SettingsControls
+Every setting has exactly one draw method here. A setting shown on two tabs (for example "Disable friendly raids" on Wealth and balance and on Gameplay) calls the same method from both pages, so label, tooltip, range and greying stay identical. Rules:
+- At most two tabs per setting.
+- Every page starts with `PageHeader` (caption + one or two sentence description); sections use `Section`.
+- Dependent controls are greyed out with `using (EnabledIf(cond))`, never hidden: the scope draws them gray and drops their changes. `Indented()` shifts rows right (done by hand, `Listing_Standard.Indent` differs between game versions). Checkboxes are drawn with `Widgets.CheckboxLabeled` for the same reason.
+- Labels of limits and threats name their scope ("regular ruins", "pristine ruins", "all ruins").
+- The tech level "applies here" checkboxes sit in the Regular / Events / Planetary sections of the Spawn tab but belong to the cap in the Common section: they are indented, greyed while the cap is off, and their tooltip says so.
+- Text buffers (blacklists, planetary limits) are static and remember the value they were last synced with, so import, reset or a preset refills them instead of writing the old text back.
 
-**Cost limit sentinel**: `itemCostLimit >= 1000` displays as "∞". The slider maximum of 1000 is an in-band magic value.
+### PresetsSettingsPage
+Two rows of preset buttons (play style, tech level), each with "Current: <preset>|Custom", and Export / Import / Reset all settings. The matching preset is highlighted.
 
----
+### SettingsPresets
+A preset is a partial settings dictionary in the export string format, applied key by key through `SettingsSerializer.ApplyValue`. Play style and tech level presets set disjoint keys (`TechKeys`), so the order they're picked in doesn't matter; no preset sets `PersonalKeys` (cache, network, log level, item blacklist). `Validate()` logs violations in dev mode. Only "Default" exists for play styles so far; the real presets come after a playtest. "Reset all settings" (`RealRuins_ModSettings.Reset`) is different: it resets everything, cache and debug included.
 
 ### NetworkCacheSettingsPage
-Shows live cache stats, cache limit slider, offline/download/upload toggles, "Download 50" / "Download 500" buttons, "Clear Cache" button (red, with confirmation), "Upload Now" button.
+Shows live cache stats, cache limit slider, offline/download/upload toggles, "Download 50" / "Download 500" buttons, "Clear Cache" button (red, with confirmation). A red line warns while the staging server is on.
 
-Below them, a **Planetary ruins cache** table: one row per planetary ruins subfolder (`<seed>-<mapSize>-<coverage %>`, see `SnapshotStoreManager.GamePath`) with seed, coverage, map size, blueprint count, total folder size (bold) and a "Clear" button with confirmation (`ClearPlanetaryCacheFolder`). The folders are scanned by `SnapshotStoreManager.GetPlanetaryCacheFolders()` only when `SnapshotStoreManager.CacheVersion` changes (bumped from any thread by every write, delete or clear in the cache), at most once a second so background downloads don't rescan every frame, and again whenever the page is shown after not being drawn (to catch changes made outside the game). The page height follows the drawn content (`listing.maxOneColumn`, otherwise `Listing_Standard` wraps overflow into an invisible second column). The main "Clear Cache" button still deletes everything, planetary folders included.
+Below them, a **Planetary ruins cache** table: one row per planetary ruins subfolder (`<seed>-<mapSize>-<coverage %>`, see `SnapshotStoreManager.GamePath`) with seed, coverage, map size, blueprint count, total folder size (bold) and a "Clear" button with confirmation (`ClearPlanetaryCacheFolder`). The folders are scanned by `SnapshotStoreManager.GetPlanetaryCacheFolders()` only when `SnapshotStoreManager.CacheVersion` changes (bumped from any thread by every write, delete or clear in the cache), at most once a second so background downloads don't rescan every frame, and again whenever the page is shown after not being drawn (to catch changes made outside the game). The main "Clear Cache" button still deletes everything, planetary folders included.
 
 **"Download 50" button**: Calls `SnapshotManager.Instance.LoadSomeSnapshots(5)`. The argument `5` is a batch count; display label "50" assumes batch size = 10. Relationship is undocumented.
 
 **Performance**: `SnapshotStoreManager.Instance.TotalSize()` and `StoredSnapshotsCount()` called every render frame — potential stutter if these involve disk I/O.
 
-**`GUI.color`** is restored without `try/finally` — exception between assignment and restore corrupts the global GUI color state.
+### WealthBalanceSettingsPage
+Limits (regular per map, caravan, pristine ruins, abandoned planetary locations, single item cost, no haulables, walls and doors only), Scaling (colony wealth + reference, how the regular limit counts — greyed while per-map is unlimited), Threats and difficulty (threat scale, inhabitants in regular ruins, disable friendly raids, small raids keep coming, no ruins on starting map).
 
----
+`ruinsCostCap` (pristine ruins) uses a logarithmic slider (1000–1e9 via `Math.Log`/`Math.Exp`) and is written back only when moved, because the round trip isn't exact.
 
-### AdvancedSettingsPage
-Sliders for: `forceMultiplier` (0–2 linear), `ruinsCostCap` (logarithmic 1000–1e9 via `Math.Log`/`Math.Exp`), `caravanRuinsCostCap` and `poiRuinsCostCap` (0–100,000, steps of 1,000). `caravanReformType` FloatMenu dropdown. Text fields for `spawnBlacklist`, `materialBlacklist`, `fallbackMaterial`. Export/Import buttons.
+### SpawnSettingsPage
+Common (tech level cap, roofs, no haulables, walls and doors only, blacklists and fallback material), Regular ruins (tech applies here, density, fragment size, proximity, deterioration, scavengers, keep vanilla ruins, no ruins on starting map), Events (tech applies here), Planetary locations (tech applies here, download/transfer limits, discard plain ruins, no friendly locations, abandoned %).
 
-**Text field buffers**: `RealRuins_Mod` keeps the window and pages alive, so each text buffer remembers the setting value it was last synced with (`BufferedTextField` here, `ReadableLabeledTextInput(..., ref synced)` for the numeric fields on the Planetary Ruins page). If the setting changed elsewhere (import, reset), the buffer is refilled instead of being written back.
+**Min/Max Radius enforcement**: After setting `maxRadius`, clamps `minRadius` if `min > max`.
 
-**Known bug**: `RealRuins_ModSettings.Reset()` does not reset `diskCacheLimit` and replaces `defaultScatterOptions` with `new ScatterOptions()` instead of `ScatterOptions.Default`.
+**Cost limit sentinel**: `itemCostLimit >= 1000` displays as "Unlimited". The slider maximum of 1000 is an in-band magic value.
 
----
+### GameplaySettingsPage
+Events and quests (pristine ruins quest, caravan ruins event, caravan reform mode, small raids keep coming, disable friendly raids) and Planetary locations (offer at game start, "Download and spawn now", "Remove all locations"). Rule against Spawn: Gameplay is about whether something exists and how you interact with it, Spawn about what it looks like.
 
-### TechLevelSettingsPage
-Tech level cap (see 04-scattering, Tech level cap): master toggle, maximum level and strategy dropdowns, group checkboxes.
-Everything below the master toggle is grayed out and ignores clicks while it is off.
-
----
-
-### PlanetaryRuinsSettingsPage
-Enable-on-start checkbox, download/transfer limit fields, exclude-plain-ruins checkbox, disable-friendly-locations checkbox, abandoned percentage slider, "Spawn Sites" and "Remove All Locations" buttons.
-
-**`RemoveAllLocations()`**: Correct two-pass pattern (collect `RealRuinsPOIWorldObject` instances, then iterate temp list to remove) — avoids collection-modification-during-enumeration.
-
----
+**Remove all locations**: two-pass (collect `RealRuinsPOIWorldObject` instances, then remove) to avoid modifying the collection during enumeration.
 
 ### DebugSettingsPage
-Log level FloatMenu, debug category toggle buttons (flow-wrap layout, green=enabled, grey=disabled), Reset button with confirmation dialog.
-
-**Height estimate**: `((count + 2) / 3) × (rowHeight + spacing)` assumes 3 buttons per row. Actual wrapping uses `buttonWidth=160f` against available width — estimate may over/under-allocate at non-standard panel widths.
+Log level FloatMenu, keep snapshots, log ruins wealth, staging server, debug category toggle buttons (flow-wrap layout, green=enabled, grey=disabled), "Manually trigger blueprint capture".
 
 **Side effect**: Clicking any category toggle calls `WriteSettings()`, which triggers `SnapshotStoreManager` cache checks — heavier than needed for a toggle.
 
@@ -143,6 +143,8 @@ Log level FloatMenu, debug category toggle buttons (flow-wrap layout, green=enab
 ## SettingsSerializer
 
 Import/export via Base64-encoded `key=value|key=value` strings.
+
+**`CurrentValues()` / `ApplyValue(key, value)`**: the key list and the parser, shared by export/import and by presets.
 
 **`Export()`**: Builds pipe-delimited string with `Uri.EscapeDataString`-encoded string values, `"R"` format floats (round-trip accurate). Base64-encoded for clipboard.
 
