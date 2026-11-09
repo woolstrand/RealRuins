@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <LanguageData>
-  <RealRuins_SearchRecordsForRuins.reportString>ищет руины в старых записях: TargetA.</RealRuins_SearchRecordsForRuins.reportString>
-  <RealRuins_RadioLocateRuins.reportString>ведёт радиопоиск руин: TargetA.</RealRuins_RadioLocateRuins.reportString>
+  <RealRuins_SearchRecordsForRuins.reportString>ищет руины в старых записях, используя TargetA.</RealRuins_SearchRecordsForRuins.reportString>
+  <RealRuins_RadioLocateRuins.reportString>ведёт радиопоиск руин, используя TargetA.</RealRuins_RadioLocateRuins.reportString>
 </LanguageData>

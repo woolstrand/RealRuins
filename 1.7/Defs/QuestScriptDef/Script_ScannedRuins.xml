@@ -71,7 +71,7 @@
     <defName>RealRuins_ScannedRuins_Records</defName>
     <questDescriptionRules>
       <rulesStrings>
-        <li>questDescription->[scannerName] spent days at the [scanBuilding] going through [sources], and finally [clue]. Checked against old maps, it all points to one spot: a group of ancient buildings, very old and abandoned, but with doors still sealed and all inventory and machinery still inside.\n\nUnfortunately, those sources were never yours alone. [leak] All nearby settlements are already preparing to fight for whatever lies inside these ruins. The treasure could be enormous, so be prepared for a real massacre, not like the usual carefully balanced encounters you've had before. And don't waste time: scavengers are already on their way, and the ruins won't last long.</li>
+        <li>questDescription->[scannerName] spent days at the [scanBuilding] going through [sources], and finally [clue]. Checked against old maps, it all points to one spot, a group of ancient buildings, very old and abandoned, but with doors still sealed and all inventory and machinery still inside.\n\nUnfortunately, those sources were never yours alone. [leak] All nearby settlements are already preparing to fight for whatever lies inside these ruins. The treasure could be enormous, so be prepared for a real massacre, not like the usual carefully balanced encounters you've had before. And don't waste time, scavengers are already on their way, and the ruins won't last long.</li>
         <li>sources->a crate of water-damaged books from before the collapse</li>
         <li>sources->old survey records bought from a trader for a handful of silver</li>
         <li>sources->the journals of a long-dead exploration party</li>
@@ -83,7 +83,7 @@
         <li>clue->decoded a quartermaster's notes about a stockpile that was never collected</li>
         <li>leak->Other settlements keep copies of the same books, and someone else was reading them at the same time.</li>
         <li>leak->The trader who sold you the records had sold the same bundle to every settlement around.</li>
-        <li>leak->Asking passing caravans about old landmarks was a mistake: they put two and two together faster than you did.</li>
+        <li>leak->Asking passing caravans about old landmarks was a mistake, they put two and two together faster than you did.</li>
         <li>leak->The scouts you sent to confirm the location were seen, and followed.</li>
       </rulesStrings>
     </questDescriptionRules>
@@ -94,7 +94,7 @@
     <defName>RealRuins_ScannedRuins_Radio</defName>
     <questDescriptionRules>
       <rulesStrings>
-        <li>questDescription->After days of [listening] at the [scanBuilding], [scannerName] finally picked out [signal]. Triangulation points to a group of ancient buildings: the complex is very old and abandoned, but its doors are still sealed and all inventory and machinery is still inside.\n\nUnfortunately, you weren't the only ones listening. [leak] All nearby settlements are already preparing to fight for whatever lies inside these ruins. The treasure could be enormous, so be prepared for a real massacre, not like the usual carefully balanced encounters you've had before. And don't waste time: scavengers are already on their way, and the ruins won't last long.</li>
+        <li>questDescription->After days of [listening] at the [scanBuilding], [scannerName] finally picked out [signal]. Triangulation points to a group of ancient buildings. The complex is very old and abandoned, but its doors are still sealed and all inventory and machinery is still inside.\n\nUnfortunately, you weren't the only ones listening. [leak] All nearby settlements are already preparing to fight for whatever lies inside these ruins. The treasure could be enormous, so be prepared for a real massacre, not like the usual carefully balanced encounters you've had before. And don't waste time, scavengers are already on their way, and the ruins won't last long.</li>
         <li>listening->sweeping old frequencies</li>
         <li>listening->pinging long-silent transponder codes</li>
         <li>listening->hacking into a derelict satellite relay</li>

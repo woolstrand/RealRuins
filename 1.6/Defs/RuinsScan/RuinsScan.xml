@@ -8,7 +8,7 @@
   <RealRuins.RuinsScanDef>
     <defName>RealRuins_RuinsScan_Records</defName>
     <label>search records for ruins</label>
-    <description>Have researchers comb through old books, maps, journals and trade ledgers for traces of sealed ancient ruins. Requires Intellectual {0}.\n\nThere is no telling how long it takes: a skilled researcher pieces something together after about {1} days of study on average, a novice after about {2}. The same records exist elsewhere, so once you find the ruins, others will too.</description>
+    <description>Have researchers comb through old books, maps, journals and trade ledgers for traces of sealed ancient ruins. Requires Intellectual {0}.\n\nThere is no telling how long it takes. A skilled researcher pieces something together after about {1} days of study on average, a novice after about {2}. The same records exist elsewhere, so once you find the ruins, others will too.</description>
     <foundMessage>{PAWN_nameDef} found references to sealed ruins in old records at the {BUILDING}. Working out where they are...</foundMessage>
     <job>RealRuins_SearchRecordsForRuins</job>
     <workGiver>RealRuins_SearchRecordsForRuins</workGiver>
@@ -28,7 +28,7 @@
   <RealRuins.RuinsScanDef>
     <defName>RealRuins_RuinsScan_Radio</defName>
     <label>radio-locate ruins</label>
-    <description>Have researchers sweep old frequencies, ping dormant transponders and hack into derelict relays to locate sealed ancient ruins. Requires Intellectual {0}.\n\nThere is no telling how long it takes: a skilled operator finds something after about {1} days of scanning on average, a novice after about {2}. Active pinging is never quiet, so once you find the ruins, others will too.</description>
+    <description>Have researchers sweep old frequencies, ping dormant transponders and hack into derelict relays to locate sealed ancient ruins. Requires Intellectual {0}.\n\nThere is no telling how long it takes. A skilled operator finds something after about {1} days of scanning on average, a novice after about {2}. Active pinging is never quiet, so once you find the ruins, others will too.</description>
     <foundMessage>{PAWN_nameDef} picked up a signal at the {BUILDING}. Triangulating the location...</foundMessage>
     <job>RealRuins_RadioLocateRuins</job>
     <workGiver>RealRuins_RadioLocateRuins</workGiver>

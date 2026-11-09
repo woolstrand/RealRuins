@@ -63,6 +63,13 @@ searching to figure out. Keep entries short; no screen coordinates (they change 
 
 - **An auto-accepted quest's letter sits in the letter stack as "Quest active: <name>"** on the right edge, looking like an
   alert. Clicking it opens the Quests tab and dismisses the letter; its text stays in History → Messages.
+- **Text after a colon or a period gets capitalized** in tooltips, quest descriptions and letters ("takes: A skilled",
+  "дн. Работы"). Mod text avoids ": " and abbreviations mid-sentence; a dash or a new sentence is safe.
+- **Testing a translation:** main menu → the language button (bottom right of the menu) → language; the game reloads in ~30 s.
+  Right after that switch the 1.7 engine draws pink/red missing-texture boxes on portraits and gizmo icons; a fresh launch in
+  that language is clean. Switch back to English afterwards (`langFolderName` in `Config/Prefs.xml`).
+- Vanilla Russian work-giver wording is "<verb>, используя" (`Research.verb` = "исследовать, используя"). Vanilla language files
+  are `.tar` archives in `Data/<pack>/Languages/`; `tar -xf` one into a temp folder to look up official terms.
 - Every entry in the Do incident list is shown `[NO]` (even vanilla). Clicking still fires it.
 - `esc` closes the world view as well as windows - you land back on the colony map.
 - Hovering a DLC icon on the main menu covers the menu buttons with a big panel; `move` away first.
