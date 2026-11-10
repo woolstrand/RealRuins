@@ -75,7 +75,8 @@ searching to figure out. Keep entries short; no screen coordinates (they change 
 - Hovering a DLC icon on the main menu covers the menu buttons with a big panel; `move` away first.
 - The debug log window auto-opens on any logged exception; close it with its X.
 - Letter icons shift as new letters arrive and sometimes open a beat late; re-screenshot.
-- `launch` returns before the main menu takes input: clicks sent right away (even after one screenshot) are lost. If a screenshot after clicking still shows the bare menu, just click again.
+- `launch` returns while the game still shows "Initializing." over the planet: clicks sent then are lost. Screenshot until the main menu is up before clicking.
+- **What's new window** opens by itself ~1.5 s after the main menu when `Config/RealRuins_ReadNews.txt` lacks an article id. Delete that file (or debug action RealRuins -> Forget read news) to see it again; RealRuins -> Show what's new opens it at once, which is how to test the quick-close confirmation (open and click Close in one command). The confirmation only guards unread articles marked `<important>true</important>`: run Forget read news first.
 - **Mod settings:** Options -> Mod options -> Real Ruins. Settings are written when the window closes; `quit` kills the game, so presets clicked while testing are not saved.
 - Window size/position differed between launches - always screenshot before clicking.
 - Launch `RimWorld.app`. The csproj `StartProgram` points at `RimWorldMac.app/...`, which has no binary.

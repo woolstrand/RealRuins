@@ -22,6 +22,7 @@ xcopy /E /I /Y "Defs" "!MOD_BASE_FOLDER!\Defs"
 xcopy /E /I /Y "Languages" "!MOD_BASE_FOLDER!\Languages"
 xcopy /E /I /Y "Patches" "!MOD_BASE_FOLDER!\Patches"
 xcopy /E /I /Y "Textures" "!MOD_BASE_FOLDER!\Textures"
+xcopy /E /I /Y "News" "!MOD_BASE_FOLDER!\News"
 
 REM --- Versioned folders ---
 xcopy /E /I /Y "1.1" "!MOD_BASE_FOLDER!\1.1"

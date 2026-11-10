@@ -85,6 +85,21 @@ namespace RealRuins
 
         // Classifies random cached blueprints under several tech level caps (see POITypeSampler). Needs no game, so it is in the
         // main menu too (game state flags must all match, hence two actions).
+        // The what's new window with every article, read or not; closing it marks them read as usual
+        [DebugAction("RealRuins", "Show what's new", allowedGameStates = AllowedGameStates.Entry)]
+        public static void ShowWhatsNew()
+        {
+            Find.WindowStack.Add(new WhatsNew.Dialog_WhatsNew(WhatsNew.NewsArticles.All()));
+        }
+
+        // Next launch shows every article again
+        [DebugAction("RealRuins", "Forget read news", allowedGameStates = AllowedGameStates.Entry)]
+        public static void ForgetReadNews()
+        {
+            WhatsNew.NewsArticles.ForgetRead();
+            Messages.Message("RealRuins: read news forgotten", MessageTypeDefOf.NeutralEvent, false);
+        }
+
         [DebugAction("RealRuins", "Sample POI types", allowedGameStates = AllowedGameStates.Entry)]
         public static List<DebugActionNode> SamplePOITypesAtEntry() => SamplePOITypeNodes();
 
