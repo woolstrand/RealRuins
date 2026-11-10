@@ -1,4 +1,4 @@
-# Playtest results (in progress, 2026-11-09; second run done, fixes in `8709136` and `4d3ad0b`)
+# Playtest results (in progress, 2026-11-09; second run done, fixes in `8709136` and `4d3ad0b`; third session 2026-11-10 on `62324e3`: RT-07, RT-08, U-08, S-05)
 
 Build: `development` @ `a50b298` (DLL), Windows, RimWorld 1.7.5000. Mods: Harmony, Core, all DLCs, RealRuins.
 Old build: the baseline `b3124b5` DLL committed in `1.6/Assemblies`, deployed with a `v1.7 → 1.6` load folder. The Workshop copy wasn't used: it's an in-between build without `MapRuinsStore`.
@@ -33,7 +33,7 @@ Screenshots are in `%TEMP%\realruins-run\` (overwritten per run). Only the ones 
 | S-02 | PASS | Reset clears the blacklist fields at once |
 | S-03 | PASS | Export has 50 keys incl. the 6 tech level and 9 wealth settings. Changed the tech toggles, imported: "Settings imported successfully", toggles back to the exported values |
 | S-04 | PARTIAL | Slider clicks at the ends didn't move the caravan and POI caps (clicks on the track, not drags). → H-5 |
-| S-05 | NOT RUN | |
+| S-05 | **REPORT** | 2026-11-10: dev mode off (Options → General) → the settings still show the **Debug Settings** tab with log level, keep snapshot files, log ruins wealth, **Use staging environment** and **Manually trigger blueprint capture**. Staging is reachable without dev mode: release decision |
 | S-06 | → H-5 | |
 | **C — Storage & cache** | | |
 | C-01 | PASS | Table sorted by seed: seed, coverage, size, count, MB |
@@ -46,7 +46,7 @@ Screenshots are in `%TEMP%\realruins-run\` (overwritten per run). Only the ones 
 | U-04, U-05 | DROPPED | The game's game-over mechanics changed |
 | U-06 | NOT RUN | |
 | U-07 | PASS | Offline: save writes `RealRuins/local-1893566810.bp`, no network call |
-| U-08 | NOT VERIFIED | The uploaded snapshot (28×23, crash-landing area) has no pawns |
+| U-08 | PASS | 2026-11-10: a colonist killed in the home area → the snapshot has 2 `Pawn` items (corpse + dog); the colonist: `biologicalAge` 154,885,856 ≠ `chronologicalAge` 2,592,085,856 ticks |
 | **T — Tech level** | | |
 | T-01 | PASS | Cap off: spacer and industrial things present (defaults sample) |
 | T-02 | PASS | Medieval strict, density 3, unlimited wealth: only walls, wood, wooden beds and leather armchairs in the chunk top lists; 0 errors |
@@ -124,6 +124,8 @@ Screenshots are in `%TEMP%\realruins-run\` (overwritten per run). Only the ones 
 | RT-04 | PASS | Config 0 → caravan event used `needed 1000` and the cap; label now shows 1,000 (fix in `4d3ad0b`, before it showed 0). With cap 1,000 the main ruin was tiny (worth 2) and got 0.06 raider points — no longer "empty with raiders". Slider drag → H-5 |
 | RT-05 | PASS | `ruinsCostCap` 50000 in the config: tab drawn, settings closed → still `50000`. Drag → H-5 |
 | RT-06 | PASS | "Planetary ruins" between Factions and Next; opens the loader with "Remove all spawned locations". Next → Back: loader doesn't reopen. "Allow on start" off: vanilla 4 buttons, no loader. Map-size change with cleanup not re-checked (changing it would have dropped the RT-01 context; the code path is unchanged). No `layout not recognized` warning |
+| RT-07 | PASS | 2026-11-10, build `62324e3`, staging + keep files. Quicktest, home area over the colonists and ruin walls: `Capture finished`, upload successful, 11.7 KB XML ends with `</snapshot>` and parses (walls, conduits, meals, weapons, armour). **Alive pawns are never stored** (`SnapshotGenerator.cs:315`, by design), so a second quicktest with a killed colonist in the home area: 8 KB XML, parses, ends with `</snapshot>`, 2 `Pawn` items (corpse incl. apparel) |
+| RT-08 | OPEN (RR-associated) | Popup #1. Without RealRuins: **0 of 10** quicktests, plus a vanilla save with a spawned `Shuttle` (has `CompAmbientSound`) reloaded in-game and from the main menu: 0 errors. With RealRuins: **2 of 8** quicktests (first run 1; 2026-11-10: 1 of 7). The full stack: a `SubSustainer` start queued in `ExecuteWhenFinished` at the end of map generation, no RR frames. The 2026-11-10 map had a **geothermal generator** in a ruin chunk (`CompAmbientSound`); the 5 clean maps after it had none (only an unfuelled wood-fired generator). Lead: a ruin building whose sustainer is created during map generation (on the generation thread, e.g. `CompPowerTrader`/`CompPowerPlant` when the ruin power net turns on) that the 1.7 engine can't attach. Effect: one error popup, the sound doesn't play; no other harm seen. See finding 11 |
 | **H — Hand tests** | | |
 | H-1 … H-8 | FOR THE USER | See the plan |
 
@@ -141,6 +143,8 @@ Screenshots are in `%TEMP%\realruins-run\` (overwritten per run). Only the ones 
 9. **Offline mode deletes all downloaded blueprints at startup** (`SnapshotStoreManager.CheckCacheContents`, same in the baseline). With offline mode on and no local snapshots, generic ruins are skipped ("low blueprints count"). Intended by design ("offline" = only your own bases) but surprising: switching offline on wipes a 700-blueprint cache. Decision needed; not changed.
 10. Caravan ruins at the 1,000 cap: the main ruin is nearly empty (a 13k blueprint cut to ~2). Raiders scale with value, so ~0 raiders. Fine, but the minimum could be higher if a near-empty ruin should not happen.
 
+11. **Open: popup #1 is RealRuins-associated (RT-08).** "Object is not tracked by the Unity world" in `SampleSustainer.TryMakeAndPlay` after map generation: 0 of 10 vanilla quicktests, 2 of 8 with RR. Cosmetic (one error, a missing ambient sound). Next step: a debug-only Harmony prefix on `Sustainer`'s constructor that logs `info.Maker.Thing` while a map is being generated, then a few quicktests to name the def; then either delay that comp's sustainer (spawn the thing unpowered / defer power-net connection to after `FinalizeInit`) or accept.
+
 Error-log popups of the run are listed in `playtest_popups.md` (one still needs a check without the mod).
 
 ## Tooling changes during the run
@@ -149,9 +153,12 @@ Error-log popups of the run are listed in `playtest_popups.md` (one still needs 
 
 ## Not run yet
 
-By the driver: RT-07, RT-08 (popup #1 without the mod), M-09, S-05, C-02–C-05, U-06, U-08, W-10 (×3 part), D-02 (release), D-03, R-03, E-03 (expiry), E-08, L-02, L-07 (attack after the load), RT-06 (map-size change), X-03, G-02.
+By the driver: M-09, C-02–C-05, U-06, W-10 (×3 part), D-02 (release), D-03, R-03, E-03 (expiry), E-08, L-02, L-07 (attack after the load), RT-06 (map-size change), X-03, G-02.
 By the user: H-1–H-8.
 
 ## Current environment state
 
+2026-11-10: game closed; `ModsConfig.xml`, `Prefs.xml` and the RealRuins config restored from the session backup (the user's full mod list, logVerbose on). New saves `PT-rt07`, `PT-rt07b`, `PT-rt08-vanilla`. Two test snapshots went to **staging** (RT-07). Dev mode was switched off and on through the restored `Prefs.xml` (on).
+
+Earlier state (2026-11-09): 
 Game closed. `Config/ModsConfig.xml`, `Prefs.xml` and `Mod_RealRuins_RealRuins_Mod.xml` restored from the backup. `Mods/RealRuins` has the `4d3ad0b` build. The blueprint cache was refilled from production (~650 blueprints; offline mode had wiped it, finding 9). Test saves `PT-rt02-*`, `PT-rt03`, `PT-snap` and the `PT-old-*` fixtures are in the Saves folder. One test snapshot went to **staging** (RT-03).

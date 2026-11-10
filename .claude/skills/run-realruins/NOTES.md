@@ -270,3 +270,17 @@ blueprint id) - that file also states the spawn philosophy: spawn what can be sp
   button only with "load on start" on). The start-at-POI dialog: abandoned / take over / attack / cancel, then a confirm.
 - Old saves restored by the old build log "had a beard. Removed." and "Hediff_Injury has null part after loading" on
   every first load: old-build pawn data, vanilla removes it, a re-saved game is clean.
+
+## Learned in the 2026-11-10 session
+
+- **Snapshots never store alive pawns** (`SnapshotGenerator`, by design): to test pawn encoding, kill a colonist in the home
+  area first (Debug actions → `T: Kill`, click the pawn; the tool stays active, right-click to drop it).
+- **Quit to main menu asks "Really quit?"** once the game has unsaved play (not right after a save): click Confirm.
+  Scripted quicktest loops: esc → Quit to main menu → Confirm → Dev quicktest.
+- **Testing without RealRuins** (RT-08): drop `woolstrand.realruins` from `ModsConfig.xml`; `driver.sh launch` then times out
+  waiting for the patch line (expected), the game is up anyway. `Initializing new game` is logged by RR, not vanilla.
+- **Debug actions search box**: typing works, but the first characters can be lost; check the screenshot. Clear it with
+  `key 8` (backspace) several times.
+- **Dev mode off** removes the Dev tab in Options, so "Mod options" moves up one row.
+- **Popup #1 ("Object is not tracked by the Unity world", `SampleSustainer`)**: only seen with RR (2 of 8 quicktests, 0 of 10
+  without). One occurrence had a geothermal generator in the ruins. Open, see playtest_results finding 11.
