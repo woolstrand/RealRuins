@@ -246,7 +246,7 @@ Lightweight DTO for tile metadata returned by `APIService.LoadAllMapsForSeed()`.
 - `allowOnStart` — enable ruins on game start
 - `downloadLimit` / `transferLimit` — cap on blueprint downloads/POI transfers
 - `excludePlainRuins` — exclude ruins type from POIs
-- `abandonedLocations` — proportion of abandoned (no faction) world sites (default 0.2)
+- `abandonedLocations` — proportion of abandoned (no faction) world sites (percent, default 20)
 - `disableSpawnFriendlyLocations` — prevents ruins at friendly faction tiles
 
 ---

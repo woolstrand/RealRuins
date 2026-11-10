@@ -14,55 +14,34 @@ namespace RealRuins.Settings
         {
             SettingsControls.PageHeader(listing, "RealRuins.DebugSettings.Caption", "RealRuins.DebugSettings.Description");
 
-            // Log Level Selector
-            Rect logLevelRect = listing.GetRect(25f);
-            Widgets.Label(
-                logLevelRect.LeftHalf().ContractedBy(0, 0),
-                "RealRuins.DebugSettings.LogLevel".Translate());
-            
-            if (Widgets.ButtonText(logLevelRect.RightHalf().ContractedBy(0, 3), GetLogLevelLabel()))
-            {
-                var options = new System.Collections.Generic.List<FloatMenuOption>();
-                options.Add(new FloatMenuOption("RealRuins.DebugSettings.LogLevelAll".Translate(), () => RealRuins_ModSettings.logLevel = 0));
-                options.Add(new FloatMenuOption("RealRuins.DebugSettings.LogLevelWarnings".Translate(), () => RealRuins_ModSettings.logLevel = 1));
-                options.Add(new FloatMenuOption("RealRuins.DebugSettings.LogLevelErrors".Translate(), () => RealRuins_ModSettings.logLevel = 2));
-                Find.WindowStack.Add(new FloatMenu(options));
-            }
+            SettingsControls.DropdownRow(listing, "RealRuins.DebugSettings.LogLevel".Translate(), GetLogLevelLabel(), null, () =>
+                new System.Collections.Generic.List<FloatMenuOption> {
+                    new FloatMenuOption("RealRuins.DebugSettings.LogLevelAll".Translate(), () => RealRuins_ModSettings.logLevel = 0),
+                    new FloatMenuOption("RealRuins.DebugSettings.LogLevelWarnings".Translate(), () => RealRuins_ModSettings.logLevel = 1),
+                    new FloatMenuOption("RealRuins.DebugSettings.LogLevelErrors".Translate(), () => RealRuins_ModSettings.logLevel = 2),
+                });
 
-            listing.Gap(15f);
-
-            listing.CheckboxLabeled(
-                "RealRuins.DebugSettings.KeepSnapshotsAfterUpload".Translate(),
+            SettingsControls.Checkbox(listing, "RealRuins.DebugSettings.KeepSnapshotsAfterUpload",
                 ref RealRuins_ModSettings.debugKeepSnapshotsAfterUpload,
                 "RealRuins.DebugSettings.KeepSnapshotsAfterUploadTooltip".Translate());
-
-            listing.Gap(15f);
-
-            listing.CheckboxLabeled(
-                "RealRuins.DebugSettings.LogRuinsWealth".Translate(),
+            SettingsControls.Checkbox(listing, "RealRuins.DebugSettings.LogRuinsWealth",
                 ref RealRuins_ModSettings.debugLogRuinsWealth,
                 "RealRuins.DebugSettings.LogRuinsWealthTooltip".Translate());
-
-            listing.Gap(15f);
-
-            listing.CheckboxLabeled(
-                "RealRuins.DebugSettings.UseStagingEnvironment".Translate(),
+            SettingsControls.Checkbox(listing, "RealRuins.DebugSettings.UseStagingEnvironment",
                 ref RealRuins_ModSettings.useStagingEnvironment,
                 "RealRuins.DebugSettings.UseStagingEnvironmentTooltip".Translate());
 
-            listing.Gap(15f);
-
-            // Debug Categories
-            listing.Label("RealRuins.DebugSettings.DebugCategories".Translate());
+            SettingsControls.Section(listing, "RealRuins.DebugSettings.DebugCategories");
             DrawDebugCategoryButtons(listing);
 
-            listing.Gap(15f);
+            listing.Gap(SettingsControls.SectionGap);
 
             // Manual blueprint capture
-            Rect uploadRect = listing.GetRect(35f);
-            Color prevColor = GUI.color;
-            GUI.color = new Color(0.3f, 0.8f, 0.3f);
-            if (Widgets.ButtonText(uploadRect, "RealRuins.DebugSettings.ManualUpload".Translate()))
+            int clicked = SettingsControls.ButtonRow(listing,
+                new string[] { "RealRuins.DebugSettings.ManualUpload".Translate() },
+                new Color?[] { SettingsControls.ActionColor },
+                new string[] { "RealRuins.DebugSettings.ManualUploadTooltip".Translate() });
+            if (clicked == 0)
             {
                 if (Find.CurrentMap != null)
                 {
@@ -78,8 +57,6 @@ namespace RealRuins.Settings
                         MessageTypeDefOf.RejectInput);
                 }
             }
-            GUI.color = prevColor;
-            TooltipHandler.TipRegion(uploadRect, "RealRuins.DebugSettings.ManualUploadTooltip".Translate());
         }
 
         private string GetLogLevelLabel()
@@ -97,39 +74,35 @@ namespace RealRuins.Settings
             }
         }
 
+        // As many equal columns as the longest category name allows
         private void DrawDebugCategoryButtons(Listing_Standard listing)
         {
-            float buttonWidth = 160f;
-            float spacing = 5f;
-            float rowHeight = 25f;
-            
-            // Calculate required height based on number of categories
-            int categoriesCount = Debug.AllCategories.Length;
-            float requiredHeight = ((categoriesCount + 2) / 3) * (rowHeight + spacing) + spacing;
-            
-            Rect baseRect = listing.GetRect(requiredHeight);
-            float x = baseRect.x;
-            float y = baseRect.y;
-            float maxWidth = baseRect.width;
-            float currentX = x;
-            float currentY = y;
+            const float rowHeight = 26f;
+            const float spacing = 6f;
+            string[] categories = Debug.AllCategories;
 
-            foreach (string category in Debug.AllCategories)
+            float labelWidth = 0f;
+            foreach (string category in categories)
             {
-                float requiredWidth = buttonWidth + spacing;
-                if (currentX + requiredWidth > x + maxWidth)
-                {
-                    currentX = x;
-                    currentY += rowHeight + spacing;
-                }
+                labelWidth = Mathf.Max(labelWidth, Text.CalcSize(category).x);
+            }
+            float width = listing.ColumnWidth;
+            int columns = Mathf.Clamp(Mathf.FloorToInt((width + spacing) / (labelWidth + 16f + spacing)), 1, categories.Length);
+            int rows = (categories.Length + columns - 1) / columns;
+            float buttonWidth = (width - spacing * (columns - 1)) / columns;
 
-                Rect buttonRect = new Rect(currentX, currentY, buttonWidth, rowHeight);
+            Rect baseRect = listing.GetRect(rows * rowHeight + (rows - 1) * spacing);
+            for (int i = 0; i < categories.Length; i++)
+            {
+                string category = categories[i];
+                Rect buttonRect = new Rect(
+                    baseRect.x + (i % columns) * (buttonWidth + spacing),
+                    baseRect.y + (i / columns) * (rowHeight + spacing),
+                    buttonWidth, rowHeight).Rounded();
                 bool isEnabled = Debug.extras.Contains(category);
-                
-                Color bgColor = isEnabled ? new Color(0.3f, 0.8f, 0.3f) : new Color(0.5f, 0.5f, 0.5f);
+
                 Color prevColor = GUI.color;
-                GUI.color = bgColor;
-                
+                GUI.color = isEnabled ? new Color(0.3f, 0.8f, 0.3f) : new Color(0.5f, 0.5f, 0.5f);
                 if (Widgets.ButtonText(buttonRect, category))
                 {
                     if (isEnabled)
@@ -142,9 +115,7 @@ namespace RealRuins.Settings
                     }
                     LoadedModManager.GetMod<RealRuins_Mod>().WriteSettings();
                 }
-                
                 GUI.color = prevColor;
-                currentX += buttonWidth + spacing;
             }
         }
     }

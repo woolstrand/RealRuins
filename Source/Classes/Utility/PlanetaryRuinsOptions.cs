@@ -10,7 +10,7 @@ namespace RealRuins
         public int downloadLimit = 0;
         public int transferLimit = 0;
         public bool excludePlainRuins = false;
-        public float abandonedLocations = 0.2f;
+        public float abandonedLocations = 20f; //percent
         public bool disableSpawnFriendlyLocations = false;
 
 
@@ -24,7 +24,7 @@ namespace RealRuins
             Scribe_Values.Look(ref downloadLimit, "downloadLimit", 0, false);
             Scribe_Values.Look(ref transferLimit, "transferLimit", 0, false);
             Scribe_Values.Look(ref excludePlainRuins, "excludePlainRuins", false, false);
-            Scribe_Values.Look(ref abandonedLocations, "abandonedLocations", 0.2f, false);
+            Scribe_Values.Look(ref abandonedLocations, "abandonedLocations", 20f, false);
             Scribe_Values.Look(ref disableSpawnFriendlyLocations, "disableSpawnFriendlyLocations", false, false);
         }
     }

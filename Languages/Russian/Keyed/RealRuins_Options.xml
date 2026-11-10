@@ -22,7 +22,7 @@
   <RealRuins_MapOptions_Size_Max>Максимальный размер фрагмента</RealRuins_MapOptions_Size_Max>
   <RealRuins_MapOptions_Deterioration>Дополнительная степень разрушения</RealRuins_MapOptions_Deterioration>
   <RealRuins_MapOptions_Scavengers>Активность мародеров</RealRuins_MapOptions_Scavengers>
-  <RealRuins_MapOptions_CostLimit>Лимит стоимости одной вещи (обычные руины)</RealRuins_MapOptions_CostLimit>
+  <RealRuins_MapOptions_CostLimit>Лимит стоимости одной вещи (обычные и нетронутые руины)</RealRuins_MapOptions_CostLimit>
   <RealRuins_MapOptions_DisableHaulables>Без переносимых предметов</RealRuins_MapOptions_DisableHaulables>
   <RealRuins_MapOptions_WallsAndDoorsOnly>Только стены и двери</RealRuins_MapOptions_WallsAndDoorsOnly>
   <RealRuins_MapOptions_DisableHostiles>Обитатели обычных руин</RealRuins_MapOptions_DisableHostiles>
@@ -39,7 +39,7 @@
   <RealRuins_MapOptions_WealthIgnoreStructureTT>Обычные стены, двери и полы (до 50 серебра за клетку) не учитываются в ограничении и никогда не убираются ради него: их много, и это не добыча. Золотые стены, серебряные полы, автодвери и тому подобное по-прежнему учитываются.</RealRuins_MapOptions_WealthIgnoreStructureTT>
   <RealRuins_MapOptions_WealthCountDamage>Учитывать повреждённые вещи по сниженной стоимости</RealRuins_MapOptions_WealthCountDamage>
   <RealRuins_MapOptions_WealthCountDamageTT>Если выключено: всё учитывается по полной цене, поскольку ремонт её восстанавливает, а повреждённая вещь часто работает не хуже целой. Если включено: учитывается фактическая рыночная стоимость появившихся вещей (повреждения её снижают, качество меняет), поэтому в ограничение помещается больше.</RealRuins_MapOptions_WealthCountDamageTT>
-  <RealRuins_MapOptions_CostLimitTT>Все, что дороже указанной суммы, убирается из обычных руин. У руин, найденных караваном, и планетарных локаций свои фиксированные лимиты. Крайнее правое положение: без ограничений.</RealRuins_MapOptions_CostLimitTT>
+  <RealRuins_MapOptions_CostLimitTT>Все, что дороже указанной суммы, убирается из обычных и нетронутых руин. У руин, найденных караваном, и планетарных локаций свои фиксированные лимиты. Крайнее правое положение: без ограничений.</RealRuins_MapOptions_CostLimitTT>
   <RealRuins_MapOptions_DisableHaulablesTT>Переносимые вещи появляться не будут, но мебель по-прежнему может встречаться. Действует на обычные руины, руины, найденные караваном, и разрушенные планетарные локации. Не действует на нетронутые руины и обитаемые локации.</RealRuins_MapOptions_DisableHaulablesTT>
   <RealRuins_MapOptions_WallsAndDoorsOnlyTT>Будет разрушено все, что не является строго дверью или стеной. Или полом. И золотой пол все равно украдут, не надейтесь. Действует на обычные руины, руины, найденные караваном, и разрушенные планетарные локации. Не действует на нетронутые руины и обитаемые локации.</RealRuins_MapOptions_WallsAndDoorsOnlyTT>
   <RealRuins_MapOptions_DisableHostilesTT>Вероятность того, что в фрагменте руин кто-то живет: животные (80%) или механоиды (20%). У остальных руин значения фиксированные: руины, найденные караваном, 80%, нетронутые руины всегда, планетарные локации никогда. Множитель угрозы действует на все из них.</RealRuins_MapOptions_DisableHostilesTT>
@@ -228,6 +228,7 @@
   <RealRuins.CacheSettings.TabCaption>Кэш и хранилище</RealRuins.CacheSettings.TabCaption>
   <RealRuins.CacheSettings.Caption>Кэш и хранилище</RealRuins.CacheSettings.Caption>
   <RealRuins.CacheSettings.Description>Откуда берутся чертежи и где они хранятся на вашем диске.</RealRuins.CacheSettings.Description>
+  <RealRuins.CacheSettings.NetworkSection>Загрузка и выгрузка</RealRuins.CacheSettings.NetworkSection>
   <RealRuins_ModOptions_NoLimit>Без ограничений</RealRuins_ModOptions_NoLimit>
   <RealRuins_ModOptions_ClearCacheConfirm>Вы уверены, что хотите очистить весь кэш? Это действие невозможно отменить.</RealRuins_ModOptions_ClearCacheConfirm>
   <RealRuins_ModOptions_OfflineModeConfirm>Оффлайн-режим удалит все чертежи руин, загруженные с сервера, сразу после закрытия настроек. Сохранятся только снимки ваших собственных баз и чертежи планетарных руин.\n\nЕсли вы передумаете, придётся выключить оффлайн-режим и загрузить чертежи заново, а это может занять несколько минут. До тех пор руины будут строиться только из ваших собственных баз.\n\nВключить оффлайн-режим?</RealRuins_ModOptions_OfflineModeConfirm>
@@ -339,22 +340,29 @@
   <!-- Settings layout: presets -->
   <RealRuins.Presets.TabCaption>Пресеты</RealRuins.Presets.TabCaption>
   <RealRuins.Presets.Caption>Пресеты</RealRuins.Presets.Caption>
-  <RealRuins.Presets.Description>Готовые наборы настроек для разных стилей игры. Пресет меняет только относящиеся к нему настройки: кэш, сеть, отладка и ваш черный список предметов не затрагиваются. Пресеты стиля игры и технологического уровня не влияют друг на друга.</RealRuins.Presets.Description>
+  <RealRuins.Presets.Description>Готовые наборы настроек для разных стилей игры. Пресет меняет только относящиеся к нему настройки. Кэш, сеть, отладка и ваш черный список предметов не затрагиваются. Пресеты стиля игры и технологического уровня не влияют друг на друга.</RealRuins.Presets.Description>
   <RealRuins.Presets.PlayStyle>Стиль игры</RealRuins.Presets.PlayStyle>
   <RealRuins.Presets.TechLevel>Технологический уровень</RealRuins.Presets.TechLevel>
   <RealRuins.Presets.SettingsSection>Все настройки</RealRuins.Presets.SettingsSection>
   <RealRuins.Presets.Current>Сейчас</RealRuins.Presets.Current>
   <RealRuins.Presets.Custom>Свои настройки</RealRuins.Presets.Custom>
   <RealRuins.Presets.Default>По умолчанию</RealRuins.Presets.Default>
-  <RealRuins.Presets.DefaultTT>Руины такими, какими мод задуман изначально. Сбрасывает настройки богатства, угроз, генерации и событий, но не технологический уровень.</RealRuins.Presets.DefaultTT>
+  <RealRuins.Presets.DefaultTT>Задуманный способ игры. Руины есть везде, но их содержимое давно разграблено и ничего по-настоящему ценного там обычно нет, хотя изредка может и повезти. Тем не менее, квест с нетронутыми руинами не имеет никаких ограничений ни по богатству, ни по масштабам сражения.</RealRuins.Presets.DefaultTT>
+  <RealRuins.Presets.Nomadic>Кочевник</RealRuins.Presets.Nomadic>
+  <RealRuins.Presets.NomadicTT>Руины богаче, и их должно хватать для жизни за счёт найденного, даже если у вас нет постоянного поселения. Остатков построек на картах больше, они крупнее и богаче, меньше разграблены. На самой планете больше заброшенных локаций, чем принадлежащих какой-то фракции.</RealRuins.Presets.NomadicTT>
+  <RealRuins.Presets.Balanced>Сбалансированный</RealRuins.Presets.Balanced>
+  <RealRuins.Presets.BalancedTT>Строгие лимиты богатства, растущие вместе с колонией, обветшалые и хорошо разграбленные руины. Все для того, чтобы вы никогда не смогли найти что-то действительно полезное, пока не пожертвуете половиной колонистов.</RealRuins.Presets.BalancedTT>
+  <RealRuins.Presets.Dense>Много руин</RealRuins.Presets.Dense>
+  <RealRuins.Presets.DenseTT>Руины по всей карте. Гораздо больше крупных фрагментов, в том числе вдали от поселений, при умеренном лимите богатства.</RealRuins.Presets.DenseTT>
+  <RealRuins.Presets.CustomTT>Ваши собственные настройки. Выбирается, как только настройки перестают совпадать с пресетами, и запоминается - после выбора пресета эта кнопка вернёт ваши настройки.</RealRuins.Presets.CustomTT>
   <RealRuins.Presets.TechNormal>Обычный</RealRuins.Presets.TechNormal>
-  <RealRuins.Presets.TechNormalTT>Без ограничения технологического уровня: может появиться все, что было в исходной базе.</RealRuins.Presets.TechNormalTT>
+  <RealRuins.Presets.TechNormalTT>Без ограничения технологического уровня: может появиться все, что было у прежнего хозяина колонии.</RealRuins.Presets.TechNormalTT>
   <RealRuins.Presets.TechNeolithic>Настоящий неолит</RealRuins.Presets.TechNeolithic>
   <RealRuins.Presets.TechNeolithicTT>Ничего выше неолита не появляется ни в каких руинах и локациях.</RealRuins.Presets.TechNeolithicTT>
   <RealRuins.Presets.TechMedieval>Настоящее средневековье</RealRuins.Presets.TechMedieval>
   <RealRuins.Presets.TechMedievalTT>Средневековый или фэнтезийный мир: ничего выше средневековья не появляется ни в каких руинах и локациях.</RealRuins.Presets.TechMedievalTT>
-  <RealRuins.Presets.TechPostApocalyptic>Постапокалипсис</RealRuins.Presets.TechPostApocalyptic>
-  <RealRuins.Presets.TechPostApocalypticTT>Средневековый мир после катастрофы: почти все вещи средневековые или древнее, но редкие реликвии индустриального и космического прошлого все еще встречаются.</RealRuins.Presets.TechPostApocalypticTT>
+  <RealRuins.Presets.TechPostApocalyptic>Средневековый постапокалипсис</RealRuins.Presets.TechPostApocalyptic>
+  <RealRuins.Presets.TechPostApocalypticTT>Средневековый мир после катастрофы: цивилизация откатилась до средневековья, но редкие реликвии индустриального и космического прошлого все еще встречаются.</RealRuins.Presets.TechPostApocalypticTT>
   <RealRuins.Presets.ResetAllTT>Сбрасывает все настройки Real Ruins, включая кэш, сеть и отладку. Пресет стиля игры «По умолчанию» сбрасывает только настройки стиля игры.</RealRuins.Presets.ResetAllTT>
 
   <!-- Settings layout: wealth and balance -->

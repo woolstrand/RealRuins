@@ -44,7 +44,7 @@ All settings are `public static` fields — accessible from anywhere.
 | `offlineMode` | bool | false | Disable server communication |
 | `allowDownloads` | bool | true | Enable blueprint downloads |
 | `allowUploads` | bool | true | Enable blueprint uploads |
-| `diskCacheLimit` | float | 256 | Local cache size limit (MB); -1 = unlimited |
+| `diskCacheLimit` | float | 1024 | Local cache size limit (MB); -1 = unlimited |
 | `ruinsCostCap` | float | 1e9 | Max market value of an abandoned base |
 | `caravanRuinsCostCap` | float | 25000 | Max market value of the caravan event's main ruin; 100,000 = no limit |
 | `poiRuinsCostCap` | float | 15000 | Max market value of an abandoned POI; 100,000 = no limit |
@@ -102,10 +102,10 @@ Every setting has exactly one draw method here. A setting shown on two tabs (for
 - Text buffers (blacklists, planetary limits) are static and remember the value they were last synced with, so import, reset or a preset refills them instead of writing the old text back.
 
 ### PresetsSettingsPage
-Two rows of preset buttons (play style, tech level), each with "Current: <preset>|Custom", and Export / Import / Reset all settings. The matching preset is highlighted.
+Play styles are rows (button in the left 30%, description in the right 70%); tech levels are columns (buttons on top, descriptions below). Each group shows "Current: <preset>|Custom" and highlights the matching preset. Descriptions are the presets' `TT` texts. Each group ends with Custom: highlighted whenever the settings match no preset of the group. No change handlers: the page compares on every draw and, while nothing matches, stores the group's keys in `customPlayStyle` / `customTechLevel` (saved with the mod settings, `SettingsPresets.Pack` format), so after picking a preset the Custom button restores them. It is disabled until something has been stored. Then Export / Import / Reset all settings.
 
 ### SettingsPresets
-A preset is a partial settings dictionary in the export string format, applied key by key through `SettingsSerializer.ApplyValue`. Play style and tech level presets set disjoint keys (`TechKeys`), so the order they're picked in doesn't matter; no preset sets `PersonalKeys` (cache, network, log level, item blacklist). `Validate()` logs violations in dev mode. Only "Default" exists for play styles so far; the real presets come after a playtest. "Reset all settings" (`RealRuins_ModSettings.Reset`) is different: it resets everything, cache and debug included.
+A preset is a partial settings dictionary in the export string format, applied key by key through `SettingsSerializer.ApplyValue`. Play style and tech level presets set disjoint keys (`TechKeys`), so the order they're picked in doesn't matter; no preset sets `PersonalKeys` (cache, network, log level, item blacklist). `Validate()` logs violations in dev mode. Play styles: Default, Nomadic, Balanced, Dense ruins. Each is `DefaultPlayStyle` plus overrides (`PlayStyle(...)`), so all play styles set the same keys and switching between them leaves nothing behind. "Reset all settings" (`RealRuins_ModSettings.Reset`) is different: it resets everything, cache and debug included.
 
 ### NetworkCacheSettingsPage
 Shows live cache stats, cache limit slider, offline/download/upload toggles, "Download 50" / "Download 500" buttons, "Clear Cache" button (red, with confirmation). A red line warns while the staging server is on.

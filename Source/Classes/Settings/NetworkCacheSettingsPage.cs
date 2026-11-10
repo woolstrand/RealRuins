@@ -34,44 +34,25 @@ namespace RealRuins.Settings
                 GUI.color = Color.white;
             }
 
-            listing.Label(
-                "RealRuins_ModOptions_CurrentCacheSize".Translate() + " " +
+            SettingsControls.ValueRow(listing, "RealRuins_ModOptions_CurrentCacheSize".Translate(),
                 SnapshotStoreManager.Instance.TotalSize() / (1024 * 1024) + " MB");
-
-            listing.Label(
-                "RealRuins_ModOptions_CurrentCacheCount".Translate() + " " +
-                SnapshotStoreManager.Instance.StoredSnapshotsCount());
+            SettingsControls.ValueRow(listing, "RealRuins_ModOptions_CurrentCacheCount".Translate(),
+                SnapshotStoreManager.Instance.StoredSnapshotsCount().ToString());
 
             string cacheLimitStr = RealRuins_ModSettings.diskCacheLimit < 0 ? (string)"RealRuins_ModOptions_NoLimit".Translate() : (((int)(RealRuins_ModSettings.diskCacheLimit)).ToString() + " MB");
-            listing.Label(
-                "RealRuins_ModOptions_CacheSize".Translate() + "  " + cacheLimitStr,
-                -1f,
+            float sliderValue = SettingsControls.SliderRow(listing,
+                "RealRuins_ModOptions_CacheSize".Translate().ToString().TrimEnd() + " " + cacheLimitStr,
+                RealRuins_ModSettings.diskCacheLimit < 0 ? 4096.0f : RealRuins_ModSettings.diskCacheLimit,
+                20.0f, 4096.0f,
                 "RealRuins_ModOptions_CacheSizeTooltip".Translate());
+            RealRuins_ModSettings.diskCacheLimit = sliderValue >= 4095.0f ? -1f : sliderValue;
 
-            listing.Gap(10f);
-
-            float sliderValue = listing.Slider(
-                RealRuins_ModSettings.diskCacheLimit,
-                20.0f,
-                4096.0f);
-            
-            if (sliderValue >= 4095.0f)
-            {
-                RealRuins_ModSettings.diskCacheLimit = -1f;
-            }
-            else
-            {
-                RealRuins_ModSettings.diskCacheLimit = sliderValue;
-            }
-
-            listing.Gap(15f);
+            SettingsControls.Section(listing, "RealRuins.CacheSettings.NetworkSection");
 
             // Switching offline mode on deletes every downloaded blueprint once the settings are saved
             // (RealRuins_Mod.WriteSettings -> CheckCacheContents), so it is confirmed first. Switching it off needs no confirmation.
             bool offlineMode = RealRuins_ModSettings.offlineMode;
-            listing.CheckboxLabeled(
-                "RealRuins_ModOptions_OfflineMode".Translate(),
-                ref offlineMode,
+            SettingsControls.Checkbox(listing, "RealRuins_ModOptions_OfflineMode", ref offlineMode,
                 "RealRuins_ModOptions_OfflineModeTooltip".Translate());
             if (offlineMode && !RealRuins_ModSettings.offlineMode)
             {
@@ -86,60 +67,41 @@ namespace RealRuins.Settings
                 RealRuins_ModSettings.offlineMode = false;
             }
 
-            listing.CheckboxLabeled(
-                "RealRuins_ModOptions_AllowDownloads".Translate(),
-                ref RealRuins_ModSettings.allowDownloads,
+            SettingsControls.Checkbox(listing, "RealRuins_ModOptions_AllowDownloads", ref RealRuins_ModSettings.allowDownloads,
                 "RealRuins_ModOptions_AllowDownloadsTooltip".Translate());
-
-            listing.CheckboxLabeled(
-                "RealRuins_ModOptions_AllowUploads".Translate(),
-                ref RealRuins_ModSettings.allowUploads,
+            SettingsControls.Checkbox(listing, "RealRuins_ModOptions_AllowUploads", ref RealRuins_ModSettings.allowUploads,
                 "RealRuins_ModOptions_AllowUploadsTooltip".Translate());
 
-            listing.Gap(15f);
+            listing.Gap(8f);
 
-            // Two-column button layout
-            Rect buttonRowRect = listing.GetRect(90f);
-            float colWidth = buttonRowRect.width / 2f;
-
-            // Column 1: Download buttons (50 and 500)
-            Rect col1Rect = new Rect(buttonRowRect.x, buttonRowRect.y, colWidth - 5f, buttonRowRect.height);
-            Rect download50Rect = new Rect(col1Rect.x, col1Rect.y, col1Rect.width, 40f);
-            if (Widgets.ButtonText(download50Rect, "RealRuins_ModOptions_DownloadMore".Translate() + " (50)"))
+            string downloadTooltip = "RealRuins_ModOptions_DownloadMoreTooltip".Translate();
+            int clicked = SettingsControls.ButtonRow(listing,
+                new string[] {
+                    "RealRuins_ModOptions_DownloadMore".Translate() + " (50)",
+                    "RealRuins_ModOptions_DownloadMore".Translate() + " (500)",
+                    "RealRuins_ModOptions_RemoveAll".Translate()
+                },
+                new Color?[] { null, null, SettingsControls.DangerColor },
+                new string[] { downloadTooltip, downloadTooltip, "RealRuins_ModOptions_CacheSizeTooltip".Translate() });
+            switch (clicked)
             {
-                SnapshotManager.Instance.LoadSomeSnapshots(5);
+                case 0:
+                    SnapshotManager.Instance.LoadSomeSnapshots(5);
+                    break;
+                case 1:
+                    for (int i = 0; i < 10; i++)
+                    {
+                        SnapshotManager.Instance.LoadSomeSnapshots();
+                    }
+                    break;
+                case 2:
+                    Find.WindowStack.Add(Dialog_MessageBox.CreateConfirmation(
+                        "RealRuins_ModOptions_ClearCacheConfirm".Translate(),
+                        () => SnapshotStoreManager.Instance.ClearCache(),
+                        true,
+                        null));
+                    break;
             }
-
-            Rect download500Rect = new Rect(col1Rect.x, col1Rect.y + 45f, col1Rect.width, 40f);
-            if (Widgets.ButtonText(download500Rect, "RealRuins_ModOptions_DownloadMore".Translate() + " (500)"))
-            {
-                for (int i = 0; i < 10; i++)
-                {
-                    SnapshotManager.Instance.LoadSomeSnapshots();
-                }
-            }
-
-            // Column 2: Clear cache (double height, red)
-            Rect col2Rect = new Rect(buttonRowRect.x + colWidth, buttonRowRect.y, colWidth - 5f, buttonRowRect.height);
-            Rect clearCacheRect = new Rect(col2Rect.x, col2Rect.y, col2Rect.width, 85f);
-            Color prevColor = GUI.color;
-            GUI.color = new Color(1f, 0.3f, 0.3f);
-            if (Widgets.ButtonText(clearCacheRect, "RealRuins_ModOptions_RemoveAll".Translate()))
-            {
-                Find.WindowStack.Add(Dialog_MessageBox.CreateConfirmation(
-                    "RealRuins_ModOptions_ClearCacheConfirm".Translate(),
-                    () => SnapshotStoreManager.Instance.ClearCache(),
-                    true,
-                    null));
-            }
-            GUI.color = prevColor;
-
-            TooltipHandler.TipRegion(download50Rect, "RealRuins_ModOptions_DownloadMoreTooltip".Translate());
-            TooltipHandler.TipRegion(clearCacheRect, "RealRuins_ModOptions_CacheSizeTooltip".Translate());
-
-            listing.Gap(15f);
-
-            listing.GapLine();
 
             DrawPlanetaryCache(listing);
         }
@@ -165,12 +127,9 @@ namespace RealRuins.Settings
         {
             RefreshPlanetaryFoldersIfNeeded();
 
-            GameFont font = Text.Font;
-            Text.Font = GameFont.Medium;
-            listing.Label("RealRuins.CacheSettings.PlanetaryCaption".Translate());
-            Text.Font = font;
-            listing.Label("RealRuins.CacheSettings.PlanetaryDescription".Translate());
-            listing.Gap(5f);
+            SettingsControls.Section(listing, "RealRuins.CacheSettings.PlanetaryCaption");
+            SettingsControls.Description(listing, "RealRuins.CacheSettings.PlanetaryDescription".Translate());
+            listing.Gap(8f);
 
             if (planetaryFolders.Count == 0)
             {

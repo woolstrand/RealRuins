@@ -13,9 +13,19 @@ namespace RealRuins.Settings
     /// </summary>
     public static class SettingsControls
     {
-        private const float RowHeight = 25f;
-        private const float RowGap = 6f;
-        private const float SectionGap = 14f;
+        // One grid for every page: rows of the same height and gap, a control column of the same width at the right edge
+        public const float RowHeight = 28f;
+        public const float RowGap = 4f;
+        public const float SectionGap = 18f;
+        public const float ButtonHeight = 30f;
+        public const float ButtonGap = 10f;
+        private const float ControlFraction = 0.42f;
+        private const float ControlGap = 12f;
+        private const float CheckboxSize = 24f;
+
+        public static readonly Color DescriptionColor = new Color(0.75f, 0.75f, 0.75f);
+        public static readonly Color DangerColor = new Color(1f, 0.3f, 0.3f);
+        public static readonly Color ActionColor = new Color(0.3f, 1f, 0.3f);
 
         private static readonly string[] CaravanReformOptions = {
             "RealRuins.Reform.Automatic",
@@ -79,98 +89,166 @@ namespace RealRuins.Settings
 
         public static IndentScope Indented() => new IndentScope(true);
 
-        // Listing_Standard.Indent changed between game versions, so rows are indented here
-        private static Rect Row(Listing_Standard listing, float height)
+        private static float ControlWidth(Listing_Standard listing) => Mathf.Round(listing.ColumnWidth * ControlFraction);
+
+        // Listing_Standard.Indent changed between game versions, so rows are indented here.
+        // Only the label is indented, the control column stays put: controls line up whatever the nesting.
+        private static void SplitRow(Listing_Standard listing, string label, float controlWidth, out Rect labelRect, out Rect controlRect)
         {
-            Rect rect = listing.GetRect(height);
-            rect.xMin += indent;
-            return rect;
+            float labelWidth = listing.ColumnWidth - controlWidth - ControlGap - indent;
+            float height = Mathf.Max(RowHeight, Text.CalcHeight(label, labelWidth));
+            Rect row = listing.GetRect(height);
+            controlRect = new Rect(row.xMax - controlWidth, row.y, controlWidth, height);
+            labelRect = new Rect(row.x + indent, row.y, labelWidth, height);
+            listing.Gap(RowGap);
+        }
+
+        private static void RowLabel(Rect rect, string label)
+        {
+            TextAnchor anchor = Text.Anchor;
+            Text.Anchor = TextAnchor.MiddleLeft;
+            Widgets.Label(rect, label);
+            Text.Anchor = anchor;
+        }
+
+        // Highlight and tooltip over the whole row, label and control
+        private static void RowTooltip(Rect labelRect, Rect controlRect, string tooltip)
+        {
+            if (tooltip.NullOrEmpty()) return;
+            Rect row = new Rect(labelRect.x, labelRect.y, controlRect.xMax - labelRect.x, labelRect.height);
+            if (Mouse.IsOver(row)) Widgets.DrawHighlight(row);
+            TooltipHandler.TipRegion(row, tooltip);
+        }
+
+        // A control of the given height, vertically centered in the control column
+        private static Rect ControlBox(Rect controlRect, float height)
+        {
+            return new Rect(controlRect.x, controlRect.y + Mathf.Round((controlRect.height - height) / 2f), controlRect.width, height);
+        }
+
+        private static void Caption(Listing_Standard listing, string caption)
+        {
+            GameFont font = Text.Font;
+            Text.Font = GameFont.Medium;
+            Widgets.Label(listing.GetRect(Text.CalcHeight(caption, listing.ColumnWidth)), caption);
+            Text.Font = font;
         }
 
         public static void PageHeader(Listing_Standard listing, string captionKey, string descriptionKey)
         {
-            GameFont font = Text.Font;
-            Text.Font = GameFont.Medium;
-            listing.Label(captionKey.Translate());
-            Text.Font = font;
-
-            string description = descriptionKey.Translate();
-            Rect descRect = listing.GetRect(Text.CalcHeight(description, listing.ColumnWidth));
-            Color prevColor = GUI.color;
-            GUI.color = new Color(0.8f, 0.8f, 0.8f);
-            Widgets.Label(descRect, description);
-            GUI.color = prevColor;
-            listing.GapLine();
+            Caption(listing, captionKey.Translate());
+            listing.Gap(2f);
+            Description(listing, descriptionKey.Translate());
+            listing.GapLine(16f);
         }
 
         public static void Section(Listing_Standard listing, string captionKey)
         {
             listing.Gap(SectionGap);
-            GameFont font = Text.Font;
-            Text.Font = GameFont.Medium;
-            listing.Label(captionKey.Translate());
-            Text.Font = font;
-            listing.Gap(2f);
+            Caption(listing, captionKey.Translate());
+            listing.Gap(4f);
+        }
+
+        /// <summary>Grey wrapped text across the whole width.</summary>
+        public static void Description(Listing_Standard listing, string text)
+        {
+            Rect rect = listing.GetRect(Text.CalcHeight(text, listing.ColumnWidth));
+            Color prevColor = GUI.color;
+            GUI.color = prevColor * DescriptionColor;
+            Widgets.Label(rect, text);
+            GUI.color = prevColor;
+        }
+
+        /// <summary>A label on the left and a read-only value in the control column.</summary>
+        public static void ValueRow(Listing_Standard listing, string label, string value, string tooltip = null)
+        {
+            SplitRow(listing, label, ControlWidth(listing), out Rect labelRect, out Rect controlRect);
+            RowTooltip(labelRect, controlRect, tooltip);
+            RowLabel(labelRect, label);
+            RowLabel(controlRect, value);
+        }
+
+        /// <summary>A label-only row, e.g. the caption of a group of indented rows.</summary>
+        public static void LabelRow(Listing_Standard listing, string label)
+        {
+            float width = listing.ColumnWidth - indent;
+            Rect row = listing.GetRect(Mathf.Max(RowHeight, Text.CalcHeight(label, width)));
+            row.xMin += indent;
+            RowLabel(row, label);
+            listing.Gap(RowGap);
+        }
+
+        /// <summary>Equal buttons across the whole width. Returns the index of the clicked one, or -1.</summary>
+        public static int ButtonRow(Listing_Standard listing, string[] labels, Color?[] colors = null, string[] tooltips = null)
+        {
+            Rect row = listing.GetRect(ButtonHeight);
+            float width = (row.width - ButtonGap * (labels.Length - 1)) / labels.Length;
+            int clicked = -1;
+            for (int i = 0; i < labels.Length; i++)
+            {
+                Rect rect = new Rect(row.x + i * (width + ButtonGap), row.y, width, row.height).Rounded();
+                Color prevColor = GUI.color;
+                if (colors != null && colors[i].HasValue) GUI.color = colors[i].Value;
+                if (Widgets.ButtonText(rect, labels[i], active: enabled) && enabled) clicked = i;
+                GUI.color = prevColor;
+                if (tooltips != null && !tooltips[i].NullOrEmpty()) TooltipHandler.TipRegion(rect, tooltips[i]);
+            }
+            listing.Gap(RowGap);
+            return clicked;
         }
 
         // Drawn by hand instead of Listing_Standard.CheckboxLabeled, which can't be indented or disabled on every game version
-        private static void Checkbox(Listing_Standard listing, string labelKey, ref bool value, string tooltip = null)
+        public static void Checkbox(Listing_Standard listing, string labelKey, ref bool value, string tooltip = null)
         {
             string label = labelKey.Translate();
-            float height = Mathf.Max(Text.LineHeight, Text.CalcHeight(label, listing.ColumnWidth - indent - 34f));
-            Rect rect = Row(listing, height);
-            if (!tooltip.NullOrEmpty())
-            {
-                if (Mouse.IsOver(rect)) Widgets.DrawHighlight(rect);
-                TooltipHandler.TipRegion(rect, tooltip);
-            }
+            SplitRow(listing, label, CheckboxSize, out Rect labelRect, out Rect controlRect);
+            RowTooltip(labelRect, controlRect, tooltip);
+            RowLabel(labelRect, label);
             bool shown = value;
-            Widgets.CheckboxLabeled(rect, label, ref shown);
+            Rect box = ControlBox(controlRect, CheckboxSize);
+            Widgets.Checkbox(box.x, box.y, ref shown, CheckboxSize);
             if (enabled) value = shown;
-            listing.Gap(2f);
         }
 
-        private static void Checkbox(Listing_Standard listing, string labelKey, ref bool value, bool withTooltip)
+        public static void Checkbox(Listing_Standard listing, string labelKey, ref bool value, bool withTooltip)
         {
             Checkbox(listing, labelKey, ref value, withTooltip ? (string)(labelKey + "TT").Translate() : null);
         }
 
-        // Label on the left half, slider on the right half. Returns the new value, or the old one while disabled.
-        private static float SliderRow(Listing_Standard listing, string label, float value, float min, float max, string tooltip)
+        // Label on the left, slider in the control column. Returns the new value, or the old one while disabled.
+        public static float SliderRow(Listing_Standard listing, string label, float value, float min, float max, string tooltip)
         {
-            Rect rect = Row(listing, RowHeight);
-            Widgets.Label(rect.LeftHalf(), label);
-            float result = Widgets.HorizontalSlider(rect.RightHalf().ContractedBy(0, 3), value, min, max);
-            if (tooltip != null) TooltipHandler.TipRegion(rect, tooltip);
-            listing.Gap(RowGap);
+            SplitRow(listing, label, ControlWidth(listing), out Rect labelRect, out Rect controlRect);
+            RowTooltip(labelRect, controlRect, tooltip);
+            RowLabel(labelRect, label);
+            float result = Widgets.HorizontalSlider(ControlBox(controlRect, 20f), value, min, max);
             return enabled ? result : value;
         }
 
-        private static void DropdownRow(Listing_Standard listing, string label, string current, string tooltip, Func<List<FloatMenuOption>> options)
+        public static void DropdownRow(Listing_Standard listing, string label, string current, string tooltip, Func<List<FloatMenuOption>> options)
         {
-            Rect rect = Row(listing, RowHeight);
-            Widgets.Label(rect.LeftHalf(), label);
-            if (Widgets.ButtonText(rect.RightHalf().ContractedBy(0, 2), current, active: enabled) && enabled)
+            SplitRow(listing, label, ControlWidth(listing), out Rect labelRect, out Rect controlRect);
+            RowTooltip(labelRect, controlRect, tooltip);
+            RowLabel(labelRect, label);
+            if (Widgets.ButtonText(ControlBox(controlRect, 24f), current, active: enabled) && enabled)
             {
                 Find.WindowStack.Add(new FloatMenu(options()));
             }
-            if (tooltip != null) TooltipHandler.TipRegion(rect, tooltip);
-            listing.Gap(RowGap);
         }
 
         private static string TextFieldRow(Listing_Standard listing, string labelKey, string value, ref string buffer, ref string synced)
         {
-            Rect rect = Row(listing, RowHeight);
-            Widgets.Label(rect.LeftHalf(), labelKey.Translate());
+            string label = labelKey.Translate();
+            SplitRow(listing, label, ControlWidth(listing), out Rect labelRect, out Rect controlRect);
+            RowTooltip(labelRect, controlRect, (labelKey + "TT").Translate());
+            RowLabel(labelRect, label);
             if (buffer == null || value != synced)
             {
                 //first draw, or the setting was changed elsewhere (import, reset, preset): show it instead of writing the old text back
                 buffer = value ?? "";
             }
-            buffer = Widgets.TextField(rect.RightHalf().ContractedBy(0, 2), buffer);
+            buffer = Widgets.TextField(ControlBox(controlRect, 24f), buffer);
             synced = buffer;
-            TooltipHandler.TipRegion(rect, (labelKey + "TT").Translate());
-            listing.Gap(RowGap);
             return buffer;
         }
 
@@ -181,11 +259,11 @@ namespace RealRuins.Settings
             {
                 buffer = value.ToString();
             }
-            Rect rect = Row(listing, RowHeight);
-            Widgets.Label(rect.LeftHalf(), labelKey.Translate());
-            Widgets.TextFieldNumeric(rect.RightPartPixels(100).ContractedBy(0, 2), ref value, ref buffer);
+            string label = labelKey.Translate();
+            SplitRow(listing, label, ControlWidth(listing), out Rect labelRect, out Rect controlRect);
+            RowLabel(labelRect, label);
+            Widgets.TextFieldNumeric(ControlBox(controlRect, 24f), ref value, ref buffer);
             synced = value;
-            listing.Gap(RowGap);
         }
 
         private static string WealthText(float cap) => cap < RuinsWealthLimits.NoLimit ? cap.ToString("#,0") : (string)"RealRuins.Unlimited".Translate();
@@ -249,7 +327,7 @@ namespace RealRuins.Settings
             using (EnabledIf(RealRuins_ModSettings.ruinsScaleWithColonyWealth))
             using (Indented())
             {
-                                RealRuins_ModSettings.ruinsReferenceColonyWealth = Mathf.Round(SliderRow(listing,
+                RealRuins_ModSettings.ruinsReferenceColonyWealth = Mathf.Round(SliderRow(listing,
                     "RealRuins.ReferenceColonyWealth".Translate() + ": " + RealRuins_ModSettings.ruinsReferenceColonyWealth.ToString("#,0"),
                     RealRuins_ModSettings.ruinsReferenceColonyWealth, 25000.0f, 500000.0f,
                     "RealRuins.ReferenceColonyWealthTT".Translate()) / 5000.0f) * 5000.0f;
@@ -259,11 +337,11 @@ namespace RealRuins.Settings
         // Only matters while the per-map limit is on
         public static void RegularLimitCounting(Listing_Standard listing)
         {
-            listing.Label("RealRuins.Settings.RegularLimitCounting".Translate());
+            LabelRow(listing, "RealRuins.Settings.RegularLimitCounting".Translate());
             using (EnabledIf(RuinsWealthLimits.SettingCap(RuinsKind.Regular) < RuinsWealthLimits.NoLimit))
             using (Indented())
             {
-                                Checkbox(listing, "RealRuins_MapOptions_WealthScaleWithProximity", ref RealRuins_ModSettings.ruinsWealthScaleWithProximity, true);
+                Checkbox(listing, "RealRuins_MapOptions_WealthScaleWithProximity", ref RealRuins_ModSettings.ruinsWealthScaleWithProximity, true);
                 Checkbox(listing, "RealRuins_MapOptions_WealthIgnoreStructure", ref RealRuins_ModSettings.ruinsWealthIgnoreStructure, true);
                 Checkbox(listing, "RealRuins_MapOptions_WealthCountDamage", ref RealRuins_ModSettings.ruinsWealthCountDamage, true);
             }
@@ -330,7 +408,7 @@ namespace RealRuins.Settings
             using (EnabledIf(RealRuins_ModSettings.techLimitEnabled))
             using (Indented())
             {
-                                DropdownRow(listing, "RealRuins.TechLimit.MaxLevel".Translate(), TechLevelLabel(RealRuins_ModSettings.techLimitMaxLevel),
+                DropdownRow(listing, "RealRuins.TechLimit.MaxLevel".Translate(), TechLevelLabel(RealRuins_ModSettings.techLimitMaxLevel),
                     "RealRuins.TechLimit.MaxLevelTT".Translate(), () => {
                         List<FloatMenuOption> options = new List<FloatMenuOption>();
                         foreach (TechLevel level in CapLevels)
@@ -354,7 +432,7 @@ namespace RealRuins.Settings
             using (EnabledIf(RealRuins_ModSettings.techLimitEnabled))
             using (Indented())
             {
-                                Checkbox(listing, "RealRuins.TechLimit.AppliesHere", ref value,
+                Checkbox(listing, "RealRuins.TechLimit.AppliesHere", ref value,
                     "RealRuins.TechLimit.AppliesHereTT".Translate() + "\n\n" + scopeTooltipKey.Translate());
             }
         }
@@ -472,21 +550,14 @@ namespace RealRuins.Settings
 
         public static void PlanetaryButtons(Listing_Standard listing)
         {
-            Rect buttonRect = listing.GetRect(30f);
-            Rect spawnButtonRect = buttonRect.LeftHalf().Rounded();
-            spawnButtonRect.width -= 5f;
-            Rect removeButtonRect = buttonRect.RightHalf().Rounded();
-            removeButtonRect.xMin += 5f;
-
-            Color prevColor = GUI.color;
-            GUI.color = new Color(0.3f, 1f, 0.3f);
-            if (Widgets.ButtonText(spawnButtonRect, "RealRuins.PlanetarySettings.MapsModuleButton".Translate()))
+            int clicked = ButtonRow(listing,
+                new string[] { "RealRuins.PlanetarySettings.MapsModuleButton".Translate(), "RealRuins.PlanetarySettings.RemoveAll".Translate() },
+                new Color?[] { ActionColor, DangerColor });
+            if (clicked == 0)
             {
                 Find.WindowStack.Add(new Page_PlanetaryRuinsLoader());
             }
-
-            GUI.color = new Color(1f, 0.3f, 0.3f);
-            if (Widgets.ButtonText(removeButtonRect, "RealRuins.PlanetarySettings.RemoveAll".Translate()))
+            else if (clicked == 1)
             {
                 Find.WindowStack.Add(Dialog_MessageBox.CreateConfirmation(
                     "RealRuins.PlanetarySettings.RemoveAllConfirm".Translate(),
@@ -494,8 +565,6 @@ namespace RealRuins.Settings
                     true,
                     null));
             }
-            GUI.color = prevColor;
-            listing.Gap(RowGap);
         }
 
         private static void RemoveAllLocations()

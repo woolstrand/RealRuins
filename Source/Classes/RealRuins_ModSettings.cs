@@ -25,7 +25,7 @@ namespace RealRuins
         public static bool ruinsWealthScaleWithProximity = false; //limit scales with the proximity chunk count multiplier: more ruins near settlements, more wealth
         public static bool ruinsWealthIgnoreStructure = true; //plain walls, doors and floors (Tile.IsBasicStructure) don't count toward the limit
         public static bool ruinsWealthCountDamage = false; //limit counts the actual value of spawned things (damage, quality) instead of full price
-        public static float diskCacheLimit = 256.0f; //256mb cache by default, it's about 2000 to 10000 blueprints in average.
+        public static float diskCacheLimit = 1024.0f; //1 GB cache by default, about 8000 blueprints
         public static bool useRuinsForcesGenerationV2 = true; // support fixed amount of troops on ruins maps
         public static int logLevel = 2; //0 = all, 1 = warnings, 2 = errors
         public static bool useStagingEnvironment = false; // debug: use staging server instead of production
@@ -54,6 +54,9 @@ namespace RealRuins
 
         public static ScatterOptions defaultScatterOptions = new ScatterOptions();
         public static PlanetaryRuinsOptions planetaryRuinsOptions = new PlanetaryRuinsOptions();
+        // the last settings of each preset group which matched no preset, restored by its Custom button (SettingsPresets.Pack format)
+        public static string customPlayStyle = "";
+        public static string customTechLevel = "";
 
         public override void ExposeData()
         {
@@ -61,7 +64,7 @@ namespace RealRuins
             Scribe_Values.Look(ref offlineMode, "offlineMode", false, false);
             Scribe_Values.Look(ref allowDownloads, "allowDownloads", true, false);
             Scribe_Values.Look(ref allowUploads, "allowUploads", true, false);
-            Scribe_Values.Look(ref diskCacheLimit, "diskCacheLimit", 256.0f, false);
+            Scribe_Values.Look(ref diskCacheLimit, "diskCacheLimit", 1024.0f, false);
             Scribe_Values.Look(ref caravanReformType, "caravanReformType", 0, false);
             Scribe_Values.Look(ref preserveStandardRuins, "preserveStandardRuins", false, false);
             Scribe_Values.Look(ref forceMultiplier, "forceMultiplier", 1.0f, false);
@@ -97,6 +100,8 @@ namespace RealRuins
             Scribe_Values.Look(ref techLimitEvents, "techLimitEvents", true, false);
             Scribe_Deep.Look(ref defaultScatterOptions, "defaultScatterOptions");
             Scribe_Deep.Look(ref planetaryRuinsOptions, "planetaryRuinsOptions");
+            Scribe_Values.Look(ref customPlayStyle, "customPlayStyle", "", false);
+            Scribe_Values.Look(ref customTechLevel, "customTechLevel", "", false);
         
             if (Scribe.mode == LoadSaveMode.LoadingVars) 
             {
@@ -121,7 +126,9 @@ namespace RealRuins
             planetaryRuinsOptions = new PlanetaryRuinsOptions();
 
             offlineMode = false;
-            diskCacheLimit = 256.0f;
+            diskCacheLimit = 1024.0f;
+            customPlayStyle = "";
+            customTechLevel = "";
             allowDownloads = true;
             allowUploads = true;
             caravanReformType = 0;

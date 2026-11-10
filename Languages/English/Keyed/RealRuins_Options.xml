@@ -22,7 +22,7 @@
   <RealRuins_MapOptions_Size_Max>Maximum fragment size</RealRuins_MapOptions_Size_Max>
   <RealRuins_MapOptions_Deterioration>Additional deterioration degree</RealRuins_MapOptions_Deterioration>
   <RealRuins_MapOptions_Scavengers>Scavengers activity multiplier</RealRuins_MapOptions_Scavengers>
-  <RealRuins_MapOptions_CostLimit>Single item cost limit (regular ruins)</RealRuins_MapOptions_CostLimit>
+  <RealRuins_MapOptions_CostLimit>Single item cost limit (regular and pristine ruins)</RealRuins_MapOptions_CostLimit>
   <RealRuins_MapOptions_DisableHaulables>No haulable items</RealRuins_MapOptions_DisableHaulables>
   <RealRuins_MapOptions_WallsAndDoorsOnly>Walls and doors only</RealRuins_MapOptions_WallsAndDoorsOnly>
   <RealRuins_MapOptions_DisableHostiles>Inhabitants in regular ruins</RealRuins_MapOptions_DisableHostiles>
@@ -39,7 +39,7 @@
   <RealRuins_MapOptions_WealthIgnoreStructureTT>Plain walls, doors and floors (up to 50 silver per tile) don't count toward the limit and are never removed for it: there are lots of them and they are not loot. Golden walls, silver floors, autodoors and the like still count.</RealRuins_MapOptions_WealthIgnoreStructureTT>
   <RealRuins_MapOptions_WealthCountDamage>Count damaged things at lower value</RealRuins_MapOptions_WealthCountDamage>
   <RealRuins_MapOptions_WealthCountDamageTT>Off: everything counts at full price, since repairing restores it and a damaged thing often works just as well. On: the actual market value of what spawned is counted (damage lowers it, quality changes it), so more fits into the limit.</RealRuins_MapOptions_WealthCountDamageTT>
-  <RealRuins_MapOptions_CostLimitTT>Things worth more than this are removed from regular ruins. Caravan ruins and planetary locations have their own fixed limits. Rightmost position: no limit.</RealRuins_MapOptions_CostLimitTT>
+  <RealRuins_MapOptions_CostLimitTT>Things worth more than this are removed from regular and pristine ruins. Caravan ruins and planetary locations have their own fixed limits. Rightmost position: no limit.</RealRuins_MapOptions_CostLimitTT>
   <RealRuins_MapOptions_DisableHaulablesTT>No haulable items will spawn, but furniture may still appear. Applies to regular ruins, caravan ruins and ruined planetary locations, not to pristine ruins and intact locations.</RealRuins_MapOptions_DisableHaulablesTT>
   <RealRuins_MapOptions_WallsAndDoorsOnlyTT>This setting is pretty aggressive and will remove everything that is not based on a vanilla wall or a door. Applies to regular ruins, caravan ruins and ruined planetary locations, not to pristine ruins and intact locations.</RealRuins_MapOptions_WallsAndDoorsOnlyTT>
   <RealRuins_MapOptions_DisableHostilesTT>Chance for every ruin fragment that animals (80%) or mechanoids (20%) live in it. Other ruins have fixed values: caravan ruins 80%, pristine ruins always, planetary locations never. Threat scale still applies to all of them.</RealRuins_MapOptions_DisableHostilesTT>
@@ -53,6 +53,7 @@
   <RealRuins.CacheSettings.TabCaption>Cache and storage</RealRuins.CacheSettings.TabCaption>
   <RealRuins.CacheSettings.Caption>Cache and storage</RealRuins.CacheSettings.Caption>
   <RealRuins.CacheSettings.Description>Where blueprints come from and where they are stored on your disk.</RealRuins.CacheSettings.Description>
+  <RealRuins.CacheSettings.NetworkSection>Downloads and uploads</RealRuins.CacheSettings.NetworkSection>
   <RealRuins_ModOptions_NoLimit>No limit</RealRuins_ModOptions_NoLimit>
   <RealRuins_ModOptions_ClearCacheConfirm>Are you sure you want to clear all cached snapshots, including planetary ruins blueprints? This action cannot be undone.</RealRuins_ModOptions_ClearCacheConfirm>
   <RealRuins_ModOptions_OfflineModeConfirm>Local mode deletes all ruins blueprints downloaded from the server as soon as you close the settings. Only your own bases and the blueprints of planetary ruins are kept.\n\nIf you change your mind later, you will have to switch local mode off and download the blueprints again, which can take several minutes. Until then, ruins are built from your own bases only.\n\nSwitch to local mode?</RealRuins_ModOptions_OfflineModeConfirm>
@@ -336,22 +337,29 @@
   <!-- Settings layout: presets -->
   <RealRuins.Presets.TabCaption>Presets</RealRuins.Presets.TabCaption>
   <RealRuins.Presets.Caption>Presets</RealRuins.Presets.Caption>
-  <RealRuins.Presets.Description>Quick setups for common ways to play. A preset changes only the settings it is about: your cache, network and debug settings and your item blacklist are never touched. Play style and tech level presets don't affect each other.</RealRuins.Presets.Description>
+  <RealRuins.Presets.Description>Quick setups for common ways to play. A preset changes only the settings it is about. Your cache, network and debug settings and your item blacklist are never touched. Play style and tech level presets don't affect each other.</RealRuins.Presets.Description>
   <RealRuins.Presets.PlayStyle>Play style</RealRuins.Presets.PlayStyle>
   <RealRuins.Presets.TechLevel>Tech level</RealRuins.Presets.TechLevel>
   <RealRuins.Presets.SettingsSection>All settings</RealRuins.Presets.SettingsSection>
   <RealRuins.Presets.Current>Current</RealRuins.Presets.Current>
   <RealRuins.Presets.Custom>Custom</RealRuins.Presets.Custom>
   <RealRuins.Presets.Default>Default</RealRuins.Presets.Default>
-  <RealRuins.Presets.DefaultTT>Ruins the way the mod comes out of the box. Resets wealth, threats, spawn and event settings, but not the tech level.</RealRuins.Presets.DefaultTT>
+  <RealRuins.Presets.DefaultTT>The intended way to play. There are ruins everywhere, but they were looted long ago and usually hold nothing really valuable, though now and then you may get lucky. The pristine ruins quest, however, has no limits on either wealth or the scale of the fighting.</RealRuins.Presets.DefaultTT>
+  <RealRuins.Presets.Nomadic>Nomadic</RealRuins.Presets.Nomadic>
+  <RealRuins.Presets.NomadicTT>Richer ruins, enough to live off what you find even without a permanent settlement. Maps have more ruins, and they are larger, richer and less picked over. The planet itself has more abandoned locations than ones held by a faction.</RealRuins.Presets.NomadicTT>
+  <RealRuins.Presets.Balanced>Balanced</RealRuins.Presets.Balanced>
+  <RealRuins.Presets.BalancedTT>Strict wealth limits that grow with your colony, worn and well scavenged ruins. All so that you never find anything truly useful until you sacrifice half of your colonists.</RealRuins.Presets.BalancedTT>
+  <RealRuins.Presets.Dense>Dense ruins</RealRuins.Presets.Dense>
+  <RealRuins.Presets.DenseTT>Ruins all over the map. Many more and larger fragments, also far from settlements, with a moderate wealth limit.</RealRuins.Presets.DenseTT>
+  <RealRuins.Presets.CustomTT>Your own settings. Selected as soon as the settings match no preset, and remembered: after you pick a preset, this brings your settings back.</RealRuins.Presets.CustomTT>
   <RealRuins.Presets.TechNormal>Normal</RealRuins.Presets.TechNormal>
   <RealRuins.Presets.TechNormalTT>No tech level limit: anything the original base had may spawn.</RealRuins.Presets.TechNormalTT>
   <RealRuins.Presets.TechNeolithic>True neolithic</RealRuins.Presets.TechNeolithic>
   <RealRuins.Presets.TechNeolithicTT>Nothing above the neolithic level ever spawns, in any ruins or locations.</RealRuins.Presets.TechNeolithicTT>
   <RealRuins.Presets.TechMedieval>True medieval</RealRuins.Presets.TechMedieval>
   <RealRuins.Presets.TechMedievalTT>A medieval or fantasy world: nothing above the medieval level ever spawns, in any ruins or locations.</RealRuins.Presets.TechMedievalTT>
-  <RealRuins.Presets.TechPostApocalyptic>Post-apocalyptic</RealRuins.Presets.TechPostApocalyptic>
-  <RealRuins.Presets.TechPostApocalypticTT>A medieval world after a cataclysm: most things are medieval or older, but rare relics of the industrial and spacer past still turn up.</RealRuins.Presets.TechPostApocalypticTT>
+  <RealRuins.Presets.TechPostApocalyptic>Medieval post-apocalypse</RealRuins.Presets.TechPostApocalyptic>
+  <RealRuins.Presets.TechPostApocalypticTT>A medieval world after a cataclysm. Civilization has fallen back to the middle ages, but rare relics of the industrial and spacer past still turn up.</RealRuins.Presets.TechPostApocalypticTT>
   <RealRuins.Presets.ResetAllTT>Resets every Real Ruins setting to its default, including cache, network and debug settings. The Default play style preset resets only the play style settings.</RealRuins.Presets.ResetAllTT>
 
   <!-- Settings layout: wealth and balance -->
