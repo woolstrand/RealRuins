@@ -128,13 +128,16 @@ Screenshots are in `%TEMP%\realruins-run\` (overwritten per run). Only the ones 
 | RT-05 | PASS | `ruinsCostCap` 50000 in the config: tab drawn, settings closed → still `50000`. Drag → H-5 |
 | RT-06 | PASS | "Planetary ruins" between Factions and Next; opens the loader with "Remove all spawned locations". Next → Back: loader doesn't reopen. "Allow on start" off: vanilla 4 buttons, no loader. Map-size change with cleanup not re-checked (changing it would have dropped the RT-01 context; the code path is unchanged). No `layout not recognized` warning |
 | RT-07 | PASS | 2026-11-10, build `62324e3`, staging + keep files. Quicktest, home area over the colonists and ruin walls: `Capture finished`, upload successful, 11.7 KB XML ends with `</snapshot>` and parses (walls, conduits, meals, weapons, armour). **Alive pawns are never stored** (`SnapshotGenerator.cs:315`, by design), so a second quicktest with a killed colonist in the home area: 8 KB XML, parses, ends with `</snapshot>`, 2 `Pawn` items (corpse incl. apparel) |
-| RT-08 | OPEN (RR-associated) | Popup #1. Without RealRuins: **0 of 10** quicktests, plus a vanilla save with a spawned `Shuttle` (has `CompAmbientSound`) reloaded in-game and from the main menu: 0 errors. With RealRuins: **2 of 8** quicktests (first run 1; 2026-11-10: 1 of 7). The full stack: a `SubSustainer` start queued in `ExecuteWhenFinished` at the end of map generation, no RR frames. The 2026-11-10 map had a **geothermal generator** in a ruin chunk (`CompAmbientSound`); the 5 clean maps after it had none (only an unfuelled wood-fired generator). Lead: a ruin building whose sustainer is created during map generation (on the generation thread, e.g. `CompPowerTrader`/`CompPowerPlant` when the ruin power net turns on) that the 1.7 engine can't attach. Effect: one error popup, the sound doesn't play; no other harm seen. See finding 11 |
+| RT-08 | **FIXED** | Popup #1 is RealRuins: 0 of 10 vanilla quicktests, 2 of 8 with RR. Identified 2026-11-11 with a probe on `TrySpawnSustainer` (logs calls off the main thread): ruins spawn a **geothermal generator** during new-game map generation, which runs on a worker thread. `CompPowerPlant.PostSpawnSetup` switches its power on, `CompAmbientSound` gets "PowerTurnedOn" and starts its sustainer right there. The sustainer's GameObject, made off the main thread, isn't tracked by the 1.7 engine, so starting the sample later throws. Fix (`OffThreadSustainerFix.cs`): `CompAmbientSound.StartSustanier` and `CompPowerTrader.StartSustainerPoweredIfInactive` defer to the main thread when called from another one (spawned/powered checked again). Verified with a forced blueprint of four geothermal generators: without the fix 5 and 4 errors per quicktest (2 of 2), with it 0 (3 of 3), 0 other errors |
 | **H — Hand tests** | | |
 | H-1 | DONE (user) | M-06, M-07, E-04 |
 | H-2 | DONE (user) | E-05, E-06, D-08 |
 | H-3 | DONE (user) | D-07 |
 | H-4 | DONE (user) | L-08, L-09, X-06, R-04, R-06 (on) |
-| H-5 … H-8 | FOR THE USER | See the plan |
+| H-5 | PASS (user) | S-04, RT-04, RT-05, S-06 |
+| H-6 | FOR THE USER | W-11, W-12 |
+| H-7 | PASS (user) | X-02, X-04, T-07 |
+| H-8 | PASS (user) | U-02 |
 
 ## Findings
 
@@ -150,7 +153,7 @@ Screenshots are in `%TEMP%\realruins-run\` (overwritten per run). Only the ones 
 9. **Offline mode deletes all downloaded blueprints at startup** (`SnapshotStoreManager.CheckCacheContents`, same in the baseline). With offline mode on and no local snapshots, generic ruins are skipped ("low blueprints count"). Intended by design ("offline" = only your own bases) but surprising: switching offline on wipes a 700-blueprint cache. Decision needed; not changed.
 10. Caravan ruins at the 1,000 cap: the main ruin is nearly empty (a 13k blueprint cut to ~2). Raiders scale with value, so ~0 raiders. Fine, but the minimum could be higher if a near-empty ruin should not happen.
 
-11. **Open: popup #1 is RealRuins-associated (RT-08).** "Object is not tracked by the Unity world" in `SampleSustainer.TryMakeAndPlay` after map generation: 0 of 10 vanilla quicktests, 2 of 8 with RR. Cosmetic (one error, a missing ambient sound). Next step: a debug-only Harmony prefix on `Sustainer`'s constructor that logs `info.Maker.Thing` while a map is being generated, then a few quicktests to name the def; then either delay that comp's sustainer (spawn the thing unpowered / defer power-net connection to after `FinalizeInit`) or accept.
+11. **Fixed (RT-08): popup #1 was RealRuins.** Cause and fix in the RT-08 row. Original note: "Object is not tracked by the Unity world" in `SampleSustainer.TryMakeAndPlay` after map generation: 0 of 10 vanilla quicktests, 2 of 8 with RR. Cosmetic (one error, a missing ambient sound). Next step: a debug-only Harmony prefix on `Sustainer`'s constructor that logs `info.Maker.Thing` while a map is being generated, then a few quicktests to name the def; then either delay that comp's sustainer (spawn the thing unpowered / defer power-net connection to after `FinalizeInit`) or accept.
 
 12. **L-02: the planetary transfer has no stop button.** `forceStopTransfer` is declared and checked but never set; the plan expected a stop. The transfer is fast (18 s for 580 local blueprints), so a stop is mostly needed with big downloads, and the download stage has one. Fix: add a Stop button in the ProcessingBlueprints state (sets `forceStopTransfer`), or drop the dead flag and the test.
 
@@ -163,7 +166,7 @@ Error-log popups of the run are listed in `playtest_popups.md` (one still needs 
 ## Not run yet
 
 By the driver: M-09, W-10 (×3 part), D-02 (release), D-03, R-03, L-07 (attack after the load), RT-06 (map-size change), X-03, G-02.
-By the user: H-5–H-8.
+By the user: H-6.
 
 ## Current environment state
 

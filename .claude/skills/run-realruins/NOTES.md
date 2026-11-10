@@ -282,8 +282,12 @@ blueprint id) - that file also states the spawn philosophy: spawn what can be sp
 - **Debug actions search box**: typing works, but the first characters can be lost; check the screenshot. Clear it with
   `key 8` (backspace) several times.
 - **Dev mode off** removes the Dev tab in Options, so "Mod options" moves up one row.
-- **Popup #1 ("Object is not tracked by the Unity world", `SampleSustainer`)**: only seen with RR (2 of 8 quicktests, 0 of 10
-  without). One occurrence had a geothermal generator in the ruins. Open, see playtest_results finding 11.
+- **"Object is not tracked by the Unity world" (`SampleSustainer`)**: a sustainer created off the main thread. New-game map
+  generation runs on a worker thread; anything that starts a sound there breaks. Fixed for powered/ambient comps
+  (`OffThreadSustainerFix.cs`). To find such a caller: a Harmony prefix on `SoundStarter.TrySpawnSustainer` that logs
+  `UnityData.IsInMainThread == false` with `Environment.StackTrace`. To force a thing into every ruin: write a tiny gzipped
+  snapshot XML (`<snapshot width height ...><cell x z><terrain def/><item def/></cell>...`) and point `SingleFileName` at it.
+  `Ambient_Space` is also started off-thread by vanilla during new games; harmless.
 - **Game menu from the world map:** the first `esc` closes the world view, the second opens the menu; after closing a
   settings window the Options window is still open underneath (close it with OK). Screenshot between steps; chained
   esc/click sequences often land on the map.
