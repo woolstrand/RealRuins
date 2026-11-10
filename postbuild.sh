@@ -22,6 +22,7 @@ cp -R Defs "$MOD_BASE_FOLDER"
 cp -R Languages "$MOD_BASE_FOLDER"
 cp -R Patches "$MOD_BASE_FOLDER"
 cp -R Textures "$MOD_BASE_FOLDER"
+cp -R News "$MOD_BASE_FOLDER"
 
 # --- versioned folders ---
 echo "Copying versioned folders..."

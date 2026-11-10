@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<NewsArticle>
+  <title>November 2026 update</title>
+  <text>Hate to interrupt, so I'll be short. Added ruins wealth limits with optional scaling by colony wealth, tech level caps (strict and soft), pristine ruins frequency fixed (and greatly reduced), but now you can find new ruins using comms console or research table. Settings reworked, added presets for different play styles and tech levels. Rebalanced planetary location types and added a few more (villages, castles, workshops, shipwrecks).</text>
+  <important>true</important>
+</NewsArticle>

@@ -167,3 +167,11 @@ Modal window for copy/pasting the Base64 settings string.
 - `absorbInputAroundWindow = true` (modal). `closeOnClickedOutside = false`.
 - `forcePause = false` — game does not pause while dialog is open (inconsistent with most RimWorld modals).
 - `GUI.SetNextControlName("ExportTextField")` is called but nothing subsequently uses the name — the call is a no-op.
+
+## What's new window (`Source/Classes/WhatsNew/`)
+
+- **Articles:** `News/<language folder>/<id>.xml` in the mod root, `<NewsArticle><title/><text/><important>true</important></NewsArticle>` (`important` optional, default false). The id is the file name, the same in every language; a file missing in the active language falls back to `News/English/`. Names sort by date, newest shown first. Postbuild scripts copy `News/`.
+- **Read state:** ids in `Config/RealRuins_ReadNews.txt`, separate from the mod settings so "Reset all settings" doesn't bring old news back.
+- **When it opens (`WhatsNewLauncher`):** a postfix on `MainMenuDrawer.MainMenuOnGUI`, once per launch, after loading, 1.5 s after the menu appears, and only while no other Dialog-layer window is open (dev windows such as the debug log don't count). So it never stacks on other mods' startup popups (HugsLib news, error reports): it waits for them to be closed.
+- **Read rule (`Dialog_WhatsNew`):** read once the player scrolled or the window has been open 3 s. Close protection applies only if the window shows an unread `important` article; otherwise it closes like any window. With one, closing earlier in any way (button, X, Escape) goes through `OnCloseRequest` and opens `Dialog_SkipWhatsNew`. Its "Back to the notes" button is placed exactly over the notes' Close button, "Close anyway" far left, so a double click never skips the notes. Confirming marks the notes read. "Open Real Ruins settings" marks them read and opens `Dialog_ModSettings` for the mod.
+- **Debug actions (main menu):** RealRuins → Show what's new (all articles), Forget read news.
