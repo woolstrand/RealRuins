@@ -380,7 +380,7 @@
   <RealRuins.TechLimit.AppliesHereTT>Part of the tech level limit at the top of this page: it only works while the limit is on.</RealRuins.TechLimit.AppliesHereTT>
 
   <!-- Settings layout: gameplay -->
-  <RealRuins.GameplaySettings.TabCaption>Gameplay</RealRuins.GameplaySettings.TabCaption>
+  <RealRuins.GameplaySettings.TabCaption>Gameplay and\nPlanetary Ruins</RealRuins.GameplaySettings.TabCaption>
   <RealRuins.GameplaySettings.Caption>Gameplay</RealRuins.GameplaySettings.Caption>
   <RealRuins.GameplaySettings.Description>Which special sites exist in your game and how you interact with them.</RealRuins.GameplaySettings.Description>
   <RealRuins.GameplaySettings.Events>Events and quests</RealRuins.GameplaySettings.Events>

@@ -40,7 +40,7 @@ namespace RealRuins {
         private int blueprintsProcessedCount = 0; // also incremented from the transfer thread, use Interlocked
         private int blueprintsUsed = 0;
 
-        private int abandonedPercentage = (int)RealRuins_ModSettings.planetaryRuinsOptions.abandonedLocations;
+        private int abandonedPercentage = Mathf.RoundToInt(RealRuins_ModSettings.planetaryRuinsOptions.abandonedLocations);
         private bool biomeStrict = true;
         private bool costStrict = false;
         private bool areaStrict = false;
@@ -275,7 +275,7 @@ namespace RealRuins {
                 this.transferLimit = number;
             }
 
-            abandonedPercentage = (int)list.SliderLabeled("RealRuins.PlanetaryLoader.AbandonedPercentage".Translate(), (float)abandonedPercentage, 0, 100);
+            abandonedPercentage = Mathf.RoundToInt(list.SliderLabeled("RealRuins.PlanetaryLoader.AbandonedPercentage".Translate() + ": " + abandonedPercentage + "%", (float)abandonedPercentage, 0, 100));
 
             list.CheckboxLabeled("RealRuins.PlanetaryLoader.BiomeFiltering".Translate(), ref biomeStrict, "RealRuins.PlanetaryLoader.BiomeFilteringTT".Translate());
             list.CheckboxLabeled("RealRuins.PlanetaryLoader.CostFiltering".Translate(), ref costStrict, "RealRuins.PlanetaryLoader.CostFilteringTT".Translate());

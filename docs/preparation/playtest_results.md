@@ -37,14 +37,17 @@ Screenshots are in `%TEMP%\realruins-run\` (overwritten per run). Only the ones 
 | S-06 | → H-5 | |
 | **C — Storage & cache** | | |
 | C-01 | PASS | Table sorted by seed: seed, coverage, size, count, MB |
-| C-02, C-03, C-04, C-05 | NOT RUN | Paused before C-04 |
+| C-02 | PASS | 2026-11-10 (done on the loaded world, same code path): confirmation "Remove all 827 … (359.7 MB) stored for seed shotgun", the row disappeared at once, 0 errors |
+| C-03 | RECORDED (as expected) | Cleared the running game's own seed, then DEV: Explore on an unvisited abandoned POI: `Could not load POI blueprint …`, `GenStep_ScatterPOIRuins: no site plan, skipping`, an empty map, no error popup. The clear dialog doesn't say this is the loaded world. Release decision: warn in the dialog, or accept |
+| C-04 | PASS | 2026-11-10: cache 261 MB / 1,584 files, limit dragged to 105 MB (the slider's low end; 10 MB isn't reachable), settings closed → 104.5 MB / 627 files, planetary seed folders untouched, 0 errors. Note: eviction order is by file name (GUID, descending), so it removes random blueprints, not the oldest |
+| C-05 | PASS | Cache restored to 1,584 files, limit "No limit", settings closed → still 1,584 files, 0 errors. The cache size shown in the tab isn't refreshed by changes made outside the game |
 | C-06 | PASS | Same seed again: "Already available: 577, new blueprints: 5"; only the 5 new ones downloaded (2 fail as usual). Transfer used 580 local blueprints |
 | **U — Server & uploads** | | |
 | U-01 | PASS | Save → `Uploading file …RealRuinsPendingUploads\…bp` → "Map upload successful", pending folder emptied, file kept in `%TEMP%` (debug keep). One small test snapshot went to **production** |
 | U-02 | PARTIAL | Retry path verified: a file in the pending folder at startup → "Retrying pending upload" → success (against staging). The network block itself wasn't simulated → H-8 |
 | U-03 | PASS | Uploads off + a pending file → the file is deleted at startup |
 | U-04, U-05 | DROPPED | The game's game-over mechanics changed |
-| U-06 | NOT RUN | |
+| U-06 | PASS | 2026-11-10: planetary game (`shotgun`), DEV: Explore on an abandoned POI. Save right away: nothing (the map isn't a player home yet). After a few ticks the POI turns player-owned; save: `Skipping snapshot of a planetary POI map`, no upload, 0 errors |
 | U-07 | PASS | Offline: save writes `RealRuins/local-1893566810.bp`, no network call |
 | U-08 | PASS | 2026-11-10: a colonist killed in the home area → the snapshot has 2 `Pawn` items (corpse + dog); the colonist: `biologicalAge` 154,885,856 ≠ `chronologicalAge` 2,592,085,856 ticks |
 | **T — Tech level** | | |
@@ -70,7 +73,7 @@ Screenshots are in `%TEMP%\realruins-run\` (overwritten per run). Only the ones 
 | **D — Threats** | | |
 | D-01 | PASS | Hostile chance 1.0: no force generation on the starting map |
 | D-01b | PASS | Camp map in the same game: animal generation on all 10 chunks |
-| D-02 | NOT VERIFIED | Ran about 2 days at fast speed; no `Releasing … animal inhabitants` line seen in the window watched |
+| D-02 | NOT VERIFIED | Ran about 2 days at fast speed; no `Releasing … animal inhabitants` line seen in the window watched. 2026-11-10: hostile chance 1.0, quicktest starting map: no inhabitants (D-01 again). Caravan + `SmallRuinsFound`: main ruin 24,519 → 613 raider points; of 2 regular chunks one got `Animal forces generation` (375-point budget; spawned animals aren't logged), the other a mechanoid. Ran a few minutes at speed 4: no `Releasing` line. Small ruins are a poor test map: the animals likely fight the raiders, and release waits until no animal has an enemy target. Needs a generic ruins map without raiders (e.g. settle a new tile with hostile chance 1.0) |
 | D-03 | NOT RUN | |
 | D-04 | PASS | Force multiplier 0: caravan ruins "0 points of raiders"; abandoned base generated with no `ForceGen` lines, no triggers; the ruins are still there |
 | D-07, D-08 | → H-3, H-2 | |
@@ -88,17 +91,17 @@ Screenshots are in `%TEMP%\realruins-run\` (overwritten per run). Only the ones 
 | **E — Events** | | |
 | E-01 | PASS | 1,000 rolls: RealRuins_AbandonedBase 10.1% |
 | E-02 | PASS | Event off: the quest never appears |
-| E-03 | PARTIAL | Quest → DEV: Explore → map, raids, triggers. Site expiry not observed (still to run) |
+| E-03 | PASS | Quest → DEV: Explore → map, raids, triggers (first run). 2026-11-10: expiry. A 72,426 site created on day 1, left unvisited (after G-02's Explore/Reset) at speed 3–4: wealth 36,458 on day 4 ("Raiders presence: low"), expired on day 7: `Sending expiration signal: Quest0.ruins.Scavenged`, letter "The quest Untouched Ruins has expired", site gone, 0 errors |
 | E-04 | PARTIAL | See M-06 (manual lock shown); walking off the edge and the unlock → H-1 |
 | E-05 | PASS (partial) | Instant: reform blocked with "There are still some enemies in this area" while hostiles are present. Instant reform after the fight → H-2 |
 | E-06 | PARTIAL | Reform enabled under fire, item list, route; formation starts. The caravaners died before leaving → H-2 |
 | E-06b | PASS | "The caravan can't carry that much", mass shown in red |
 | E-07 | PASS | Caravan small ruins: medium ruin + 4 regular chunks, raiders scaled, 0 errors |
-| E-08 | NOT RUN | |
+| E-08 | PASS | 2026-11-10: all generic blueprints moved out of the cache (count recalculated to 0): debug "Generate pristine ruins quest" → "the pristine ruins quest can't run now (event disabled, too few blueprints or no site tile)", no site, 0 errors. ("Simulate random quest rolls" on day 0 gave "nothing fires" for every slot, vanilla quests included, so it says nothing here.) Cache restored |
 | E-09 | PASS | `caravanReformType` 5 shown as Automatic; reform enabled with raiders present; 0 errors |
 | **L — Planetary** | | |
 | L-01 | PASS | Transfer limit 100: "Reached limit of 100 blueprints" (no "Transfer finished" line when the limit stops it). Closing the window mid-transfer: transfer continued (580 local, 392 sites) |
-| L-02 | NOT RUN | |
+| L-02 | **FAIL (no control)** | 2026-11-10: the **transfer can't be stopped**: during "Processing blueprints N / 580" the window has only Close (the transfer goes on). `forceStopTransfer` in `Page_PlanetaryRuinsLoader` is never set. Stop exists only for the download stage (not reached: all 580 cached). The transfer took 18 s, 392 sites, 0 errors. Finding 12 |
 | L-03 | PASS | Village, Castle, Workshop, Factory, City and other icons render; abandoned POIs white |
 | L-04 | PASS | Own-tile start: shelves player-owned, items not forbidden, no fog, no defenders |
 | L-05 | PASS | Attack start: citizen defenders + triggers for the POI faction; no animal or mechanoid generation |
@@ -115,7 +118,7 @@ Screenshots are in `%TEMP%\realruins-run\` (overwritten per run). Only the ones 
 | X-05 | PASS (new build) | Fresh pristine ruins save/reload: 0 errors. Old saves: see finding 1 |
 | **G — Debug** | | |
 | G-01 | PASS | All samplers worked, 0 errors. After a 10-map sample and opening/closing the settings, the config still has `logLevel` 0 and `debugLogRuinsWealth` True |
-| G-02 | NOTE | After a reload, DEV: Reset says "not entered with Explore: reverted as far as known" |
+| G-02 | PASS | 2026-11-10: POI (abandoned temporary camp) Explore → Reset → Explore → Reset: "Temporary camp reset", map removed, camp abandoned again. Abandoned base (72,426 cap): Explore → Reset ("Ruins reset", wealth kept) → save `PT-g02` → Explore → load `PT-g02` → Reset on the same site: "Ruins reset (not entered with Explore: reverted as far as known)", so the other session's Explore state wasn't used. Both Explores generated the same map (actual 11,592). 0 errors |
 | G-03 | PASS | Staging on: planetary list goes to `staging.woolstrand.art`, pending upload retried there |
 | **RT — Retests** | | |
 | RT-01 | PASS | (a) Back out to the menu with an attack POI, quicktest: `Discarding starting POI of another game or tile`, normal map, no `null relation` errors (one unrelated popup, see popups #1). (b) Same, then New colony on the same tile: `Game start context is empty`, normal start. (c) Attack start still works (POI map, `Found starting poi`, citizen defenders + triggers for the POI faction, 0 errors); takeover start works (0 errors); L-06 `Discarding starting POI chosen for another tile`. L-07 load part: S2 loaded after backing out with a stored POI, but no enemy base was attacked afterwards |
@@ -127,7 +130,11 @@ Screenshots are in `%TEMP%\realruins-run\` (overwritten per run). Only the ones 
 | RT-07 | PASS | 2026-11-10, build `62324e3`, staging + keep files. Quicktest, home area over the colonists and ruin walls: `Capture finished`, upload successful, 11.7 KB XML ends with `</snapshot>` and parses (walls, conduits, meals, weapons, armour). **Alive pawns are never stored** (`SnapshotGenerator.cs:315`, by design), so a second quicktest with a killed colonist in the home area: 8 KB XML, parses, ends with `</snapshot>`, 2 `Pawn` items (corpse incl. apparel) |
 | RT-08 | OPEN (RR-associated) | Popup #1. Without RealRuins: **0 of 10** quicktests, plus a vanilla save with a spawned `Shuttle` (has `CompAmbientSound`) reloaded in-game and from the main menu: 0 errors. With RealRuins: **2 of 8** quicktests (first run 1; 2026-11-10: 1 of 7). The full stack: a `SubSustainer` start queued in `ExecuteWhenFinished` at the end of map generation, no RR frames. The 2026-11-10 map had a **geothermal generator** in a ruin chunk (`CompAmbientSound`); the 5 clean maps after it had none (only an unfuelled wood-fired generator). Lead: a ruin building whose sustainer is created during map generation (on the generation thread, e.g. `CompPowerTrader`/`CompPowerPlant` when the ruin power net turns on) that the 1.7 engine can't attach. Effect: one error popup, the sound doesn't play; no other harm seen. See finding 11 |
 | **H — Hand tests** | | |
-| H-1 … H-8 | FOR THE USER | See the plan |
+| H-1 | DONE (user) | M-06, M-07, E-04 |
+| H-2 | DONE (user) | E-05, E-06, D-08 |
+| H-3 | DONE (user) | D-07 |
+| H-4 | DONE (user) | L-08, L-09, X-06, R-04, R-06 (on) |
+| H-5 … H-8 | FOR THE USER | See the plan |
 
 ## Findings
 
@@ -145,6 +152,8 @@ Screenshots are in `%TEMP%\realruins-run\` (overwritten per run). Only the ones 
 
 11. **Open: popup #1 is RealRuins-associated (RT-08).** "Object is not tracked by the Unity world" in `SampleSustainer.TryMakeAndPlay` after map generation: 0 of 10 vanilla quicktests, 2 of 8 with RR. Cosmetic (one error, a missing ambient sound). Next step: a debug-only Harmony prefix on `Sustainer`'s constructor that logs `info.Maker.Thing` while a map is being generated, then a few quicktests to name the def; then either delay that comp's sustainer (spawn the thing unpowered / defer power-net connection to after `FinalizeInit`) or accept.
 
+12. **L-02: the planetary transfer has no stop button.** `forceStopTransfer` is declared and checked but never set; the plan expected a stop. The transfer is fast (18 s for 580 local blueprints), so a stop is mostly needed with big downloads, and the download stage has one. Fix: add a Stop button in the ProcessingBlueprints state (sets `forceStopTransfer`), or drop the dead flag and the test.
+
 Error-log popups of the run are listed in `playtest_popups.md` (one still needs a check without the mod).
 
 ## Tooling changes during the run
@@ -153,10 +162,12 @@ Error-log popups of the run are listed in `playtest_popups.md` (one still needs 
 
 ## Not run yet
 
-By the driver: M-09, C-02–C-05, U-06, W-10 (×3 part), D-02 (release), D-03, R-03, E-03 (expiry), E-08, L-02, L-07 (attack after the load), RT-06 (map-size change), X-03, G-02.
-By the user: H-1–H-8.
+By the driver: M-09, W-10 (×3 part), D-02 (release), D-03, R-03, L-07 (attack after the load), RT-06 (map-size change), X-03, G-02.
+By the user: H-5–H-8.
 
 ## Current environment state
+
+2026-11-10, second session (build with the tab rename and the rounded percentage): game closed, configs restored again. New saves `PT-u06`, `PT-u06b`, `PT-g02`. The `shotgun` planetary cache was cleared (C-03), the generic cache is back to 1,585 files. Staging got no new uploads.
 
 2026-11-10: game closed; `ModsConfig.xml`, `Prefs.xml` and the RealRuins config restored from the session backup (the user's full mod list, logVerbose on). New saves `PT-rt07`, `PT-rt07b`, `PT-rt08-vanilla`. Two test snapshots went to **staging** (RT-07). Dev mode was switched off and on through the restored `Prefs.xml` (on).
 

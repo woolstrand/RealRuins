@@ -383,7 +383,7 @@
   <RealRuins.TechLimit.AppliesHereTT>Часть ограничения технологического уровня вверху страницы: работает, только пока ограничение включено.</RealRuins.TechLimit.AppliesHereTT>
 
   <!-- Settings layout: gameplay -->
-  <RealRuins.GameplaySettings.TabCaption>Игровой процесс</RealRuins.GameplaySettings.TabCaption>
+  <RealRuins.GameplaySettings.TabCaption>Игровой процесс и\nпланетарные руины</RealRuins.GameplaySettings.TabCaption>
   <RealRuins.GameplaySettings.Caption>Игровой процесс</RealRuins.GameplaySettings.Caption>
   <RealRuins.GameplaySettings.Description>Какие особые места есть в вашей игре и как вы с ними взаимодействуете.</RealRuins.GameplaySettings.Description>
   <RealRuins.GameplaySettings.Events>События и задания</RealRuins.GameplaySettings.Events>

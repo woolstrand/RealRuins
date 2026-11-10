@@ -284,3 +284,13 @@ blueprint id) - that file also states the spawn philosophy: spawn what can be sp
 - **Dev mode off** removes the Dev tab in Options, so "Mod options" moves up one row.
 - **Popup #1 ("Object is not tracked by the Unity world", `SampleSustainer`)**: only seen with RR (2 of 8 quicktests, 0 of 10
   without). One occurrence had a geothermal generator in the ruins. Open, see playtest_results finding 11.
+- **Game menu from the world map:** the first `esc` closes the world view, the second opens the menu; after closing a
+  settings window the Options window is still open underneath (close it with OK). Screenshot between steps; chained
+  esc/click sequences often land on the map.
+- **Pristine ruins expiry (E-03):** the site loses value only while unvisited (`RuinedBaseComp`); a ~72k site halved in
+  ~3 days and expired on day 7. Dev speed is `key 52`; extra loaded maps slow it down a lot.
+- **Planetary loader:** the abandoned-percentage slider is under "More options...". The transfer can't be stopped (no button).
+- **E-08 setup:** move the generic cache files out, then make the mod recount: close the settings with a finite cache limit
+  (with "No limit" `CheckCacheSizeLimits` returns early and the count stays stale).
+- **Animal inhabitants release (D-02):** don't use small ruins: their raiders fight the animals, and release waits for no
+  enemy target. Use a generic ruins map without raiders.

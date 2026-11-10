@@ -538,9 +538,9 @@ namespace RealRuins.Settings
         public static void AbandonedLocations(Listing_Standard listing)
         {
             PlanetaryRuinsOptions po = RealRuins_ModSettings.planetaryRuinsOptions;
-            po.abandonedLocations = SliderRow(listing,
-                "RealRuins.PlanetarySettings.AbandonedPercentage".Translate() + ": " + (int)po.abandonedLocations + "%",
-                po.abandonedLocations, 0.0f, 100.0f, null);
+            po.abandonedLocations = Mathf.Round(SliderRow(listing,
+                "RealRuins.PlanetarySettings.AbandonedPercentage".Translate() + ": " + Mathf.RoundToInt(po.abandonedLocations) + "%",
+                po.abandonedLocations, 0.0f, 100.0f, null));
         }
 
         public static void OfferPlanetaryAtStart(Listing_Standard listing)
