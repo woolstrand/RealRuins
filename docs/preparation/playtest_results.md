@@ -68,13 +68,13 @@ Screenshots are in `%TEMP%\realruins-run\` (overwritten per run). Only the ones 
 | W-07 | RECORDED | Caravan cap 0: the main ruin is completely empty (0 things, not even walls), yet a 693-point raider party spawns from the random bonus. Fixed: minimum 1,000 → RT-04 |
 | W-08 | PASS | Cap 50k: inspect string "low (49851)"; map wealth 25k counted; site cap 49,851 |
 | W-09 | PASS | Abandoned 100%: three POIs at 14,825 / 9,377 / 1,732 (blueprints 49k / 24.6k / 17k), all ≤ 15k |
-| W-10 | PASS (×3 not reached) | (a) starting map limit 2,500 (×0.5). (b) After spawning gold: limit 5,594 (×1.12 at about 112k colony wealth). The first sample still used the old wealth: vanilla recounts wealth only every 5,000 ticks |
+| W-10 | PASS | (a) starting map limit 2,500 (×0.5; again 2026-11-11). (b) 2026-11-11: ~250k of gold spawned on the home map, ~5,000 ticks run for the wealth recount, then a new tile settled: `limit=15936` (×3.19 of 5,000, colony ≈ 319k), 0 errors. First run: limit 5,594 at about 112k (vanilla recounts wealth only every 5,000 ticks) |
 | W-11, W-12 | → H-6 | |
 | **D — Threats** | | |
 | D-01 | PASS | Hostile chance 1.0: no force generation on the starting map |
 | D-01b | PASS | Camp map in the same game: animal generation on all 10 chunks |
-| D-02 | NOT VERIFIED | Ran about 2 days at fast speed; no `Releasing … animal inhabitants` line seen in the window watched. 2026-11-10: hostile chance 1.0, quicktest starting map: no inhabitants (D-01 again). Caravan + `SmallRuinsFound`: main ruin 24,519 → 613 raider points; of 2 regular chunks one got `Animal forces generation` (375-point budget; spawned animals aren't logged), the other a mechanoid. Ran a few minutes at speed 4: no `Releasing` line. Small ruins are a poor test map: the animals likely fight the raiders, and release waits until no animal has an enemy target. Needs a generic ruins map without raiders (e.g. settle a new tile with hostile chance 1.0) |
-| D-03 | NOT RUN | |
+| D-02 | PASS (+ balance note) | 2026-11-11: hostile chance 1.0, a dev caravan (4 colonists) settled a tile 7 from a settlement: 12 chunks, 10 with `Animal forces generation`, 2 with mechanoids. Released on day 5 (map made on day 2): 5× `Releasing 1 animal inhabitants into the wild`, 0 errors. **Note:** the inhabitants killed all 4 new settlers on day 1 (iguana, rat and megascarab died too). The settlers were random dev pawns; with hostile chance 1.0 a fresh settlement next to ruins is dangerous. Small-ruins attempt (2026-11-10): no release seen, raiders on the same map |
+| D-03 | PASS (adjusted) | 2026-11-11: a tile set to sea ice (debug Set biome), settled with hostile chance 1.0: 9 chunks, 6 with `Animal forces generation`, 3 with mechanoids, 0 errors. Sea ice isn't an "animal-less" biome: its wild animals include polar bear, arctic wolf and arctic fox (ice sheet too), so the arctic fox always fits. The `No wild animals …` path needs a biome without predators (e.g. orbit), not reachable on a normal surface tile |
 | D-04 | PASS | Force multiplier 0: caravan ruins "0 points of raiders"; abandoned base generated with no `ForceGen` lines, no triggers; the ruins are still there |
 | D-07, D-08 | → H-3, H-2 | |
 | D-05 | PASS* | Points = value/40 plus a 50% chance of up to about 1,500 random points; the random part dominates cheap ruins (2.5k ruin → 1,218 points, 7.5k ruin → 294) |
@@ -82,7 +82,7 @@ Screenshots are in `%TEMP%\realruins-run\` (overwritten per run). Only the ones 
 | **R — Regular ruins** | | |
 | R-01 | PASS | Dist 6 → 7–8 chunks, dist 16 → 2 of 4 maps empty, `count x…` logged |
 | R-02 | PASS | Proximity off: dist=0 logged, flat count 7–12 |
-| R-03 | NOT RUN | |
+| R-03 | PASS | 2026-11-11: debug quest `OpportunitySite_ItemStash` (350 points), caravan entered instantly: 5 chunks at dist 1 (scale ×3.9) packed around the vanilla stash, but the stash's stone room and the psychic shock lance inside are intact; the nearest ruin walls stop 2–3 cells from it (`UsedRects` + 2 padding; the stash genstep runs at order 400, the scatter at 760). 0 errors |
 | R-04 | → H-4 | Preserve on: map generated, but vanilla ruins don't log and weren't checked visually |
 | R-05 | PASS | Start without ruins: the starting map had no `Spawning N ruin chunks`; the next map (caravan event) had regular ruins |
 | R-06 | PASS (off) / → H-4 (on) | Roofs off: no roof inside ruin rooms. On: 10 sampled maps logged no `Removed N roof cells` line (nothing to remove, or nothing floating); whether a floating roof collapses needs play → H-4 |
@@ -106,13 +106,13 @@ Screenshots are in `%TEMP%\realruins-run\` (overwritten per run). Only the ones 
 | L-04 | PASS | Own-tile start: shelves player-owned, items not forbidden, no fog, no defenders |
 | L-05 | PASS | Attack start: citizen defenders + triggers for the POI faction; no animal or mechanoid generation |
 | L-06 | PASS | "Discarding starting POI chosen for another tile", normal map |
-| L-07 | PASS | Chose a POI, backed out to the main menu, loaded a save, attacked a pirate base: "Game start context is empty", normal base map |
+| L-07 | PASS | Chose a POI, backed out to the main menu, loaded a save, attacked a pirate base: "Game start context is empty", normal base map. 2026-11-11, full path: attack-at-POI chosen for a City (seed `interstellar`), Back through every page to the main menu, loaded `PT-g02`, attacked a tribal base (Dev: instantly): "Game start context is empty, generating map as usual", normal base map with 11 regular chunks, 0 errors |
 | L-08, L-09 | → H-4 | |
 | L-10 | PASS | 300 blueprints, no cap: large military base 2, small 8 |
 | L-11 | **FAIL** → fixed | See finding 2 → RT-01 |
 | **X — Compatibility** | | |
 | X-01 | PASS | About 90 maps generated over the run (samplers + quicktests); no `Failed to spawn` storms; only "[2] Failed to load, recovering…" (recovered) |
-| X-03 | NOT RUN | |
+| X-03 | PASS | 2026-11-11: a forced test blueprint (room with 4 xenogerms and 4 stacks of wastepacks, `SingleFileName`), quicktest with scavenging 0 (at 1.0 scavengers take the xenogerms): 16 "Unique xenogerm" on the map, each with genes (e.g. Reduced pain, Heat tolerant, Pig voice), 0 wastepacks (map search), 0 errors |
 | X-02, X-04 | → H-7 | |
 | X-06 | → H-4 | |
 | X-05 | PASS (new build) | Fresh pristine ruins save/reload: 0 errors. Old saves: see finding 1 |
@@ -126,7 +126,7 @@ Screenshots are in `%TEMP%\realruins-run\` (overwritten per run). Only the ones 
 | RT-03 | PASS (+ new bug, fixed) | Offline: save with home < 300 cells made nothing; painted home, saved at once → snapshot made (slot not used up). But the file was **0 bytes**: new finding 8, fixed in `4d3ad0b`, re-checked on staging: valid XML (132 cells, 19 items), upload successful |
 | RT-04 | PASS | Config 0 → caravan event used `needed 1000` and the cap; label now shows 1,000 (fix in `4d3ad0b`, before it showed 0). With cap 1,000 the main ruin was tiny (worth 2) and got 0.06 raider points — no longer "empty with raiders". Slider drag → H-5 |
 | RT-05 | PASS | `ruinsCostCap` 50000 in the config: tab drawn, settings closed → still `50000`. Drag → H-5 |
-| RT-06 | PASS | "Planetary ruins" between Factions and Next; opens the loader with "Remove all spawned locations". Next → Back: loader doesn't reopen. "Allow on start" off: vanilla 4 buttons, no loader. Map-size change with cleanup not re-checked (changing it would have dropped the RT-01 context; the code path is unchanged). No `layout not recognized` warning |
+| RT-06 | PASS | "Planetary ruins" between Factions and Next; opens the loader with "Remove all spawned locations". Next → Back: loader doesn't reopen. "Allow on start" off: vanilla 4 buttons, no loader. Map-size change with cleanup not re-checked (changing it would have dropped the RT-01 context; the code path is unchanged). No `layout not recognized` warning | 2026-11-11, map-size part: in 1.7 the map size moved to Create world → Advanced settings (reached with Back from the site page). Changing it to 200×200 opens the loader right on the Create world page (the `Dialog_AdvancedGameConfig` close patch); after Generate the site-page loader requests `mapSize=200` and creates sites, 0 errors. **Note:** that first pop-up is redundant (the world is generated again anyway) and could be removed (finding 13) |
 | RT-07 | PASS | 2026-11-10, build `62324e3`, staging + keep files. Quicktest, home area over the colonists and ruin walls: `Capture finished`, upload successful, 11.7 KB XML ends with `</snapshot>` and parses (walls, conduits, meals, weapons, armour). **Alive pawns are never stored** (`SnapshotGenerator.cs:315`, by design), so a second quicktest with a killed colonist in the home area: 8 KB XML, parses, ends with `</snapshot>`, 2 `Pawn` items (corpse incl. apparel) |
 | RT-08 | **FIXED** | Popup #1 is RealRuins: 0 of 10 vanilla quicktests, 2 of 8 with RR. Identified 2026-11-11 with a probe on `TrySpawnSustainer` (logs calls off the main thread): ruins spawn a **geothermal generator** during new-game map generation, which runs on a worker thread. `CompPowerPlant.PostSpawnSetup` switches its power on, `CompAmbientSound` gets "PowerTurnedOn" and starts its sustainer right there. The sustainer's GameObject, made off the main thread, isn't tracked by the 1.7 engine, so starting the sample later throws. Fix (`OffThreadSustainerFix.cs`): `CompAmbientSound.StartSustanier` and `CompPowerTrader.StartSustainerPoweredIfInactive` defer to the main thread when called from another one (spawned/powered checked again). Verified with a forced blueprint of four geothermal generators: without the fix 5 and 4 errors per quicktest (2 of 2), with it 0 (3 of 3), 0 other errors |
 | **H — Hand tests** | | |
@@ -157,6 +157,8 @@ Screenshots are in `%TEMP%\realruins-run\` (overwritten per run). Only the ones 
 
 12. **L-02: the planetary transfer has no stop button.** `forceStopTransfer` is declared and checked but never set; the plan expected a stop. The transfer is fast (18 s for 580 local blueprints), so a stop is mostly needed with big downloads, and the download stage has one. Fix: add a Stop button in the ProcessingBlueprints state (sets `forceStopTransfer`), or drop the dead flag and the test.
 
+13. **Minor (RT-06): the planetary loader pops up on the Create world page after a map-size change.** In 1.7 the map size is set on that page, before the world is generated again, so the forced-cleanup loader opened by `Window_Close_Patch` (`RealRuins.cs:168`) comes too early and does nothing useful; the loader on the site page then uses the new size correctly. Fix: drop the patch, or open the loader only when a world exists and the site page is open.
+
 Error-log popups of the run are listed in `playtest_popups.md` (one still needs a check without the mod).
 
 ## Tooling changes during the run
@@ -165,7 +167,7 @@ Error-log popups of the run are listed in `playtest_popups.md` (one still needs 
 
 ## Not run yet
 
-By the driver: M-09, W-10 (×3 part), D-02 (release), D-03, R-03, L-07 (attack after the load), RT-06 (map-size change), X-03, G-02.
+By the driver: M-09 (needs an S7 fixture: pods in flight in an old-build save).
 By the user: H-6.
 
 ## Current environment state

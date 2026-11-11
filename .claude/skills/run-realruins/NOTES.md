@@ -298,3 +298,11 @@ blueprint id) - that file also states the spawn philosophy: spawn what can be sp
   (with "No limit" `CheckCacheSizeLimits` returns early and the count stays stale).
 - **Animal inhabitants release (D-02):** don't use small ruins: their raiders fight the animals, and release waits for no
   enemy target. Use a generic ruins map without raiders.
+- **Debug actions window opens on its Settings tab after a world/map switch**: always screenshot after clicking
+  Actions/tools; a blind click there toggles a debug setting (e.g. "Show Hidden Pawns").
+- **Map search (Z)** skips fogged things: run Debug actions → Clear All Fog first. Clicking a result moves the camera
+  there and selects the thing (good way to inspect ruins items, e.g. xenogerm genes).
+- **Forced test blueprints and scavenging:** at scavenging 1.0, haulable items in a forced blueprint are mostly gone; set
+  `scavengingMultiplier` 0 in `defaultScatterOptions` to see them.
+- **Staging has no planetary lists**: turn `useStagingEnvironment` off for planetary tests.
+- **1.7 map size** is in Create world → Advanced settings (Edit...), not on the site page.
