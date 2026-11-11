@@ -96,7 +96,7 @@ namespace RealRuins.Settings
                     break;
                 case 2:
                     Find.WindowStack.Add(Dialog_MessageBox.CreateConfirmation(
-                        "RealRuins_ModOptions_ClearCacheConfirm".Translate(),
+                        ClearConfirmText("RealRuins_ModOptions_ClearCacheConfirm".Translate(), LoadedWorldHasPlanetaryBlueprints()),
                         () => SnapshotStoreManager.Instance.ClearCache(),
                         true,
                         null));
@@ -173,7 +173,8 @@ namespace RealRuins.Settings
                 {
                     string folderName = folder.folderName;
                     Find.WindowStack.Add(Dialog_MessageBox.CreateConfirmation(
-                        "RealRuins.CacheSettings.ClearFolderConfirm".Translate(folder.seed, folder.blueprintCount, FormatSize(folder.totalSize)),
+                        ClearConfirmText("RealRuins.CacheSettings.ClearFolderConfirm".Translate(folder.seed, folder.blueprintCount, FormatSize(folder.totalSize)),
+                            IsLoadedWorldFolder(folderName)),
                         () => SnapshotStoreManager.Instance.ClearPlanetaryCacheFolder(folderName),
                         true,
                         null));
@@ -181,6 +182,25 @@ namespace RealRuins.Settings
             }
 
             Text.Anchor = anchor;
+        }
+
+        // Planetary blueprints are not downloaded again while playing (only when a save is loaded, see LoadGame_Patch), so clearing
+        // the folder of the world being played leaves its unvisited ruins empty. The confirmation says so in red.
+        private static bool IsLoadedWorldFolder(string folderName)
+        {
+            return Current.ProgramState == ProgramState.Playing && Find.World != null &&
+                folderName == SnapshotStoreManager.CurrentGamePath();
+        }
+
+        private bool LoadedWorldHasPlanetaryBlueprints()
+        {
+            return planetaryFolders != null && planetaryFolders.Exists(f => IsLoadedWorldFolder(f.folderName));
+        }
+
+        private static string ClearConfirmText(string text, bool loadedWorld)
+        {
+            if (!loadedWorld) return text;
+            return text + "\n\n" + "RealRuins.CacheSettings.ClearLoadedWorldWarning".Translate().Colorize(ColorLibrary.RedReadable);
         }
 
         // Lays out one table line and returns the rect left for the clear button.

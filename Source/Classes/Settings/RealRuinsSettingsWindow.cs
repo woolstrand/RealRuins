@@ -46,6 +46,8 @@ namespace RealRuins.Settings
                 new WealthBalanceSettingsPage(),
                 new SpawnSettingsPage(),
                 new GameplaySettingsPage(),
+                // Shown without dev mode on purpose (playtest S-05, 2026-11-11): players may need to switch to staging when asked,
+                // and the Cache tab warns in red while staging is on. Not an issue, don't hide it behind Prefs.DevMode.
                 new DebugSettingsPage()
             };
         }

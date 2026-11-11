@@ -163,6 +163,7 @@
   <RealRuins.PlanetaryLoader.StopButtonTitle1>Стоп</RealRuins.PlanetaryLoader.StopButtonTitle1>
   <RealRuins.PlanetaryLoader.StopButtonTitle2>Хватит!</RealRuins.PlanetaryLoader.StopButtonTitle2>
   <RealRuins.PlanetaryLoader.StopButtonTitle3>ГОРШОЧЕК, НЕ ВАРИ!!!</RealRuins.PlanetaryLoader.StopButtonTitle3>
+  <RealRuins.PlanetaryLoader.Interrupt>Прервать</RealRuins.PlanetaryLoader.Interrupt>
   <RealRuins.PlanetaryLoader.DownloadLimit>Загрузить не более (0 - без ограничений): </RealRuins.PlanetaryLoader.DownloadLimit>
   <RealRuins.PlanetaryLoader.TransferLimit>Создать локаций не более (0 - без ограничений): </RealRuins.PlanetaryLoader.TransferLimit>
   <RealRuins.PlanetaryLoader.AbandonedPercentage>Доля покинутых локаций (без фракции)</RealRuins.PlanetaryLoader.AbandonedPercentage>
@@ -241,7 +242,10 @@
   <RealRuins.CacheSettings.Blueprints>Чертежи</RealRuins.CacheSettings.Blueprints>
   <RealRuins.CacheSettings.FolderSize>Размер</RealRuins.CacheSettings.FolderSize>
   <RealRuins.CacheSettings.ClearFolder>Очистить</RealRuins.CacheSettings.ClearFolder>
-  <RealRuins.CacheSettings.ClearFolderConfirm>Удалить все чертежи планетарных руин ({1} шт., {2}) для зерна «{0}»? Миры с этим зерном загрузят их заново при необходимости.</RealRuins.CacheSettings.ClearFolderConfirm>
+  <RealRuins.CacheSettings.ClearFolderConfirm>Удалить все чертежи планетарных руин ({1} шт., {2}) для зерна «{0}»?
+
+Сами они заново не загрузятся: недостающие чертежи загружаются только при загрузке сохранения этого мира, и только если загрузки разрешены. До тех пор ещё не посещённые руины этого мира будут пустыми.</RealRuins.CacheSettings.ClearFolderConfirm>
+  <RealRuins.CacheSettings.ClearLoadedWorldWarning>Среди них чертежи мира, в котором вы сейчас играете. Ещё не посещённые руины будут пустыми, пока вы не сохраните и не загрузите игру заново.</RealRuins.CacheSettings.ClearLoadedWorldWarning>
   <RealRuins_ModOptions_DownloadMoreTooltip>Загрузить дополнительные планы из базы данных.</RealRuins_ModOptions_DownloadMoreTooltip>
 
   <RealRuins.SpawnSettings.TabCaption>Генерация и тех. уровень</RealRuins.SpawnSettings.TabCaption>

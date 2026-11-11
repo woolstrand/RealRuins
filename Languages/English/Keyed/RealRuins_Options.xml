@@ -66,7 +66,10 @@
   <RealRuins.CacheSettings.Blueprints>Blueprints</RealRuins.CacheSettings.Blueprints>
   <RealRuins.CacheSettings.FolderSize>Size</RealRuins.CacheSettings.FolderSize>
   <RealRuins.CacheSettings.ClearFolder>Clear</RealRuins.CacheSettings.ClearFolder>
-  <RealRuins.CacheSettings.ClearFolderConfirm>Remove all {1} planetary ruins blueprints ({2}) stored for seed "{0}"? Worlds with this seed will download them again when needed.</RealRuins.CacheSettings.ClearFolderConfirm>
+  <RealRuins.CacheSettings.ClearFolderConfirm>Remove all {1} planetary ruins blueprints ({2}) stored for seed "{0}"?
+
+They are not downloaded again on their own: missing blueprints are downloaded only when a save of this world is loaded, and only while downloads are allowed. Until then, ruins of this world that you haven't visited yet will be empty.</RealRuins.CacheSettings.ClearFolderConfirm>
+  <RealRuins.CacheSettings.ClearLoadedWorldWarning>This includes the blueprints of the world you are playing now. Ruins you haven't visited yet will be empty until you save and load the game again.</RealRuins.CacheSettings.ClearLoadedWorldWarning>
   <RealRuins_ModOptions_DownloadMoreTooltip>Download additional blueprints from the server.</RealRuins_ModOptions_DownloadMoreTooltip>
 
   <RealRuins.SpawnSettings.TabCaption>Spawn and tech level</RealRuins.SpawnSettings.TabCaption>
@@ -193,6 +196,7 @@
   <RealRuins.PlanetaryLoader.StopButtonTitle1>Stop</RealRuins.PlanetaryLoader.StopButtonTitle1>
   <RealRuins.PlanetaryLoader.StopButtonTitle2>Enough!</RealRuins.PlanetaryLoader.StopButtonTitle2>
   <RealRuins.PlanetaryLoader.StopButtonTitle3>STOP LITTLE POT, STOP!!!</RealRuins.PlanetaryLoader.StopButtonTitle3>
+  <RealRuins.PlanetaryLoader.Interrupt>Interrupt</RealRuins.PlanetaryLoader.Interrupt>
   <RealRuins.PlanetaryLoader.DownloadLimit>Download limit (0 for no limit): </RealRuins.PlanetaryLoader.DownloadLimit>
   <RealRuins.PlanetaryLoader.TransferLimit>Transfer limit (0 for no limit): </RealRuins.PlanetaryLoader.TransferLimit>
   <RealRuins.PlanetaryLoader.AbandonedPercentage>Percentage of abandoned locations</RealRuins.PlanetaryLoader.AbandonedPercentage>

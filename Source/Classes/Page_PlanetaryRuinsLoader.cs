@@ -48,7 +48,7 @@ namespace RealRuins {
         private bool disableFriendlyLocations = RealRuins_ModSettings.planetaryRuinsOptions.disableSpawnFriendlyLocations;
 
         private bool forceStopLoading = false;
-        private volatile bool forceStopTransfer = false;
+        private TransferJob currentJob; // the running transfer, for the Interrupt button
 
         private bool showLoaderOptions = false;
         private bool showTranferrerOptions = false;
@@ -68,12 +68,8 @@ namespace RealRuins {
 
         private APIService service = new APIService();
 
-        public Page_PlanetaryRuinsLoader(bool forceCleanup = false) {
+        public Page_PlanetaryRuinsLoader() {
             doCloseX = true;
-            if (forceCleanup) {
-                PlanetaryRuinsInitData.shared.Cleanup();
-                RemoveSites();
-            }
         }
 
         public void DoWindowContents(Rect rect, bool standalone) {
@@ -253,6 +249,15 @@ namespace RealRuins {
                     list.Label(blueprintStats);
                     list.Label(skipped);
                     list.Label(used);
+                    // Sites created so far are kept; "Remove sites" clears them once the transfer has stopped.
+                    if (currentJob != null && !currentJob.stop) {
+                        GUI.color = new Color(1f, 0.3f, 0.3f);
+                        if (list.ButtonText("RealRuins.PlanetaryLoader.Interrupt".Translate())) {
+                            Debug.Log(Debug.POI, "Transfer interrupted by the user");
+                            currentJob.stop = true;
+                        }
+                        GUI.color = Color.white;
+                    }
                     break;
 
                 case RuinsPageState.Completed:
@@ -499,6 +504,7 @@ namespace RealRuins {
             }
 
             TransferJob job = new TransferJob();
+            currentJob = job;
             new Thread(() => PrepareSites(job, candidates, gamePath, initialMapSize)) { IsBackground = true }.Start();
             CoroutineManager.Instance.RunCoroutine(CommitSites(job, gamePath));
         }
@@ -507,7 +513,7 @@ namespace RealRuins {
         private void PrepareSites(TransferJob job, List<PlanetTileInfo> candidates, string gamePath, IntVec3 initialMapSize) {
             try {
                 foreach (PlanetTileInfo t in candidates) {
-                    if (job.stop || forceStopTransfer) {
+                    if (job.stop) {
                         break;
                     }
 
@@ -539,9 +545,14 @@ namespace RealRuins {
                 // Read before draining: if preparation was already over, the queue is final once drained.
                 bool preparationFinished = !job.preparing;
 
-                if (forceStopTransfer || Find.World != world) {
+                if (Find.World != world) {
                     job.stop = true;
                     pageState = RuinsPageState.Idle;
+                    yield break;
+                }
+                if (job.stop) {
+                    Debug.Log(Debug.POI, "Transfer stopped, {0} sites created", blueprintsUsed);
+                    pageState = RuinsPageState.Completed;
                     yield break;
                 }
 

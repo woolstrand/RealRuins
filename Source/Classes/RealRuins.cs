@@ -164,26 +164,9 @@ namespace RealRuins
             }
         }
 
-        // This patch shows planetary ruins configuration options after closing "map size" selector (if map size was changed)
-        [HarmonyPatch(typeof(Verse.Window), "Close")]
-        static class Window_Close_Patch
-        {
-            static void Postfix(Verse.Window __instance)
-            {
-                if (__instance is Dialog_AdvancedGameConfig)
-                {
-                    if (PlanetaryRuinsInitData.shared.state == PlanetaryRuinsState.configuring &&
-                        Find.GameInitData.mapSize != PlanetaryRuinsInitData.shared.selectedMapSize)
-                    {
-                        //add dialog yes/no
-
-                        Find.WindowStack.Add(new Page_PlanetaryRuinsLoader(forceCleanup: true));
-                        PlanetaryRuinsInitData.shared.state = PlanetaryRuinsState.configuring;
-                        PlanetaryRuinsInitData.shared.selectedMapSize = Find.GameInitData.mapSize;
-                    }
-                }
-            }
-        }
+        // No patch on closing Dialog_AdvancedGameConfig: the map size is chosen on the Create world page (1.6 and 1.7), before the
+        // world is generated again, so reopening the loader there did nothing useful (playtest RT-06). The loader opened on the
+        // starting site page already uses the new size.
 
         // This patch enables pressing "next" to select a starting site on a tile with RealRuins POI inside
         [HarmonyPatch(typeof(Page_SelectStartingSite), "CanDoNext")]

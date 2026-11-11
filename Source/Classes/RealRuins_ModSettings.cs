@@ -28,7 +28,8 @@ namespace RealRuins
         public static float diskCacheLimit = 1024.0f; //1 GB cache by default, about 8000 blueprints
         public static bool useRuinsForcesGenerationV2 = true; // support fixed amount of troops on ruins maps
         public static int logLevel = 2; //0 = all, 1 = warnings, 2 = errors
-        public static bool useStagingEnvironment = false; // debug: use staging server instead of production
+        // debug: use staging server instead of production. Visible and saved without dev mode on purpose (playtest S-05).
+        public static bool useStagingEnvironment = false;
         public static bool debugKeepSnapshotsAfterUpload = false; // debug: keep snapshot files after upload instead of deleting
         public static bool debugLogRuinsWealth = false; // debug: log estimated and actual wealth of spawned ruins, regardless of log level
         public static int debugTileFocusId = -1; // debug: tile ID to focus/select in world view

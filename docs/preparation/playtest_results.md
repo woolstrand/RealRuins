@@ -33,12 +33,12 @@ Screenshots are in `%TEMP%\realruins-run\` (overwritten per run). Only the ones 
 | S-02 | PASS | Reset clears the blacklist fields at once |
 | S-03 | PASS | Export has 50 keys incl. the 6 tech level and 9 wealth settings. Changed the tech toggles, imported: "Settings imported successfully", toggles back to the exported values |
 | S-04 | PARTIAL | Slider clicks at the ends didn't move the caravan and POI caps (clicks on the track, not drags). → H-5 |
-| S-05 | **REPORT** | 2026-11-10: dev mode off (Options → General) → the settings still show the **Debug Settings** tab with log level, keep snapshot files, log ruins wealth, **Use staging environment** and **Manually trigger blueprint capture**. Staging is reachable without dev mode: release decision |
+| S-05 | **REPORT** | 2026-11-10: dev mode off (Options → General) → the settings still show the **Debug Settings** tab with log level, keep snapshot files, log ruins wealth, **Use staging environment** and **Manually trigger blueprint capture**. Staging is reachable without dev mode. **Decision 2026-11-11: intended, accepted** (noted in `RealRuinsSettingsWindow.InitializePages` and at `useStagingEnvironment`) |
 | S-06 | → H-5 | |
 | **C — Storage & cache** | | |
 | C-01 | PASS | Table sorted by seed: seed, coverage, size, count, MB |
 | C-02 | PASS | 2026-11-10 (done on the loaded world, same code path): confirmation "Remove all 827 … (359.7 MB) stored for seed shotgun", the row disappeared at once, 0 errors |
-| C-03 | RECORDED (as expected) | Cleared the running game's own seed, then DEV: Explore on an unvisited abandoned POI: `Could not load POI blueprint …`, `GenStep_ScatterPOIRuins: no site plan, skipping`, an empty map, no error popup. The clear dialog doesn't say this is the loaded world. Release decision: warn in the dialog, or accept |
+| C-03 | RECORDED (as expected) | Cleared the running game's own seed, then DEV: Explore on an unvisited abandoned POI: `Could not load POI blueprint …`, `GenStep_ScatterPOIRuins: no site plan, skipping`, an empty map, no error popup. The clear dialog doesn't say this is the loaded world. **Decision 2026-11-11: warn.** Both clear dialogs now add a red line when the loaded world's blueprints are included; the per-seed text no longer claims the blueprints are downloaded again on their own (they are only on loading a save, `LoadGame_Patch`). Not re-checked in game |
 | C-04 | PASS | 2026-11-10: cache 261 MB / 1,584 files, limit dragged to 105 MB (the slider's low end; 10 MB isn't reachable), settings closed → 104.5 MB / 627 files, planetary seed folders untouched, 0 errors. Note: eviction order is by file name (GUID, descending), so it removes random blueprints, not the oldest |
 | C-05 | PASS | Cache restored to 1,584 files, limit "No limit", settings closed → still 1,584 files, 0 errors. The cache size shown in the tab isn't refreshed by changes made outside the game |
 | C-06 | PASS | Same seed again: "Already available: 577, new blueprints: 5"; only the 5 new ones downloaded (2 fail as usual). Transfer used 580 local blueprints |
@@ -101,7 +101,7 @@ Screenshots are in `%TEMP%\realruins-run\` (overwritten per run). Only the ones 
 | E-09 | PASS | `caravanReformType` 5 shown as Automatic; reform enabled with raiders present; 0 errors |
 | **L — Planetary** | | |
 | L-01 | PASS | Transfer limit 100: "Reached limit of 100 blueprints" (no "Transfer finished" line when the limit stops it). Closing the window mid-transfer: transfer continued (580 local, 392 sites) |
-| L-02 | **FAIL (no control)** | 2026-11-10: the **transfer can't be stopped**: during "Processing blueprints N / 580" the window has only Close (the transfer goes on). `forceStopTransfer` in `Page_PlanetaryRuinsLoader` is never set. Stop exists only for the download stage (not reached: all 580 cached). The transfer took 18 s, 392 sites, 0 errors. Finding 12 |
+| L-02 | **FAIL (no control)** → fixed, not re-checked | 2026-11-10: the **transfer can't be stopped**: during "Processing blueprints N / 580" the window has only Close (the transfer goes on). `forceStopTransfer` in `Page_PlanetaryRuinsLoader` is never set. Stop exists only for the download stage (not reached: all 580 cached). The transfer took 18 s, 392 sites, 0 errors. Finding 12. 2026-11-11: red **Interrupt** button added while processing; sites made so far are kept |
 | L-03 | PASS | Village, Castle, Workshop, Factory, City and other icons render; abandoned POIs white |
 | L-04 | PASS | Own-tile start: shelves player-owned, items not forbidden, no fog, no defenders |
 | L-05 | PASS | Attack start: citizen defenders + triggers for the POI faction; no animal or mechanoid generation |
@@ -126,7 +126,7 @@ Screenshots are in `%TEMP%\realruins-run\` (overwritten per run). Only the ones 
 | RT-03 | PASS (+ new bug, fixed) | Offline: save with home < 300 cells made nothing; painted home, saved at once → snapshot made (slot not used up). But the file was **0 bytes**: new finding 8, fixed in `4d3ad0b`, re-checked on staging: valid XML (132 cells, 19 items), upload successful |
 | RT-04 | PASS | Config 0 → caravan event used `needed 1000` and the cap; label now shows 1,000 (fix in `4d3ad0b`, before it showed 0). With cap 1,000 the main ruin was tiny (worth 2) and got 0.06 raider points — no longer "empty with raiders". Slider drag → H-5 |
 | RT-05 | PASS | `ruinsCostCap` 50000 in the config: tab drawn, settings closed → still `50000`. Drag → H-5 |
-| RT-06 | PASS | "Planetary ruins" between Factions and Next; opens the loader with "Remove all spawned locations". Next → Back: loader doesn't reopen. "Allow on start" off: vanilla 4 buttons, no loader. Map-size change with cleanup not re-checked (changing it would have dropped the RT-01 context; the code path is unchanged). No `layout not recognized` warning | 2026-11-11, map-size part: in 1.7 the map size moved to Create world → Advanced settings (reached with Back from the site page). Changing it to 200×200 opens the loader right on the Create world page (the `Dialog_AdvancedGameConfig` close patch); after Generate the site-page loader requests `mapSize=200` and creates sites, 0 errors. **Note:** that first pop-up is redundant (the world is generated again anyway) and could be removed (finding 13) |
+| RT-06 | PASS | "Planetary ruins" between Factions and Next; opens the loader with "Remove all spawned locations". Next → Back: loader doesn't reopen. "Allow on start" off: vanilla 4 buttons, no loader. Map-size change with cleanup not re-checked (changing it would have dropped the RT-01 context; the code path is unchanged). No `layout not recognized` warning | 2026-11-11, map-size part: in 1.7 the map size moved to Create world → Advanced settings (reached with Back from the site page). Changing it to 200×200 opens the loader right on the Create world page (the `Dialog_AdvancedGameConfig` close patch); after Generate the site-page loader requests `mapSize=200` and creates sites, 0 errors. **Note:** that first pop-up is redundant (the world is generated again anyway) and could be removed (finding 13). 2026-11-11: the patch is removed (1.6 also opens the dialog from Create world) |
 | RT-07 | PASS | 2026-11-10, build `62324e3`, staging + keep files. Quicktest, home area over the colonists and ruin walls: `Capture finished`, upload successful, 11.7 KB XML ends with `</snapshot>` and parses (walls, conduits, meals, weapons, armour). **Alive pawns are never stored** (`SnapshotGenerator.cs:315`, by design), so a second quicktest with a killed colonist in the home area: 8 KB XML, parses, ends with `</snapshot>`, 2 `Pawn` items (corpse incl. apparel) |
 | RT-08 | **FIXED** | Popup #1 is RealRuins: 0 of 10 vanilla quicktests, 2 of 8 with RR. Identified 2026-11-11 with a probe on `TrySpawnSustainer` (logs calls off the main thread): ruins spawn a **geothermal generator** during new-game map generation, which runs on a worker thread. `CompPowerPlant.PostSpawnSetup` switches its power on, `CompAmbientSound` gets "PowerTurnedOn" and starts its sustainer right there. The sustainer's GameObject, made off the main thread, isn't tracked by the 1.7 engine, so starting the sample later throws. Fix (`OffThreadSustainerFix.cs`): `CompAmbientSound.StartSustanier` and `CompPowerTrader.StartSustainerPoweredIfInactive` defer to the main thread when called from another one (spawned/powered checked again). Verified with a forced blueprint of four geothermal generators: without the fix 5 and 4 errors per quicktest (2 of 2), with it 0 (3 of 3), 0 other errors |
 | **H — Hand tests** | | |
@@ -135,7 +135,7 @@ Screenshots are in `%TEMP%\realruins-run\` (overwritten per run). Only the ones 
 | H-3 | DONE (user) | D-07 |
 | H-4 | DONE (user) | L-08, L-09, X-06, R-04, R-06 (on) |
 | H-5 | PASS (user) | S-04, RT-04, RT-05, S-06 |
-| H-6 | FOR THE USER | W-11, W-12 |
+| H-6 | PASS (user) | W-11, W-12 |
 | H-7 | PASS (user) | X-02, X-04, T-07 |
 | H-8 | PASS (user) | U-02 |
 
@@ -155,9 +155,9 @@ Screenshots are in `%TEMP%\realruins-run\` (overwritten per run). Only the ones 
 
 11. **Fixed (RT-08): popup #1 was RealRuins.** Cause and fix in the RT-08 row. Original note: "Object is not tracked by the Unity world" in `SampleSustainer.TryMakeAndPlay` after map generation: 0 of 10 vanilla quicktests, 2 of 8 with RR. Cosmetic (one error, a missing ambient sound). Next step: a debug-only Harmony prefix on `Sustainer`'s constructor that logs `info.Maker.Thing` while a map is being generated, then a few quicktests to name the def; then either delay that comp's sustainer (spawn the thing unpowered / defer power-net connection to after `FinalizeInit`) or accept.
 
-12. **L-02: the planetary transfer has no stop button.** `forceStopTransfer` is declared and checked but never set; the plan expected a stop. The transfer is fast (18 s for 580 local blueprints), so a stop is mostly needed with big downloads, and the download stage has one. Fix: add a Stop button in the ProcessingBlueprints state (sets `forceStopTransfer`), or drop the dead flag and the test.
+12. **Fixed 2026-11-11 (red Interrupt button, `TransferJob.stop`; the dead `forceStopTransfer` is gone).** **L-02: the planetary transfer has no stop button.** `forceStopTransfer` is declared and checked but never set; the plan expected a stop. The transfer is fast (18 s for 580 local blueprints), so a stop is mostly needed with big downloads, and the download stage has one. Fix: add a Stop button in the ProcessingBlueprints state (sets `forceStopTransfer`), or drop the dead flag and the test.
 
-13. **Minor (RT-06): the planetary loader pops up on the Create world page after a map-size change.** In 1.7 the map size is set on that page, before the world is generated again, so the forced-cleanup loader opened by `Window_Close_Patch` (`RealRuins.cs:168`) comes too early and does nothing useful; the loader on the site page then uses the new size correctly. Fix: drop the patch, or open the loader only when a world exists and the site page is open.
+13. **Fixed 2026-11-11 (patch removed).** **Minor (RT-06): the planetary loader pops up on the Create world page after a map-size change.** In 1.7 the map size is set on that page, before the world is generated again, so the forced-cleanup loader opened by `Window_Close_Patch` (`RealRuins.cs:168`) comes too early and does nothing useful; the loader on the site page then uses the new size correctly. Fix: drop the patch, or open the loader only when a world exists and the site page is open.
 
 Error-log popups of the run are listed in `playtest_popups.md` (one still needs a check without the mod).
 
@@ -168,7 +168,8 @@ Error-log popups of the run are listed in `playtest_popups.md` (one still needs 
 ## Not run yet
 
 By the driver: M-09 (needs an S7 fixture: pods in flight in an old-build save).
-By the user: H-6.
+By the user: none (all H tests passed).
+To re-check in game: the Interrupt button (L-02), the clear-cache warnings (C-03), no loader pop-up on Create world (RT-06).
 
 ## Current environment state
 

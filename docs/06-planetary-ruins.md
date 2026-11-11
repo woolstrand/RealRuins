@@ -40,11 +40,6 @@ Page_SelectStartingSite.PostOpen [postfix]
   → if (allowOnStart enabled): push Page_PlanetaryRuinsLoader onto window stack
   → set PlanetaryRuinsInitData.shared.state = configuring
 
-Window.Close [postfix on every window close]
-  → if closed window is Dialog_AdvancedGameConfig
-  → if map size changed during configuring state
-  → re-open ruins loader with forceCleanup: true
-
 Page_SelectStartingSite.CanDoNext [prefix]
   → if selected tile has RealRuinsPOIWorldObject: force result = true
 
@@ -96,11 +91,11 @@ A `Window` subclass implementing a multi-step download + placement wizard.
 - Iterates `mapTiles`, skipping non-filtered entries
 - Applies biome/cost/area filtering
 - Calls `RealRuinsPOIFactory.CreatePOI()` per tile
-- Tracks `blueprintsProcessedCount`, `blueprintsUsed`; respects `transferLimit` and `forceStopTransfer`
+- Tracks `blueprintsProcessedCount`, `blueprintsUsed`; respects `transferLimit`; the red Interrupt button (shown while processing) sets `TransferJob.stop`
 
 ### Thread Safety Issues
 - `CreateSitesInt()` runs on background thread but writes `blueprintsProcessedCount`, `blueprintsUsed`, `pageState` without synchronization (`volatile`, `lock`, or `Interlocked`)
-- `forceStopLoading` and `forceStopTransfer` shared between threads without synchronization
+- `forceStopLoading` shared between threads without synchronization
 - No cleanup of background thread if window is closed mid-transfer
 
 ---

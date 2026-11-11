@@ -21,12 +21,12 @@ Items already tracked in `docs/FIXES_QUEUE.md` are only referenced, not repeated
 | R3 | Merge leftover, not intentional: fixed (checks the uploaded map, and the game-over fallback skips POI maps) | `db18ce6` |
 | R4 | Fixed: `StillValid` rejects a missing target, null-safe labels | `9acd31b` |
 | R5 | Accepted; a popup will be added later | — |
-| R6 | Accepted | — |
+| R6 | Accepted (playtest S-05, 2026-11-11); noted in code | — |
 | R7 | Fixed: roofs and wealth options come through `PipelineSettings` | `0a0ef49` |
 | R8 | Fixed: abstract stat calls checked and documented as safe; DefRoles lazy init made thread-safe | `9d0a13e` |
 | R9 | Fixed: `SessionState` resets statics on load, new game and main menu; owns the starting map flag | `0f998c3` |
 | R10 | Accepted (1.6 and 1.7 content is identical) | — |
-| R11 | Intended behavior; documented at `ClearPlanetaryCacheFolder` | `043d772` |
+| R11 | Intended behavior; documented at `ClearPlanetaryCacheFolder`. 2026-11-11: the clear dialogs warn when the loaded world is included | `043d772` |
 | R13 | Fixed: `MemberwiseClone` | `290ae20` |
 | R14 | Fixed: `CaravanReformMode` + `CaravanReformPolicy` | `a50b298` |
 | R12, R15–R23 | Open | — |
