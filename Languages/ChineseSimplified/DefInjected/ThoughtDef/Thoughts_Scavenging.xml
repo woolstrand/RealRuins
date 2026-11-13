@@ -1,13 +1,19 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
+
 <LanguageData>
-  <ScavengingRuins.stages.0.label>低财富遗迹</ScavengingRuins.stages.0.label>
-  <ScavengingRuins.stages.0.description>我们真的要为了石头和垃圾走那么远吗?</ScavengingRuins.stages.0.description>
-  <ScavengingRuins.stages.1.label>中等财富遗迹</ScavengingRuins.stages.1.label>
-  <ScavengingRuins.stages.1.description>看来我们可以在这里找到一些真正有用的东西</ScavengingRuins.stages.1.description>
-  <ScavengingRuins.stages.2.label>高财富遗迹</ScavengingRuins.stages.2.label>
-  <ScavengingRuins.stages.2.description>这个旅程绝对是值得的。</ScavengingRuins.stages.2.description>
-  <ScavengingRuins.stages.3.label>极高财富遗迹</ScavengingRuins.stages.3.label>
-  <ScavengingRuins.stages.3.description>这里有一大笔财富! 我们应该拿下一切，我将为之奋斗！</ScavengingRuins.stages.3.description>
-  <ScavengingRuins.stages.4.label>疯狂财富遗迹</ScavengingRuins.stages.4.label>
-  <ScavengingRuins.stages.4.description>卧槽，这太夸张了，这么多钱！</ScavengingRuins.stages.4.description>
+  <!-- EN: low wealth ruins / Did we really have to go that far just for stones and trash? -->
+  <ScavengingRuins.stages.0.label>穷酸遗迹</ScavengingRuins.stages.0.label>
+  <ScavengingRuins.stages.0.description>咱大老远跑这一趟，就为了看一地烂石头和垃圾？</ScavengingRuins.stages.0.description>
+  <!-- EN: medium wealth ruins / Looks like we can find some really useful things here. -->
+  <ScavengingRuins.stages.1.label>一般遗迹</ScavengingRuins.stages.1.label>
+  <ScavengingRuins.stages.1.description>看着还行，里头应该能翻出点真正派得上用场的好货。</ScavengingRuins.stages.1.description>
+  <!-- EN: high wealth ruins / This journey was definitely worth it. -->
+  <ScavengingRuins.stages.2.label>高价值遗迹</ScavengingRuins.stages.2.label>
+  <ScavengingRuins.stages.2.description>这趟没白跑，绝对血赚！</ScavengingRuins.stages.2.description>
+  <!-- EN: very high wealth ruins / There is a whole fortune here! We should take everything and I will fight for it! -->
+  <ScavengingRuins.stages.3.label>极高价值遗迹</ScavengingRuins.stages.3.label>
+  <ScavengingRuins.stages.3.description>这儿简直有金山银山！全给它搬空，谁敢来抢老子跟谁拼命！</ScavengingRuins.stages.3.description>
+  <!--EN: insanely wealthy ruins / OH MY THAT'S INSANE SUCH WEALTH MUCH MONEY-->
+  <ScavengingRuins.stages.4.label>天价财富遗迹</ScavengingRuins.stages.4.label>
+  <ScavengingRuins.stages.4.description>卧槽这也太TM离谱了吧？！超级巨富！满地钞票！这辈子都不愁吃穿了！</ScavengingRuins.stages.4.description>
 </LanguageData>

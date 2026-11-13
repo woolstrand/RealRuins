@@ -1,4 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
+
 <LanguageData>
-  <RaidTrigger.label>遗迹袭击标志</RaidTrigger.label>
+  <!-- EN: rough floor -->
+  <RaidTrigger.label>粗糙的地面</RaidTrigger.label>
+  <!-- EN: rough floor -->
+  <TrippingTrigger.label>粗糙的地面</TrippingTrigger.label>
 </LanguageData>

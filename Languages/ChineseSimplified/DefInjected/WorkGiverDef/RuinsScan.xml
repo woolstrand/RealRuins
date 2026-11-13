@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<LanguageData>
+  <!-- EN: label: search records for ruins | verb: search records for ruins at | gerund: searching records for ruins at -->
+  <RealRuins_SearchRecordsForRuins.label>翻查档案寻找遗迹</RealRuins_SearchRecordsForRuins.label>
+  <RealRuins_SearchRecordsForRuins.verb>翻查档案寻找遗迹</RealRuins_SearchRecordsForRuins.verb>
+  <RealRuins_SearchRecordsForRuins.gerund>正在翻查档案寻找遗迹</RealRuins_SearchRecordsForRuins.gerund>
+  <!-- EN: label: radio-locate ruins | verb: radio-locate ruins at | gerund: radio-locating ruins at -->
+  <RealRuins_RadioLocateRuins.label>无线电定位遗迹</RealRuins_RadioLocateRuins.label>
+  <RealRuins_RadioLocateRuins.verb>无线电定位遗迹</RealRuins_RadioLocateRuins.verb>
+  <RealRuins_RadioLocateRuins.gerund>正在无线电定位遗迹</RealRuins_RadioLocateRuins.gerund>
+</LanguageData>
