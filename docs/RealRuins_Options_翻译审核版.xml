@@ -675,7 +675,7 @@
   <!-- EN: Requires Intellectual {0} -->
   <RealRuins_RuinsScan_SkillTooLow>需要智识 {0}</RealRuins_RuinsScan_SkillTooLow>
   <!-- EN: {PAWN_nameDef} is incapable of intellectual work -->
-  <RealRuins_RuinsScan_IncapableOfIntellectual>{PAWN_nameDef} 无法从事智力工作</RealRuins_RuinsScan_IncapableOfIntellectual>
+  <RealRuins_RuinsScan_IncapableOfIntellectual>{PAWN_nameDef} 无法从事智识工作</RealRuins_RuinsScan_IncapableOfIntellectual>
   <!-- EN: The trail to the ruins went cold before their location could be pinned down. -->
   <RealRuins_RuinsScan_SignalLost>通往遗迹的线索在定位之前就中断了。</RealRuins_RuinsScan_SignalLost>
   <!-- EN: your researcher -->

@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- 遗迹扫描方式（RealRuins.RuinsScanDef，目录名必须是完整类型名）。
-     description 中的 {0}=最低智力需求，{1}/{2}=最低/最高智力下的平均天数；foundMessage 中 {PAWN_nameDef}=小人，{BUILDING}=建筑。 -->
+     description 中的 {0}=最低智识需求，{1}/{2}=最低/最高智识下的平均天数；foundMessage 中 {PAWN_nameDef}=小人，{BUILDING}=建筑。 -->
 <LanguageData>
   <!-- EN: search records for ruins -->
   <RealRuins_RuinsScan_Records.label>翻查档案寻找遗迹</RealRuins_RuinsScan_Records.label>
   <!-- EN: Have researchers comb through old books, maps, journals and trade ledgers for traces of sealed ancient ruins. Requires Intellectual {0}.\n\nThere is no telling how long it takes. A skilled researcher pieces something together after about {1} days of study on average, a novice after about {2}. The same records exist elsewhere, so once you find the ruins, others will too. -->
-  <RealRuins_RuinsScan_Records.description>让研究员翻阅旧书籍、地图、日志和贸易账册，寻找被封存的古代遗迹的踪迹。需要智力 {0}。\n\n耗时无法预计：熟练的研究员平均约 {1} 天能拼凑出线索，新手则约需 {2} 天。同样的档案别处也有——你找到遗迹之后，别人也会找到。</RealRuins_RuinsScan_Records.description>
+  <RealRuins_RuinsScan_Records.description>让研究员翻阅旧书籍、地图、日志和贸易账册，寻找被封存的古代遗迹的踪迹。需要智识 {0}。\n\n耗时无法预计：熟练的研究员平均约 {1} 天能拼凑出线索，新手则约需 {2} 天。同样的档案别处也有——你找到遗迹之后，别人也会找到。</RealRuins_RuinsScan_Records.description>
   <!-- EN: {PAWN_nameDef} found references to sealed ruins in old records at the {BUILDING}. Working out where they are... -->
   <RealRuins_RuinsScan_Records.foundMessage>{PAWN_nameDef}在{BUILDING}翻查旧档案时发现了被封存遗迹的线索。正在推算它们的位置……</RealRuins_RuinsScan_Records.foundMessage>
   <!-- EN: radio-locate ruins -->
   <RealRuins_RuinsScan_Radio.label>无线电定位遗迹</RealRuins_RuinsScan_Radio.label>
   <!-- EN: Have researchers sweep old frequencies, ping dormant transponders and hack into derelict relays to locate sealed ancient ruins. Requires Intellectual {0}.\n\nThere is no telling how long it takes. A skilled operator finds something after about {1} days of scanning on average, a novice after about {2}. Active pinging is never quiet, so once you find the ruins, others will too. -->
-  <RealRuins_RuinsScan_Radio.description>让研究员扫过旧频段、唤醒休眠的应答器并入侵废弃的中继站，以定位被封存的古代遗迹。需要智力 {0}。\n\n耗时无法预计：熟练的操作员平均约 {1} 天能有所发现，新手则约需 {2} 天。主动发射的信号绝不会安静，你找到遗迹之后，别人也会跟着找到。</RealRuins_RuinsScan_Radio.description>
+  <RealRuins_RuinsScan_Radio.description>让研究员扫过旧频段、唤醒休眠的应答器并入侵废弃的中继站，以定位被封存的古代遗迹。需要智识 {0}。\n\n耗时无法预计：熟练的操作员平均约 {1} 天能有所发现，新手则约需 {2} 天。主动发射的信号绝不会安静，你找到遗迹之后，别人也会跟着找到。</RealRuins_RuinsScan_Radio.description>
   <!-- EN: {PAWN_nameDef} picked up a signal at the {BUILDING}. Triangulating the location... -->
   <RealRuins_RuinsScan_Radio.foundMessage>{PAWN_nameDef}在{BUILDING}捕捉到了一个信号。正在三角定位……</RealRuins_RuinsScan_Radio.foundMessage>
 </LanguageData>
