@@ -1,5 +1,11 @@
 # Real Ruins 变更日志
 
+## 2026-11-13（3）
+- 应用用户审核定稿到 Keyed（远行队/行星遗迹/遗迹任务等术语统一，约 80 条润色），同步提交 `fc71be0`。
+- 术语分工定稿："原始遗迹任务"仅作任务名（事件开关、说明文案），其余场景用"遗迹任务"；`CaravanReformType` 改为"在遗迹重组远行队"。
+- 新增 DefInjected 审核文件（`docs/DefInjected_审核版/`，按最终目录结构拆分，每条带英文原文注释）：拾荒心情 5 阶段、TrippingTrigger.label、遗迹扫描（RuinsScanDef/JobDef/WorkGiverDef）、扫描遗迹任务 QuestScriptDef（约 27 条随机文案）。提交 `c86d3e5`。
+- 已知待办：任务名规则（questNameRules）在抽象基类里，DefInjected 无法翻译，定稿后需写 PatchOperation 补丁。
+
 ## 2026-11-13（2）
 - 生成翻译审核版 `docs/RealRuins_Options_翻译审核版.xml`：335 键全量、按英文文件分节，每条中文上方以 `EN:` 注释附英文原文；`\n` 字面量与 `&lt;` 等转义保留原样，审核定稿后可直接替换 Keyed 文件。
 - 备份当前翻译到 `docs/_lang_backup/RealRuins_Options.xml.20261113-full.bak`。提交 `aa71497`。
