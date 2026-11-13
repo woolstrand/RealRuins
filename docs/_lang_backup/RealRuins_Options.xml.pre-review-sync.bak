@@ -1,0 +1,385 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<LanguageData>
+  <RealRuins_ModOptions_Category>真实遗迹</RealRuins_ModOptions_Category>
+  <RealRuins_ModOptions_AllowDownloads>允许从数据库下载遗迹</RealRuins_ModOptions_AllowDownloads>
+  <RealRuins_ModOptions_AllowUploads>允许上传你的基地到遗迹数据库</RealRuins_ModOptions_AllowUploads>
+  <RealRuins_ModOptions_CacheSize>将本地缓存大小限制为</RealRuins_ModOptions_CacheSize>
+  <RealRuins_ModOptions_OfflineMode>仅本地模式</RealRuins_ModOptions_OfflineMode>
+  <RealRuins_ModOptions_AllowDownloadsTooltip>关闭后，不会删除你已经下载的内容。</RealRuins_ModOptions_AllowDownloadsTooltip>
+  <RealRuins_ModOptions_AllowUploadsTooltip>建议保持这个状态，以帮助用各种有趣的基本设计填充数据库。每个游戏会话的消耗量不应超过几兆字节。</RealRuins_ModOptions_AllowUploadsTooltip>
+  <RealRuins_ModOptions_CacheSizeTooltip>如果达到限制大小，mod将继续下载新的蓝图，并依次删除旧的。</RealRuins_ModOptions_CacheSizeTooltip>
+  <RealRuins_ModOptions_OfflineModeTooltip>此模式将删除从服务器下载的所有缓存数据，并阻止任何进一步的上载和下载。但是，你自己的基地仍然会被存储在本地，并用于在游戏中创建遗迹。</RealRuins_ModOptions_OfflineModeTooltip>
+  <RealRuins_ModOptions_CurrentCacheSize>当前本地缓存大小：</RealRuins_ModOptions_CurrentCacheSize>
+  <RealRuins_ModOptions_RemoveAll>清除缓存</RealRuins_ModOptions_RemoveAll>
+  <RealRuins_ModOptions_DownloadMore>下载更多蓝图</RealRuins_ModOptions_DownloadMore>
+  <RealRuins_ModOptions_CurrentCacheCount>缓存中的蓝图：</RealRuins_ModOptions_CurrentCacheCount>
+  <RealRuins_MapOptions_Density>遗迹密度</RealRuins_MapOptions_Density>
+  <RealRuins_MapOptions_Size>最小碎片大小</RealRuins_MapOptions_Size>
+  <RealRuins_MapOptions_Size_Max>最大碎片大小</RealRuins_MapOptions_Size_Max>
+  <RealRuins_MapOptions_Deterioration>老化程度</RealRuins_MapOptions_Deterioration>
+  <RealRuins_MapOptions_Scavengers>拾荒者活动倍率</RealRuins_MapOptions_Scavengers>
+  <RealRuins_MapOptions_CostLimit>单件物品价值上限（常规与原始遗迹）</RealRuins_MapOptions_CostLimit>
+  <RealRuins_MapOptions_DisableHaulables>禁用生成可运输物品</RealRuins_MapOptions_DisableHaulables>
+  <RealRuins_MapOptions_WallsAndDoorsOnly>仅生成墙和门</RealRuins_MapOptions_WallsAndDoorsOnly>
+  <RealRuins_MapOptions_DisableHostiles>常规遗迹中的居民</RealRuins_MapOptions_DisableHostiles>
+  <RealRuins_MapOptions_DensityTT>在100x100区域产生的平均遗迹数量</RealRuins_MapOptions_DensityTT>
+  <RealRuins_MapOptions_SizeTT>遗迹面积在输入值的50%到150%之间随机选择</RealRuins_MapOptions_SizeTT>
+  <RealRuins_MapOptions_DeteriorationTT>这个值决定了一个牌被摧毁的额外几率，并且不影响剩余的生命值。零是默认设置，最大值将导致没有任何遗迹。</RealRuins_MapOptions_DeteriorationTT>
+  <RealRuins_MapOptions_ScavengersTT>零是原始的蓝图。</RealRuins_MapOptions_ScavengersTT>
+  <RealRuins_MapOptions_CostLimitTT>价值超过此值的物品会从常规和原始遗迹中移除。商队遗迹和行星地点有各自固定的上限。最右端：不设上限。</RealRuins_MapOptions_CostLimitTT>
+  <RealRuins_MapOptions_DisableHaulablesTT>所有可搬运的物品不会产生，但家具可能仍然会出现</RealRuins_MapOptions_DisableHaulablesTT>
+  <RealRuins_MapOptions_WallsAndDoorsOnlyTT>这个设置是相当积极的，将删除一切不是基于原版墙或门。</RealRuins_MapOptions_WallsAndDoorsOnlyTT>
+  <RealRuins_MapOptions_DisableHostilesTT>每个遗迹碎片中有动物（80%）或机械族（20%）栖息的概率。其他遗迹为固定值：商队遗迹 80%，原始遗迹必定有，行星地点没有。威胁规模仍对所有类型生效。</RealRuins_MapOptions_DisableHostilesTT>
+  <RealRuins_MapOptions_EnableProximity>考虑邻近定居点</RealRuins_MapOptions_EnableProximity>
+  <RealRuins_MapOptions_EnableProximityTT>聚落邻近性影响生成参数：遗迹在城市附近更密集，但物资数量更少。</RealRuins_MapOptions_EnableProximityTT>
+  <RealRuins_MapOptions_StartWithoutRuins>起始地图上没有遗迹</RealRuins_MapOptions_StartWithoutRuins>
+  <RealRuins_MapOptions_StartWithoutRuinsTT>起始地图上不会产生遗迹。后期遗迹将根据设置正常生成。</RealRuins_MapOptions_StartWithoutRuinsTT>
+  <LetterLabelCaravanEnteredRuins>部队到达遗迹</LetterLabelCaravanEnteredRuins>
+  <LetterCaravanEnteredRuins>{0}已经抵达废弃基地遗迹，准备开始清理。</LetterCaravanEnteredRuins>
+  <RealRuins.CaravanFoundRuins>在他们的旅行中，{0}发现附近有一堆被摧毁的建筑，它们的状况似乎比平时好。可能还有一些贵重物品。另一方面，可能有野生动物的巢穴，机械巢穴或掠夺者前哨：应该有一个原因，为什么这些建筑似乎没有受到影响。</RealRuins.CaravanFoundRuins>
+  <RealRuins.CaravanFoundRuins.Investigate>调查</RealRuins.CaravanFoundRuins.Investigate>
+  <RealRuins.CaravanFoundRuinsTitle>附近有小遗迹</RealRuins.CaravanFoundRuinsTitle>
+  <DeterioratedArtDescription>这件东西太破旧了。你可以肯定它曾经是一件美丽的艺术品，但现在你几乎猜不出它是关于什么的。</DeterioratedArtDescription>
+  <RealRuins.RuinsWealth>财富： </RealRuins.RuinsWealth>
+  <RealRuins.RuinsActivity>突袭者的存在： </RealRuins.RuinsActivity>
+  <RealRuins.RuinsWealth.0>几乎为零(&lt;10K)</RealRuins.RuinsWealth.0>
+  <RealRuins.RuinsWealth.1>低</RealRuins.RuinsWealth.1>
+  <RealRuins.RuinsWealth.2>一般</RealRuins.RuinsWealth.2>
+  <RealRuins.RuinsWealth.3>高(&gt;1M)</RealRuins.RuinsWealth.3>
+  <RealRuins.RuinsWealth.4>最高(&gt;10M)</RealRuins.RuinsWealth.4>
+  <RealRuins.RuinsActivity.0>几乎没有</RealRuins.RuinsActivity.0>
+  <RealRuins.RuinsActivity.1>低</RealRuins.RuinsActivity.1>
+  <RealRuins.RuinsActivity.2>一般</RealRuins.RuinsActivity.2>
+  <RealRuins.RuinsActivity.3>高</RealRuins.RuinsActivity.3>
+  <RealRuins.RuinsActivity.4>最高</RealRuins.RuinsActivity.4>
+  <RealRuins.NoMoreEnemies>看来没人会再出现了。你可以安全地收拾行李离开。</RealRuins.NoMoreEnemies>
+  <RealRuins.CaptionPOI0>小型军事基地</RealRuins.CaptionPOI0>
+  <RealRuins.CaptionPOI1>军事前哨</RealRuins.CaptionPOI1>
+  <RealRuins.CaptionPOI2>临时营地</RealRuins.CaptionPOI2>
+  <RealRuins.CaptionPOI3>城市</RealRuins.CaptionPOI3>
+  <RealRuins.CaptionPOI4>工厂</RealRuins.CaptionPOI4>
+  <RealRuins.CaptionPOI5>研究中心</RealRuins.CaptionPOI5>
+  <RealRuins.CaptionPOI6>发电厂</RealRuins.CaptionPOI6>
+  <RealRuins.CaptionPOI7>大型军事基地</RealRuins.CaptionPOI7>
+  <RealRuins.CaptionPOI8>仓库</RealRuins.CaptionPOI8>
+  <RealRuins.CaptionPOI9>通讯中心</RealRuins.CaptionPOI9>
+  <RealRuins.CaptionPOI10>遗迹</RealRuins.CaptionPOI10>
+  <RealRuins.CaptionPOI11>据点</RealRuins.CaptionPOI11>
+  <RealRuins.DescPOI0>一小群建筑，大概是军用的。可能是一个军械库或者一个小型的中转军事基地。它可以有几个炮台和一些士兵。</RealRuins.DescPOI0>
+  <RealRuins.DescPOI1>一个很小的军事前哨，几个房间，几个炮塔，几个士兵。</RealRuins.DescPOI1>
+  <RealRuins.DescPOI2>为开采资源、狩猎或作为转运点而建立的临时营地。</RealRuins.DescPOI2>
+  <RealRuins.DescPOI3>一个繁荣的大城市。即使它通常没有巨大的墙壁或许多固定的武器，它可以要求强大的增援，以防攻击。</RealRuins.DescPOI3>
+  <RealRuins.DescPOI4>那些建筑里有很多工作台和成品。很可能这家工厂守卫森严。</RealRuins.DescPOI4>
+  <RealRuins.DescPOI5>研发中心专注于生产，但产品比普通工厂更复杂，价格也更昂贵。很可能是守卫森严，一旦你决定进攻，守卫会立即呼叫增援。</RealRuins.DescPOI5>
+  <RealRuins.DescPOI6>主要用于发电的一组建筑物。</RealRuins.DescPOI6>
+  <RealRuins.DescPOI7>一个大型军事基地，有许多炮台，几十名人员和增援部队随时待命。</RealRuins.DescPOI7>
+  <RealRuins.DescPOI8>从远处看，它像一个装满货物的大机库。还有很多警卫。</RealRuins.DescPOI8>
+  <RealRuins.DescPOI9>看起来像通讯中心的小楼。可能只是一个临时的军营，只有几个警卫。</RealRuins.DescPOI9>
+  <RealRuins.DescPOI10>一些建筑物的剩余部分、家具碎片、破碎的工作台、管道和金属棒。你不知道那是什么很久以前的事了，剩下的都是空无一物的遗迹。</RealRuins.DescPOI10>
+  <RealRuins.DescPOI11>戒备森严的要塞。用成群的炮台、警戒部队和增援部队进行了非常好的防御。</RealRuins.DescPOI11>
+  <RealRuins.POINowRuined>这个地方曾经充满了生机，但现在被遗弃了，没人知道为什么。所以最好小心各种危险。</RealRuins.POINowRuined>
+  <RealRuins.EnterPOI>进入{0}</RealRuins.EnterPOI>
+  <RealRuins.AttackPOI>攻击{0}</RealRuins.AttackPOI>
+  <RealRuins.CaravanEnteringPOI>进入中{0}</RealRuins.CaravanEnteringPOI>
+  <LetterLabelCaravanEnteredUnownedPOI>部队抵达</LetterLabelCaravanEnteredUnownedPOI>
+  <LetterCaravanEnteredUnownedPOI>{0}已到达目的地。小心操作。</LetterCaravanEnteredUnownedPOI>
+  <LetterLabelCaravanAttackedPOI>部队正在进攻</LetterLabelCaravanAttackedPOI>
+  <LetterCaravanAttackedPOI>{0}正在攻击其他势力的财产。</LetterCaravanAttackedPOI>
+  <LetterTransportPodsArrivedInUnownedPOI>空降已经到达目的地。</LetterTransportPodsArrivedInUnownedPOI>
+  <LetterLabelTransportPodsAttackedPOI>空降已经到了</LetterLabelTransportPodsAttackedPOI>
+  <LetterTransportPodsAttackedPOI>空降已经到达目的地。攻击开始。</LetterTransportPodsAttackedPOI>
+  <LetterLabelTransportPodsArrivedAtRuins>空降已经到达遗迹</LetterLabelTransportPodsArrivedAtRuins>
+  <LetterTransportPodsArrivedAtRuins>空降已经到达遗迹</LetterTransportPodsArrivedAtRuins>
+  <RealRuins.PlanetaryLoader.LoadBlueprintsCaption>装载行星的蓝图</RealRuins.PlanetaryLoader.LoadBlueprintsCaption>
+  <RealRuins.PlanetaryLoader.LoadBlueprints>仅加载</RealRuins.PlanetaryLoader.LoadBlueprints>
+  <RealRuins.PlanetaryLoader.Close>关闭</RealRuins.PlanetaryLoader.Close>
+  <RealRuins.PlanetaryLoader.Searching>正在搜索蓝图……</RealRuins.PlanetaryLoader.Searching>
+  <RealRuins.PlanetaryLoader.Loading>正在加载蓝图：</RealRuins.PlanetaryLoader.Loading>
+  <RealRuins.PlanetaryLoader.Processing>处理蓝图：</RealRuins.PlanetaryLoader.Processing>
+  <RealRuins.PlanetaryLoader.Completed>已完成</RealRuins.PlanetaryLoader.Completed>
+  <RealRuins.PlanetaryLoader.BiomeFiltering>生物过滤</RealRuins.PlanetaryLoader.BiomeFiltering>
+  <RealRuins.PlanetaryLoader.BiomeFilteringTT>排除缺少或不匹配生物群落的地图</RealRuins.PlanetaryLoader.BiomeFilteringTT>
+  <RealRuins.PlanetaryLoader.CostFiltering>成份筛选</RealRuins.PlanetaryLoader.CostFiltering>
+  <RealRuins.PlanetaryLoader.CostFilteringTT>排除成本太低的地图（低于平均“空”地图）</RealRuins.PlanetaryLoader.CostFilteringTT>
+  <RealRuins.PlanetaryLoader.AreaFiltering>区域和项目筛选</RealRuins.PlanetaryLoader.AreaFiltering>
+  <RealRuins.PlanetaryLoader.AreaFilteringTT>排除面积太小、项目数太低的地图</RealRuins.PlanetaryLoader.AreaFilteringTT>
+  <RealRuins.PlanetaryLoader.UsedMaps>使用的地图：</RealRuins.PlanetaryLoader.UsedMaps>
+  <RealRuins.PlanetaryLoader.DroppedMaps>删除的地图：</RealRuins.PlanetaryLoader.DroppedMaps>
+  <RealRuins.PlanetarySettings.MapsModuleButton>立即下载并生成</RealRuins.PlanetarySettings.MapsModuleButton>
+  <RealRuins.PlanetaryLoader.NeedsGameInProgress>你必须在正在进行的游戏中才能使用此菜单</RealRuins.PlanetaryLoader.NeedsGameInProgress>
+  <RealRuins.CaravanReformType>在原始遗迹重组商队</RealRuins.CaravanReformType>
+  <RealRuins.Reform.Automatic>自动</RealRuins.Reform.Automatic>
+  <RealRuins.Reform.Instant>立刻</RealRuins.Reform.Instant>
+  <RealRuins.Reform.Manual>手动</RealRuins.Reform.Manual>
+  <RealRuins.CaravanReformTooltip>你如何离开原始遗迹。\n\n自动：与在家园地图组建商队的方式相同。\n\n即时：周围没有敌人时，世界地图上的一个按钮可立即重组商队。\n\n手动：袭击结束前无法重组。手动拾取物品并从地图边缘离开。</RealRuins.CaravanReformTooltip>
+  <RealRuins.ForceMultiplier>威胁规模（所有遗迹）</RealRuins.ForceMultiplier>
+  <RealRuins.AbsoluteWealthCap>原始遗迹</RealRuins.AbsoluteWealthCap>
+  <RealRuins.ForceMultiplierTT>缩放真实遗迹创建的所有威胁：常规遗迹中的动物和机械族、商队遗迹的掠夺者、原始遗迹的袭击与袭击触发，以及初始队伍。0 表示完全没有居民、掠夺者或袭击触发。</RealRuins.ForceMultiplierTT>
+  <RealRuins.AbsoluteWealthCapTT>原始遗迹（任务）的价值上限。商队遗迹有自己的上限。木墙和木门不计入。</RealRuins.AbsoluteWealthCapTT>
+
+  <RealRuins.CacheSettings.TabCaption>常规、网络和缓存</RealRuins.CacheSettings.TabCaption>
+  <RealRuins.CacheSettings.Caption>常规、网络和缓存设置</RealRuins.CacheSettings.Caption>
+  <RealRuins.CacheSettings.Description>蓝图从哪里来，又存储在你磁盘的哪里。</RealRuins.CacheSettings.Description>
+  <RealRuins_ModOptions_NoLimit>无限制</RealRuins_ModOptions_NoLimit>
+  <RealRuins_ModOptions_ClearCacheConfirm>您确定要清除所有缓存的快照（包括行星遗迹蓝图）吗？此操作无法撤销。</RealRuins_ModOptions_ClearCacheConfirm>
+  <RealRuins_ModOptions_DownloadMoreTooltip>从服务器下载额外的蓝图。</RealRuins_ModOptions_DownloadMoreTooltip>
+
+  <RealRuins.SpawnSettings.TabCaption>生成设置</RealRuins.SpawnSettings.TabCaption>
+  <RealRuins.SpawnSettings.Caption>生成设置</RealRuins.SpawnSettings.Caption>
+  <RealRuins.SpawnSettings.Description>遗迹的样子：数量、大小、破损程度，以及其中可能出现的东西。财富上限在“财富与平衡”选项卡。</RealRuins.SpawnSettings.Description>
+  <RealRuins.KeepVanillaRuins>保留原生遗迹</RealRuins.KeepVanillaRuins>
+  <RealRuins.KeepVanillaRuinsTT>如果启用，将在真实遗迹旁边保留RimWorld原生遗迹。</RealRuins.KeepVanillaRuinsTT>
+
+  <RealRuins.PlanetarySettings.DisableFriendly>不生成友好的位置</RealRuins.PlanetarySettings.DisableFriendly>
+  <RealRuins.PlanetarySettings.DisableFriendlyTT>如果启用，世界位置将仅由敌对派系占据。</RealRuins.PlanetarySettings.DisableFriendlyTT>
+  <RealRuins.PlanetaryLoader.DisableFriendlyLocations>不生成友好的位置</RealRuins.PlanetaryLoader.DisableFriendlyLocations>
+  <RealRuins.PlanetaryLoader.DisableFriendlyLocationsTT>如果启用，世界位置将仅由敌对派系占据。</RealRuins.PlanetaryLoader.DisableFriendlyLocationsTT>
+  <RealRuins.PlanetarySettings.RemoveAll>删除所有位置</RealRuins.PlanetarySettings.RemoveAll>
+  <RealRuins.PlanetarySettings.RemoveAllConfirm>您确定要删除真实遗迹生成的所有位置吗？</RealRuins.PlanetarySettings.RemoveAllConfirm>
+
+  <RealRuins.DisableFriendlyRaids>禁用友好突袭</RealRuins.DisableFriendlyRaids>
+  <RealRuins.DisableFriendlyRaidsTT>如果启用，在遗迹事件中只会进行敌对派系的突袭。</RealRuins.DisableFriendlyRaidsTT>
+  <RealRuins.SpawnRoofs>生成屋顶</RealRuins.SpawnRoofs>
+  <RealRuins.SpawnRoofsTT>如果禁用，所有遗迹（包括兴趣点和废弃基地）都将在没有屋顶的情况下生成。因损坏而坍塌的屋顶在任何情况下都不会恢复。</RealRuins.SpawnRoofsTT>
+
+  <RealRuins.SpawnBlacklist>物品黑名单</RealRuins.SpawnBlacklist>
+  <RealRuins.SpawnBlacklistTT>逗号分割的物品定义列表，用于排除不应生成的物品。</RealRuins.SpawnBlacklistTT>
+
+  <RealRuins.MaterialBlacklist>材料黑名单</RealRuins.MaterialBlacklist>
+  <RealRuins.MaterialBlacklistTT>逗号分割的材料列表，用于排除不应生成的材料。当遇到由黑名单材料制成的物品时，它将被替换为备用材料。</RealRuins.MaterialBlacklistTT>
+
+  <RealRuins.FallbackMaterial>备用材料</RealRuins.FallbackMaterial>
+  <RealRuins.FallbackMaterialTT>当遇到黑名单材料时使用的材料。默认为木材。</RealRuins.FallbackMaterialTT>
+
+  <RealRuins.Unlimited>无限制</RealRuins.Unlimited>
+  <RealRuins.AdvancedSettings>事件与高级设置</RealRuins.AdvancedSettings>
+
+  <RealRuins.DebugSettings.LogLevel>日志级别</RealRuins.DebugSettings.LogLevel>
+  <RealRuins.DebugSettings.LogLevelAll>所有消息</RealRuins.DebugSettings.LogLevelAll>
+  <RealRuins.DebugSettings.LogLevelWarnings>警告和错误</RealRuins.DebugSettings.LogLevelWarnings>
+  <RealRuins.DebugSettings.LogLevelErrors>仅错误</RealRuins.DebugSettings.LogLevelErrors>
+  <RealRuins.DebugSettings.DebugCategories>调试类别</RealRuins.DebugSettings.DebugCategories>
+  <RealRuins.DebugSettings.ResetSettings>重置所有设置</RealRuins.DebugSettings.ResetSettings>
+  <RealRuins.DebugSettings.ResetSettingsConfirm>您确定要将所有设置重置为默认值吗？</RealRuins.DebugSettings.ResetSettingsConfirm>
+
+  <!-- ===== 以下为补全的翻译（2026-11-13） ===== -->
+
+  <!-- 财富上限相关 -->
+  <RealRuins_MapOptions_WealthPerMap>常规遗迹：每张地图</RealRuins_MapOptions_WealthPerMap>
+  <RealRuins_MapOptions_WealthPerMapTT>一张地图上所有散布遗迹的总市场价值上限（物品和地板）。大多数地图远低于默认值；若某张地图出现异常富裕的遗迹，会移除其中价值最高的物品，直到遗迹总额符合上限。最右端：不设上限。不影响原始遗迹、行星地点和商队事件的主遗迹。</RealRuins_MapOptions_WealthPerMapTT>
+  <RealRuins_MapOptions_WealthScaleWithProximity>随聚落邻近度缩放</RealRuins_MapOptions_WealthScaleWithProximity>
+  <RealRuins_MapOptions_WealthScaleWithProximityTT>靠近聚落时提高上限，远离时降低，方式与遗迹数量随邻近度变化相同，因此每个遗迹的份额大致不变。关闭：靠近聚落的遗迹共用同一上限，密集处的遗迹会被翻捡得更干净。需要开启“考虑聚落邻近度”。</RealRuins_MapOptions_WealthScaleWithProximityTT>
+  <RealRuins_MapOptions_WealthIgnoreStructure>不计入墙与地板</RealRuins_MapOptions_WealthIgnoreStructure>
+  <RealRuins_MapOptions_WealthIgnoreStructureTT>普通墙、门和地板（每格最多50白银）不计入上限，也不会因此被移除：它们数量多且不算战利品。金墙、银地板、自动门等仍会计入。</RealRuins_MapOptions_WealthIgnoreStructureTT>
+  <RealRuins_MapOptions_WealthCountDamage>受损物品按较低价值计算</RealRuins_MapOptions_WealthCountDamage>
+  <RealRuins_MapOptions_WealthCountDamageTT>关闭：一切按原价计入，因为修复能复原，受损物品往往也能正常使用。开启：按生成时的实际市场价值计算（损坏降低价值，品质改变价值），因此上限能容纳更多东西。</RealRuins_MapOptions_WealthCountDamageTT>
+
+  <!-- 缓存与存储 -->
+  <RealRuins.CacheSettings.NetworkSection>下载与上传</RealRuins.CacheSettings.NetworkSection>
+  <RealRuins_ModOptions_OfflineModeConfirm>仅本地模式会在你关闭设置页后立即删除所有从服务器下载的遗迹蓝图。只有你自己的基地和行星遗迹的蓝图会被保留。\n\n如果之后改变主意，你需要重新关闭仅本地模式并重新下载蓝图，这可能需要几分钟。在此之前，遗迹只会由你自己的基地生成。\n\n切换到仅本地模式？</RealRuins_ModOptions_OfflineModeConfirm>
+  <RealRuins.CacheSettings.PlanetaryCaption>行星遗迹缓存</RealRuins.CacheSettings.PlanetaryCaption>
+  <RealRuins.CacheSettings.PlanetaryDescription>为行星遗迹下载的蓝图会按每个世界的种子、覆盖率和地图大小分开存储。</RealRuins.CacheSettings.PlanetaryDescription>
+  <RealRuins.CacheSettings.PlanetaryEmpty>未存储任何行星遗迹蓝图。</RealRuins.CacheSettings.PlanetaryEmpty>
+  <RealRuins.CacheSettings.Seed>种子</RealRuins.CacheSettings.Seed>
+  <RealRuins.CacheSettings.Coverage>覆盖率</RealRuins.CacheSettings.Coverage>
+  <RealRuins.CacheSettings.MapSize>地图大小</RealRuins.CacheSettings.MapSize>
+  <RealRuins.CacheSettings.Blueprints>蓝图</RealRuins.CacheSettings.Blueprints>
+  <RealRuins.CacheSettings.FolderSize>大小</RealRuins.CacheSettings.FolderSize>
+  <RealRuins.CacheSettings.ClearFolder>清除</RealRuins.CacheSettings.ClearFolder>
+  <RealRuins.CacheSettings.ClearFolderConfirm>删除为种子“{0}”存储的全部 {1} 个行星遗迹蓝图（{2}）？使用该种子的世界会在需要时重新下载。</RealRuins.CacheSettings.ClearFolderConfirm>
+  <RealRuins.CacheSettings.StagingWarning>测试服务器已开启（“调试”选项卡）。正常游玩请关闭。</RealRuins.CacheSettings.StagingWarning>
+
+  <!-- 行星地点设置 -->
+  <RealRuins.PlanetarySettings.Caption>行星遗迹与地点</RealRuins.PlanetarySettings.Caption>
+  <RealRuins.PlanetarySettings.Enable>游戏开始时提示加载行星地点</RealRuins.PlanetarySettings.Enable>
+  <RealRuins.PlanetarySettings.DownloadLimit>蓝图下载数量上限</RealRuins.PlanetarySettings.DownloadLimit>
+  <RealRuins.PlanetarySettings.TransferLimit>地点生成数量上限</RealRuins.PlanetarySettings.TransferLimit>
+  <RealRuins.PlanetarySettings.ExcludePlain>丢弃未分类地点（普通遗迹）</RealRuins.PlanetarySettings.ExcludePlain>
+  <RealRuins.PlanetarySettings.AbandonedPercentage>废弃地点数量比例</RealRuins.PlanetarySettings.AbandonedPercentage>
+
+  <!-- 信件与消息 -->
+  <RealRuins.SmallRuinsInspectString>小型废弃建筑。里面可能还有值钱的东西。</RealRuins.SmallRuinsInspectString>
+  <RealRuins.PristineRuinsIncidentRetired.Label>原始遗迹事件已移除</RealRuins.PristineRuinsIncidentRetired.Label>
+  <RealRuins.PristineRuinsIncidentRetired.Text>“发现附近遗迹”事件已被移除，未生成任何东西。原始遗迹现在以任务形式出现。要手动创建，请使用调试操作 -&gt; 生成任务 -&gt; RealRuins_AbandonedBase。</RealRuins.PristineRuinsIncidentRetired.Text>
+  <RealRuins.ReformLockedManual>掠夺者可能仍会出现。捡起小人能带走的物品，从地图边缘离开，或等事情平息。</RealRuins.ReformLockedManual>
+
+  <!-- 兴趣点类型补充 -->
+  <RealRuins.CaptionPOI12>村庄</RealRuins.CaptionPOI12>
+  <RealRuins.CaptionPOI13>城堡</RealRuins.CaptionPOI13>
+  <RealRuins.CaptionPOI14>工坊</RealRuins.CaptionPOI14>
+  <RealRuins.CaptionPOI15>飞船残骸</RealRuins.CaptionPOI15>
+  <RealRuins.DescPOI12>农民和工匠的村庄。房屋简陋，但村民会保卫它们。</RealRuins.DescPOI12>
+  <RealRuins.DescPOI13>厚墙后的城堡。驻军看守着它，领主不会不战而降。</RealRuins.DescPOI13>
+  <RealRuins.DescPOI14>满是工作台、工具和手工成品的工坊。工匠雇了几个守卫保护他们的货物。</RealRuins.DescPOI14>
+  <RealRuins.DescPOI15>一架降落在此、再未起飞的星舰。船体内仍留有船员携带的一切，或许已有人搬了进去。</RealRuins.DescPOI15>
+  <RealRuins.POIUselessRuins>你会琢磨它很久以前究竟是什么。如今只剩岩石和瓦砾。</RealRuins.POIUselessRuins>
+
+  <!-- 行星蓝图加载器 -->
+  <RealRuins.PlanetaryLoader.LoadBlueprintsDescription>此功能会加载曾在同一行星上建立殖民地的其他玩家的地图。他们的殖民地会以其他派系的聚落、前哨或废弃遗迹的形式生成。与随机遗迹不同，它们会出现在原始位置。</RealRuins.PlanetaryLoader.LoadBlueprintsDescription>
+  <RealRuins.PlanetaryLoader.OptionsDescription>在此模式下你可以控制每一步。先只加载该星球可用蓝图的数量，并选择要下载多少；加载后，再选择要转移多少以及如何筛选。你可以在任何一步停下，全部删除并重新开始。</RealRuins.PlanetaryLoader.OptionsDescription>
+  <RealRuins.PlanetaryLoader.MapSizeChangeWarning>警告：如果你打算更改地图大小，请立即按“关闭”，在更改地图大小之后再下载蓝图。</RealRuins.PlanetaryLoader.MapSizeChangeWarning>
+  <RealRuins.PlanetaryLoader.LowCountWarning>你的蓝图太少了。如果介意，请尝试选择其他种子或其他地图设置。你可以访问 https://woolstrand.art/view/maps/topseeds 查看蓝图最多的世界</RealRuins.PlanetaryLoader.LowCountWarning>
+  <RealRuins.PlanetaryLoader.NoBlueprintsWarning.Caption>抱歉</RealRuins.PlanetaryLoader.NoBlueprintsWarning.Caption>
+  <RealRuins.PlanetaryLoader.NoBlueprintsWarning.Text>这个世界没有任何地图。这意味着还没有人用过相同的种子、覆盖率和地图大小进行游戏。如果你想要世界地图上有一些地点，请尝试选择更常见的种子。你可以访问 https://woolstrand.art/view/maps/topseeds 查看蓝图最多的世界</RealRuins.PlanetaryLoader.NoBlueprintsWarning.Text>
+  <RealRuins.PlanetaryLoader.StartAuto>自动加载</RealRuins.PlanetaryLoader.StartAuto>
+  <RealRuins.PlanetaryLoader.GetCount>加载列表</RealRuins.PlanetaryLoader.GetCount>
+  <RealRuins.PlanetaryLoader.MoreOptions>更多选项...</RealRuins.PlanetaryLoader.MoreOptions>
+  <RealRuins.PlanetaryLoader.StopButtonTitle1>停止</RealRuins.PlanetaryLoader.StopButtonTitle1>
+  <RealRuins.PlanetaryLoader.StopButtonTitle2>够了！</RealRuins.PlanetaryLoader.StopButtonTitle2>
+  <RealRuins.PlanetaryLoader.StopButtonTitle3>快停下吧，求求了！！！</RealRuins.PlanetaryLoader.StopButtonTitle3>
+  <RealRuins.PlanetaryLoader.DownloadLimit>下载上限（0 为不限制）： </RealRuins.PlanetaryLoader.DownloadLimit>
+  <RealRuins.PlanetaryLoader.TransferLimit>转移上限（0 为不限制）： </RealRuins.PlanetaryLoader.TransferLimit>
+  <RealRuins.PlanetaryLoader.AbandonedPercentage>废弃地点百分比</RealRuins.PlanetaryLoader.AbandonedPercentage>
+  <RealRuins.PlanetaryLoader.TransferringOptions>转移</RealRuins.PlanetaryLoader.TransferringOptions>
+  <RealRuins.PlanetaryLoader.LoadAndSpawnBlueprints>加载并生成</RealRuins.PlanetaryLoader.LoadAndSpawnBlueprints>
+  <RealRuins.PlanetaryLoader.TransferBlueprints>创建前哨</RealRuins.PlanetaryLoader.TransferBlueprints>
+  <RealRuins.PlanetaryLoader.RemoveSites>移除所有已生成地点</RealRuins.PlanetaryLoader.RemoveSites>
+  <RealRuins.PlanetaryLoader.OpenButton>行星遗迹</RealRuins.PlanetaryLoader.OpenButton>
+  <RealRuins.PlanetaryLoader.Transferring>正在转移蓝图： </RealRuins.PlanetaryLoader.Transferring>
+  <RealRuins.PlanetaryLoader.LoadedAmount>服务器上有 {0} 个此星球的蓝图。</RealRuins.PlanetaryLoader.LoadedAmount>
+  <RealRuins.PlanetaryLoader.TooManyBlueprints.Load.Title>蓝图似乎非常多！</RealRuins.PlanetaryLoader.TooManyBlueprints.Load.Title>
+  <RealRuins.PlanetaryLoader.TooManyBlueprints.Load.Text>服务器显示这个世界有 {0} 个蓝图。下载和处理可能耗时较长，世界地图也可能变得杂乱。如果你是第一次使用此模式，建议限制蓝图数量。</RealRuins.PlanetaryLoader.TooManyBlueprints.Load.Text>
+  <RealRuins.PlanetaryLoader.TooManyBlueprints.GetAll>仍然获取全部蓝图</RealRuins.PlanetaryLoader.TooManyBlueprints.GetAll>
+  <RealRuins.PlanetaryLoader.TooManyBlueprints.ShowOptions>显示高级设置，由我决定</RealRuins.PlanetaryLoader.TooManyBlueprints.ShowOptions>
+  <RealRuins.PlanetaryLoader.TooManyBlueprints.Get500>只获取 500 个蓝图</RealRuins.PlanetaryLoader.TooManyBlueprints.Get500>
+  <RealRuins.PlanetaryLoader.DiscardAbandoned>激进丢弃</RealRuins.PlanetaryLoader.DiscardAbandoned>
+  <RealRuins.PlanetaryLoader.DiscardAbandonedTT>丢弃所有不属于任何特定兴趣点类型的地图（通常会丢弃约一半地图）</RealRuins.PlanetaryLoader.DiscardAbandonedTT>
+
+  <!-- 战斗与事件 -->
+  <RealRuins.UseForcesGenerationV2>小型袭击持续来袭（原始遗迹）</RealRuins.UseForcesGenerationV2>
+  <RealRuins.UseForcesGenerationV2TT>你在原始遗迹期间，除了大型袭击之外，还会有小股敌人分批不断到达。剩余战利品越多，来的越多；随着你搬走战利品，他们会逐渐减少。关闭后只会遇到大型袭击。</RealRuins.UseForcesGenerationV2TT>
+
+  <!-- 科技等级限制 -->
+  <RealRuins.TechLimit.Caption>科技等级</RealRuins.TechLimit.Caption>
+  <RealRuins.TechLimit.Enabled>限制科技等级</RealRuins.TechLimit.Enabled>
+  <RealRuins.TechLimit.EnabledTT>比所选科技等级更先进的物品会从遗迹中移除。物品的科技等级取自其自身等级、建造或制作所需的研究以及其原材料。超过上限的墙和门会被替换为普通石墙和木门。完全没有科技等级的物品总是保留。</RealRuins.TechLimit.EnabledTT>
+  <RealRuins.TechLimit.MaxLevel>最高科技等级</RealRuins.TechLimit.MaxLevel>
+  <RealRuins.TechLimit.MaxLevelTT>可在遗迹中生成的物品的最高科技等级。</RealRuins.TechLimit.MaxLevelTT>
+  <RealRuins.TechLimit.Strategy>上限策略</RealRuins.TechLimit.Strategy>
+  <RealRuins.TechLimit.StrategyTT>严格：超过上限的东西永远不会生成。适合真正的中世纪或奇幻玩法。\n\n宽松：超过上限的物品是昔日的稀世遗物：10% 保留在上限之上一级，1% 高两级，以此类推。适合后启示录低科技玩法。</RealRuins.TechLimit.StrategyTT>
+  <RealRuins.TechLimit.Strict>严格</RealRuins.TechLimit.Strict>
+  <RealRuins.TechLimit.Limited>宽松</RealRuins.TechLimit.Limited>
+  <RealRuins.TechLimit.AppliesTo>应用于：</RealRuins.TechLimit.AppliesTo>
+  <RealRuins.TechLimit.Ruins>常规遗迹</RealRuins.TechLimit.Ruins>
+  <RealRuins.TechLimit.RuinsTT>散布在新生成地图上的遗迹。</RealRuins.TechLimit.RuinsTT>
+  <RealRuins.TechLimit.POIs>行星地点</RealRuins.TechLimit.POIs>
+  <RealRuins.TechLimit.POIsTT>新游戏开始时由其他玩家基地生成的地点，废弃或有人居住。地点类型在应用上限后判定，居民来自符合科技等级的派系。类型与居民在地点创建时确定，因此已有地点只有内容会变化。</RealRuins.TechLimit.POIsTT>
+  <RealRuins.TechLimit.Events>事件与任务</RealRuins.TechLimit.Events>
+  <RealRuins.TechLimit.EventsTT>原始遗迹和商队发现的小遗迹。</RealRuins.TechLimit.EventsTT>
+  <RealRuins.TechLimit.AppliesHere>此处受科技等级上限约束</RealRuins.TechLimit.AppliesHere>
+  <RealRuins.TechLimit.AppliesHereTT>本页顶部的科技等级上限的一部分：只有在上限开启时才生效。</RealRuins.TechLimit.AppliesHereTT>
+
+  <!-- 开局地块被占 -->
+  <RealRuins.FactionOwnedStartTile>地块已被占据</RealRuins.FactionOwnedStartTile>
+  <RealRuins.FactionOwnedStartTileDesc>你即将进入一个有聚落的地块，且该聚落属于其他派系。你可以将其废弃并在遗迹中定居、将其据为己有，或用你的初始队伍攻打它。</RealRuins.FactionOwnedStartTileDesc>
+  <RealRuins.FactionOwnedStartTile.MakeAbandoned>废弃并定居</RealRuins.FactionOwnedStartTile.MakeAbandoned>
+  <RealRuins.FactionOwnedStartTile.CaptureUntouched>占据此地并定居</RealRuins.FactionOwnedStartTile.CaptureUntouched>
+  <RealRuins.FactionOwnedStartTile.Attack>用初始队伍攻打</RealRuins.FactionOwnedStartTile.Attack>
+  <RealRuins.FactionOwnedStartTile.Cancel>取消</RealRuins.FactionOwnedStartTile.Cancel>
+
+  <!-- 调试设置补充 -->
+  <RealRuins.DebugSettings.Caption>调试设置</RealRuins.DebugSettings.Caption>
+  <RealRuins.DebugSettings.Description>日志与开发者工具。只有报告 bug 时才需要。</RealRuins.DebugSettings.Description>
+  <RealRuins.DebugSettings.KeepSnapshotsAfterUpload>上传后保留快照文件</RealRuins.DebugSettings.KeepSnapshotsAfterUpload>
+  <RealRuins.DebugSettings.KeepSnapshotsAfterUploadTooltip>开启后，上传的快照文件会保留在临时目录中而不被删除。用于排查上传问题。</RealRuins.DebugSettings.KeepSnapshotsAfterUploadTooltip>
+  <RealRuins.DebugSettings.LogRuinsWealth>记录遗迹财富</RealRuins.DebugSettings.LogRuinsWealth>
+  <RealRuins.DebugSettings.LogRuinsWealthTooltip>开启后，每个生成的遗迹都会记录其估算财富（新旧两套成本方案）和生成物的实际市场价值，每张有散布遗迹的地图都会记录汇总。无论日志级别如何都会记录。也可在开发模式的调试操作菜单（RealRuins）中切换。</RealRuins.DebugSettings.LogRuinsWealthTooltip>
+  <RealRuins.DebugSettings.UseStagingEnvironment>使用测试环境</RealRuins.DebugSettings.UseStagingEnvironment>
+  <RealRuins.DebugSettings.UseStagingEnvironmentTooltip>开启后，所有 API 请求发送至 staging.woolstrand.art，蓝图存入测试存储桶（realruins-staging, sfo3）。正常游玩请关闭。</RealRuins.DebugSettings.UseStagingEnvironmentTooltip>
+  <RealRuins.DebugSettings.ManualUpload>手动触发蓝图捕获</RealRuins.DebugSettings.ManualUpload>
+  <RealRuins.DebugSettings.ManualUploadTooltip>手动触发当前地图的蓝图捕获和上传。用于测试上传功能。</RealRuins.DebugSettings.ManualUploadTooltip>
+  <RealRuins.DebugSettings.UploadTriggered>蓝图捕获已触发。详情请查看日志。</RealRuins.DebugSettings.UploadTriggered>
+  <RealRuins.DebugSettings.NoMap>没有可用地图。请先加载游戏。</RealRuins.DebugSettings.NoMap>
+
+  <!-- 事件开关与财富缩放 -->
+  <RealRuins.EnableAbandonedRuinsFoundEvent>原始遗迹任务</RealRuins.EnableAbandonedRuinsFoundEvent>
+  <RealRuins.EnableAbandonedRuinsFoundEventTT>开启后，你可能接到前往附近大型原始遗迹的任务：富有且未遭翻捡，但掠夺者环伺。</RealRuins.EnableAbandonedRuinsFoundEventTT>
+  <RealRuins.EnableCaravanFoundRuinsEvent>启用“商队发现小遗迹”事件</RealRuins.EnableCaravanFoundRuinsEvent>
+  <RealRuins.EnableCaravanFoundRuinsEventTT>开启后，旅行的商队可能发现附近的小遗迹，你可以选择调查。</RealRuins.EnableCaravanFoundRuinsEventTT>
+  <RealRuins.ScaleWithColonyWealth>所有上限随殖民地财富缩放</RealRuins.ScaleWithColonyWealth>
+  <RealRuins.ScaleWithColonyWealthTT>所有遗迹财富上限乘以你的殖民地财富除以下方的基准值：富裕的殖民地找到更富裕的遗迹，贫穷的找到更寒酸的，但每个上限至少保留一半。这样设置后上限可以超过你填的值。不设上限的遗迹仍不设上限。殖民地财富的计算方式与 storyteller 相同，覆盖你的主地图和商队。</RealRuins.ScaleWithColonyWealthTT>
+  <RealRuins.ReferenceColonyWealth>上限对应的殖民地财富</RealRuins.ReferenceColonyWealth>
+  <RealRuins.ReferenceColonyWealthTT>在此殖民地财富下，所有遗迹财富上限恰好等于你设定的值。财富翻倍时上限也翻倍。</RealRuins.ReferenceColonyWealthTT>
+  <RealRuins.POIRuinsCostCap>废弃行星地点</RealRuins.POIRuinsCostCap>
+  <RealRuins.POIRuinsCostCapTT>行星上一处废弃地点的价值上限。大多数地点低于此值。</RealRuins.POIRuinsCostCapTT>
+  <RealRuins.CaravanRuinsCostCap>商队遗迹</RealRuins.CaravanRuinsCostCap>
+  <RealRuins.CaravanRuinsCostCapTT>商队发现的遗迹的价值上限。价值最高的物品会被移除直到符合上限。遗迹中的掠夺者规模随剩余物调整。</RealRuins.CaravanRuinsCostCapTT>
+
+  <!-- 设置导入导出 -->
+  <RealRuins.Settings.ExportSettings>导出设置</RealRuins.Settings.ExportSettings>
+  <RealRuins.Settings.ImportSettings>导入设置</RealRuins.Settings.ImportSettings>
+  <RealRuins.Settings.ExportTitle>导出设置</RealRuins.Settings.ExportTitle>
+  <RealRuins.Settings.ImportTitle>导入设置</RealRuins.Settings.ImportTitle>
+  <RealRuins.Settings.CopyToClipboard>复制到剪贴板</RealRuins.Settings.CopyToClipboard>
+  <RealRuins.Settings.CopiedToClipboard>设置字符串已复制到剪贴板。</RealRuins.Settings.CopiedToClipboard>
+  <RealRuins.Settings.ImportApply>导入</RealRuins.Settings.ImportApply>
+  <RealRuins.Settings.ImportSuccess>设置导入成功。</RealRuins.Settings.ImportSuccess>
+  <RealRuins.Settings.ImportFailed>导入设置失败。字符串可能无效或已损坏。</RealRuins.Settings.ImportFailed>
+  <RealRuins.Settings.RegularLimitCounting>常规遗迹：上限如何计算</RealRuins.Settings.RegularLimitCounting>
+
+  <!-- 预设页 -->
+  <RealRuins.Presets.TabCaption>预设</RealRuins.Presets.TabCaption>
+  <RealRuins.Presets.Caption>预设</RealRuins.Presets.Caption>
+  <RealRuins.Presets.Description>常见玩法的快速配置。预设只会改动它所涵盖的设置。缓存、网络和调试设置以及物品黑名单绝不会被动。玩法风格预设和科技等级预设互不影响。</RealRuins.Presets.Description>
+  <RealRuins.Presets.PlayStyle>玩法风格</RealRuins.Presets.PlayStyle>
+  <RealRuins.Presets.TechLevel>科技等级</RealRuins.Presets.TechLevel>
+  <RealRuins.Presets.SettingsSection>全部设置</RealRuins.Presets.SettingsSection>
+  <RealRuins.Presets.Current>当前</RealRuins.Presets.Current>
+  <RealRuins.Presets.Custom>自定义</RealRuins.Presets.Custom>
+  <RealRuins.Presets.Default>默认</RealRuins.Presets.Default>
+  <RealRuins.Presets.DefaultTT>本作的设计玩法。到处都有遗迹，但早已被搜刮一空，通常没什么真正值钱的东西，不过偶尔你也会走运。而原始遗迹任务则没有财富和战斗规模上的任何限制。</RealRuins.Presets.DefaultTT>
+  <RealRuins.Presets.Nomadic>游牧</RealRuins.Presets.Nomadic>
+  <RealRuins.Presets.NomadicTT>更富裕的遗迹，即使没有永久定居点也能靠拾荒为生。地图上有更多遗迹，更大、更富、被翻捡得更少。行星上废弃地点也比派系占据的更多。</RealRuins.Presets.NomadicTT>
+  <RealRuins.Presets.Balanced>平衡</RealRuins.Presets.Balanced>
+  <RealRuins.Presets.BalancedTT>严格的财富上限并随殖民地成长，遗迹破旧且被充分搜刮。这一切都是为了让你在牺牲一半殖民者之前，永远找不到真正有用的东西。</RealRuins.Presets.BalancedTT>
+  <RealRuins.Presets.Dense>密集遗迹</RealRuins.Presets.Dense>
+  <RealRuins.Presets.DenseTT>遗迹遍布地图。碎片更多更大，远离聚落的地方也有，财富上限适中。</RealRuins.Presets.DenseTT>
+  <RealRuins.Presets.CustomTT>你自己的设置。一旦设置不匹配任何预设即自动选中，并被记住：在你选回某个预设后，它会找回你原来的设置。</RealRuins.Presets.CustomTT>
+  <RealRuins.Presets.TechNormal>正常</RealRuins.Presets.TechNormal>
+  <RealRuins.Presets.TechNormalTT>不限制科技等级：原基地拥有的一切都可能出现。</RealRuins.Presets.TechNormalTT>
+  <RealRuins.Presets.TechNeolithic>纯粹新石器</RealRuins.Presets.TechNeolithic>
+  <RealRuins.Presets.TechNeolithicTT>任何遗迹或地点中，都永远不会生成超过新石器时代的东西。</RealRuins.Presets.TechNeolithicTT>
+  <RealRuins.Presets.TechMedieval>纯粹中世纪</RealRuins.Presets.TechMedieval>
+  <RealRuins.Presets.TechMedievalTT>中世纪或奇幻世界：任何遗迹或地点中，都永远不会生成超过中世纪时代的东西。</RealRuins.Presets.TechMedievalTT>
+  <RealRuins.Presets.TechPostApocalyptic>中世纪后启示录</RealRuins.Presets.TechPostApocalyptic>
+  <RealRuins.Presets.TechPostApocalypticTT>大灾变后的中世纪世界。文明退回中世纪，但工业时代和太空时代的稀世遗物仍会偶尔出现。</RealRuins.Presets.TechPostApocalypticTT>
+  <RealRuins.Presets.ResetAllTT>将真实遗迹的所有设置重置为默认值，包括缓存、网络和调试设置。“默认”玩法风格预设只重置玩法风格相关的设置。</RealRuins.Presets.ResetAllTT>
+
+  <!-- 财富与平衡页 -->
+  <RealRuins.WealthSettings.TabCaption>财富与平衡</RealRuins.WealthSettings.TabCaption>
+  <RealRuins.WealthSettings.Caption>财富与平衡</RealRuins.WealthSettings.Caption>
+  <RealRuins.WealthSettings.Description>地图上的遗迹可以值多少钱，以及它们有多危险。上限是最主要的平衡工具：无论其他怎么设置，遗迹都不会超过上限。</RealRuins.WealthSettings.Description>
+  <RealRuins.WealthSettings.Limits>上限</RealRuins.WealthSettings.Limits>
+  <RealRuins.WealthSettings.Scaling>缩放</RealRuins.WealthSettings.Scaling>
+  <RealRuins.WealthSettings.Threats>威胁与难度</RealRuins.WealthSettings.Threats>
+
+  <!-- 生成设置分区 -->
+  <RealRuins.SpawnSettings.Common>所有遗迹与地点</RealRuins.SpawnSettings.Common>
+  <RealRuins.SpawnSettings.Regular>常规遗迹</RealRuins.SpawnSettings.Regular>
+  <RealRuins.SpawnSettings.Events>事件（原始遗迹、商队遗迹）</RealRuins.SpawnSettings.Events>
+  <RealRuins.SpawnSettings.Planetary>行星地点</RealRuins.SpawnSettings.Planetary>
+
+  <!-- 玩法页 -->
+  <RealRuins.GameplaySettings.TabCaption>玩法</RealRuins.GameplaySettings.TabCaption>
+  <RealRuins.GameplaySettings.Caption>玩法</RealRuins.GameplaySettings.Caption>
+  <RealRuins.GameplaySettings.Description>你的游戏中存在哪些特殊地点，以及你如何与它们互动。</RealRuins.GameplaySettings.Description>
+  <RealRuins.GameplaySettings.Events>事件与任务</RealRuins.GameplaySettings.Events>
+  <RealRuins.GameplaySettings.Planetary>行星地点</RealRuins.GameplaySettings.Planetary>
+
+  <!-- 遗迹扫描 -->
+  <RealRuins_RuinsScan_Enabled>激活：{0}</RealRuins_RuinsScan_Enabled>
+  <RealRuins_RuinsScan_Locating>正在定位已发现的遗迹</RealRuins_RuinsScan_Locating>
+  <RealRuins_RuinsScan_NotEnoughBlueprints>已下载的遗迹蓝图还不够</RealRuins_RuinsScan_NotEnoughBlueprints>
+  <RealRuins_RuinsScan_SkillTooLow>需要智力 {0}</RealRuins_RuinsScan_SkillTooLow>
+  <RealRuins_RuinsScan_IncapableOfIntellectual>{PAWN_nameDef} 无法从事智力工作</RealRuins_RuinsScan_IncapableOfIntellectual>
+  <RealRuins_RuinsScan_SignalLost>通往遗迹的线索在定位之前就中断了。</RealRuins_RuinsScan_SignalLost>
+  <RealRuins_RuinsScan_UnknownScanner>你的研究员</RealRuins_RuinsScan_UnknownScanner>
+  <RealRuins_RuinsScan_UnknownBuilding>工作站</RealRuins_RuinsScan_UnknownBuilding>
+
+  <!-- 更新说明窗口 -->
+  <RealRuins.WhatsNew.Title>真实遗迹更新内容</RealRuins.WhatsNew.Title>
+  <RealRuins.WhatsNew.OpenSettings>打开真实遗迹设置</RealRuins.WhatsNew.OpenSettings>
+  <RealRuins.WhatsNew.SkipText>模组发生了重大变化。如果你不小心关掉了窗口，现在正是回来阅读更新说明的好时机。你仍然可以关闭窗口继续游戏。</RealRuins.WhatsNew.SkipText>
+  <RealRuins.WhatsNew.SkipConfirm>仍然关闭</RealRuins.WhatsNew.SkipConfirm>
+  <RealRuins.WhatsNew.SkipBack>返回更新说明</RealRuins.WhatsNew.SkipBack>
+</LanguageData>
