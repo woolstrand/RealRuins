@@ -1,5 +1,9 @@
 # Real Ruins 变更日志
 
+## 2026-11-13（2）
+- 生成翻译审核版 `docs/RealRuins_Options_翻译审核版.xml`：335 键全量、按英文文件分节，每条中文上方以 `EN:` 注释附英文原文；`\n` 字面量与 `&lt;` 等转义保留原样，审核定稿后可直接替换 Keyed 文件。
+- 备份当前翻译到 `docs/_lang_backup/RealRuins_Options.xml.20261113-full.bak`。提交 `aa71497`。
+
 ## 2026-11-13
 - 汉化：`Languages/ChineseSimplified/Keyed/RealRuins_Options.xml` 补全 183 个缺失键（英文 335 键现已全覆盖），包括：
   - 整页缺失：预设（Presets）、财富与平衡（Wealth and balance）、玩法（Gameplay）、科技等级限制（TechLimit）、遗迹扫描（RuinsScan）、更新说明窗口（WhatsNew）、开局地块被占（FactionOwnedStartTile）、行星蓝图加载器大部分文案、设置导入导出。
