@@ -206,7 +206,7 @@
   <!-- EN: Pristine ruins incident removed -->
   <RealRuins.PristineRuinsIncidentRetired.Label>发现遗迹事件已移除</RealRuins.PristineRuinsIncidentRetired.Label>
   <!-- EN: The "nearby ruins found" incident was removed, nothing has been spawned. Pristine ruins now come as a quest. To create one manually, use Debug actions -> Generate quest -> RealRuins_AbandonedBase. -->
-  <RealRuins.PristineRuinsIncidentRetired.Text>“发现附近遗迹”事件已被移除，未生成任何东西。原始遗迹现在以任务形式出现。要手动创建，请使用调试操作 -> 生成任务 -> RealRuins_AbandonedBase。</RealRuins.PristineRuinsIncidentRetired.Text>
+  <RealRuins.PristineRuinsIncidentRetired.Text>“发现附近遗迹”事件已被移除，未生成任何东西。此类遗迹现在以原始遗迹任务的形式出现。要手动创建，请使用调试操作 -> 生成任务 -> RealRuins_AbandonedBase。</RealRuins.PristineRuinsIncidentRetired.Text>
   <!-- EN: Raiders may still show up. Pick up what your pawns can carry and leave via the map edge, or wait until things calm down. -->
   <RealRuins.ReformLockedManual>掠夺者可能仍会出现。捡起小人能带走的物品，从地图边缘离开，或等事情平息。</RealRuins.ReformLockedManual>
   <!-- POI captions and descriptions -->
@@ -396,7 +396,7 @@
   <!-- EN: You have to be in an ongoing game to use this menu -->
   <RealRuins.PlanetaryLoader.NeedsGameInProgress>你必须在正在进行的游戏中才能使用此菜单</RealRuins.PlanetaryLoader.NeedsGameInProgress>
   <!-- EN: Caravan reform at pristine ruins -->
-  <RealRuins.CaravanReformType>在原始遗迹重组远行队</RealRuins.CaravanReformType>
+  <RealRuins.CaravanReformType>在遗迹重组远行队</RealRuins.CaravanReformType>
   <!-- EN: Automatic -->
   <RealRuins.Reform.Automatic>自动</RealRuins.Reform.Automatic>
   <!-- EN: Instant -->
@@ -472,7 +472,7 @@
   <!-- EN: Events and quests -->
   <RealRuins.TechLimit.Events>事件与任务</RealRuins.TechLimit.Events>
   <!-- EN: Pristine ruins and small ruins spotted by caravans. -->
-  <RealRuins.TechLimit.EventsTT>原始遗迹和远行队发现的小遗迹。</RealRuins.TechLimit.EventsTT>
+  <RealRuins.TechLimit.EventsTT>遗迹任务和远行队发现的小遗迹。</RealRuins.TechLimit.EventsTT>
   <!-- EN: Tile is occupied -->
   <RealRuins.FactionOwnedStartTile>地块已被占据</RealRuins.FactionOwnedStartTile>
   <!-- EN: You're about to enter a tile with a settlement on it, and this settlement belongs to another faction. You can either make it abandoned and settle in the ruins, make it yours, or you can attack it with your starting party. -->
@@ -526,7 +526,7 @@
   <!-- EN: Pristine ruins quest -->
   <RealRuins.EnableAbandonedRuinsFoundEvent>原始遗迹任务</RealRuins.EnableAbandonedRuinsFoundEvent>
   <!-- EN: When enabled, you can get a quest to large pristine ruins nearby: rich and untouched, but contested by raiders. -->
-  <RealRuins.EnableAbandonedRuinsFoundEventTT>开启后，你可能接到前往附近大型原始遗迹的任务：富有且未遭翻捡，但掠夺者将源源不断袭来。</RealRuins.EnableAbandonedRuinsFoundEventTT>
+  <RealRuins.EnableAbandonedRuinsFoundEventTT>开启后，你可能接到原始遗迹任务，前往附近的大型遗迹：富有且未遭翻捡，但掠夺者将源源不断袭来。</RealRuins.EnableAbandonedRuinsFoundEventTT>
   <!-- EN: Enable "caravan spotted small ruins" event -->
   <RealRuins.EnableCaravanFoundRuinsEvent>启用“远行队发现小遗迹”事件</RealRuins.EnableCaravanFoundRuinsEvent>
   <!-- EN: When enabled, travelling caravans can spot a small ruin nearby and give you the option to investigate it. -->
