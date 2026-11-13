@@ -3,5 +3,5 @@
      现有 RaidTrigger.label 译作"遗迹袭击标志"（非伪装名）。如要伪装风格可改为"粗糙的地面"。 -->
 <LanguageData>
   <!-- EN: rough floor -->
-  <TrippingTrigger.label>遗迹绊发标志</TrippingTrigger.label>
+  <TrippingTrigger.label>粗糙的地面</TrippingTrigger.label>
 </LanguageData>

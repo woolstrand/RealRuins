@@ -2,7 +2,7 @@
 <!-- 扫描工作的工作报告（JobDef.reportString）。TargetA 为目标占位符，位置与原版译法一致（内联在句中）。 -->
 <LanguageData>
   <!-- EN: searching old records for ruins at TargetA. -->
-  <RealRuins_SearchRecordsForRuins.reportString>正在翻阅TargetA处的旧档案以寻找遗迹。</RealRuins_SearchRecordsForRuins.reportString>
+  <RealRuins_SearchRecordsForRuins.reportString>正在翻查TargetA处的旧档案以寻找遗迹。</RealRuins_SearchRecordsForRuins.reportString>
   <!-- EN: radio-locating ruins at TargetA. -->
   <RealRuins_RadioLocateRuins.reportString>正在对TargetA进行无线电定位以寻找遗迹。</RealRuins_RadioLocateRuins.reportString>
 </LanguageData>
