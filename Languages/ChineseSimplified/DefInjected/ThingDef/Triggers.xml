@@ -1,6 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<!-- 陷阱触发器：两个触发器为隐形物（EtherealThingBase），label 仅在开发模式/日志可见，
-     英文原文为伪装名 "rough floor"，译文按伪装风格处理。 -->
+
 <LanguageData>
   <!-- EN: rough floor -->
   <RaidTrigger.label>粗糙的地面</RaidTrigger.label>

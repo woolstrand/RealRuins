@@ -1,8 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<!-- 翻译审核版：每条中文翻译上方的 EN 注释为英文原文。注释不影响 RimWorld 加载，审核定稿后可直接用本文件替换 Keyed 文件。 -->
+
 <LanguageData>
 
-  <!-- ===== 文件: RealRuins_Options.xml ===== -->
+  
   <!-- EN: Real Ruins -->
   <RealRuins_ModOptions_Category>真实遗迹</RealRuins_ModOptions_Category>
   <!-- EN: Allow downloading ruins from database -->
@@ -87,7 +87,7 @@
   <RealRuins_MapOptions_StartWithoutRuins>起始地图上没有遗迹</RealRuins_MapOptions_StartWithoutRuins>
   <!-- EN: No ruins will be generated on the starting map. Later ruins will be generated normally according to settings. -->
   <RealRuins_MapOptions_StartWithoutRuinsTT>起始地图上不会产生遗迹，其他地图的遗迹将根据设置正常生成。</RealRuins_MapOptions_StartWithoutRuinsTT>
-  <!-- Captions -->
+  
   <!-- EN: Cache and storage -->
   <RealRuins.CacheSettings.TabCaption>常规、网络和缓存</RealRuins.CacheSettings.TabCaption>
   <!-- EN: Cache and storage -->
@@ -134,7 +134,7 @@
   <RealRuins.KeepVanillaRuins>保留原生遗迹</RealRuins.KeepVanillaRuins>
   <!-- EN: If enabled, vanilla RimWorld ruins will be preserved alongside Real Ruins. -->
   <RealRuins.KeepVanillaRuinsTT>如果启用，将在真实遗迹旁边保留RimWorld原生遗迹。</RealRuins.KeepVanillaRuinsTT>
-  <!-- Planetary ruins section -->
+  
   <!-- EN: Planetary ruins and locations -->
   <RealRuins.PlanetarySettings.Caption>行星遗迹与地点</RealRuins.PlanetarySettings.Caption>
   <!-- EN: Offer to load planetary locations at game start -->
@@ -159,7 +159,7 @@
   <RealRuins.PlanetaryLoader.DisableFriendlyLocations>不生成友好的位置</RealRuins.PlanetaryLoader.DisableFriendlyLocations>
   <!-- EN: If enabled, world locations will be occupied by hostile factions only. -->
   <RealRuins.PlanetaryLoader.DisableFriendlyLocationsTT>如果启用，世界位置将仅由敌对派系占据。</RealRuins.PlanetaryLoader.DisableFriendlyLocationsTT>
-  <!-- Caravan entered map -->
+  
   <!-- EN: Caravan arrived at the ruins -->
   <LetterLabelCaravanEnteredRuins>部队到达遗迹</LetterLabelCaravanEnteredRuins>
   <!-- EN: {0} has arrived at the abandoned base ruins and is ready to begin scavenging. -->
@@ -172,10 +172,10 @@
   <RealRuins.CaravanFoundRuinsTitle>附近有小遗迹</RealRuins.CaravanFoundRuinsTitle>
   <!-- EN: Small abandoned buildings. Something valuable may still be inside. -->
   <RealRuins.SmallRuinsInspectString>小型废弃建筑。里面可能还有值钱的东西。</RealRuins.SmallRuinsInspectString>
-  <!-- Art -->
+  
   <!-- EN: This item is too worn and damaged. You can tell for sure it was a beautiful art object once, but now you can hardly guess what it was about. -->
   <DeterioratedArtDescription>这件东西太破旧了。你可以肯定它曾经是一件美丽的艺术品，但现在你几乎猜不出它是关于什么的。</DeterioratedArtDescription>
-  <!-- Ruins info -->
+  
   <!-- EN: Wealth:  -->
   <RealRuins.RuinsWealth>财富： </RealRuins.RuinsWealth>
   <!-- EN: Raiders presence:  -->
@@ -187,9 +187,9 @@
   <!-- EN: medium -->
   <RealRuins.RuinsWealth.2>一般</RealRuins.RuinsWealth.2>
   <!-- EN: high (>1M) -->
-  <RealRuins.RuinsWealth.3>高(>1M)</RealRuins.RuinsWealth.3>
+  <RealRuins.RuinsWealth.3>高(&gt;1M)</RealRuins.RuinsWealth.3>
   <!-- EN: extremely high (>10M) -->
-  <RealRuins.RuinsWealth.4>最高(>10M)</RealRuins.RuinsWealth.4>
+  <RealRuins.RuinsWealth.4>最高(&gt;10M)</RealRuins.RuinsWealth.4>
   <!-- EN: almost none -->
   <RealRuins.RuinsActivity.0>几乎没有</RealRuins.RuinsActivity.0>
   <!-- EN: low -->
@@ -200,16 +200,16 @@
   <RealRuins.RuinsActivity.3>高</RealRuins.RuinsActivity.3>
   <!-- EN: extreme -->
   <RealRuins.RuinsActivity.4>最高</RealRuins.RuinsActivity.4>
-  <!-- Ruins messages -->
+  
   <!-- EN: Looks like no one's gonna show up anymore. You can safely pack up and leave. -->
   <RealRuins.NoMoreEnemies>看来没人会再出现了。你可以安全地收拾行李离开。</RealRuins.NoMoreEnemies>
   <!-- EN: Pristine ruins incident removed -->
   <RealRuins.PristineRuinsIncidentRetired.Label>发现遗迹事件已移除</RealRuins.PristineRuinsIncidentRetired.Label>
   <!-- EN: The "nearby ruins found" incident was removed, nothing has been spawned. Pristine ruins now come as a quest. To create one manually, use Debug actions -> Generate quest -> RealRuins_AbandonedBase. -->
-  <RealRuins.PristineRuinsIncidentRetired.Text>“发现附近遗迹”事件已被移除，未生成任何东西。此类遗迹现在以原始遗迹任务的形式出现。要手动创建，请使用调试操作 -> 生成任务 -> RealRuins_AbandonedBase。</RealRuins.PristineRuinsIncidentRetired.Text>
+  <RealRuins.PristineRuinsIncidentRetired.Text>“发现附近遗迹”事件已被移除，未生成任何东西。此类遗迹现在以原始遗迹任务的形式出现。要手动创建，请使用调试操作 -&gt; 生成任务 -&gt; RealRuins_AbandonedBase。</RealRuins.PristineRuinsIncidentRetired.Text>
   <!-- EN: Raiders may still show up. Pick up what your pawns can carry and leave via the map edge, or wait until things calm down. -->
   <RealRuins.ReformLockedManual>掠夺者可能仍会出现。捡起小人能带走的物品，从地图边缘离开，或等事情平息。</RealRuins.ReformLockedManual>
-  <!-- POI captions and descriptions -->
+  
   <!-- EN: Small military base -->
   <RealRuins.CaptionPOI0>小型军事基地</RealRuins.CaptionPOI0>
   <!-- EN: Military outpost -->
@@ -302,7 +302,7 @@
   <LetterLabelTransportPodsArrivedAtRuins>空降已经到达遗迹</LetterLabelTransportPodsArrivedAtRuins>
   <!-- EN: Transport pods have arrived at the ruins. -->
   <LetterTransportPodsArrivedAtRuins>空降已经到达遗迹</LetterTransportPodsArrivedAtRuins>
-  <!-- POI load dialog -->
+  
   <!-- EN: Load blueprints for the planet -->
   <RealRuins.PlanetaryLoader.LoadBlueprintsCaption>为当前星球加载蓝图</RealRuins.PlanetaryLoader.LoadBlueprintsCaption>
   <!-- EN: This feature will load maps of other players who had their colonies on the same planet. Their colonies will be spawned as other factions' settlements and outposts, or as abandoned ruins. Unlike random ruins, those will be placed at their original locations. -->
@@ -428,7 +428,7 @@
   <!-- EN: Item spawn blacklist -->
   <RealRuins.SpawnBlacklist>物品黑名单</RealRuins.SpawnBlacklist>
   <!-- EN: Comma-separated list of item defs to exclude from spawning. -->
-  <RealRuins.SpawnBlacklistTT>以英文逗号分隔的要排除生成的物品定义（defName）列表。例如排除高爆弹和有毒垃圾：Shell_HighExplosive,Wastepack</RealRuins.SpawnBlacklistTT>
+  <RealRuins.SpawnBlacklistTT>以英文逗号分隔的要排除生成的物品定义（defName）列表。例如排除高爆弹和有毒垃圾：\n\nShell_HighExplosive,Wastepack</RealRuins.SpawnBlacklistTT>
   <!-- EN: Material blacklist -->
   <RealRuins.MaterialBlacklist>材料黑名单</RealRuins.MaterialBlacklist>
   <!-- EN: Comma-separated list of materials to exclude from spawning. When a thing made of a blacklisted material is encountered, it will be replaced with the fallback material. -->
@@ -485,7 +485,7 @@
   <RealRuins.FactionOwnedStartTile.Attack>用初始队伍攻打</RealRuins.FactionOwnedStartTile.Attack>
   <!-- EN: Cancel -->
   <RealRuins.FactionOwnedStartTile.Cancel>取消</RealRuins.FactionOwnedStartTile.Cancel>
-  <!-- Debug settings (dev mode only) -->
+  
   <!-- EN: Debug Settings -->
   <RealRuins.DebugSettings.Caption>调试设置</RealRuins.DebugSettings.Caption>
   <!-- EN: Log Level -->
@@ -522,7 +522,7 @@
   <RealRuins.DebugSettings.UploadTriggered>蓝图捕获已触发。详情请查看日志。</RealRuins.DebugSettings.UploadTriggered>
   <!-- EN: No map available. Please load a game first. -->
   <RealRuins.DebugSettings.NoMap>没有可用地图。请先加载游戏。</RealRuins.DebugSettings.NoMap>
-  <!-- Event toggles -->
+  
   <!-- EN: Pristine ruins quest -->
   <RealRuins.EnableAbandonedRuinsFoundEvent>原始遗迹任务</RealRuins.EnableAbandonedRuinsFoundEvent>
   <!-- EN: When enabled, you can get a quest to large pristine ruins nearby: rich and untouched, but contested by raiders. -->
@@ -547,7 +547,7 @@
   <RealRuins.CaravanRuinsCostCap>远行队遗迹</RealRuins.CaravanRuinsCostCap>
   <!-- EN: The most a ruin spotted by a caravan may be worth. Its most valuable things are taken away until it fits. Raiders at the ruin scale with what is left. -->
   <RealRuins.CaravanRuinsCostCapTT>远行队发现的遗迹的价值上限。价值最高的物品会被移除直到符合上限。遗迹中的掠夺者规模随剩余物调整。</RealRuins.CaravanRuinsCostCapTT>
-  <!-- Import/Export settings -->
+  
   <!-- EN: Export Settings -->
   <RealRuins.Settings.ExportSettings>导出设置</RealRuins.Settings.ExportSettings>
   <!-- EN: Import Settings -->
@@ -566,7 +566,7 @@
   <RealRuins.Settings.ImportSuccess>设置导入成功。</RealRuins.Settings.ImportSuccess>
   <!-- EN: Failed to import settings. The string may be invalid or corrupted. -->
   <RealRuins.Settings.ImportFailed>导入设置失败。字符串可能无效或已损坏。</RealRuins.Settings.ImportFailed>
-  <!-- Settings layout: presets -->
+  
   <!-- EN: Presets -->
   <RealRuins.Presets.TabCaption>预设</RealRuins.Presets.TabCaption>
   <!-- EN: Presets -->
@@ -619,7 +619,7 @@
   <RealRuins.Presets.TechPostApocalypticTT>大灾变后的中世纪世界。文明退回中世纪，但工业时代和太空时代的稀世遗物仍会偶尔出现。</RealRuins.Presets.TechPostApocalypticTT>
   <!-- EN: Resets every Real Ruins setting to its default, including cache, network and debug settings. The Default play style preset resets only the play style settings. -->
   <RealRuins.Presets.ResetAllTT>将真实遗迹的所有设置重置为默认值，包括缓存、网络和调试设置。“默认”玩法风格预设只重置玩法风格相关的设置。</RealRuins.Presets.ResetAllTT>
-  <!-- Settings layout: wealth and balance -->
+  
   <!-- EN: Wealth and balance -->
   <RealRuins.WealthSettings.TabCaption>财富与平衡</RealRuins.WealthSettings.TabCaption>
   <!-- EN: Wealth and balance -->
@@ -634,7 +634,7 @@
   <RealRuins.WealthSettings.Threats>威胁与难度</RealRuins.WealthSettings.Threats>
   <!-- EN: Regular ruins: how the limit counts -->
   <RealRuins.Settings.RegularLimitCounting>常规遗迹上限如何计算</RealRuins.Settings.RegularLimitCounting>
-  <!-- Settings layout: spawn and tech level -->
+  
   <!-- EN: All ruins and locations -->
   <RealRuins.SpawnSettings.Common>所有遗迹与地点</RealRuins.SpawnSettings.Common>
   <!-- EN: Regular ruins -->
@@ -647,7 +647,7 @@
   <RealRuins.TechLimit.AppliesHere>此处受科技等级上限约束</RealRuins.TechLimit.AppliesHere>
   <!-- EN: Part of the tech level limit at the top of this page: it only works while the limit is on. -->
   <RealRuins.TechLimit.AppliesHereTT>本页顶部的科技等级上限的一部分：只有在上限开启时才生效。</RealRuins.TechLimit.AppliesHereTT>
-  <!-- Settings layout: gameplay -->
+  
   <!-- EN: Gameplay -->
   <RealRuins.GameplaySettings.TabCaption>玩法</RealRuins.GameplaySettings.TabCaption>
   <!-- EN: Gameplay -->
@@ -658,14 +658,14 @@
   <RealRuins.GameplaySettings.Events>事件与任务</RealRuins.GameplaySettings.Events>
   <!-- EN: Planetary locations -->
   <RealRuins.GameplaySettings.Planetary>行星遗迹</RealRuins.GameplaySettings.Planetary>
-  <!-- Settings layout: cache and debug -->
+  
   <!-- EN: Staging server is on (Debug tab). Turn it off for normal play. -->
   <RealRuins.CacheSettings.StagingWarning>测试服务器已开启（“调试”选项卡）。正常游玩请关闭。</RealRuins.CacheSettings.StagingWarning>
   <!-- EN: Logging and developer tools. You only need these when you report a bug. -->
   <RealRuins.DebugSettings.Description>日志与开发者工具。只有报告 bug 时才需要。</RealRuins.DebugSettings.Description>
 
-  <!-- ===== 文件: RealRuins_RuinsScan.xml ===== -->
-  <!-- Toggle labels, tooltips and discovery messages are in the RealRuins.RuinsScanDef defs -->
+  
+  
   <!-- EN: Active: {0} -->
   <RealRuins_RuinsScan_Enabled>激活：{0}</RealRuins_RuinsScan_Enabled>
   <!-- EN: Locating discovered ruins -->
@@ -683,7 +683,7 @@
   <!-- EN: workstation -->
   <RealRuins_RuinsScan_UnknownBuilding>工作站</RealRuins_RuinsScan_UnknownBuilding>
 
-  <!-- ===== 文件: RealRuins_WhatsNew.xml ===== -->
+  
   <!-- EN: What's new in Real Ruins -->
   <RealRuins.WhatsNew.Title>真实遗迹更新内容</RealRuins.WhatsNew.Title>
   <!-- EN: Open Real Ruins settings -->

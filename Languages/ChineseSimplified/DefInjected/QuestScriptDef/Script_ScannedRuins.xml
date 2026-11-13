@@ -1,13 +1,8 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- 扫描遗迹任务（QuestScriptDef）。键按 rulesStrings 列表序号编号，定稿后可直接并入 DefInjected/QuestScriptDef/。
-     两点说明：
-     1. 任务名规则（questNameRules）在抽象基类 RealRuins_ScannedRuinsBase 里，DefInjected 无法翻译抽象 def，
-        需要时我可以用 PatchOperation 做翻译补丁（草稿见文件末尾注释）。
-     2. 任务过期信件的 label/text 带 TKey="LetterLabelQuestExpired"/"LetterTextQuestExpired"，
-        指向原版键，Core 语言包已有翻译，无需处理。 -->
+﻿<?xml version="1.0" encoding="utf-8"?>
+
 <LanguageData>
 
-  <!-- ===== RealRuins_ScannedRuins_Records（翻查档案） ===== -->
+  
 
   <!-- EN: [scannerName] spent days at the [scanBuilding] going through [sources], and finally [clue]. Checked against old maps, it all points to one spot, a group of ancient buildings, very old and abandoned, but with doors still sealed and all inventory and machinery still inside.\n\nUnfortunately, those sources were never yours alone. [leak] All nearby settlements are already preparing to fight for whatever lies inside these ruins. The treasure could be enormous, so be prepared for a real massacre, not like the usual carefully balanced encounters you've had before. And don't waste time, scavengers are already on their way, and the ruins won't last long. -->
   <RealRuins_ScannedRuins_Records.questDescriptionRules.rulesStrings.0>questDescription-&gt;[scannerName]在[scanBuilding]里花了数天时间仔细检索[sources]，最终[clue]。经过与古老地图的比对，所有线索都指向同一个地点——一片极其古老且荒废已久的建筑群，但大门依然紧闭，内部的库存物资与机器设备也全都完好无损。\n\n不幸的是，这些情报来源从来就不只为你一人所有。[leak]附近所有的定居点都已开始整军备战，准备争夺这片遗迹中的一切。那里的宝藏可能极其丰厚，所以请做好迎接一场真正大屠杀的准备——这可不像你以前经历过的那些“精心平衡”的常规遭遇战。别浪费时间了，拾荒者们已经在路上了，这片遗迹也撑不了多久。</RealRuins_ScannedRuins_Records.questDescriptionRules.rulesStrings.0>
@@ -38,7 +33,7 @@
   <!-- EN: The scouts you sent to confirm the location were seen, and followed. -->
   <RealRuins_ScannedRuins_Records.questDescriptionRules.rulesStrings.13>leak-&gt;你派去确认位置的侦察兵暴露了行踪，而且被人跟上了。</RealRuins_ScannedRuins_Records.questDescriptionRules.rulesStrings.13>
 
-  <!-- ===== RealRuins_ScannedRuins_Radio（无线电定位） ===== -->
+  
 
   <!-- EN: After days of [listening] at the [scanBuilding], [scannerName] finally picked out [signal]. Triangulation points to a group of ancient buildings. The complex is very old and abandoned, but its doors are still sealed and all inventory and machinery is still inside.\n\nUnfortunately, you weren't the only ones listening. [leak] All nearby settlements are already preparing to fight for whatever lies inside these ruins. The treasure could be enormous, so be prepared for a real massacre, not like the usual carefully balanced encounters you've had before. And don't waste time, scavengers are already on their way, and the ruins won't last long. -->
   <RealRuins_ScannedRuins_Radio.questDescriptionRules.rulesStrings.0>questDescription-&gt;在[scanBuilding]进行了数天的[listening]后，[scannerName]终于捕捉到了[signal]。三角定位指向了一片古老的建筑群。这座建筑群极其古老且荒废已久，但大门依然紧闭，内部的库存物资与机器设备也全都完好无损。\n\n不幸的是，在监听的不止你们一家。[leak]附近所有的定居点都已开始整军备战，准备争夺这片遗迹中的一切。那里的宝藏可能极其丰厚，所以请做好迎接一场真正大屠杀的准备——这可不像你以前经历过的那些“精心平衡”的常规遭遇战。别浪费时间了，拾荒者们已经在路上了，这片遗迹也撑不了多久。</RealRuins_ScannedRuins_Radio.questDescriptionRules.rulesStrings.0>
@@ -67,27 +62,6 @@
   <!-- EN: The moment you narrowed it down, the old security network started answering everyone, not just you. -->
   <RealRuins_ScannedRuins_Radio.questDescriptionRules.rulesStrings.12>leak-&gt;就在你锁定具体范围的那一刻，那套古老的安保网络开始回应所有人的信号，而不再只有你一个。</RealRuins_ScannedRuins_Radio.questDescriptionRules.rulesStrings.12>
 
-  <!-- ===== 任务名规则（抽象基类，DefInjected 不可用，需 PatchOperation，草稿如下） =====
-  EN: questName->[intact] [base] / [lost] [ruins]
-      intact: Pristine / Sealed / Untouched
-      base:   Ruins / Complex / Outpost
-      lost:   Trail to the / Echo of the
-      ruins:  Ancient Complex / Sealed Vault / Lost Outpost
-
-  <li>questName-&gt;[intact][base]</li>
-  <li>intact-&gt;原始的</li>
-  <li>intact-&gt;封存的</li>
-  <li>intact-&gt;无人踏足的</li>
-  <li>base-&gt;遗迹群</li>
-  <li>base-&gt;建筑群</li>
-  <li>base-&gt;前哨站</li>
-  <li>questName-&gt;[ruins][lost]</li>
-  <li>ruins-&gt;远古建筑群</li>
-  <li>ruins-&gt;封存密室</li>
-  <li>ruins-&gt;失落前哨站</li>
-  <li>lost-&gt;的踪迹</li>
-  <li>lost-&gt;的回响</li>
-  <li>lost-&gt;的封印</li>
-  -->
+  
 
 </LanguageData>

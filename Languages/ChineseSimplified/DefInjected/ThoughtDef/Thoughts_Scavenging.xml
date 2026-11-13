@@ -1,5 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- 拾荒心情（ThoughtDef）：5 个心情阶段。键格式 ScavengingRuins.stages.<序号>.label/description。 -->
+﻿<?xml version="1.0" encoding="utf-8"?>
+
 <LanguageData>
   <!-- EN: low wealth ruins / Did we really have to go that far just for stones and trash? -->
   <ScavengingRuins.stages.0.label>穷酸遗迹</ScavengingRuins.stages.0.label>
@@ -13,7 +13,7 @@
   <!-- EN: very high wealth ruins / There is a whole fortune here! We should take everything and I will fight for it! -->
   <ScavengingRuins.stages.3.label>极高价值遗迹</ScavengingRuins.stages.3.label>
   <ScavengingRuins.stages.3.description>这儿简直有金山银山！全给它搬空，谁敢来抢老子跟谁拼命！</ScavengingRuins.stages.3.description>
-  <!-- EN: insanely wealthy ruins / OH MY THAT'S INSANE SUCH WEALTH MUCH MONEY（原文是梗味大写喊叫，按同风格译） -->
+  <!--EN: insanely wealthy ruins / OH MY THAT'S INSANE SUCH WEALTH MUCH MONEY-->
   <ScavengingRuins.stages.4.label>天价财富遗迹</ScavengingRuins.stages.4.label>
   <ScavengingRuins.stages.4.description>卧槽这也太TM离谱了吧？！超级巨富！满地钞票！这辈子都不愁吃穿了！</ScavengingRuins.stages.4.description>
 </LanguageData>
