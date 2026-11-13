@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- 陷阱触发器（ThingDef）：补 TrippingTrigger.label。注意两个触发器的 label 在英文里都是伪装名 "rough floor"，
-     现有 RaidTrigger.label 译作"遗迹袭击标志"（非伪装名）。如要伪装风格可改为"粗糙的地面"。 -->
-<LanguageData>
-  <!-- EN: rough floor -->
-  <TrippingTrigger.label>粗糙的地面</TrippingTrigger.label>
-</LanguageData>
