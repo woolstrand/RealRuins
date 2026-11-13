@@ -1,5 +1,10 @@
 # Real Ruins 变更日志
 
+## 2026-11-13（4）
+- DefInjected 汉化写入（+51 键）：拾荒心情 5 阶段（10 键）、TrippingTrigger.label（"粗糙的地面"，伪装风格）、遗迹扫描 RuinsScanDef/JobDef/WorkGiverDef（14 键）、扫描遗迹任务 QuestScriptDef（27 键）。`RaidTrigger.label` 保留用户旧译"遗迹袭击标志"未动。备份：`docs/_lang_backup/definjected-20261113/`。
+- 术语："智力"→"智识"（4 处，对齐原版），提交 `12a7be7`。
+- 已知待办：扫描任务名规则（questNameRules）在抽象基类，需 PatchOperation 补丁（草稿在审核文件末尾）。
+
 ## 2026-11-13（3）
 - 应用用户审核定稿到 Keyed（远行队/行星遗迹/遗迹任务等术语统一，约 80 条润色），同步提交 `fc71be0`。
 - 术语分工定稿："原始遗迹任务"仅作任务名（事件开关、说明文案），其余场景用"遗迹任务"；`CaravanReformType` 改为"在遗迹重组远行队"。
