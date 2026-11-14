@@ -39,6 +39,11 @@ namespace RealRuins.Settings
 
             Dictionary<string, string> current = SettingsPresets.CurrentValues();
 
+            SettingsPreset techLevel = PresetSection(listing, "RealRuins.Presets.TechLevel", SettingsPresets.TechLevels, current);
+            SettingsPreset customTechLevel = Custom(ref RealRuins_ModSettings.customTechLevel, TechLevelKeys, current, techLevel == null, TechLevelSlot);
+            List<SettingsPreset> techColumns = new List<SettingsPreset>(SettingsPresets.TechLevels) { customTechLevel };
+            DrawPresetColumns(listing, techColumns, techLevel ?? customTechLevel);
+
             SettingsPreset playStyle = PresetSection(listing, "RealRuins.Presets.PlayStyle", SettingsPresets.PlayStyles, current);
             SettingsPreset customPlayStyle = Custom(ref RealRuins_ModSettings.customPlayStyle, PlayStyleKeys, current, playStyle == null, PlayStyleSlot);
             foreach (SettingsPreset preset in SettingsPresets.PlayStyles)
@@ -46,11 +51,6 @@ namespace RealRuins.Settings
                 DrawPresetRow(listing, preset, preset == playStyle);
             }
             DrawPresetRow(listing, customPlayStyle, playStyle == null);
-
-            SettingsPreset techLevel = PresetSection(listing, "RealRuins.Presets.TechLevel", SettingsPresets.TechLevels, current);
-            SettingsPreset customTechLevel = Custom(ref RealRuins_ModSettings.customTechLevel, TechLevelKeys, current, techLevel == null, TechLevelSlot);
-            List<SettingsPreset> techColumns = new List<SettingsPreset>(SettingsPresets.TechLevels) { customTechLevel };
-            DrawPresetColumns(listing, techColumns, techLevel ?? customTechLevel);
 
             SettingsControls.Section(listing, "RealRuins.Presets.SettingsSection");
             DrawSettingsButtons(listing);
@@ -123,22 +123,24 @@ namespace RealRuins.Settings
             listing.Gap(PresetGap);
         }
 
-        // One column per preset: buttons on the top row, descriptions below them
+        // One column per preset: buttons on the top row, descriptions below them. The buttons fit two lines of text, so long
+        // labels (Medieval post-apocalypse) wrap instead of being cut; ButtonText only wraps in a rect at least two lines high.
         private static void DrawPresetColumns(Listing_Standard listing, List<SettingsPreset> presets, SettingsPreset selected)
         {
             float width = (listing.ColumnWidth - SettingsControls.ButtonGap * (presets.Count - 1)) / presets.Count;
+            float buttonHeight = Mathf.Max(PresetButtonHeight, Mathf.Ceil(Text.LineHeight * 2f) + 8f);
             float textHeight = 0f;
             foreach (SettingsPreset preset in presets)
             {
                 textHeight = Mathf.Max(textHeight, Text.CalcHeight(preset.Tooltip, width));
             }
 
-            Rect row = listing.GetRect(PresetButtonHeight + 6f + textHeight);
+            Rect row = listing.GetRect(buttonHeight + 6f + textHeight);
             for (int i = 0; i < presets.Count; i++)
             {
                 float x = Mathf.Round(row.x + i * (width + SettingsControls.ButtonGap));
-                PresetButton(new Rect(x, row.y, Mathf.Round(width), PresetButtonHeight), presets[i], presets[i] == selected);
-                DescriptionLabel(new Rect(x, row.y + PresetButtonHeight + 6f, Mathf.Round(width), textHeight), presets[i].Tooltip, TextAnchor.UpperLeft);
+                PresetButton(new Rect(x, row.y, Mathf.Round(width), buttonHeight), presets[i], presets[i] == selected);
+                DescriptionLabel(new Rect(x, row.y + buttonHeight + 6f, Mathf.Round(width), textHeight), presets[i].Tooltip, TextAnchor.UpperLeft);
             }
             listing.Gap(PresetGap);
         }
