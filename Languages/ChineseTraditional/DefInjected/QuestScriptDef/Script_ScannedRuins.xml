@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LanguageData>
+
+  
+
+  <!-- EN: [scannerName] spent days at the [scanBuilding] going through [sources], and finally [clue]. Checked against old maps, it all points to one spot, a group of ancient buildings, very old and abandoned, but with doors still sealed and all inventory and machinery still inside.\n\nUnfortunately, those sources were never yours alone. [leak] All nearby settlements are already preparing to fight for whatever lies inside these ruins. The treasure could be enormous, so be prepared for a real massacre, not like the usual carefully balanced encounters you've had before. And don't waste time, scavengers are already on their way, and the ruins won't last long. -->
+  <RealRuins_ScannedRuins_Records.questDescriptionRules.rulesStrings.0>questDescription-&gt;[scannerName]在[scanBuilding]裡花了數天時間仔細檢索[sources]，最終[clue]。經過與古老地圖的比對，所有線索都指向同一個地點——一片極其古老且荒廢已久的建築群，但大門依然緊閉，內部的庫存物資與機器裝置也全都完好無損。\n\n不幸的是，這些情報來源從來就不只為你一人所有。[leak]附近所有的據點都已開始整軍備戰，準備爭奪這片遺跡中的一切。那裡的寶藏可能極其豐厚，所以請做好迎接一場真正大屠殺的準備——這可不像你以前經歷過的那些精心平衡過的遭遇戰。別浪費時間了，拾荒者們已經在路上了，這片遺跡也撐不了多久。</RealRuins_ScannedRuins_Records.questDescriptionRules.rulesStrings.0>
+  <!-- EN: a crate of water-damaged books from before the collapse -->
+  <RealRuins_ScannedRuins_Records.questDescriptionRules.rulesStrings.1>sources-&gt;一箱大崩塌前的受潮書籍</RealRuins_ScannedRuins_Records.questDescriptionRules.rulesStrings.1>
+  <!-- EN: old survey records bought from a trader for a handful of silver -->
+  <RealRuins_ScannedRuins_Records.questDescriptionRules.rulesStrings.2>sources-&gt;花幾枚白銀從商人那裡買來的舊勘測記錄</RealRuins_ScannedRuins_Records.questDescriptionRules.rulesStrings.2>
+  <!-- EN: the journals of a long-dead exploration party -->
+  <RealRuins_ScannedRuins_Records.questDescriptionRules.rulesStrings.3>sources-&gt;一支早已覆滅的探險隊的記錄</RealRuins_ScannedRuins_Records.questDescriptionRules.rulesStrings.3>
+  <!-- EN: a dozen folk tales that contradict each other in every detail but one -->
+  <RealRuins_ScannedRuins_Records.questDescriptionRules.rulesStrings.4>sources-&gt;十幾個除了一處細節外其餘全都不一致的民間傳說</RealRuins_ScannedRuins_Records.questDescriptionRules.rulesStrings.4>
+  <!-- EN: the ledgers of a trading company that no longer exists -->
+  <RealRuins_ScannedRuins_Records.questDescriptionRules.rulesStrings.5>sources-&gt;一家早已倒閉的貿易公司的帳本</RealRuins_ScannedRuins_Records.questDescriptionRules.rulesStrings.5>
+  <!-- EN: found the same unmarked depot mentioned in three unrelated sources -->
+  <RealRuins_ScannedRuins_Records.questDescriptionRules.rulesStrings.6>clue-&gt;在三份互不相關的資料中發現了同一個未作標記的倉庫</RealRuins_ScannedRuins_Records.questDescriptionRules.rulesStrings.6>
+  <!-- EN: noticed that an old supply route ends at a place no map bothers to name -->
+  <RealRuins_ScannedRuins_Records.questDescriptionRules.rulesStrings.7>clue-&gt;注意到一條舊補給線的終點竟是一處任何地圖都未曾命名的地點</RealRuins_ScannedRuins_Records.questDescriptionRules.rulesStrings.7>
+  <!-- EN: matched a hand-drawn sketch in a margin to the shape of a nearby valley -->
+  <RealRuins_ScannedRuins_Records.questDescriptionRules.rulesStrings.8>clue-&gt;將頁邊空白處的一幅手繪草圖與附近一座山谷的輪廓對應了起來</RealRuins_ScannedRuins_Records.questDescriptionRules.rulesStrings.8>
+  <!-- EN: decoded a quartermaster's notes about a stockpile that was never collected -->
+  <RealRuins_ScannedRuins_Records.questDescriptionRules.rulesStrings.9>clue-&gt;破譯了一名軍需官關於一批從未被運走的物資儲備的筆記</RealRuins_ScannedRuins_Records.questDescriptionRules.rulesStrings.9>
+  <!-- EN: Other settlements keep copies of the same books, and someone else was reading them at the same time. -->
+  <RealRuins_ScannedRuins_Records.questDescriptionRules.rulesStrings.10>leak-&gt;其他據點也留有同款書籍的副本，且就在同一時間，也有其他人正在翻閱它們</RealRuins_ScannedRuins_Records.questDescriptionRules.rulesStrings.10>
+  <!-- EN: The trader who sold you the records had sold the same bundle to every settlement around. -->
+  <RealRuins_ScannedRuins_Records.questDescriptionRules.rulesStrings.11>leak-&gt;把這些記錄賣給你的那個商人，其實早就把同一份資料轉手賣給了周邊的每一個據點</RealRuins_ScannedRuins_Records.questDescriptionRules.rulesStrings.11>
+  <!-- EN: Asking passing caravans about old landmarks was a mistake, they put two and two together faster than you did. -->
+  <RealRuins_ScannedRuins_Records.questDescriptionRules.rulesStrings.12>leak-&gt;向路過的旅隊打聽舊地標是個錯誤，他們比你更快反應了過來。</RealRuins_ScannedRuins_Records.questDescriptionRules.rulesStrings.12>
+  <!-- EN: The scouts you sent to confirm the location were seen, and followed. -->
+  <RealRuins_ScannedRuins_Records.questDescriptionRules.rulesStrings.13>leak-&gt;你派去確認位置的偵察兵暴露了行蹤，而且被人跟上了。</RealRuins_ScannedRuins_Records.questDescriptionRules.rulesStrings.13>
+
+  
+
+  <!-- EN: After days of [listening] at the [scanBuilding], [scannerName] finally picked out [signal]. Triangulation points to a group of ancient buildings. The complex is very old and abandoned, but its doors are still sealed and all inventory and machinery is still inside.\n\nUnfortunately, you weren't the only ones listening. [leak] All nearby settlements are already preparing to fight for whatever lies inside these ruins. The treasure could be enormous, so be prepared for a real massacre, not like the usual carefully balanced encounters you've had before. And don't waste time, scavengers are already on their way, and the ruins won't last long. -->
+  <RealRuins_ScannedRuins_Radio.questDescriptionRules.rulesStrings.0>questDescription-&gt;在[scanBuilding]進行了數天的[listening]後，[scannerName]終於捕捉到了[signal]。三角定位指向了一片古老的建築群。這座建築群極其古老且荒廢已久，但大門依然緊閉，內部的庫存物資與機器裝置也全都完好無損。\n\n不幸的是，在監聽的不止你們一家。[leak]附近所有的據點都已開始整軍備戰，準備爭奪這片遺跡中的一切。那裡的寶藏可能極其豐厚，所以請做好迎接一場真正大屠殺的準備——這可不像你以前經歷過的那些精心平衡過的遭遇戰。別浪費時間了，拾荒者們已經在路上了，這片遺跡也撐不了多久。</RealRuins_ScannedRuins_Radio.questDescriptionRules.rulesStrings.0>
+  <!-- EN: sweeping old frequencies -->
+  <RealRuins_ScannedRuins_Radio.questDescriptionRules.rulesStrings.1>listening-&gt;舊頻段掃描</RealRuins_ScannedRuins_Radio.questDescriptionRules.rulesStrings.1>
+  <!-- EN: pinging long-silent transponder codes -->
+  <RealRuins_ScannedRuins_Radio.questDescriptionRules.rulesStrings.2>listening-&gt;探測沉寂已久的應答器編碼</RealRuins_ScannedRuins_Radio.questDescriptionRules.rulesStrings.2>
+  <!-- EN: hacking into a derelict satellite relay -->
+  <RealRuins_ScannedRuins_Radio.questDescriptionRules.rulesStrings.3>listening-&gt;廢棄衛星中繼站入侵</RealRuins_ScannedRuins_Radio.questDescriptionRules.rulesStrings.3>
+  <!-- EN: triangulating stray transmissions -->
+  <RealRuins_ScannedRuins_Radio.questDescriptionRules.rulesStrings.4>listening-&gt;雜散訊號三角定位</RealRuins_ScannedRuins_Radio.questDescriptionRules.rulesStrings.4>
+  <!-- EN: a faint automated beacon repeating the same distress code it has been sending for centuries -->
+  <RealRuins_ScannedRuins_Radio.questDescriptionRules.rulesStrings.5>signal-&gt;一個微弱的自動信標，正不斷重複著它已傳送了數個世紀的同一組求救碼</RealRuins_ScannedRuins_Radio.questDescriptionRules.rulesStrings.5>
+  <!-- EN: a cluster of shielded power signatures where there should be nothing at all -->
+  <RealRuins_ScannedRuins_Radio.questDescriptionRules.rulesStrings.6>signal-&gt;一簇本不該存在於那片空無一物之地的遮蔽能源特徵</RealRuins_ScannedRuins_Radio.questDescriptionRules.rulesStrings.6>
+  <!-- EN: a dormant security network quietly answering each of your pings -->
+  <RealRuins_ScannedRuins_Radio.questDescriptionRules.rulesStrings.7>signal-&gt;一個正悄然回應著你每一次探測請求的休眠安保網路</RealRuins_ScannedRuins_Radio.questDescriptionRules.rulesStrings.7>
+  <!-- EN: an encrypted maintenance channel that finally cracked open on the hundredth try -->
+  <RealRuins_ScannedRuins_Radio.questDescriptionRules.rulesStrings.8>signal-&gt;一條在第一百次嘗試時終於被攻破的加密維護頻道</RealRuins_ScannedRuins_Radio.questDescriptionRules.rulesStrings.8>
+  <!-- EN: Your active pings woke up the complex's own beacon, and it is now broadcasting its position on every band. -->
+  <RealRuins_ScannedRuins_Radio.questDescriptionRules.rulesStrings.9>leak-&gt;你的主動探測喚醒了建築群自身的信標，此刻它正全頻段廣播著自己的座標。</RealRuins_ScannedRuins_Radio.questDescriptionRules.rulesStrings.9>
+  <!-- EN: Your triangulation pings were loud enough for every comms array in the region to trace them to the same spot. -->
+  <RealRuins_ScannedRuins_Radio.questDescriptionRules.rulesStrings.10>leak-&gt;你的三角定位脈衝動靜太大，這片區域裡的每一座通訊站都順著訊號追蹤到了同一處地點。</RealRuins_ScannedRuins_Radio.questDescriptionRules.rulesStrings.10>
+  <!-- EN: A passing trader intercepted your comms traffic and is selling the coordinates to anyone willing to pay. -->
+  <RealRuins_ScannedRuins_Radio.questDescriptionRules.rulesStrings.11>leak-&gt;一名路過的商人截獲了你的通訊流量，正把座標兜售給任何願意出錢的人。</RealRuins_ScannedRuins_Radio.questDescriptionRules.rulesStrings.11>
+  <!-- EN: The moment you narrowed it down, the old security network started answering everyone, not just you. -->
+  <RealRuins_ScannedRuins_Radio.questDescriptionRules.rulesStrings.12>leak-&gt;就在你鎖定具體範圍的那一刻，那套古老的安保網路開始回應所有人的訊號，而不再只有你一個。</RealRuins_ScannedRuins_Radio.questDescriptionRules.rulesStrings.12>
+
+  
+
+</LanguageData>

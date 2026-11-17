@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LanguageData>
+  <!-- EN: search records for ruins -->
+  <RealRuins_RuinsScan_Records.label>翻查檔案尋找遺跡</RealRuins_RuinsScan_Records.label>
+  <!-- EN: Have researchers comb through old books, maps, journals and trade ledgers for traces of sealed ancient ruins. Requires Intellectual {0}.\n\nThere is no telling how long it takes. A skilled researcher pieces something together after about {1} days of study on average, a novice after about {2}. The same records exist elsewhere, so once you find the ruins, others will too. -->
+  <RealRuins_RuinsScan_Records.description>安排研究員翻閱舊書籍、地圖、記錄與貿易帳本，以搜尋密封遠古遺跡的蛛絲馬跡。需要知識{0}。\n\n具體耗時難以預料。經驗豐富的研究員平均研究約{1}天即可拼湊出線索，而新手則平均需要約{2}天。同樣的記錄也存在於其他地方，因此一旦你發現了遺跡，其他勢力也會同步察覺。</RealRuins_RuinsScan_Records.description>
+  <!-- EN: {PAWN_nameDef} found references to sealed ruins in old records at the {BUILDING}. Working out where they are... -->
+  <RealRuins_RuinsScan_Records.foundMessage>{PAWN_nameDef}在{BUILDING}翻查舊檔案時發現了被封存遺跡的線索。正在推算它們的位置...</RealRuins_RuinsScan_Records.foundMessage>
+  <!-- EN: radio-locate ruins -->
+  <RealRuins_RuinsScan_Radio.label>無線電定位遺跡</RealRuins_RuinsScan_Radio.label>
+  <!-- EN: Have researchers sweep old frequencies, ping dormant transponders and hack into derelict relays to locate sealed ancient ruins. Requires Intellectual {0}.\n\nThere is no telling how long it takes. A skilled operator finds something after about {1} days of scanning on average, a novice after about {2}. Active pinging is never quiet, so once you find the ruins, others will too. -->
+  <RealRuins_RuinsScan_Radio.description>安排研究員掃描舊波段、探測休眠應答器並駭入廢棄中繼站，以定位密封的遠古遺跡。需要知識{0}。\n\n具體耗時難以預料。經驗豐富的操作員平均掃描約{1}天即可有所發現，而新手則平均需要約{2}天。主動探測向來動靜不小，一旦你發現了遺跡，其他勢力也會同步察覺。</RealRuins_RuinsScan_Radio.description>
+  <!-- EN: {PAWN_nameDef} picked up a signal at the {BUILDING}. Triangulating the location... -->
+  <RealRuins_RuinsScan_Radio.foundMessage>{PAWN_nameDef}在{BUILDING}捕捉到了一個訊號。正在進行三角定位...</RealRuins_RuinsScan_Radio.foundMessage>
+</LanguageData>

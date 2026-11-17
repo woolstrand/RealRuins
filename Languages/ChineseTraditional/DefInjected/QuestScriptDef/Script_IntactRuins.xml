@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LanguageData>
+
+  <!-- EN:
+    <li>questName->[abandoned] [base]</li>
+    <li>questName->[intact] [ruins]</li>
+    <li>abandoned->Abandoned</li>
+    <li>abandoned->Destroyed</li>
+    <li>abandoned->Sealed</li>
+    <li>base->Base</li>
+    <li>base->Outpost</li>
+    <li>base->Complex</li>
+    <li>base->City</li>
+    <li>base->Factory</li>
+    <li>intact->Pristine</li>
+    <li>intact->Intact</li>
+    <li>intact->Untouched</li>
+    <li>ruins->Ruins</li>
+  -->
+  <RealRuins_AbandonedBase.questNameRules.rulesStrings>
+    <li>questName->[abandoned][base]</li>
+    <li>questName->[intact][ruins]</li>
+    <li>abandoned->廢棄</li>
+    <li>abandoned->被毀</li>
+    <li>abandoned->封存</li>
+    <li>base->基地</li>
+    <li>base->前哨</li>
+    <li>base->建築群</li>
+    <li>base->城市</li>
+    <li>base->工廠</li>
+    <li>intact->完整</li>
+    <li>intact->完好</li>
+    <li>intact->原封不動的</li>
+    <li>ruins->遺跡</li>
+  </RealRuins_AbandonedBase.questNameRules.rulesStrings>
+
+  <!-- EN:
+    <li>questDescription->[source] a group of ancient buildings. Looks like the complex is very old and abandoned, but the doors are sealed and all inventory and machinery is still inside. Word spreads fast, and all nearby settlements are already preparing to fight for whatever lies inside these ruins. The treasure could be enormous, so be prepared for a real massacre, not like the usual carefully balanced encounters you've had before. And don't waste time: I see someone already [stealing]. Ruins won't last long.</li>
+    <li>source->Your scouts discovered</li>
+    <li>source->A trader told you he found</li>
+    <li>source->A powerful explosion in a nearby mountain uncovered</li>
+    <li>stealing->dismantling golden floor tiles across all rooms</li>
+    <li>stealing->hauling a stack of advanced components from there</li>
+    <li>stealing->loading a drop pod launcher with ten vanometric cells</li>
+    <li>stealing->trying to capture five stacks of antigrain warheads</li>
+  -->
+  <RealRuins_AbandonedBase.questDescriptionRules.rulesStrings>
+    <li>questDescription->[source]一片古老的建築群。這座建築群看起來非常古老、早已荒廢，但大門依然緊閉，裡面的物資和機器都還在。消息傳得很快，附近所有據點都已經在準備爭奪遺跡裡的一切。那裡的寶藏可能非常豐厚，所以要做好面對一場真正大屠殺的準備，這可不像你以前遇過那些精心平衡過的遭遇戰。也別浪費時間了：我已經看到有人在[stealing]了。這片遺跡撐不了多久。</li>
+    <li>source->你的偵察兵發現了</li>
+    <li>source->一名商人告訴你，他找到了</li>
+    <li>source->附近山中一場猛烈的爆炸，炸出了</li>
+    <li>stealing->拆走每個房間的黃金地磚</li>
+    <li>stealing->從那裡搬走一疊高級零件</li>
+    <li>stealing->往發射平台裡裝十個虛量發電機</li>
+    <li>stealing->想搶走五疊反粒子彈頭</li>
+  </RealRuins_AbandonedBase.questDescriptionRules.rulesStrings>
+
+  <!-- EN: Quest expired: [resolvedQuestName] -->
+  <RealRuins_AbandonedBase.LetterLabelQuestExpired.slateRef>任務過期：[resolvedQuestName]</RealRuins_AbandonedBase.LetterLabelQuestExpired.slateRef>
+  <!-- EN: The discovered ruins location was looted and scavenged. The quest [resolvedQuestName] has expired. -->
+  <RealRuins_AbandonedBase.LetterTextQuestExpired.slateRef>發現的遺跡已經被洗劫一空。任務「[resolvedQuestName]」已過期。</RealRuins_AbandonedBase.LetterTextQuestExpired.slateRef>
+
+</LanguageData>
