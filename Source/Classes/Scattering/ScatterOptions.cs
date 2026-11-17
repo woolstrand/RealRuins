@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
+using RimWorld;
 using Verse;
 
 namespace RealRuins {
@@ -19,7 +20,6 @@ namespace RealRuins {
         public int itemCostLimit = 1000;
         public bool disableSpawnItems = false;
         public bool wallsDoorsOnly = false;
-        public bool claimableBlocks = true;
         public bool enableProximity = true;
 
         public float decorationChance = 0.0001f; //probability PER CELL
@@ -33,6 +33,7 @@ namespace RealRuins {
         public float minimumDensityRequired = 0.1f;
         public int minimumCostRequired = 0;
         public int costCap = -1;
+        public bool cutDismantlesWalls = false; //cost cut removes expensive walls and doors instead of replacing them with cheap ones (scavenged sites)
         public int startingPartyPoints = 0;
         public bool shouldKeepDefencesAndPower = false;
         public bool shouldLoadPartOnly = true; //indicates if the loader should load only a part of the blueprint or the whole one
@@ -44,11 +45,14 @@ namespace RealRuins {
         public bool shouldAddFilth = true;
         public IntVec3 overridePosition = new IntVec3(0, 0, 0);
         public bool overwritesEverything = false; //if true, each item, terrain and even empty cell inside a room removes everything from that tile
+        public bool claimEverything = false; //the site's faction (the player taking a POI over) owns every building, traps and turrets too, and nothing is forbidden
         public bool centerIfExceedsBounds = false;
         public bool avoidUsedRects = false; //if true, cells inside MapGenerator.UsedRects (quest-critical areas) are left untouched
         public string blueprintFileName = null;
 
         public float doorOwnershipProbability = 0.0f;
+        public TechLevel maxTechLevel = TechLevel.Undefined; //things above it don't spawn (TechLevelFilter); Undefined = no cap
+        public bool techLimitStrict = true; //false: things above the cap may still spawn, with a much lower chance
   
 
         
@@ -67,7 +71,6 @@ namespace RealRuins {
             Scribe_Values.Look(ref itemCostLimit, "itemCostLimit", 1000, false);
             Scribe_Values.Look(ref disableSpawnItems, "disableSpawnItems", false, false);
             Scribe_Values.Look(ref wallsDoorsOnly, "wallsDoorsOnly", false, false);
-            Scribe_Values.Look(ref claimableBlocks, "claimableBlocks", true, false);
             Scribe_Values.Look(ref enableProximity, "enableProximity", true, false);
 
             Scribe_Values.Look(ref decorationChance, "decorationChance", 0.0001f, false);
@@ -76,43 +79,10 @@ namespace RealRuins {
 
         }
 
+        //Every field is a value, a string or an enum, so a shallow copy is a full one. Keep it that way: a reference type field
+        //added here would be shared between the copies (a list or array needs to be copied by hand below).
         public ScatterOptions Copy() {
-            ScatterOptions copy = new ScatterOptions {
-                deteriorationMultiplier = deteriorationMultiplier,
-                claimableBlocks = claimableBlocks,
-                decorationChance = decorationChance,
-                densityMultiplier = densityMultiplier,
-                hostileChance = hostileChance,
-                scavengingMultiplier = scavengingMultiplier,
-                trapChance = trapChance,
-                disableSpawnItems = disableSpawnItems,
-                itemCostLimit = itemCostLimit,
-                minRadius = minRadius,
-                maxRadius = maxRadius,
-                wallsDoorsOnly = wallsDoorsOnly,
-                enableProximity = enableProximity,
-                minimumAreaRequired = minimumAreaRequired,
-                minimumDensityRequired = minimumDensityRequired,
-                minimumCostRequired = minimumCostRequired,
-                costCap = costCap,
-                startingPartyPoints = startingPartyPoints,
-                deleteLowQuality = deleteLowQuality,
-                shouldKeepDefencesAndPower = shouldKeepDefencesAndPower,
-                shouldLoadPartOnly = shouldLoadPartOnly,
-                shouldAddRaidTriggers = shouldAddRaidTriggers,
-                shouldAddFilth = shouldAddFilth,
-                allowFriendlyRaids = allowFriendlyRaids,
-                enableDeterioration = enableDeterioration,
-                forceFullHitPoints = forceFullHitPoints,
-                canHaveFood = canHaveFood,
-                blueprintFileName = blueprintFileName,
-                centerIfExceedsBounds = centerIfExceedsBounds,
-                overridePosition = overridePosition,
-                avoidUsedRects = avoidUsedRects,
-                overwritesEverything = overwritesEverything,
-                doorOwnershipProbability = doorOwnershipProbability,
-            };
-            return copy;
+            return (ScatterOptions)MemberwiseClone();
         }
 
     }

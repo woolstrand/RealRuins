@@ -32,8 +32,15 @@ Replaces all invalid filesystem characters with `_` via regex. Used to sanitize 
 
 ### `ThingDefExtension`
 
-**`ThingComponentsMarketCost(BuildableDef def, ThingDef stuff)`**
-Recursively computes market cost from `costList` items plus stuff cost, adjusted by `VolumePerUnit`. Falls back to `BaseMarketValue` for items without recipes (e.g., golden walls). Used extensively in blueprint cost calculations.
+**`AbstractMarketValue(BuildableDef def, ThingDef stuff)`**
+The game's own abstract `MarketValue` stat for a def: materials plus work (`StatWorker_MarketValue`). Defs made from stuff without a stuff are valued with their default stuff. Quality is not included: it is rolled only when the thing is spawned. The only blueprint cost (tile `cost`). Cached per (def, stuff) under a lock: a def's value doesn't change during a session, and the planetary loader analyzes blueprints off the main thread. (Before 2026-11-03 blueprints used a materials-only estimate that ignored work; it was ~10% lower overall and much lower for crafted items.)
+
+## WealthUtility.cs
+
+Wealth of things already spawned, in the same units as blueprint costs.
+- **`MarketValueWithContents(thing)`**: `MarketValue × stackCount` (quality and hit points included) plus what the thing holds, at any depth. Minified things report their inner thing already; pawns and corpses are not opened.
+- **`MapWealth(map, filter)`**: the above summed over the map's things. `RuinedBaseComp` (resources only), `RealRuinsPOIWorldObject` (all things).
+- **`WealthDescription(cost)`**: the `RealRuins.RuinsWealth.N` tier (0-10k, 10k-100k, 100k-1M, 1M-10M, more) shown in the abandoned base and POI inspect strings.
 
 **`ThingWeight(ThingDef def, ThingDef stuff)`**
 Tries `Mass` stat; if zero or 1.0 (likely default), falls back to recursive weight sum from `costList`. Returns minimum 1.0. Used by `ScavengingProcessor` for raider carry-capacity calculations.
@@ -122,6 +129,8 @@ String constants representing subsystems: `Generic`, `Loader`, `Store`, `Bluepri
 
 **`SysLog(string)`**: Bypasses level filtering. Called for critical startup/system messages.
 
+**`Report(category, format, args)`**: Bypasses level filtering too. For reports the user switched on explicitly in debug settings (`RuinsWealthReport`).
+
 **`Extra(category, message)`**: Logged only when `logLevel == 0` AND the category appears in `debugExtras` list. Provides per-subsystem verbose opt-in without flooding all debug output.
 
 **`Debug.Log()` → `Debug.Message()` → `Debug.Warning()` → `Debug.Error()`**: Tiered output methods each checking their level threshold. Warnings go to `Log.Warning`, errors to `Log.Error` (which opens the log window in dev mode, so expected situations use `Debug.Warning`); everything else goes to `Log.Message`.
@@ -138,6 +147,41 @@ Registers a `[DebugAction]` in RimWorld's developer debug menu (LudeonTK) for th
 **`ShowFocusTileDialog()`**: Opens `Dialog_FocusTile` (defined inline in same file) — a minimal window with a numeric input field. On "Focus Tile", validates tile ID and delegates to `RealRuinsDebugUtils.FocusTile()`.
 
 Uses `[StaticConstructorOnStartup]` to ensure registration during game startup.
+
+**`GeneratePristineRuinsQuest()`** ("Generate pristine ruins quest", on a map): generates `RealRuins_AbandonedBase` with the current threat points. Vanilla "Generate quest" passes no points for this quest (`affectedByPoints` false), and `QuestScriptDef.CanRun` caches its result per (tick, points) starting from "tick 0, 0 points, false", so on a fresh, still paused game it always answers "CanRun returned false" without testing anything.
+
+**`SampleRuinsWealth()`** ("Sample ruins wealth", 10/25/50 maps, on a map) → `RuinsWealthSampler`: for each map a temporary player settlement on a random settle-able tile, full map generation (regular ruins scatter runs as on a new colony), then the map and settlement are removed. Turns the wealth log on and drops the log level to errors for the duration (the game stops logging after 10000 messages), then logs a `SAMPLE` line with percentiles of ruins wealth (actual, estimate, richest chunk, chunk count) and generation time (whole map, ruins scatter, cost calculation).
+
+**`ToggleRuinsWealthLog()`** ("Toggle ruins wealth log", in game only: `AllowedGameStates` flags must all match, so `Entry | Playing` never shows): flips `RealRuins_ModSettings.debugLogRuinsWealth`, the same setting as the "Log ruins wealth" checkbox on the mod's debug settings page, and saves settings.
+
+**`SamplePOITypes()`** ("Sample POI types", main menu or in game) → `POITypeSampler`, see 06-planetary-ruins.
+
+## DevSiteTools.cs
+
+Dev mode buttons on the world map, on planetary POIs (`RealRuinsPOIWorldObject`) and pristine ruins (`AbandonedBaseWorldObject`),
+both `IDevExplorableSite`:
+- **DEV: Explore**: saves the site state (`DevSaveState`), makes a caravan of 3–6 armed colonists on the site tile and runs the
+  site's own caravan arrival action (map generation, letters, relations), then jumps to the caravan. Disabled when the site has
+  a map.
+- **DEV: Reset**: destroys player caravans on the tile and every player pawn on the site map, removes the map and restores the
+  saved state. POI: owner, the owner's goodwill (entering an owned POI makes its faction hostile), no entry cooldown. Pristine
+  ruins: scavenging state, cost cap and raider activity, and what the visit set up. The saved states are not saved with the game;
+  without one (entered normally, or after a reload) the site is reverted as far as known (POI: its owner before the player took
+  it; pristine ruins: waiting for arrival). The pristine ruins quest listens only to the site's own signals, so it goes on.
+
+---
+
+## RuinsWealthReport.cs
+
+Debug measurement of ruins wealth, collected only while `debugLogRuinsWealth` is on and logged with `Debug.Report` (category `Wealth`) whatever the log level is.
+
+`BlueprintTransferUtility.Transfer` creates one report per run (`ScatterState.wealthReport`): for every transferred tile it adds the estimate (tile `cost`) and the actual value of what was spawned — `WealthUtility.MarketValueWithContents` (pawns skipped) and the market value of placed terrain. Measured right after the item is spawned, before forces, filth and roof cleanup.
+
+`CostTiming` (same file) counts time spent in blueprint cost calculation (`Blueprint.UpdateItemStats` and terrain), always on; the `MAP` line of generic ruins shows `limit`, `scatterMs`, `costMs`.
+
+Log lines:
+- `Chunk <blueprint>: estimate, allowance, actual (things, terrain). Top: ...` — per run, from `RuinsScatterer`.
+- `MAP tile=.. size=.. chunks=.. estimate=.. actual=.. things=.. terrain=.. maxChunk=.. site=..` — one greppable line per map, followed by every chunk sorted by actual value and the 10 most valuable things on the map. Written by `GenStep_ScatterRealRuins` (with proximity conditions: planned chunk count, settlement distance, scavenging multiplier, radius) and by `GenStep_RealRuinsSite` for single-run sites (abandoned base, caravan ruins, POI).
 
 ---
 

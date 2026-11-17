@@ -38,3 +38,5 @@ bld/
 
 HugsLib.xml
 *.dll.config
+# Backups of decompiled sources/resources from previous game versions
+DecompiledBackup*/

@@ -54,8 +54,9 @@ namespace RealRuins {
 
             int maxPawns = 100; //sanity cap
             while (cumulativePower <= powerThreshold && maxPawns-- > 0) {
-
-                PawnKindDef currentPawnKindDef = mechKinds.RandomElementByWeight((PawnKindDef kind) => 1f / kind.combatPower);
+                if (!mechKinds.TryRandomElementByWeight((PawnKindDef kind) => 1f / kind.combatPower, out PawnKindDef currentPawnKindDef)) {
+                    break; //the list is not empty and all weights are positive, so this should not happen
+                }
 
                 PawnGenerationRequest request =
                     new PawnGenerationRequest(currentPawnKindDef, faction: faction, tile: tile, forceGenerateNewPawn: true,

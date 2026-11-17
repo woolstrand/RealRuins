@@ -20,7 +20,7 @@ namespace RealRuins
 			
 			int minArea = minimumArea.GetValue(slate);
 			int minWealth = minimumWealth.GetValue(slate);
-			long wealthCap = (long)RealRuins_ModSettings.ruinsCostCap;
+			long wealthCap = (long)RuinsWealthLimits.For(RuinsKind.AbandonedBase);
 			long effectiveMinWealth = (long)Math.Min(minWealth, wealthCap);
 			
 			Debug.Extra(Debug.QuestNode_FindBlueprint, "FindBlueprint: Parameters - minArea={0}, minWealth={1}, wealthCap={2}, effectiveMinWealth={3}", 
@@ -42,8 +42,8 @@ namespace RealRuins
 					Debug.Extra(Debug.QuestNode_FindBlueprint, "FindBlueprint: storeCostAs key={0}", key ?? "NULL");
 					
 					if (key != null) {
-						slate.Set("blueprintCachedCost", (int)(bp.totalCost));
-						var storedCost = slate.Get<int>("blueprintCachedCost");
+						slate.Set(key, (int)(bp.totalCost));
+						var storedCost = slate.Get<int>(key);
                         Debug.Extra(Debug.QuestNode_Find, "value: {0}, slate: {1}", storedCost, slate);
 
 						//success
@@ -65,6 +65,11 @@ namespace RealRuins
 
 		protected override bool TestRunInt(Slate slate) {
             Debug.Log(Debug.QuestNode_FindBlueprintNode, "TestRun launched for RealRuins_AbandonedBase quest");
+            // Same gates the retired Pristine ruins incident had. Loading blueprints here would be too slow:
+            // TestRun runs every time any random quest is rolled.
+            if (!RealRuins_ModSettings.enableAbandonedRuinsFoundEvent || !SnapshotStoreManager.Instance.CanFireLargeEvent()) {
+                return false;
+            }
             var filename = "TEST";
             string storeAsKey = storeAs.GetValue(slate);
             Debug.Log(Debug.QuestNode_FindBlueprintNode, "TestRun: storeAs key={0}", storeAsKey ?? "NULL");

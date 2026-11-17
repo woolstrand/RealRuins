@@ -112,7 +112,7 @@ namespace RealRuins
         
         private static string snapshotsFolderPath = null;
 
-        private static string GetSnapshotsFolderPath() {
+        public static string GetSnapshotsFolderPath() {
             if (snapshotsFolderPath == null) {
                 snapshotsFolderPath = Path.Combine(GenFilePaths.SaveDataFolderPath, "RealRuins");
                 DirectoryInfo directoryInfo = new DirectoryInfo(snapshotsFolderPath);
@@ -207,7 +207,8 @@ namespace RealRuins
             var files = Directory.GetFiles(GetSnapshotsFolderPath());
             if (files.Length == 0) return null;
 
-            int index = Rand.Range(0, files.Length);
+            // also called off the main thread (ruins scan blueprint search)
+            int index = ThreadSafeRand.Range(0, files.Length);
             Debug.Log(Debug.Store, "files length: {0} count {1}, selected: {2}", files.Length, files.Count(), index);
             return files[index];
         }
@@ -341,6 +342,9 @@ namespace RealRuins
             return result;
         }
 
+        // Clearing the folder of the game that is currently loaded is allowed on purpose: the player asked for it and confirmed.
+        // POIs already on its world map keep only their blueprint names; entering one then generates an empty map
+        // (GenStep_ScatterPOIRuins logs a warning) instead of failing.
         public void ClearPlanetaryCacheFolder(string folderName) {
             try {
                 string path = Path.Combine(GetSnapshotsFolderPath(), folderName);

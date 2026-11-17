@@ -116,6 +116,34 @@ namespace RealRuins {
             Debug.Log(Debug.Generic, "Generated map. Cap cost: {0}, actual cost: {1}, reference wealth for forces: {2}.", currentCapCost, currentCost, referenceWealth);
         }
 
+        // Dev Explore / Reset (DevSiteTools, via AbandonedBaseWorldObject): the scavenging state before the visit
+        private class DevState {
+            public RuinedBaseState state;
+            public int currentCapCost;
+            public float raidersActivity;
+        }
+
+        public object DevSaveState() {
+            return new DevState { state = state, currentCapCost = currentCapCost, raidersActivity = raidersActivity };
+        }
+
+        public void DevRestoreState(object saved) {
+            if (saved is DevState devState) {
+                state = devState.state;
+                currentCapCost = devState.currentCapCost;
+                raidersActivity = devState.raidersActivity;
+            } else if (state != RuinedBaseState.Inactive && state != RuinedBaseState.ScavengedCompletely) {
+                state = RuinedBaseState.WaitingForArrival;
+            }
+            //what the visit set up, PostMapGenerate sets it again on the next one
+            unlockTargetTime = -1;
+            allTriggersFiredTick = -1;
+            triggersCache = null;
+            referenceWealth = -1;
+            destructionLevel = 0;
+            baseSmallRaidChance = 0.05f;
+        }
+
         public void StartScavenging(int initialCost) {
             currentCapCost = initialCost;
             raidersActivity = 0;
@@ -223,18 +251,7 @@ namespace RealRuins {
             if (!ParentHasMap && state == RuinedBaseState.WaitingForArrival) {
                 string result = "";
                 if (currentCapCost > 0) {
-                    string wealthDesc = "";
-
-                    int[] costThresholds = {0, 10000, 100000, 1000000, 10000000 };
-                    if (currentCapCost > costThresholds[costThresholds.Length - 1]) wealthDesc = ("RealRuins.RuinsWealth." + (costThresholds.Length - 1)).Translate();
-                    for (int i = 0; i < costThresholds.Length - 1; i++) {
-                        if (currentCapCost > costThresholds[i] && currentCapCost <= costThresholds[i + 1]) {
-                            wealthDesc = ("RealRuins.RuinsWealth." + i.ToString()).Translate();
-                        }
-                    }
-                    
-
-                    result += "RealRuins.RuinsWealth".Translate() + wealthDesc;
+                    result += "RealRuins.RuinsWealth".Translate() + WealthUtility.WealthDescription(currentCapCost);
                     if (Prefs.DevMode) { result += " (" + currentCapCost + ")"; }
                 }
 
@@ -281,11 +298,7 @@ namespace RealRuins {
         }
 
         private float GetTotalMapWealth(Map map) {
-            if (map == null) return 0f;
-
-            return map.listerThings.AllThings
-                .Where(t => t.def != null && t.def.CountAsResource)
-                .Sum(t => t.MarketValue * t.stackCount);
+            return WealthUtility.MapWealth(map, t => t.def.CountAsResource);
         }
     }
 }

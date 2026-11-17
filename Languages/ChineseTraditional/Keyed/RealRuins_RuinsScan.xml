@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LanguageData>
+
+  <!-- EN: Active: {0} -->
+  <RealRuins_RuinsScan_Enabled>啟用：{0}</RealRuins_RuinsScan_Enabled>
+  <!-- EN: Locating discovered ruins -->
+  <RealRuins_RuinsScan_Locating>正在定位已發現的遺跡</RealRuins_RuinsScan_Locating>
+  <!-- EN: Not enough ruins blueprints downloaded yet -->
+  <RealRuins_RuinsScan_NotEnoughBlueprints>已下載的遺跡藍圖還不夠</RealRuins_RuinsScan_NotEnoughBlueprints>
+  <!-- EN: Requires Intellectual {0} -->
+  <RealRuins_RuinsScan_SkillTooLow>需要知識{0}</RealRuins_RuinsScan_SkillTooLow>
+  <!-- EN: {PAWN_nameDef} is incapable of intellectual work -->
+  <RealRuins_RuinsScan_IncapableOfIntellectual>{PAWN_nameDef}無法從事知識工作</RealRuins_RuinsScan_IncapableOfIntellectual>
+  <!-- EN: The trail to the ruins went cold before their location could be pinned down. -->
+  <RealRuins_RuinsScan_SignalLost>通往遺跡的線索在定位之前就中斷了。</RealRuins_RuinsScan_SignalLost>
+  <!-- EN: your researcher -->
+  <RealRuins_RuinsScan_UnknownScanner>你的研究員</RealRuins_RuinsScan_UnknownScanner>
+  <!-- EN: workstation -->
+  <RealRuins_RuinsScan_UnknownBuilding>工作站</RealRuins_RuinsScan_UnknownBuilding>
+
+</LanguageData>

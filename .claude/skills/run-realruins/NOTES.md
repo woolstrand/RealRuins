@@ -10,12 +10,33 @@ searching to figure out. Keep entries short; no screen coordinates (they change 
 - **Dev toolbar** (top center, dev mode only): 4th icon = **Debug actions**. It opens on the
   *Settings* tab - switch to **Actions/tools**. Typing into its search box via `type` didn't register
   reliably; clicking entries works.
-- **RealRuins debug actions:** only "Focus on tile" (`Source/Classes/Utility/DebugTools/DebugActionsRealRuins.cs`).
-  Quests/events are fired as incidents instead.
-- **Ruins quest ("Pristine ruins found nearby"):** incident `Quest_PristineRuins`
-  (`Defs/Storyteller/Incidents.xml`, worker `IncidentWorker_RuinsFound`). It's targetTag `World`:
-  go to the **World** tab first, then Debug actions → **Do incident (World)...**. From a map you only
-  get "Do incident (Map)", which can't fire it.
+- **RealRuins debug actions** (`Source/Classes/Utility/DebugTools/DebugActionsRealRuins.cs`): Focus on tile, Toggle ruins wealth
+  log, **Sample ruins wealth** (10/25/50 maps), Simulate random quest rolls. Quests/events are fired as incidents.
+- **Ruins wealth distribution:** quicktest → Debug actions → RealRuins → Sample ruins wealth → N maps. Generates full maps on random
+  tiles (~3 s each), logs one `[Wealth]: MAP ...` line per map and a `[Wealth]: SAMPLE ...` summary with percentiles of wealth
+  and generation time. Keep the window focused (take a screenshot every ~10 s): the game stops while unfocused.
+- **POI type distribution:** works right from the main menu: dev toolbar → Debug actions → Actions/tools → RealRuins →
+  **Sample POI types** → N blueprints. Asynchronous long event, ~4.5 min for 1000. The table and per-role def tally go to
+  Player.log (`grep "POI types of"`), all metrics to `RealRuinsPOISample.csv` next to the `RealRuins` cache folder. The log has
+  a 10000 message limit; the sampler mutes mod logging while it runs.
+- **Pristine ruins:** since 1.6 only the quest `RealRuins_AbandonedBase` creates them: Debug actions → **RealRuins →
+  Generate pristine ruins quest** (then Quests tab → Active → the quest → Jump to ruins). Vanilla **Generate quest** →
+  `RealRuins_AbandonedBase` answers "CanRun returned false" on a fresh paused game: the quest has `affectedByPoints` false, so the
+  debug menu passes 0 points, and `QuestScriptDef.CanRun` caches per (tick, points) with a cache that starts as "tick 0, points 0,
+  false" - it returns false without testing anything. It works once the game has run a tick; our action passes real points.
+  To force a cost cut on the site, lower the absolute wealth cap (`ruinsCostCap`, Events and Advanced page): the quest caps the
+  site's starting value at it. The old incident `Quest_PristineRuins` is retired
+  (`baseChance` 0); firing it via Do incident (World) only sends a letter pointing to the quest.
+  **RealRuins → Simulate random quest rolls** counts how often the random quest slot would give it.
+- **Manual ruins search (`Source/Classes/RuinsScan`):** two methods, each a `RuinsScanDef`: research benches **Search records for
+  ruins**, comms console / long range scanner **Radio-locate ruins**. Spawn a `SimpleResearchBench` (Debug actions → Spawn
+  unminified thing...; no power needed) → select it → toggle. The comms console is not in that list (not minifiable): turn on
+  **God Mode** in debug Settings, place it from Architect → Misc, then its **DEV: Toggle power on** gizmo. Quicktest colonists usually have Intellectual below the minimum (6):
+  Debug actions → **Set Skill...** → Intellectual → level → click the pawn (the colonist bar portrait is the reliable click), and
+  tick **Research** for that pawn in the Work tab, else vanilla says "Not assigned to researching". Then the pawn starts on its
+  own; **RealRuins → Ruins scan: find signal now** makes the next roll succeed. Log: `[RuinsScan]: X found a signal` →
+  `[Store]: Acceptable blueprint` → `[RuinsScan]: Blueprint search finished` → quest. A pending signal is saved
+  (`RealRuins.RuinsScanTracker` / `signalPending` in the .rws): setting it to True in a copy of a save tests the restart-on-load path.
 - **Force one blueprint everywhere (debug):** set `RealRuins.SingleFileName` (`Source/Classes/RealRuins.cs`)
   to a full path of a cached `.bp`; `SnapshotStoreManager` then returns it for every random pick (scatter
   *and* quests). Mark the edit `// TEMP-TEST` and revert + rebuild after. Cached blueprints are gzipped XML
@@ -25,6 +46,9 @@ searching to figure out. Keep entries short; no screen coordinates (they change 
 - **Planetary POI start:** New colony → scenario → storyteller (just press Next, the defaults are fine) → Generate world → the "Load blueprints
   for planet" window opens on site selection → **Load automatically** (downloads by seed, places POIs) → Close → click a
   POI icon (inspector shows Faction) → Next → choose mode (abandoned / own / **attack**) → confirm → Start.
+- **Visit a POI or pristine ruins fast:** dev mode → select the site on the world map → **DEV: Explore** (random armed caravan,
+  enters at once, camera jumps to it). **DEV: Reset** removes the map and the player pawns there and restores the site, so
+  test visits don't pile up maps (`DevSiteTools`).
 - **Attack a faction base:** spawn a caravan next to it, select caravan, right-click base → **Attack X (Dev: instantly)**.
   Some planetary POIs look like vanilla settlements (e.g. "Temporary camp") - check the inspector before attacking.
 - **Small ruins event:** select a caravan on the world map → Debug actions → **Do incident (<caravan>)...** →
@@ -37,11 +61,23 @@ searching to figure out. Keep entries short; no screen coordinates (they change 
 
 ## Traps
 
+- **An auto-accepted quest's letter sits in the letter stack as "Quest active: <name>"** on the right edge, looking like an
+  alert. Clicking it opens the Quests tab and dismisses the letter; its text stays in History → Messages.
+- **Text after a colon or a period gets capitalized** in tooltips, quest descriptions and letters ("takes: A skilled",
+  "дн. Работы"). Mod text avoids ": " and abbreviations mid-sentence; a dash or a new sentence is safe.
+- **Testing a translation:** main menu → the language button (bottom right of the menu) → language; the game reloads in ~30 s.
+  Right after that switch the 1.7 engine draws pink/red missing-texture boxes on portraits and gizmo icons; a fresh launch in
+  that language is clean. Switch back to English afterwards (`langFolderName` in `Config/Prefs.xml`).
+- Vanilla Russian work-giver wording is "<verb>, используя" (`Research.verb` = "исследовать, используя"). Vanilla language files
+  are `.tar` archives in `Data/<pack>/Languages/`; `tar -xf` one into a temp folder to look up official terms.
 - Every entry in the Do incident list is shown `[NO]` (even vanilla). Clicking still fires it.
 - `esc` closes the world view as well as windows - you land back on the colony map.
 - Hovering a DLC icon on the main menu covers the menu buttons with a big panel; `move` away first.
 - The debug log window auto-opens on any logged exception; close it with its X.
 - Letter icons shift as new letters arrive and sometimes open a beat late; re-screenshot.
+- `launch` returns while the game still shows "Initializing." over the planet: clicks sent then are lost. Screenshot until the main menu is up before clicking.
+- **What's new window** opens by itself ~1.5 s after the main menu when `Config/RealRuins_ReadNews.txt` lacks an article id. Delete that file (or debug action RealRuins -> Forget read news) to see it again; RealRuins -> Show what's new opens it at once, which is how to test the quick-close confirmation (open and click Close in one command). The confirmation only guards unread articles marked `<important>true</important>`: run Forget read news first.
+- **Mod settings:** Options -> Mod options -> Real Ruins. Settings are written when the window closes; `quit` kills the game, so presets clicked while testing are not saved.
 - Window size/position differed between launches - always screenshot before clicking.
 - Launch `RimWorld.app`. The csproj `StartProgram` points at `RimWorldMac.app/...`, which has no binary.
 - `Player.log` is recreated each launch (old → `Player-prev.log`).
@@ -97,6 +133,13 @@ searching to figure out. Keep entries short; no screen coordinates (they change 
 - Ctrl+V for paste: `key 86 ctrl` (Windows VK code; `key v ctrl` fails).
 - Game speed keys on Windows: `key 50` (VK of "2") - `key 2` sends raw VK 2 and does nothing. Check the clock on the
   screenshot: with several ruin maps loaded an in-game hour takes 30-60 s at speed 2.
+- **The game stops updating while its window is unfocused** (log: `[Vulkan] Focus regained after N s idle`). A long wait with
+  nothing happening is usually that, not a hang; a `driver.sh ss` brings the window back.
+- **Generating and removing maps in debug code:** run `LongEventHandler.ForceExecuteToExecuteWhenFinished()` after
+  `MapGenerator.GenerateMap` before `DeinitAndRemoveMap` - map init defers the drawer setup, and removing earlier throws in
+  `MapDrawer.Dispose`, then floods the log with "Exception printing ..." and access violations. An occasional
+  "Thing Mech_X is associated with invalid map index" remains (1 in 50 maps), harmless for a debug run.
+- **`AllowedGameStates` flags must all match:** `Entry | Playing` never shows the action anywhere.
 - **`logVerbose` in `Prefs.xml` fills the log with DeepProfiler "--- Main thread ---" dumps** (thousands per raid) and hits
   the ~420k line cap within minutes. Turn it off for a test session, restore after.
 - The Debug actions window has a different layout on the world map than on a colony map; if the incident list shows map
@@ -192,6 +235,16 @@ blueprint id) - that file also states the spawn philosophy: spawn what can be sp
 - 2026-10-30 (Windows, 1.7): verified H1 + H9 on the planetary loader, seed `shotgun`: 579 fresh downloads, window closed
   mid-transfer (173/579) and sites kept appearing → 393 sites, 0 exceptions; only the 2 failed downloads were missing
   locally (completion now waits for disk writes). Second world, same seed: Close turned green on completion.
+- 2026-11-03 (Windows, 1.7): unified costs (cached market value, one cut). 50-map sample clean; cost calculation 5 ms median per
+  map (was ~60). The MAP block now ends with "Estimate minus actual, by def": walls and doors lead (live market value scales with
+  hit points, StatPart_Health). Dense maps near settlements (27-34 chunks) exhaust the 15k budget: late chunks get allowance 0 and
+  are cut to bare walls/doors. Debug "Generate quest" → RealRuins_AbandonedBase failed with "CanRun returned false" (vanilla CanRun
+  cache at tick 0, see Getting to things). With the new debug action: an 895k blueprint capped at 40k (ruinsCostCap) spawned at
+  40,019 with expensive walls dismantled (half-open rooms, floors kept), 0 errors.
+- 2026-11-03 (Windows, 1.7): ruins wealth sampling, 50 maps (cost = game market value + container contents, scavengers take
+  contents out). Median ruins wealth per map 3.0k, p90 9.5k, max 33k; biggest spikes were ship structural beams (1065 each,
+  one blueprint spawned twice). actual/estimate 0.83, estimate/legacy 1.10. New cost calculation 68 ms median per map (legacy 24),
+  ruins scatter 0.85 s, whole map 2.8 s. Found: log level "all" hits the 10000 message cap within ~30 maps.
 - 2026-11-01 (Windows, 1.7.4995): compatibility rolling run (branch `chores/compatibility_rolling`), ~59 mods incl. DBH,
   Rimefeller, Rimatomics, plus newly added Vanilla Races Expanded - Android and NewRatkinPlus (HAR). Targeted pristine ruins on
   DBH-heaviest blueprints (E26958BD, CA1DCCA3), DBH pipe overlap (E4790701), pump/reactor/spell (E43CD04F), android pawns
@@ -201,3 +254,55 @@ blueprint id) - that file also states the spawn philosophy: spawn what can be sp
   vanilla "Used only X / Y points generating for <faction>" and Ratkin "tried to wear RK_*" from pawn-group generation.
 - 2026-11-01 (Windows, 1.7): planetary cache table in General/Network/Cache settings: 13 real seed folders listed with correct
   coverage/size/count; test folders (dashed seed, folder added from outside) cleared via Clear + confirmation, table refreshed, 0 errors.
+
+## Learned in the 2026-11-09 playtest
+
+- **Offline mode deletes every downloaded blueprint at startup** (`CheckCacheContents`): generic ruins are then skipped
+  ("low blueprints count"). Refill with online mode + Download more blueprints (500), several minutes.
+- **Staging has only ~9 blueprints**: don't fill the cache from staging. Use staging only for uploads (with
+  `debugKeepSnapshotsAfterUpload`, the uploaded file stays in `%TEMP%` - `gzip -dc` it to check the XML).
+- An upload needs a home area of ≥ 300 cells: Architect → Zone → Expand home area, then `driver.sh drag`.
+- **`T: Spawn Random Caravan` on an ocean tile fails** with "Incident target is null or not allowed" in a popup. Look at
+  the world view first and pick a land hex.
+- After loading a save, the first error pops the debug log and swallows the next clicks: a scripted save right after a
+  load silently doesn't happen. Screenshot after loads before scripting further.
+- Starting-site page: the bottom bar is Back / Select random site / Factions / Planetary ruins / Next (the RealRuins
+  button only with "load on start" on). The start-at-POI dialog: abandoned / take over / attack / cancel, then a confirm.
+- Old saves restored by the old build log "had a beard. Removed." and "Hediff_Injury has null part after loading" on
+  every first load: old-build pawn data, vanilla removes it, a re-saved game is clean.
+
+## Learned in the 2026-11-10 session
+
+- **Snapshots never store alive pawns** (`SnapshotGenerator`, by design): to test pawn encoding, kill a colonist in the home
+  area first (Debug actions → `T: Kill`, click the pawn; the tool stays active, right-click to drop it).
+- **Quit to main menu asks "Really quit?"** once the game has unsaved play (not right after a save): click Confirm.
+  Scripted quicktest loops: esc → Quit to main menu → Confirm → Dev quicktest.
+- **Testing without RealRuins** (RT-08): drop `woolstrand.realruins` from `ModsConfig.xml`; `driver.sh launch` then times out
+  waiting for the patch line (expected), the game is up anyway. `Initializing new game` is logged by RR, not vanilla.
+- **Debug actions search box**: typing works, but the first characters can be lost; check the screenshot. Clear it with
+  `key 8` (backspace) several times.
+- **Dev mode off** removes the Dev tab in Options, so "Mod options" moves up one row.
+- **"Object is not tracked by the Unity world" (`SampleSustainer`)**: a sustainer created off the main thread. New-game map
+  generation runs on a worker thread; anything that starts a sound there breaks. Fixed for powered/ambient comps
+  (`OffThreadSustainerFix.cs`). To find such a caller: a Harmony prefix on `SoundStarter.TrySpawnSustainer` that logs
+  `UnityData.IsInMainThread == false` with `Environment.StackTrace`. To force a thing into every ruin: write a tiny gzipped
+  snapshot XML (`<snapshot width height ...><cell x z><terrain def/><item def/></cell>...`) and point `SingleFileName` at it.
+  `Ambient_Space` is also started off-thread by vanilla during new games; harmless.
+- **Game menu from the world map:** the first `esc` closes the world view, the second opens the menu; after closing a
+  settings window the Options window is still open underneath (close it with OK). Screenshot between steps; chained
+  esc/click sequences often land on the map.
+- **Pristine ruins expiry (E-03):** the site loses value only while unvisited (`RuinedBaseComp`); a ~72k site halved in
+  ~3 days and expired on day 7. Dev speed is `key 52`; extra loaded maps slow it down a lot.
+- **Planetary loader:** the abandoned-percentage slider is under "More options...". The transfer can't be stopped (no button).
+- **E-08 setup:** move the generic cache files out, then make the mod recount: close the settings with a finite cache limit
+  (with "No limit" `CheckCacheSizeLimits` returns early and the count stays stale).
+- **Animal inhabitants release (D-02):** don't use small ruins: their raiders fight the animals, and release waits for no
+  enemy target. Use a generic ruins map without raiders.
+- **Debug actions window opens on its Settings tab after a world/map switch**: always screenshot after clicking
+  Actions/tools; a blind click there toggles a debug setting (e.g. "Show Hidden Pawns").
+- **Map search (Z)** skips fogged things: run Debug actions → Clear All Fog first. Clicking a result moves the camera
+  there and selects the thing (good way to inspect ruins items, e.g. xenogerm genes).
+- **Forced test blueprints and scavenging:** at scavenging 1.0, haulable items in a forced blueprint are mostly gone; set
+  `scavengingMultiplier` 0 in `defaultScatterOptions` to see them.
+- **Staging has no planetary lists**: turn `useStagingEnvironment` off for planetary tests.
+- **1.7 map size** is in Create world → Advanced settings (Edit...), not on the site page.

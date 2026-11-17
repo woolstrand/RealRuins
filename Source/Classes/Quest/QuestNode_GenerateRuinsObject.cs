@@ -39,13 +39,18 @@ namespace RealRuins
                 // Here we have to determine starting value. Ruins value will decrease over time (lore: scavenged by other factions)
                 // However, we do not want it to be initially larger than total wealth cap.
 
-                float costCap = RealRuins_ModSettings.ruinsCostCap;
+                float costCap = RuinsWealthLimits.For(RuinsKind.AbandonedBase);
                 float startingCap = Math.Min(costCap, Math.Max(cachedCost, cachedCost2));
+                if (startingCap <= 0) {
+                    // Blueprint search failed (no cost stored). A zero cap would make the comp mark the ruins scavenged on the
+                    // first tick and expire the quest at once; with the settings cap the map generator picks a blueprint itself.
+                    startingCap = costCap;
+                }
                 if (startingCap > int.MaxValue) {
                     startingCap = int.MaxValue - 1; //not sure why StartScavenging takes int as input, but don't want to change it now.
                 }
 
-                Debug.Log(Debug.Event, "Initial cost set to {0} (blueprint cost {1} OR {3}, settings cap {2}", startingCap, cachedCost, costCap, cachedCost2);
+                Debug.Log(Debug.Event, "Initial cost set to {0} (blueprint cost {1} OR {3}, settings cap {2})", startingCap, cachedCost, costCap, cachedCost2);
                 Debug.Extra(Debug.QuestNode_GenerateRuinsObject, "TryGenerateWorldObject: Calling StartScavenging with startingCap={0}", startingCap);
                 comp.StartScavenging((int)startingCap); //passing initial cost to calculate coefficients without need to load bp one more time
 
@@ -60,7 +65,7 @@ namespace RealRuins
         }
 
         protected override bool TestRunInt(Slate slate) {
-            Debug.Log(Debug.QuestNode_GenerateRuinsNode, "TestRun Launched for RealRuins_AbandonedBase quest");
+            Debug.Log(Debug.QuestNode_GenerateRuinsNode, "TestRun launched for RealRuins_AbandonedBase quest");
             
             // Check if blueprintFilename exists in slate (set by previous node)
             var testFilename = blueprintFilename.GetValue(slate);
@@ -69,21 +74,13 @@ namespace RealRuins
             var tileId = tile.GetValue(slate);
             Debug.Log(Debug.QuestNode_GenerateRuinsNode, "TestRun: tileId={0}", tileId);
             
-            if (tileId == 0) {
-                Debug.Warning(Debug.QuestNode_GenerateRuinsNode, "TestRun: tileId is 0! This might cause quest rejection.");
-            }
-
-            AbandonedBaseWorldObject worldObject = (AbandonedBaseWorldObject)WorldObjectMaker.MakeWorldObject(DefDatabase<WorldObjectDef>.GetNamed("AbandonedBase"));
-            if (worldObject == null) {
-                Debug.Error(Debug.QuestNode_GenerateRuinsNode, "TestRun: Failed to create world object!");
+            if (!tileId.Valid) {
+                Debug.Warning(Debug.QuestNode_GenerateRuinsNode, "TestRun: tile is not valid, rejecting quest.");
                 return false;
             }
-            worldObject.Tile = tileId;
 
-            string storeAsKey = storeAs.GetValue(slate);
-            slate.Set(storeAsKey, worldObject);
-            Debug.Log(Debug.QuestNode_GenerateRuinsNode, "TestRun: Set slate[{0}], returning true", storeAsKey);
-
+            // No world object here: TestRun runs on every random quest roll, and MakeWorldObject would burn a world object ID
+            // and dirty the tile finder cache each time. QuestNode_SpawnWorldObjects does not read the object during TestRun.
             return true;
 		}
 

@@ -1,9 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LanguageData>
-  <AbandonedBase.label>廢棄基地</AbandonedBase.label>
-  <AbandonedBase.description>老舊基地的遺跡。</AbandonedBase.description>
-  <RealRuinsPOI.label>遺跡</RealRuinsPOI.label>
-  <RealRuinsPOI.description>尚未有人探索的古老的建築群。</RealRuinsPOI.description>
+
+  <!-- EN: ruins -->
+  <AbandonedBase.label>遺跡</AbandonedBase.label>
+  <!-- EN: Ruins of an abandoned base -->
+  <AbandonedBase.description>廢棄基地的遺跡</AbandonedBase.description>
+  <!-- EN: A group of buildings -->
+  <RealRuinsPOI.label>建築群</RealRuinsPOI.label>
+  <!-- EN: A group of buildings. Worth investigating. -->
+  <RealRuinsPOI.description>一片建築群，值得調查。</RealRuinsPOI.description>
+  <!-- EN: small ruins -->
   <CaravanSmallRuinsWorldObject.label>小型遺跡</CaravanSmallRuinsWorldObject.label>
-  <CaravanSmallRuinsWorldObject.description>尚未有人探索的幾座古老建築。</CaravanSmallRuinsWorldObject.description>
+  <!-- EN: Small ruins -->
+  <CaravanSmallRuinsWorldObject.description>小型遺跡</CaravanSmallRuinsWorldObject.description>
+
 </LanguageData>

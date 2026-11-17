@@ -84,26 +84,8 @@ namespace RealRuins {
                         ThingDef stuffDef = (item.stuffDef != null) ? DefDatabase<ThingDef>.GetNamed(item.stuffDef, false) : null;
                         if (thingDef == null) continue; //to handle corpses
 
-                        if (includeCost) {
-                            try {
-                                //Since at this moment we don't have filtered all things, we can't be sure that cost for all items can be calculated
-                                item.cost = thingDef.ThingComponentsMarketCost(stuffDef) * item.stackCount;
-                                totalCost += item.cost;
-                            } catch (Exception) { } //just ignore items with uncalculatable cost
-                        }
-
-                        if (item.defName.Contains("Wall")) item.weight = 5; //walls are on some reason always have weight of 1, which is obviously not correct. The game itself does not need walls weight, so that's ok, but we need.
-
-                        item.weight = thingDef.ThingWeight(stuffDef);
-                        
-                        if (item.stackCount != 0) item.weight *= item.stackCount;
-                        if (item.weight == 0) {
-                            if (item.stackCount != 0) {
-                                item.weight = 0.5f * item.stackCount;
-                            } else {
-                                item.weight = 1.0f;
-                            }
-                        }
+                        UpdateItemStats(item, thingDef, stuffDef, includeCost);
+                        if (includeCost) totalCost += item.cost;
 
                         itemsCount++;
                     }
@@ -112,10 +94,14 @@ namespace RealRuins {
                     if (terrainTile != null) {
                         TerrainDef terrainDef = DefDatabase<TerrainDef>.GetNamed(terrainTile.defName, false);
                         if (terrainDef != null && includeCost) {
+                            long started = CostTiming.Now;
                             try {
-                                terrainTile.cost = terrainDef.ThingComponentsMarketCost();
-                                totalCost += terrainTile.cost;
-                            } catch (Exception) { }
+                                terrainTile.cost = terrainDef.AbstractMarketValue();
+                            } catch (Exception) {
+                                terrainTile.cost = 0;
+                            }
+                            CostTiming.Add(started);
+                            totalCost += terrainTile.cost;
                         }
                         terrainTilesCount++;
                     }
@@ -123,6 +109,44 @@ namespace RealRuins {
             }
             itemsDensity = (float)itemsCount / (width * height);
             //Debug.Message("Recalculated blueprint stats. Processed {0} items and {1} tiles, got {2} cost", itemsCount, terrainTilesCount, totalCost);
+        }
+
+        //Sets weight and, if asked, cost of an item and of its contents. The cost of a container (bookcase, minified thing, sarcophagus)
+        //includes its contents, so cost caps see the whole value; scavengers take the contents out one by one (ScavengingProcessor).
+        //Since at this moment not all things are filtered yet, cost can't be calculated for some of them: those cost 0.
+        private static void UpdateItemStats(ItemTile item, ThingDef thingDef, ThingDef stuffDef, bool includeCost) {
+            if (includeCost) {
+                long started = CostTiming.Now;
+                try {
+                    item.cost = thingDef.AbstractMarketValue(stuffDef) * item.stackCount;
+                } catch (Exception) {
+                    item.cost = 0;
+                }
+                CostTiming.Add(started);
+            }
+
+            item.weight = thingDef.ThingWeight(stuffDef);
+
+            if (item.stackCount != 0) item.weight *= item.stackCount;
+            if (item.weight == 0) {
+                if (item.stackCount != 0) {
+                    item.weight = 0.5f * item.stackCount;
+                } else {
+                    item.weight = 1.0f;
+                }
+            }
+
+            if (item.innerItems == null) return;
+            foreach (ItemTile inner in item.innerItems) {
+                ThingDef innerDef = DefDatabase<ThingDef>.GetNamed(inner.defName, false);
+                if (innerDef == null || innerDef.race != null) { //corpses, pawns (cryptosleep) and missing defs: no value, they are not loot
+                    inner.cost = 0;
+                    continue;
+                }
+                ThingDef innerStuff = (inner.stuffDef != null) ? DefDatabase<ThingDef>.GetNamed(inner.stuffDef, false) : null;
+                UpdateItemStats(inner, innerDef, innerStuff, includeCost);
+                if (includeCost) item.cost += inner.cost;
+            }
         }
 
         // -------------- walls processing ------------

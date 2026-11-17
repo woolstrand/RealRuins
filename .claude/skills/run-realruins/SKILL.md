@@ -65,7 +65,7 @@ $D errors $M              # ERROR / Exception / "Failed to" lines since the mark
 $D quit
 ```
 
-Also: `rclick X Y`, `move X Y`, `type TEXT`, `esc`, `key KEY [cmd|shift|ctrl|alt]` (named keys like
+Also: `rclick X Y`, `move X Y`, `drag X1 Y1 X2 Y2` (Windows only, e.g. painting zones), `type TEXT`, `esc`, `key KEY [cmd|shift|ctrl|alt]` (named keys like
 `enter`/`space`/arrows, or a raw macOS keycode / Windows VK code), `scroll DY [N]`, `zoomout`,
 `waitlog REGEX MARK SECS`, `status`, `log`, `where`. No args prints the list.
 

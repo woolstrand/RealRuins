@@ -45,6 +45,9 @@ namespace RealRuins
         }
 
         // Safe to call from a background thread: touches only the blueprint file and defs.
+        // Costs, weights and hit points come from abstract stat requests (def + stuff, no Thing). StatWorker caches only Thing
+        // requests (temporaryStatCache, immutableStatCache), so the abstract path reads def data and shares no mutable state with
+        // the main thread. Our own lazy tables (DefRoles, TechLevelFilter) are ConcurrentDictionary or Lazy<T>.
         public static PreparedPOI PreparePOI(PlanetTileInfo tileInfo, string gameName, IntVec3 initialMapSize, bool costStrict, bool aggressiveDiscard)
         {
             string filename = SnapshotStoreManager.SnapshotNameFor(tileInfo.mapId, gameName);
@@ -113,7 +116,16 @@ namespace RealRuins
 
             if (baseChance)
             {
-                Find.FactionManager.TryGetRandomNonColonyHumanlikeFaction(out faction, false, false, minTechLevel: MinTechLevelForPOIType(poiType), requireHostile: disableFriendlyLocations);
+                TechLevel minTechLevel = POITypeUtility.MinTechLevel(poiType);
+                TechLevel maxTechLevel = TechLevel.Undefined;
+                ScatterOptions techLimit = ScatterOptionsFactory.ForAnalyzer();
+                //tech level cap: the site's faction can't be more advanced than what may spawn there (limited strategy: usually)
+                if (TechLevelFilter.IsActive(techLimit) && (techLimit.techLimitStrict || !Rand.Chance(TechLevelFilter.limitedKeepChance)))
+                {
+                    maxTechLevel = techLimit.maxTechLevel;
+                    if (minTechLevel > maxTechLevel) minTechLevel = maxTechLevel;
+                }
+                Find.FactionManager.TryGetRandomNonColonyHumanlikeFaction(out faction, false, false, minTechLevel: minTechLevel, maxTechLevel: maxTechLevel, requireHostile: disableFriendlyLocations);
             }
 
             RealRuinsPOIWorldObject site = TryCreateWorldObject(tileInfo.tile, faction, poiType == POIType.Ruins);
@@ -169,28 +181,5 @@ namespace RealRuins
             Find.WorldObjects.Add(site);
             return site;
         }
-
-        static TechLevel MinTechLevelForPOIType(POIType poiType)
-        {
-            switch (poiType)
-            {
-                case POIType.Camp:
-                    return TechLevel.Neolithic;
-                case POIType.Outpost:
-                case POIType.Storage:
-                    return TechLevel.Medieval;
-                case POIType.Factory:
-                case POIType.Research:
-                case POIType.City:
-                case POIType.Communication:
-                case POIType.Stronghold:
-                case POIType.MilitaryBaseLarge:
-                case POIType.MilitaryBaseSmall:
-                    return TechLevel.Industrial;
-                default:
-                    return TechLevel.Undefined;
-            }
-        }
-
     }
 }

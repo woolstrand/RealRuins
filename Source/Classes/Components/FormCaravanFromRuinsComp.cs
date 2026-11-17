@@ -13,6 +13,7 @@ namespace RealRuins {
     // * in automatic mode the reform button below is available under fire, because DialogFormCaravan_Patch turns it into
     //   regular caravan forming. Making the property return true there would also turn off ExitMapGrid (it is used only when
     //   the caravan can't be reformed), so pawns could not leave the map by walking off the edge during a fight.
+    // What each mode allows is decided in CaravanReformPolicy.
     class FormCaravanFromRuinsComp: FormCaravanComp {
         public override IEnumerable<Gizmo> GetGizmos() {
             MapParent mapParent = (MapParent)parent;
@@ -30,12 +31,10 @@ namespace RealRuins {
                         Find.WindowStack.Add(new Dialog_FormCaravan(mapParent.Map, reform: true)); //always show reform caravan
                     }
                 };
-                //Disable caravan reforming due to hostiles only in instant mode
-                if (GenHostility.AnyHostileActiveThreatToPlayer(mapParent.Map) && RealRuins_ModSettings.caravanReformType == 1) {
+                if (CaravanReformPolicy.ReformBlockedByHostiles(mapParent.Map)) {
                     reformCaravan.Disable("CommandReformCaravanFailHostilePawns".Translate());
                 }
-                //Manual mode: no reforming until the raids are over, leave via the map edge instead
-                if (RealRuins_ModSettings.caravanReformType == 2 && (parent.GetComponent<RuinedBaseComp>()?.mapExitLocked ?? false)) {
+                if (CaravanReformPolicy.ReformLocked(mapParent)) {
                     reformCaravan.Disable("RealRuins.ReformLockedManual".Translate());
                 }
                 yield return reformCaravan;

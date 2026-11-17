@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
+using RimWorld;
 using Verse;
 
 namespace RealRuins
@@ -17,22 +18,46 @@ namespace RealRuins
         public static bool preserveStandardRuins = false; //preservers standard ruins and adds real ruinson top of that.
         public static float forceMultiplier = 1.0f;
         public static float ruinsCostCap = 1.0e+9f; //absolute cost cap of each and every ruin
-        public static float diskCacheLimit = 256.0f; //256mb cache by default, it's about 2000 to 10000 blueprints in average.
+        public static float ruinsWealthPerMap = 5000; //wealth all regular ruins of one map may share; ruinsWealthPerMapUnlimited and above means no limit
+        public const float ruinsWealthPerMapUnlimited = 100000;
+        public static bool ruinsScaleWithColonyWealth = false; //wealth limits are multiplied by colony wealth / ruinsReferenceColonyWealth, see RuinsWealthLimits
+        public static float ruinsReferenceColonyWealth = 100000; //colony wealth the limits are set for
+        public static bool ruinsWealthScaleWithProximity = false; //limit scales with the proximity chunk count multiplier: more ruins near settlements, more wealth
+        public static bool ruinsWealthIgnoreStructure = true; //plain walls, doors and floors (Tile.IsBasicStructure) don't count toward the limit
+        public static bool ruinsWealthCountDamage = false; //limit counts the actual value of spawned things (damage, quality) instead of full price
+        public static float diskCacheLimit = 1024.0f; //1 GB cache by default, about 8000 blueprints
         public static bool useRuinsForcesGenerationV2 = true; // support fixed amount of troops on ruins maps
         public static int logLevel = 2; //0 = all, 1 = warnings, 2 = errors
-        public static bool useStagingEnvironment = false; // debug: use staging server instead of production
+        // debug: use staging server instead of production. Visible and saved without dev mode on purpose (playtest S-05).
+        public static bool useStagingEnvironment = false;
         public static bool debugKeepSnapshotsAfterUpload = false; // debug: keep snapshot files after upload instead of deleting
+        public static bool debugLogRuinsWealth = false; // debug: log estimated and actual wealth of spawned ruins, regardless of log level
         public static int debugTileFocusId = -1; // debug: tile ID to focus/select in world view
         public static List<string> debugExtras = new List<string>() { "BlueprintPawnDecoder" }; // debug: extra debug categories to log
         public static bool disableFriendlyRaids = false; // disable friendly raids on ruins
+        public static bool spawnRoofs = true; // if false, no ruins of any kind get roofs
         public static bool enableAbandonedRuinsFoundEvent = true; // enable/disable the abandoned ruins found event
         public static bool enableCaravanFoundRuinsEvent = true; // enable/disable the caravan spotted small ruins event
+        public static float caravanRuinsCostCap = 25000; //what the main ruin of the caravan event may be worth; caravanRuinsCostCapUnlimited and above means no limit
+        public const float caravanRuinsCostCapUnlimited = 100000;
+        public const float caravanRuinsCostCapMin = 1000; //a lower cap leaves the main ruin empty while its raiders still come
+        public static float poiRuinsCostCap = 15000; //what an abandoned POI may be worth; poiRuinsCostCapUnlimited and above means no limit
+        public const float poiRuinsCostCapUnlimited = 100000;
         public static string spawnBlacklist = ""; // newline-separated list of defs to exclude from spawning
         public static string materialBlacklist = ""; // newline-separated list of materials to exclude from spawning
         public static string fallbackMaterial = "Wood"; // material to use when blacklisted material is encountered
+        public static bool techLimitEnabled = false; // things above techLimitMaxLevel don't spawn (TechLevelFilter)
+        public static TechLevel techLimitMaxLevel = TechLevel.Medieval;
+        public static bool techLimitStrict = true; // false: things above the cap may still spawn, with a much lower chance
+        public static bool techLimitRuins = true; // regular ruins on generated maps
+        public static bool techLimitPOIs = true; // planetary POIs, including their classification
+        public static bool techLimitEvents = true; // abandoned base (event and quest) and caravan small ruins
 
         public static ScatterOptions defaultScatterOptions = new ScatterOptions();
         public static PlanetaryRuinsOptions planetaryRuinsOptions = new PlanetaryRuinsOptions();
+        // the last settings of each preset group which matched no preset, restored by its Custom button (SettingsPresets.Pack format)
+        public static string customPlayStyle = "";
+        public static string customTechLevel = "";
 
         public override void ExposeData()
         {
@@ -40,26 +65,44 @@ namespace RealRuins
             Scribe_Values.Look(ref offlineMode, "offlineMode", false, false);
             Scribe_Values.Look(ref allowDownloads, "allowDownloads", true, false);
             Scribe_Values.Look(ref allowUploads, "allowUploads", true, false);
-            Scribe_Values.Look(ref diskCacheLimit, "diskCacheLimit", 256.0f, false);
+            Scribe_Values.Look(ref diskCacheLimit, "diskCacheLimit", 1024.0f, false);
             Scribe_Values.Look(ref caravanReformType, "caravanReformType", 0, false);
             Scribe_Values.Look(ref preserveStandardRuins, "preserveStandardRuins", false, false);
             Scribe_Values.Look(ref forceMultiplier, "forceMultiplier", 1.0f, false);
             Scribe_Values.Look(ref ruinsCostCap, "ruinsCostCap", 1.0e+9f, false);
+            Scribe_Values.Look(ref ruinsWealthPerMap, "ruinsWealthPerMap", 5000, false);
+            Scribe_Values.Look(ref ruinsWealthScaleWithProximity, "ruinsWealthScaleWithProximity", false, false);
+            Scribe_Values.Look(ref ruinsWealthIgnoreStructure, "ruinsWealthIgnoreStructure", true, false);
+            Scribe_Values.Look(ref ruinsWealthCountDamage, "ruinsWealthCountDamage", false, false);
             Scribe_Values.Look(ref startWithoutRuins, "startWithoutRuins", false, false);
             Scribe_Values.Look(ref useRuinsForcesGenerationV2, "useRuinsForcesGenerationV2", true, true);
             Scribe_Values.Look(ref logLevel, "logLevel", 2, false);
             Scribe_Values.Look(ref useStagingEnvironment, "useStagingEnvironment", false, false);
             Scribe_Values.Look(ref debugKeepSnapshotsAfterUpload, "debugKeepSnapshotsAfterUpload", false, false);
+            Scribe_Values.Look(ref debugLogRuinsWealth, "debugLogRuinsWealth", false, false);
             Scribe_Values.Look(ref debugTileFocusId, "debugTileFocusId", -1, false);
             Scribe_Collections.Look(ref debugExtras, "debugExtras", LookMode.Value);
             Scribe_Values.Look(ref disableFriendlyRaids, "disableFriendlyRaids", false, false);
+            Scribe_Values.Look(ref spawnRoofs, "spawnRoofs", true, false);
             Scribe_Values.Look(ref enableAbandonedRuinsFoundEvent, "enableAbandonedRuinsFoundEvent", true, false);
             Scribe_Values.Look(ref enableCaravanFoundRuinsEvent, "enableCaravanFoundRuinsEvent", true, false);
+            Scribe_Values.Look(ref caravanRuinsCostCap, "caravanRuinsCostCap", 25000, false);
+            Scribe_Values.Look(ref poiRuinsCostCap, "poiRuinsCostCap", 15000, false);
+            Scribe_Values.Look(ref ruinsScaleWithColonyWealth, "ruinsScaleWithColonyWealth", false, false);
+            Scribe_Values.Look(ref ruinsReferenceColonyWealth, "ruinsReferenceColonyWealth", 100000, false);
             Scribe_Values.Look(ref spawnBlacklist, "spawnBlacklist", "", false);
             Scribe_Values.Look(ref materialBlacklist, "materialBlacklist", "", false);
             Scribe_Values.Look(ref fallbackMaterial, "fallbackMaterial", "Wood", false);
+            Scribe_Values.Look(ref techLimitEnabled, "techLimitEnabled", false, false);
+            Scribe_Values.Look(ref techLimitMaxLevel, "techLimitMaxLevel", TechLevel.Medieval, false);
+            Scribe_Values.Look(ref techLimitStrict, "techLimitStrict", true, false);
+            Scribe_Values.Look(ref techLimitRuins, "techLimitRuins", true, false);
+            Scribe_Values.Look(ref techLimitPOIs, "techLimitPOIs", true, false);
+            Scribe_Values.Look(ref techLimitEvents, "techLimitEvents", true, false);
             Scribe_Deep.Look(ref defaultScatterOptions, "defaultScatterOptions");
             Scribe_Deep.Look(ref planetaryRuinsOptions, "planetaryRuinsOptions");
+            Scribe_Values.Look(ref customPlayStyle, "customPlayStyle", "", false);
+            Scribe_Values.Look(ref customTechLevel, "customTechLevel", "", false);
         
             if (Scribe.mode == LoadSaveMode.LoadingVars) 
             {
@@ -84,7 +127,9 @@ namespace RealRuins
             planetaryRuinsOptions = new PlanetaryRuinsOptions();
 
             offlineMode = false;
-            diskCacheLimit = 256.0f;
+            diskCacheLimit = 1024.0f;
+            customPlayStyle = "";
+            customTechLevel = "";
             allowDownloads = true;
             allowUploads = true;
             caravanReformType = 0;
@@ -92,17 +137,33 @@ namespace RealRuins
             preserveStandardRuins = false;
             forceMultiplier = 1.0f;
             ruinsCostCap = 1.0e+9f;
+            ruinsWealthPerMap = 5000;
+            ruinsWealthScaleWithProximity = false;
+            ruinsWealthIgnoreStructure = true;
+            ruinsWealthCountDamage = false;
             logLevel = 2;
             useStagingEnvironment = false;
             debugKeepSnapshotsAfterUpload = false;
+            debugLogRuinsWealth = false;
             debugTileFocusId = -1;
             debugExtras = new List<string>() { "BlueprintPawnDecoder" };
             disableFriendlyRaids = false;
+            spawnRoofs = true;
             enableAbandonedRuinsFoundEvent = true;
             enableCaravanFoundRuinsEvent = true;
+            caravanRuinsCostCap = 25000;
+            poiRuinsCostCap = 15000;
+            ruinsScaleWithColonyWealth = false;
+            ruinsReferenceColonyWealth = 100000;
             spawnBlacklist = "";
             materialBlacklist = "";
             fallbackMaterial = "Wood";
+            techLimitEnabled = false;
+            techLimitMaxLevel = TechLevel.Medieval;
+            techLimitStrict = true;
+            techLimitRuins = true;
+            techLimitPOIs = true;
+            techLimitEvents = true;
         }
     }
 }

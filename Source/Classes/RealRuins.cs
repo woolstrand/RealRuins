@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using System.Reflection;
+using System.Reflection.Emit;
 using System.Collections.Generic;
 using System.IO;
 
@@ -75,17 +76,19 @@ namespace RealRuins
             public static void SaveGameOverSnapshot()
             {
                 if (!RealRuins_ModSettings.allowUploads && !RealRuins_ModSettings.offlineMode) return;
+                //a raided planetary POI is a player home too, but it is never uploaded (see UploadMapSnapshot), so skip it here
                 Map map = Find.CurrentMap;
-                if (map == null || !map.IsPlayerHome)
+                if (map == null || !map.IsPlayerHome || map.Parent is RealRuinsPOIWorldObject)
                 {
-                    map = Find.Maps.FirstOrDefault(m => m.IsPlayerHome);
+                    map = Find.Maps.FirstOrDefault(m => m.IsPlayerHome && !(m.Parent is RealRuinsPOIWorldObject));
                 }
                 if (map == null) return;
                 SnapshotManager.Instance.UploadMapSnapshot(map, force: true);
             }
         }
 
-        // This patch shows planetary ruins config dialog when selecting a starting site for a new game
+        // This patch shows planetary ruins config dialog when selecting a starting site for a new game.
+        // Not again once the world has POIs (coming back to this page): the "Planetary ruins" button below reopens it.
         [HarmonyPatch(typeof(Page_SelectStartingSite), "PostOpen")]
         static class Page_SelectStartingSite_PostOpen_Patch
         {
@@ -96,32 +99,74 @@ namespace RealRuins
                     return;
                 }
 
-                Find.WindowStack.Add(new Page_PlanetaryRuinsLoader());
+                if (!Page_PlanetaryRuinsLoader.AnySites())
+                {
+                    Find.WindowStack.Add(new Page_PlanetaryRuinsLoader());
+                }
                 PlanetaryRuinsInitData.shared.state = PlanetaryRuinsState.configuring;
                 PlanetaryRuinsInitData.shared.selectedMapSize = Find.GameInitData.mapSize;
             }
         }
 
-        // This patch shows planetary ruins configuration options after closing "map size" selector (if map size was changed)
-        [HarmonyPatch(typeof(Verse.Window), "Close")]
-        static class Window_Close_Patch
+        // Adds a "Planetary ruins" button between "Factions" and "Next" at the bottom of the starting site page.
+        // Vanilla lays out a fixed number of buttons (one row, or two on narrow screens): the count is raised by one and
+        // the button is drawn right after the factions button, moving "Next" one place on.
+        [HarmonyPatch(typeof(Page_SelectStartingSite), "DoCustomBottomButtons")]
+        static class Page_SelectStartingSite_DoCustomBottomButtons_Patch
         {
-            static void Postfix(Verse.Window __instance)
+            static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
             {
-                if (__instance is Dialog_AdvancedGameConfig)
-                {
-                    if (PlanetaryRuinsInitData.shared.state == PlanetaryRuinsState.configuring &&
-                        Find.GameInitData.mapSize != PlanetaryRuinsInitData.shared.selectedMapSize)
-                    {
-                        //add dialog yes/no
+                List<CodeInstruction> codes = instructions.ToList();
+                ConstructorInfo factionsDialog = AccessTools.Constructor(typeof(Dialog_FactionDuringLanding));
 
-                        Find.WindowStack.Add(new Page_PlanetaryRuinsLoader(forceCleanup: true));
-                        PlanetaryRuinsInitData.shared.state = PlanetaryRuinsState.configuring;
-                        PlanetaryRuinsInitData.shared.selectedMapSize = Find.GameInitData.mapSize;
-                    }
+                // the button count: the first ldc.i4.4 stored to a local
+                int countIndex = codes.FindIndex(c => c.opcode == OpCodes.Ldc_I4_4);
+                // after the factions button: the x += width + gap store that follows creating the factions dialog
+                int factionsIndex = codes.FindIndex(c => c.opcode == OpCodes.Newobj && Equals(c.operand, factionsDialog));
+                int xStoreIndex = factionsIndex < 0 ? -1 : codes.FindIndex(factionsIndex, c => c.IsStloc());
+                // the next button's rect starts with loading x and y
+                if (countIndex < 0 || xStoreIndex < 0 || xStoreIndex + 2 >= codes.Count
+                    || !codes[xStoreIndex + 1].IsLdloc() || !codes[xStoreIndex + 2].IsLdloc())
+                {
+                    Debug.Warning("StartGame", "Starting site page layout not recognized, no planetary ruins button");
+                    return codes;
                 }
+
+                CodeInstruction loadX = codes[xStoreIndex + 1];
+                CodeInstruction loadY = codes[xStoreIndex + 2];
+                codes.InsertRange(xStoreIndex + 1, new[] {
+                    new CodeInstruction(loadX.opcode, loadX.operand),
+                    new CodeInstruction(loadY.opcode, loadY.operand),
+                    new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(Page_SelectStartingSite_DoCustomBottomButtons_Patch), nameof(DrawButton))),
+                    new CodeInstruction(codes[xStoreIndex].opcode, codes[xStoreIndex].operand),
+                });
+                codes[countIndex] = new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(Page_SelectStartingSite_DoCustomBottomButtons_Patch), nameof(ButtonCount)))
+                    .MoveLabelsFrom(codes[countIndex]);
+                return codes;
+            }
+
+            //protected in Page
+            static readonly Vector2 ButtonSize = (Vector2)AccessTools.Field(typeof(Page), "BottomButSize").GetValue(null);
+
+            static int ButtonCount() => RealRuins_ModSettings.planetaryRuinsOptions.allowOnStart ? 5 : 4;
+
+            // returns x for the next button
+            static float DrawButton(float x, float y)
+            {
+                if (!RealRuins_ModSettings.planetaryRuinsOptions.allowOnStart) return x;
+
+                if (Widgets.ButtonText(new Rect(x, y, ButtonSize.x, ButtonSize.y), "RealRuins.PlanetaryLoader.OpenButton".Translate())
+                    && !Find.WindowStack.IsOpen<Page_PlanetaryRuinsLoader>())
+                {
+                    Find.WindowStack.Add(new Page_PlanetaryRuinsLoader());
+                }
+                return x + ButtonSize.x + 10f;
             }
         }
+
+        // No patch on closing Dialog_AdvancedGameConfig: the map size is chosen on the Create world page (1.6 and 1.7), before the
+        // world is generated again, so reopening the loader there did nothing useful (playtest RT-06). The loader opened on the
+        // starting site page already uses the new size.
 
         // This patch enables pressing "next" to select a starting site on a tile with RealRuins POI inside
         [HarmonyPatch(typeof(Page_SelectStartingSite), "CanDoNext")]
@@ -166,6 +211,16 @@ namespace RealRuins
             {
                 Debug.Log("StartGame", "DoNext prefix");
                 int selectedTile = Find.WorldInterface.SelectedTile;
+
+                // A POI chosen earlier (then "Back" and another tile, or an abandoned setup) must not apply to a different tile.
+                // The re-invocation after the dialog below keeps it: the POI is removed from the world, but its tile is the selected one.
+                RealRuinsPOIWorldObject previousPOI = PlanetaryRuinsInitData.shared.startingPOI;
+                if (previousPOI != null && previousPOI.Tile != selectedTile)
+                {
+                    Debug.Log("StartGame", "Discarding starting POI chosen for another tile");
+                    PlanetaryRuinsInitData.shared.startingPOI = null;
+                }
+
                 if (selectedTile > 0)
                 {
                     Debug.Log("StartGame", "Got selected tile");
@@ -227,7 +282,7 @@ namespace RealRuins
 
                             Find.WindowStack.Add(dialog);
                             // and we DO NOT need to call original DoNext, we will call it later when everything is settled
-                            Debug.Log("StartGame", "Skpping original");
+                            Debug.Log("StartGame", "Skipping original");
                             return false;
                         }
                         else
@@ -408,6 +463,15 @@ namespace RealRuins
                 // check if there is a starting poi in global context to start at
                 RealRuinsPOIWorldObject poi = PlanetaryRuinsInitData.shared.startingPOI;
 
+                // Only the starting map of the game it was chosen for, on its own tile: a setup abandoned without going through
+                // the main menu (e.g. Back to the main menu, then a dev quicktest) leaves a POI of another world behind.
+                if (poi != null && (!SessionState.GeneratingStartingMap || poi.Tile != tile))
+                {
+                    Debug.Log("[MapGen]", "Discarding starting POI of another game or tile ({0})", poi.Tile);
+                    PlanetaryRuinsInitData.shared.startingPOI = null;
+                    poi = null;
+                }
+
                 if (poi != null)
                 {
                     Debug.Log("[MapGen]", "Found RR POI in game start context. Generator def name was {0}, changing to {1}", mapGenerator.defName, poi.MapGeneratorDef.defName);
@@ -433,10 +497,6 @@ namespace RealRuins
             }
         }
 
-        //RimWorld caravan forming dialog has two modes: reform and form. 
-        // * "Reform" shows all items including items which are currently in colonists' inventories, BUT reformed caravan leaves instantly.
-        // * "Form" makes colonists go through the map and pick up all items, but it shows only items which are stored in home area.
-        // I need this dialog to show all items, but without instant caravan reforming. Unfortunately, it can be done either with extensive copy-pasting of original code or via method swizzlilng via reflections.
         //Manual caravan reform mode: no reforming on a pristine ruins map until the raids are over. Vanilla turns ExitMapGrid on
         //whenever reforming is not possible, so the player can still leave by walking off the map edge with what pawns carry.
         [HarmonyPatch(typeof(FormCaravanComp), nameof(FormCaravanComp.CanFormOrReformCaravanNow), MethodType.Getter)]
@@ -444,44 +504,63 @@ namespace RealRuins
         {
             static void Postfix(FormCaravanComp __instance, ref bool __result)
             {
-                if (__result && RealRuins_ModSettings.caravanReformType == 2 && (__instance.parent.GetComponent<RuinedBaseComp>()?.mapExitLocked ?? false))
+                if (__result && CaravanReformPolicy.ReformLocked(__instance.parent as MapParent))
                 {
                     __result = false;
                 }
             }
         }
 
+        //RimWorld caravan forming dialog has two modes: reform and form.
+        // * "Reform" shows all items including items which are currently in colonists' inventories, BUT reformed caravan leaves instantly.
+        // * "Form" makes colonists go through the map and pick up all items, but it shows only items which are stored in home area.
+        //On a pristine ruins map the reform button (FormCaravanFromRuinsComp) opens the reform dialog, and in automatic and manual modes
+        //this patch sends it as a regular forming caravan instead: the chosen pawns haul the loot and leave via the map edge.
+        //In automatic mode this works under fire on purpose: caravaners haul in the middle of a fight while the others defend.
+        //Neither the dialog nor the forming lord (LordJob_FormAndSendCaravan) checks for hostiles, the same as forming at home during a raid.
         [HarmonyPatch(typeof(Dialog_FormCaravan), "TryReformCaravan")]
         class DialogFormCaravan_Patch
         {
+            private static readonly AccessTools.FieldRef<Dialog_FormCaravan, Map> mapRef =
+                AccessTools.FieldRefAccess<Dialog_FormCaravan, Map>("map");
+            private static readonly AccessTools.FieldRef<Dialog_FormCaravan, PlanetTile> destinationTileRef =
+                AccessTools.FieldRefAccess<Dialog_FormCaravan, PlanetTile>("destinationTile");
+            private static readonly Func<Dialog_FormCaravan, bool> tryFormAndSendCaravan =
+                AccessTools.MethodDelegate<Func<Dialog_FormCaravan, bool>>(AccessTools.Method(typeof(Dialog_FormCaravan), "TryFormAndSendCaravan"));
+            private static readonly Action<Dialog_FormCaravan> flashMass =
+                AccessTools.MethodDelegate<Action<Dialog_FormCaravan>>(AccessTools.Method(typeof(Dialog_FormCaravan), "FlashMass"));
+
             static bool Prefix(Dialog_FormCaravan __instance, ref bool __result)
             {
-                if (RealRuins_ModSettings.caravanReformType == 1)
+                if (!CaravanReformPolicy.ReformSendsFormingCaravan)
                 {
-                    return true; //proceed with instant reforming if instant reforming is on
+                    return true; //instant reforming, vanilla (the button is disabled while hostiles are around)
                 }
-                else
-                {
-                    Map map = (Map)(typeof(Dialog_FormCaravan).GetField("map", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(__instance));
-                    if (map.Parent is AbandonedBaseWorldObject)
-                    {
-                        //if this is a pristine ruins event map, invoke regular caravan forming INSTEAD of instant caravan forming.
-                        PlanetTile destinationTile = (PlanetTile)(typeof(Dialog_FormCaravan).GetField("destinationTile", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(__instance));
-                        if (!destinationTile.Valid)
-                        {
-                            Messages.Message("MessageMustChooseRouteFirst".Translate(), MessageTypeDefOf.RejectInput, historical: false);
-                            return false;
-                        }
 
-                        bool result = (bool)(typeof(Dialog_FormCaravan).GetMethod("TryFormAndSendCaravan", BindingFlags.NonPublic | BindingFlags.Instance).Invoke(__instance, null));
-                        if (result)
-                        {
-                            __instance.Close(doCloseSound: false);
-                        }
-                        return false;
-                    }
+                Map map = mapRef(__instance);
+                if (!(map?.Parent is AbandonedBaseWorldObject))
+                {
+                    return true;
                 }
-                return true;
+
+                __result = false;
+                PlanetTile destinationTile = destinationTileRef(__instance);
+                if (!destinationTile.Valid)
+                {
+                    Messages.Message("MessageMustChooseRouteFirst".Translate(), MessageTypeDefOf.RejectInput, historical: false);
+                    return false;
+                }
+
+                //the reform dialog skips the mass check (reformed caravans get everything put into inventories), forming must not
+                if (__instance.MassUsage > __instance.MassCapacity)
+                {
+                    flashMass(__instance);
+                    Messages.Message("TooBigCaravanMassUsage".Translate(), MessageTypeDefOf.RejectInput, historical: false);
+                    return false;
+                }
+
+                __result = tryFormAndSendCaravan(__instance); //the dialog closes itself on success
+                return false;
             }
         }
 

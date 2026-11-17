@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -86,7 +86,7 @@ namespace RealRuins
         public override void Generate(Map map, GenStepParams parms) {
             //skip generation due to low blueprints count
             if (SnapshotStoreManager.Instance.StoredSnapshotsCount() < 10) {
-                Debug.Warning(Debug.Scatter, "Skipping ruins gerenation due to low blueprints count.");
+                Debug.Warning(Debug.Scatter, "Skipping ruins generation due to low blueprints count.");
                 return;
             }
 
@@ -115,6 +115,8 @@ namespace RealRuins
             if (map.generatorDef?.genSteps?.Any(step => step.genStep is GenStep_ScatterPOIRuins) == true) return;
 
             if (!map.TileInfo.WaterCovered) {
+                long started = CostTiming.Now;
+                long costTicks = CostTiming.ticks;
 
                 float densityMultiplier = 1.0f;
                 float scaleMultiplier = 1.0f;
@@ -158,6 +160,17 @@ namespace RealRuins
                 }
 
                 CoverageMap coverageMap = CoverageMap.EmptyCoverageMap(map);
+                float wealthLimit = RuinsWealthLimits.For(RuinsKind.Regular);
+                //same factor as the chunk count, so each chunk keeps about the same share near and far from settlements
+                bool hasWealthLimit = wealthLimit < RuinsWealthLimits.NoLimit;
+                if (hasWealthLimit && RealRuins_ModSettings.ruinsWealthScaleWithProximity && options.enableProximity) wealthLimit *= countMultiplier;
+                RuinsWealthBudget wealthBudget = hasWealthLimit ? new RuinsWealthBudget(wealthLimit, num) : null;
+                List<RuinsWealthReport> wealthReports = new List<RuinsWealthReport>();
+                //Animal or mechanoid inhabitants only on settled maps (player homes), and not on the starting one: a fresh colony
+                //can't handle them next door. Everywhere else (caravan encounters, quest and ruins sites, enemy bases) they would
+                //block leaving: vanilla refuses to reform a caravan while any hostile is on the map, dormant and fogged ones included
+                //(FormCaravanComp.GetGizmos), and they would also keep vanilla from declaring an ambush won (CaravansBattlefield).
+                bool allowInhabitants = map.IsPlayerHome && !SessionState.GeneratingStartingMap;
 
                 for (int i = 0; i < num; i++) {
                     try {
@@ -165,7 +178,7 @@ namespace RealRuins
                         ResolveParams rp = default(ResolveParams);
 
                         List<AbstractDefenderForcesGenerator> generators = new List<AbstractDefenderForcesGenerator>();
-                        if (Rand.Chance(options.hostileChance)) {
+                        if (allowInhabitants && Rand.Chance(options.hostileChance)) {
                             if (Rand.Chance(0.8f)) {
                                 generators = new List<AbstractDefenderForcesGenerator> { new AnimalInhabitantsForcesGenerator() };
                             } else {
@@ -176,11 +189,26 @@ namespace RealRuins
                         var center = CellFinder.RandomNotEdgeCell(10, map);
                         rp.rect = new CellRect(center.x, center.z, 1, 1); //after generation will be extended to a real size
                         ScatterContext context = new ScatterContext(options, settings);
-                        RuinsScatterer.Scatter(rp, context, coverageMap, generators);
+                        if (wealthBudget != null) context.wealthAllowance = wealthBudget.NextAllowance();
+                        try {
+                            RuinsScatterer.Scatter(rp, context, coverageMap, generators);
+                        } finally {
+                            wealthBudget?.Spend(context.state.transferredCost);
+                        }
                         RoofSupportUtility.RemoveUnsupportedRoofs(map, context.state.placementRect.ExpandedBy(1));
+                        if (context.state.wealthReport != null) wealthReports.Add(context.state.wealthReport);
                     } catch {
                         Debug.Warning(Debug.Scatter, "Could not scatter a single ruins chunk.");
                     }
+                }
+
+                if (RuinsWealthReport.Enabled) {
+                    var timing = new MapWealthSample {
+                        scatterMs = CostTiming.Ms(CostTiming.Now - started),
+                        costMs = CostTiming.Ms(CostTiming.ticks - costTicks),
+                    };
+                    RuinsWealthReport.LogMapSummary(map, wealthReports, string.Format("site=GenericRuins planned={0} dist={1} scav={2:F2} radius={3}-{4} limit={7:F0} scatterMs={5:F0} costMs={6:F0}",
+                        num, distanceToSettlement, options.scavengingMultiplier, options.minRadius, options.maxRadius, timing.scatterMs, timing.costMs, wealthLimit), timing);
                 }
 
                 if (shouldUnpause) {
@@ -221,7 +249,7 @@ namespace RealRuins
         }
     }
 
-    // Single medium-sized ruin spotted by a caravan (CaravanSmallRuinsWorldObject). Random blueprint, sometimes a raid party.
+    // Single medium-sized ruin spotted by a caravan (CaravanSmallRuinsWorldObject). Random blueprint, raiders in proportion to its value.
     class GenStep_ScatterMediumRealRuins : GenStep_RealRuinsSite {
 
         public override int SeedPart {
@@ -237,27 +265,9 @@ namespace RealRuins
                 faction = Find.FactionManager.OfAncientsHostile,
                 rect = new CellRect(0, 0, map.Size.x, map.Size.z),
                 ensureCanHoldRoof = false,
+                generators = new List<AbstractDefenderForcesGenerator> { new CaravanRuinsForcesGenerator() },
             };
             return plan;
-        }
-
-        // Sometimes a raid party of a random enemy faction is already there.
-        protected override void PushExtraSymbols(Map map, ResolveParams siteParams, SitePlan plan) {
-            if (!Rand.Chance(0.5f * Find.Storyteller.difficulty.threatScale)) return;
-
-            float pointsCost = Math.Abs(Rand.Gaussian()) * 500 * Find.Storyteller.difficulty.threatScale;
-
-            ResolveParams rp = siteParams; //copy!
-            rp.faction = Find.FactionManager.RandomEnemyFaction();
-            rp.singlePawnLord = LordMaker.MakeNewLord(rp.faction, new LordJob_AssaultColony(rp.faction, false, false, true, true), map, null);
-            rp.pawnGroupKindDef = PawnGroupKindDefOf.Settlement;
-            rp.pawnGroupMakerParams = new PawnGroupMakerParms {
-                tile = map.Tile,
-                faction = rp.faction,
-                points = pointsCost,
-            };
-
-            BaseGen.symbolStack.Push("pawnGroup", rp);
         }
     }
     

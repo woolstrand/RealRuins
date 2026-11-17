@@ -68,6 +68,9 @@ namespace RealRuins {
             PushExtraSymbols(map, rp, plan);
 
             RuinsScatterer.Scatter(rp, context, null, plan.generators);
+            if (context.state.wealthReport != null) {
+                RuinsWealthReport.LogMapSummary(map, new List<RuinsWealthReport> { context.state.wealthReport }, "site=" + GetType().Name);
+            }
 
             BaseGen.symbolStack.Push("chargeBatteries", rp);
             if (plan.ensureCanHoldRoof) {

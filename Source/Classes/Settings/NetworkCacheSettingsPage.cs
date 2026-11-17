@@ -10,10 +10,6 @@ namespace RealRuins.Settings
     {
         public override string TabLabel => "RealRuins.CacheSettings.TabCaption".Translate();
 
-        public override float ContentHeight => contentHeight;
-
-        private float contentHeight = 525f;
-
         // Planetary folders are scanned on disk only when the cache has changed since the last scan (at most once per
         // RescanInterval, so downloads running in the background don't cause a rescan every frame), and whenever the page
         // is shown again after not being drawn for a while (the files could have been touched from outside the game).
@@ -27,167 +23,87 @@ namespace RealRuins.Settings
         private const float ColumnWidth = 95f;
         private const float ClearButtonWidth = 80f;
 
-        public override void Draw(Rect rect)
+        protected override void DrawContents(Listing_Standard listing)
         {
-            Listing_Standard listing = new Listing_Standard();
-            
-            float contentWidth = rect.width;
-            Rect contentRect = rect;
-            contentRect.width = contentWidth;
-            
-            // the planetary table grows the page, so it must not wrap into a second (invisible) column
-            listing.maxOneColumn = true;
-            listing.Begin(contentRect);
+            SettingsControls.PageHeader(listing, "RealRuins.CacheSettings.Caption", "RealRuins.CacheSettings.Description");
 
-            GameFont font = Text.Font;
-            Text.Font = GameFont.Medium;
-            listing.Label("RealRuins.CacheSettings.Caption".Translate());
-            Text.Font = font;
-            
-            float descHeight = Text.CalcHeight("RealRuins.CacheSettings.Description".Translate(), rect.width);
-            Rect descRect = listing.GetRect(descHeight);
-            string description = "RealRuins.CacheSettings.Description".Translate();
-            Widgets.Label(descRect, description);
-            listing.Gap(5f);
-            
-            listing.GapLine();
+            if (RealRuins_ModSettings.useStagingEnvironment)
+            {
+                GUI.color = new Color(1f, 0.3f, 0.3f);
+                listing.Label("RealRuins.CacheSettings.StagingWarning".Translate());
+                GUI.color = Color.white;
+            }
 
-            listing.Label(
-                "RealRuins_ModOptions_CurrentCacheSize".Translate() + " " +
+            SettingsControls.ValueRow(listing, "RealRuins_ModOptions_CurrentCacheSize".Translate(),
                 SnapshotStoreManager.Instance.TotalSize() / (1024 * 1024) + " MB");
-
-            listing.Label(
-                "RealRuins_ModOptions_CurrentCacheCount".Translate() + " " +
-                SnapshotStoreManager.Instance.StoredSnapshotsCount());
+            SettingsControls.ValueRow(listing, "RealRuins_ModOptions_CurrentCacheCount".Translate(),
+                SnapshotStoreManager.Instance.StoredSnapshotsCount().ToString());
 
             string cacheLimitStr = RealRuins_ModSettings.diskCacheLimit < 0 ? (string)"RealRuins_ModOptions_NoLimit".Translate() : (((int)(RealRuins_ModSettings.diskCacheLimit)).ToString() + " MB");
-            listing.Label(
-                "RealRuins_ModOptions_CacheSize".Translate() + "  " + cacheLimitStr,
-                -1f,
+            float sliderValue = SettingsControls.SliderRow(listing,
+                "RealRuins_ModOptions_CacheSize".Translate().ToString().TrimEnd() + " " + cacheLimitStr,
+                RealRuins_ModSettings.diskCacheLimit < 0 ? 4096.0f : RealRuins_ModSettings.diskCacheLimit,
+                20.0f, 4096.0f,
                 "RealRuins_ModOptions_CacheSizeTooltip".Translate());
+            RealRuins_ModSettings.diskCacheLimit = sliderValue >= 4095.0f ? -1f : sliderValue;
 
-            listing.Gap(10f);
+            SettingsControls.Section(listing, "RealRuins.CacheSettings.NetworkSection");
 
-            float sliderValue = listing.Slider(
-                RealRuins_ModSettings.diskCacheLimit,
-                20.0f,
-                4096.0f);
-            
-            if (sliderValue >= 4095.0f)
-            {
-                RealRuins_ModSettings.diskCacheLimit = -1f;
-            }
-            else
-            {
-                RealRuins_ModSettings.diskCacheLimit = sliderValue;
-            }
-
-            listing.Gap(15f);
-
-            listing.CheckboxLabeled(
-                "RealRuins_ModOptions_OfflineMode".Translate(),
-                ref RealRuins_ModSettings.offlineMode,
+            // Switching offline mode on deletes every downloaded blueprint once the settings are saved
+            // (RealRuins_Mod.WriteSettings -> CheckCacheContents), so it is confirmed first. Switching it off needs no confirmation.
+            bool offlineMode = RealRuins_ModSettings.offlineMode;
+            SettingsControls.Checkbox(listing, "RealRuins_ModOptions_OfflineMode", ref offlineMode,
                 "RealRuins_ModOptions_OfflineModeTooltip".Translate());
-
-            listing.CheckboxLabeled(
-                "RealRuins_ModOptions_AllowDownloads".Translate(),
-                ref RealRuins_ModSettings.allowDownloads,
-                "RealRuins_ModOptions_AllowDownloadsTooltip".Translate());
-
-            listing.CheckboxLabeled(
-                "RealRuins_ModOptions_AllowUploads".Translate(),
-                ref RealRuins_ModSettings.allowUploads,
-                "RealRuins_ModOptions_AllowUploadsTooltip".Translate());
-
-            listing.Gap(15f);
-
-            // Three-column button layout
-            Rect buttonRowRect = listing.GetRect(100f);
-            float colWidth = buttonRowRect.width / 3f;
-
-            // Column 1: Download buttons (50 and 500)
-            Rect col1Rect = new Rect(buttonRowRect.x, buttonRowRect.y, colWidth - 5f, buttonRowRect.height);
-            Rect download50Rect = new Rect(col1Rect.x, col1Rect.y, col1Rect.width, 40f);
-            if (Widgets.ButtonText(download50Rect, "RealRuins_ModOptions_DownloadMore".Translate() + " (50)"))
-            {
-                SnapshotManager.Instance.LoadSomeSnapshots(5);
-            }
-
-            Rect download500Rect = new Rect(col1Rect.x, col1Rect.y + 45f, col1Rect.width, 40f);
-            if (Widgets.ButtonText(download500Rect, "RealRuins_ModOptions_DownloadMore".Translate() + " (500)"))
-            {
-                for (int i = 0; i < 10; i++)
-                {
-                    SnapshotManager.Instance.LoadSomeSnapshots();
-                }
-            }
-
-            // Column 2: Clear cache (double height, red)
-            Rect col2Rect = new Rect(buttonRowRect.x + colWidth, buttonRowRect.y, colWidth - 5f, buttonRowRect.height);
-            Rect clearCacheRect = new Rect(col2Rect.x, col2Rect.y, col2Rect.width, 85f);
-            Color prevColor = GUI.color;
-            GUI.color = new Color(1f, 0.3f, 0.3f);
-            if (Widgets.ButtonText(clearCacheRect, "RealRuins_ModOptions_RemoveAll".Translate()))
+            if (offlineMode && !RealRuins_ModSettings.offlineMode)
             {
                 Find.WindowStack.Add(Dialog_MessageBox.CreateConfirmation(
-                    "RealRuins_ModOptions_ClearCacheConfirm".Translate(),
-                    () => SnapshotStoreManager.Instance.ClearCache(),
+                    "RealRuins_ModOptions_OfflineModeConfirm".Translate(),
+                    () => RealRuins_ModSettings.offlineMode = true,
                     true,
                     null));
             }
-            GUI.color = prevColor;
-
-            // Column 3: Manual upload (double height, green)
-            Rect col3Rect = new Rect(buttonRowRect.x + colWidth * 2f, buttonRowRect.y, colWidth - 5f, buttonRowRect.height);
-            Rect uploadRect = new Rect(col3Rect.x, col3Rect.y, col3Rect.width, 85f);
-            GUI.color = new Color(0.3f, 0.8f, 0.3f);
-            if (Widgets.ButtonText(uploadRect, "RealRuins.DebugSettings.ManualUpload".Translate()))
+            else if (!offlineMode)
             {
-                if (Find.CurrentMap != null)
-                {
-                    SnapshotManager.Instance.UploadCurrentMapSnapshot();
-                    Messages.Message(
-                        "RealRuins.DebugSettings.UploadTriggered".Translate(),
-                        MessageTypeDefOf.NeutralEvent);
-                }
-                else
-                {
-                    Messages.Message(
-                        "RealRuins.DebugSettings.NoMap".Translate(),
-                        MessageTypeDefOf.RejectInput);
-                }
-            }
-            GUI.color = prevColor;
-
-            TooltipHandler.TipRegion(download50Rect, "RealRuins_ModOptions_DownloadMoreTooltip".Translate());
-            TooltipHandler.TipRegion(clearCacheRect, "RealRuins_ModOptions_CacheSizeTooltip".Translate());
-            TooltipHandler.TipRegion(uploadRect, "RealRuins.DebugSettings.ManualUploadTooltip".Translate());
-
-            listing.Gap(15f);
-
-            // Export / Import settings buttons
-            Rect importExportRect = listing.GetRect(30f);
-            float halfW = (importExportRect.width - 10f) / 2f;
-            Rect exportRect = new Rect(importExportRect.x, importExportRect.y, halfW, importExportRect.height);
-            Rect importRect = new Rect(importExportRect.x + halfW + 10f, importExportRect.y, halfW, importExportRect.height);
-
-            if (Widgets.ButtonText(exportRect, "RealRuins.Settings.ExportSettings".Translate()))
-            {
-                Find.WindowStack.Add(new Dialog_ImportExportSettings(true));
+                RealRuins_ModSettings.offlineMode = false;
             }
 
-            if (Widgets.ButtonText(importRect, "RealRuins.Settings.ImportSettings".Translate()))
-            {
-                Find.WindowStack.Add(new Dialog_ImportExportSettings(false));
-            }
+            SettingsControls.Checkbox(listing, "RealRuins_ModOptions_AllowDownloads", ref RealRuins_ModSettings.allowDownloads,
+                "RealRuins_ModOptions_AllowDownloadsTooltip".Translate());
+            SettingsControls.Checkbox(listing, "RealRuins_ModOptions_AllowUploads", ref RealRuins_ModSettings.allowUploads,
+                "RealRuins_ModOptions_AllowUploadsTooltip".Translate());
 
-            listing.Gap(15f);
-            listing.GapLine();
+            listing.Gap(8f);
+
+            string downloadTooltip = "RealRuins_ModOptions_DownloadMoreTooltip".Translate();
+            int clicked = SettingsControls.ButtonRow(listing,
+                new string[] {
+                    "RealRuins_ModOptions_DownloadMore".Translate() + " (50)",
+                    "RealRuins_ModOptions_DownloadMore".Translate() + " (500)",
+                    "RealRuins_ModOptions_RemoveAll".Translate()
+                },
+                new Color?[] { null, null, SettingsControls.DangerColor },
+                new string[] { downloadTooltip, downloadTooltip, "RealRuins_ModOptions_CacheSizeTooltip".Translate() });
+            switch (clicked)
+            {
+                case 0:
+                    SnapshotManager.Instance.LoadSomeSnapshots(5);
+                    break;
+                case 1:
+                    for (int i = 0; i < 10; i++)
+                    {
+                        SnapshotManager.Instance.LoadSomeSnapshots();
+                    }
+                    break;
+                case 2:
+                    Find.WindowStack.Add(Dialog_MessageBox.CreateConfirmation(
+                        ClearConfirmText("RealRuins_ModOptions_ClearCacheConfirm".Translate(), LoadedWorldHasPlanetaryBlueprints()),
+                        () => SnapshotStoreManager.Instance.ClearCache(),
+                        true,
+                        null));
+                    break;
+            }
 
             DrawPlanetaryCache(listing);
-
-            contentHeight = listing.CurHeight;
-            listing.End();
         }
 
         private void RefreshPlanetaryFoldersIfNeeded()
@@ -211,12 +127,9 @@ namespace RealRuins.Settings
         {
             RefreshPlanetaryFoldersIfNeeded();
 
-            GameFont font = Text.Font;
-            Text.Font = GameFont.Medium;
-            listing.Label("RealRuins.CacheSettings.PlanetaryCaption".Translate());
-            Text.Font = font;
-            listing.Label("RealRuins.CacheSettings.PlanetaryDescription".Translate());
-            listing.Gap(5f);
+            SettingsControls.Section(listing, "RealRuins.CacheSettings.PlanetaryCaption");
+            SettingsControls.Description(listing, "RealRuins.CacheSettings.PlanetaryDescription".Translate());
+            listing.Gap(8f);
 
             if (planetaryFolders.Count == 0)
             {
@@ -260,7 +173,8 @@ namespace RealRuins.Settings
                 {
                     string folderName = folder.folderName;
                     Find.WindowStack.Add(Dialog_MessageBox.CreateConfirmation(
-                        "RealRuins.CacheSettings.ClearFolderConfirm".Translate(folder.seed, folder.blueprintCount, FormatSize(folder.totalSize)),
+                        ClearConfirmText("RealRuins.CacheSettings.ClearFolderConfirm".Translate(folder.seed, folder.blueprintCount, FormatSize(folder.totalSize)),
+                            IsLoadedWorldFolder(folderName)),
                         () => SnapshotStoreManager.Instance.ClearPlanetaryCacheFolder(folderName),
                         true,
                         null));
@@ -268,6 +182,25 @@ namespace RealRuins.Settings
             }
 
             Text.Anchor = anchor;
+        }
+
+        // Planetary blueprints are not downloaded again while playing (only when a save is loaded, see LoadGame_Patch), so clearing
+        // the folder of the world being played leaves its unvisited ruins empty. The confirmation says so in red.
+        private static bool IsLoadedWorldFolder(string folderName)
+        {
+            return Current.ProgramState == ProgramState.Playing && Find.World != null &&
+                folderName == SnapshotStoreManager.CurrentGamePath();
+        }
+
+        private bool LoadedWorldHasPlanetaryBlueprints()
+        {
+            return planetaryFolders != null && planetaryFolders.Exists(f => IsLoadedWorldFolder(f.folderName));
+        }
+
+        private static string ClearConfirmText(string text, bool loadedWorld)
+        {
+            if (!loadedWorld) return text;
+            return text + "\n\n" + "RealRuins.CacheSettings.ClearLoadedWorldWarning".Translate().Colorize(ColorLibrary.RedReadable);
         }
 
         // Lays out one table line and returns the rect left for the clear button.

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<LanguageData>
+  <!-- Toggle labels, tooltips and discovery messages are in the RealRuins.RuinsScanDef defs -->
+  <RealRuins_RuinsScan_Enabled>Active: {0}</RealRuins_RuinsScan_Enabled>
+  <RealRuins_RuinsScan_Locating>Locating discovered ruins</RealRuins_RuinsScan_Locating>
+  <RealRuins_RuinsScan_NotEnoughBlueprints>Not enough ruins blueprints downloaded yet</RealRuins_RuinsScan_NotEnoughBlueprints>
+  <RealRuins_RuinsScan_SkillTooLow>Requires Intellectual {0}</RealRuins_RuinsScan_SkillTooLow>
+  <RealRuins_RuinsScan_IncapableOfIntellectual>{PAWN_nameDef} is incapable of intellectual work</RealRuins_RuinsScan_IncapableOfIntellectual>
+  <RealRuins_RuinsScan_SignalLost>The trail to the ruins went cold before their location could be pinned down.</RealRuins_RuinsScan_SignalLost>
+  <RealRuins_RuinsScan_UnknownScanner>your researcher</RealRuins_RuinsScan_UnknownScanner>
+  <RealRuins_RuinsScan_UnknownBuilding>workstation</RealRuins_RuinsScan_UnknownBuilding>
+</LanguageData>

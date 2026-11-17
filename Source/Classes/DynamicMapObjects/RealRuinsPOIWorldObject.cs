@@ -10,7 +10,7 @@ using Verse;
 
 namespace RealRuins {
     [StaticConstructorOnStartup]
-    class RealRuinsPOIWorldObject : MapParent {
+    class RealRuinsPOIWorldObject : MapParent, IDevExplorableSite {
 
         public override Texture2D ExpandingIcon {
             get {
@@ -34,7 +34,10 @@ namespace RealRuins {
                     case POIType.City:
                     case POIType.Stronghold:
                     case POIType.MilitaryBaseLarge:
+                    case POIType.Castle:
                         return "World/WorldObjects/DefaultSettlement";
+                    case POIType.Village:
+                    case POIType.Workshop:
                     case POIType.Research:
                     case POIType.Storage:
                     case POIType.Factory:
@@ -42,6 +45,7 @@ namespace RealRuins {
                         return "World/WorldObjects/TribalSettlement";
                     case POIType.Camp:
                     case POIType.Communication:
+                    case POIType.Shipwreck:
                         return "World/WorldObjects/Sites/GenericSite";
                     case POIType.MilitaryBaseSmall:
                     case POIType.Outpost:
@@ -104,6 +108,35 @@ namespace RealRuins {
             if (HasMap && Find.WorldSelector.SingleSelectedObject == this) {
                 yield return SettleInExistingMapUtility.SettleCommand(Map, requiresNoEnemies: true);
             }
+            foreach (Gizmo gizmo in DevSiteTools.Gizmos(this)) {
+                yield return gizmo;
+            }
+        }
+
+        // Dev Explore / Reset (DevSiteTools): owner and the owner's goodwill, which entering changes
+        private class DevState {
+            public Faction faction;
+            public int goodwill;
+        }
+
+        public CaravanArrivalAction DevArrivalAction() => new CaravanArrivalAction_VisitRealRuinsPOI(this);
+
+        public object DevSaveState() {
+            return new DevState { faction = Faction, goodwill = Faction != null && !Faction.IsPlayer ? Faction.PlayerGoodwill : 0 };
+        }
+
+        public void DevRestoreState(object saved) {
+            DevState state = saved as DevState;
+            //without a saved state: the owner before arrival if the player has taken the site since
+            Faction faction = state != null ? state.faction : (Faction == Faction.OfPlayer ? originalFaction : Faction);
+            if (Faction != faction) SetFaction(faction);
+            if (state != null && faction != null && !faction.IsPlayer) {
+                int change = state.goodwill - faction.PlayerGoodwill;
+                if (change != 0) faction.TryAffectGoodwillWith(Faction.OfPlayer, change, canSendMessage: false, canSendHostilityLetter: false);
+            }
+            //removing the map started the cooldown before the site can be entered again
+            GetComponent<EnterCooldownComp>()?.Stop();
+            cachedMat = null;
         }
 
         public override void PostMapGenerate() {
@@ -185,12 +218,9 @@ namespace RealRuins {
             return false;
         }
 
+        //Same units as approximateSnapshotCost (the game's market value), which the difference is compared with
         private float CurrentMapWealth() {
-            float totalCost = 0;
-            foreach (Thing thing in Map.listerThings.AllThings) {
-                totalCost += thing.def.ThingComponentsMarketCost(thing.Stuff) * thing.stackCount;
-            }
-            return totalCost;
+            return WealthUtility.MapWealth(Map);
         }
 
         public override string GetInspectString() {
@@ -208,14 +238,7 @@ namespace RealRuins {
 
                     if ((POIType)comp.poiType != POIType.Ruins) {
 
-                        int[] costThresholds = { 0, 10000, 100000, 1000000, 10000000 };
-                        string wealthDesc = null;
-                        if (comp.approximateSnapshotCost > costThresholds[costThresholds.Length - 1]) wealthDesc = ("RealRuins.RuinsWealth." + (costThresholds.Length - 1)).Translate();
-                        for (int i = 0; i < costThresholds.Length - 1; i++) {
-                            if (comp.approximateSnapshotCost > costThresholds[i] && comp.approximateSnapshotCost <= costThresholds[i + 1]) {
-                                wealthDesc = ("RealRuins.RuinsWealth." + i.ToString()).Translate();
-                            }
-                        }
+                        string wealthDesc = WealthUtility.WealthDescription(comp.approximateSnapshotCost);
                         if (wealthDesc != null) {
                             builder.Append("RealRuins.RuinsWealth".Translate());
                             builder.AppendLine(wealthDesc);

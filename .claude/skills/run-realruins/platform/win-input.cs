@@ -107,6 +107,23 @@ static class Input {
                 }
                 break;
             }
+            case "drag": {
+                IntPtr h = Window(a[1]);
+                Rectangle c = Client(h);
+                double s = Scale(c, int.Parse(a[2]));
+                int x1 = c.X + (int)Math.Round(double.Parse(a[3]) * s), y1 = c.Y + (int)Math.Round(double.Parse(a[4]) * s);
+                int x2 = c.X + (int)Math.Round(double.Parse(a[5]) * s), y2 = c.Y + (int)Math.Round(double.Parse(a[6]) * s);
+                SetCursorPos(x1, y1);
+                Thread.Sleep(100);
+                mouse_event(LDOWN, 0, 0, 0, IntPtr.Zero);
+                for (int i = 1; i <= 10; i++) {
+                    Thread.Sleep(30);
+                    SetCursorPos(x1 + (x2 - x1) * i / 10, y1 + (y2 - y1) * i / 10);
+                }
+                Thread.Sleep(100);
+                mouse_event(LUP, 0, 0, 0, IntPtr.Zero);
+                break;
+            }
             case "scroll":
                 mouse_event(WHEEL, 0, 0, int.Parse(a[1]) * 120, IntPtr.Zero);
                 Thread.Sleep(30);

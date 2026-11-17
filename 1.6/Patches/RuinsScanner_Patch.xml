@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Patch>
+	<!-- Buildings a pawn can man to search for ruins (RealRuins.RuinsScanDef). They need an interaction cell. -->
+	<Operation Class="PatchOperationAdd">
+		<xpath>Defs/ThingDef[defName = "SimpleResearchBench" or defName = "HiTechResearchBench"]/comps</xpath>
+		<value>
+			<li Class="RealRuins.CompProperties_RuinsScanner">
+				<scanDef>RealRuins_RuinsScan_Records</scanDef>
+			</li>
+		</value>
+	</Operation>
+	<Operation Class="PatchOperationAdd">
+		<xpath>Defs/ThingDef[defName = "CommsConsole" or defName = "LongRangeMineralScanner"]/comps</xpath>
+		<value>
+			<li Class="RealRuins.CompProperties_RuinsScanner">
+				<scanDef>RealRuins_RuinsScan_Radio</scanDef>
+			</li>
+		</value>
+	</Operation>
+</Patch>

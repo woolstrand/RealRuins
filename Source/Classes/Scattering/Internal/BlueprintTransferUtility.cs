@@ -206,7 +206,7 @@ namespace RealRuins
                 if (itemTile.defName.ToLower() == "pawn")
                 {
                     Debug.Log(Debug.BlueprintTransfer, "Now need to instantiate pawn at {0}, {1}", x, z);
-                    PawnRestoreUtility restoreUtil = new PawnRestoreUtility(blueprint.dateShift, rp.faction);
+                    PawnRestoreUtility restoreUtil = new PawnRestoreUtility(blueprint.dateShift, rp.faction, options);
                     return restoreUtil.MakePawnWithRawXml(itemTile.itemXml);
                 }
 
@@ -326,6 +326,12 @@ namespace RealRuins
                     //a minified thing is drawn with its inner thing's graphic; some modded buildings can't make one while unspawned
                     if (thing is MinifiedThing minified)
                     {
+                        //the blueprint may come from a game where the inner thing was minifiable (other mods, other versions); here it may be not
+                        if (!minified.InnerThing.def.Minifiable)
+                        {
+                            Debug.Extra(Debug.BlueprintTransfer, "Skipping minified {0}: it is not minifiable in this game", minified.InnerThing.def.defName);
+                            return null;
+                        }
                         //the inner thing was never spawned, so comps set up in PostSpawnSetup are empty (e.g. a moisture pump's power comp,
                         //and then it works on a null map). A crate's contents are inert anyway; installing it spawns the inner thing normally.
                         minified.GetDirectlyHeldThings().dontTickContents = true;
@@ -346,7 +352,11 @@ namespace RealRuins
 
                     if (thingDef.CanHaveFaction)
                     {
-                        if (thingDef.IsDoor || thingDef.IsWall)
+                        if (options.claimEverything)
+                        {
+                            thing.SetFaction(rp.faction);
+                        }
+                        else if (thingDef.IsDoor || thingDef.IsWall)
                         {
                             if (Rand.Chance(options.doorOwnershipProbability))
                             {
@@ -415,8 +425,8 @@ namespace RealRuins
                     }
                     thing.HitPoints = thing.MaxHitPoints - Rand.Range(0, maxDeltaHP);
 
-                    //Forbid haulable stuff
-                    if (thing.def.EverHaulable)
+                    //Forbid haulable stuff, unless it is the player's own base now
+                    if (thing.def.EverHaulable && !options.claimEverything)
                     {
                         thing.SetForbidden(true, false);
                     }
@@ -590,7 +600,7 @@ namespace RealRuins
 
                 Debug.Extra(Debug.BlueprintTransfer, "Finished check, recalculating stats");
                 blueprint.UpdateBlueprintStats(true);
-                Debug.Log(Debug.BlueprintTransfer, "Blueprint transfer utility did remove {0}/{1} incompatible items. New cost: {2}", removedItems, totalItems, blueprint.totalCost);
+                Debug.Log(Debug.BlueprintTransfer, "Blueprint transfer utility removed {0}/{1} incompatible items. New cost: {2}", removedItems, totalItems, blueprint.totalCost);
             }
             catch (Exception e)
             {
@@ -624,6 +634,7 @@ namespace RealRuins
         {
             //Planting blueprint
             float totalCost = 0;
+            float limitedCost = 0; //what counts toward the map's ruins wealth limit
             int transferredTerrains = 0;
             int transferredTiles = 0;
             int totalTerrains = 0;
@@ -632,6 +643,7 @@ namespace RealRuins
 
             //report actual placement rect using width and height
             context.state.placementRect = new CellRect(mapOriginX, mapOriginZ, blueprint.width, blueprint.height);
+            RuinsWealthReport wealthReport = RuinsWealthReport.Enabled ? new RuinsWealthReport() : null;
 
             Debug.Extra(Debug.BlueprintTransfer, "Clearing map...");
 
@@ -704,13 +716,15 @@ namespace RealRuins
                             {
                                 map.terrainGrid.SetTerrain(mapLocation, blueprintTerrain);
                                 totalCost += blueprint.terrainMap[x, z].cost;
+                                limitedCost += WealthLimitCost(blueprint.terrainMap[x, z], null);
+                                wealthReport?.AddTerrain(blueprintTerrain, blueprint.terrainMap[x, z].cost);
                                 transferredTerrains++;
                             }
                         }
 
 
-                        //construct roof everywhere where it exists in blueprint (for ruins ignoring outside: room with index 1).
-                        if (blueprint.roofMap[x, z] == true && (options.overwritesEverything || blueprint.wallMap[x, z] != 1))
+                        //construct roof everywhere where it exists in blueprint (for ruins ignoring outside: room with index 1), unless roofs are disabled in settings.
+                        if (context.settings.spawnRoofs && blueprint.roofMap[x, z] == true && (options.overwritesEverything || blueprint.wallMap[x, z] != 1))
                         {
                             // Only set roof if terrain allows it (not over water, etc.)
                             TerrainDef terrainAtLocation = map.terrainGrid?.TerrainAt(mapLocation);
@@ -792,7 +806,7 @@ namespace RealRuins
                                         }
                                         catch (Exception)
                                         {
-                                            Debug.Log(Debug.BlueprintTransfer, "Exception while tried to perform tick for {0} of cost {1}, retrhrowing...", thing.def.defName, itemTile.cost);
+                                            Debug.Log(Debug.BlueprintTransfer, "Exception while trying to perform tick for {0} of cost {1}, rethrowing...", thing.def.defName, itemTile.cost);
                                             thing.Destroy();
                                             throw;
                                         }
@@ -822,6 +836,8 @@ namespace RealRuins
 
                                     transferredTiles++;
                                     totalCost += itemTile.cost;
+                                    limitedCost += WealthLimitCost(itemTile, thing);
+                                    wealthReport?.AddThing(thing, itemTile.cost);
                                 }
                                 catch (Exception e)
                                 {
@@ -841,7 +857,22 @@ namespace RealRuins
                 RestoreDefencesAndPower();
             }
             context.state.uncoveredCost = totalCost;
-            Debug.Log(Debug.BlueprintTransfer, "Transferred blueprint of size {0}x{1}, age {2}, total cost of approximately {3}. Items: {4}/{5}, terrains: {6}/{7}", blueprint.width, blueprint.height, -blueprint.dateShift, totalCost, transferredTiles, totalItems, transferredTerrains, totalTerrains);
+            context.state.transferredCost = limitedCost;
+            if (wealthReport != null) {
+                wealthReport.estimate = totalCost;
+                wealthReport.counted = limitedCost;
+                context.state.wealthReport = wealthReport;
+            }
+            Debug.Log(Debug.BlueprintTransfer, "Transferred blueprint of size {0}x{1}, age {2}, total cost of approximately {3:F0}. Items: {4}/{5}, terrains: {6}/{7}", blueprint.width, blueprint.height, -blueprint.dateShift, totalCost, transferredTiles, totalItems, transferredTerrains, totalTerrains);
+        }
+
+        //What a transferred tile counts toward the map's ruins wealth limit: nothing for basic structure (if so set), the full price
+        //estimate, or (PipelineSettings.wealthCountDamage) the actual value of what spawned. Pawns are not loot.
+        private float WealthLimitCost(Tile tile, Thing spawned) {
+            if (!tile.CountsForWealthLimit(context.settings.wealthIgnoreStructure) || spawned is Pawn) return 0;
+            if (!context.settings.wealthCountDamage) return tile.cost;
+            if (spawned != null) return WealthUtility.MarketValueWithContents(spawned);
+            return tile.cost; //terrain has no damage
         }
 
         public void AddFilthAndRubble()

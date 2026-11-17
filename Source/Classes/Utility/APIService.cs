@@ -120,7 +120,7 @@ namespace RealRuins
             var path = APIRoot + MapsBySeedListPath + Uri.EscapeDataString(seed); //seed is user text and may contain '/', '?', '#' etc.
 
             string requestLink = path + "?limit=9999&coverage=" + coverage + "&mapSize=" + mapSize;
-            Debug.Log(Debug.Loader, "Loading all compatible blueprings by link {0}", requestLink);
+            Debug.Log(Debug.Loader, "Loading all compatible blueprints by link {0}", requestLink);
             UnityWebRequest request = new UnityWebRequest(requestLink, "GET")
             {
                 downloadHandler = new DownloadHandlerBuffer()

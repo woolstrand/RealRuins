@@ -25,6 +25,8 @@ namespace RealRuins
             this.pawn = pawn;
             // Set timestamp: current in-game time minus the date shift to represent when the event occurred
             ticksAbs = Find.TickManager.TicksAbs - (int)dateShift;
+            // base() is the loading constructor, which leaves the id at 0; the load id is made of the timestamp and this id
+            logID = Find.UniqueIDsManager.GetNextLogID();
         }
 
         public override void ExposeData()
@@ -32,6 +34,11 @@ namespace RealRuins
             base.ExposeData();
             Scribe_Values.Look(ref bakedString, "bakedString", "");
             Scribe_References.Look(ref pawn, "pawn");
+
+            if (Scribe.mode == LoadSaveMode.LoadingVars)
+            {
+                logID = DuplicateLoadIds.LogEntryId(ticksAbs, logID);
+            }
         }
 
         protected override string ToGameStringFromPOV_Worker(Thing pov, bool forceLog)

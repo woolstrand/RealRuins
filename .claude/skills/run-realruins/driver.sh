@@ -88,6 +88,7 @@ case "$cmd" in
     plat_ss "$OUT/$name.png"
     echo "$OUT/$name.png" ;;
   click|rclick|move) focus; plat_mouse "$cmd" "$1" "$2" ;;
+  drag)   focus; plat_drag "$1" "$2" "$3" "$4" ;;   # left-drag X1 Y1 X2 Y2 (Windows only)
   key)    focus; plat_key "$@" ;;
   esc)    focus; plat_key esc ;;
   type)   focus; plat_type "$1" ;;

@@ -22,10 +22,12 @@ namespace RealRuins
 
         private long dateShift;
         private Faction faction;
+        private ScatterOptions options; //tech level cap for apparel
 
-        public PawnRestoreUtility(long dateShift, Faction faction)
+        public PawnRestoreUtility(long dateShift, Faction faction, ScatterOptions options = null)
         {
             this.dateShift = dateShift;
+            this.options = options;
             //restored pawns belonged to another player's colony: when the site itself is the player's (taking over a planetary
             //location at game start) they must not become the player's dead colonists or free colonists in caskets
             this.faction = faction == Faction.OfPlayer ? null : faction;
@@ -61,10 +63,11 @@ namespace RealRuins
                     }
                 }
 
-                Pawn p = PawnGenerator.GeneratePawn(kindDef, faction);
+                //generated with the blueprint's gender: switching it afterwards leaves a man's beard, which vanilla removes with an error on load
+                Gender? gender = kindDef.RaceProps.hasGenders ? BlueprintGender(root) : null;
+                Pawn p = PawnGenerator.GeneratePawn(new PawnGenerationRequest(kindDef, faction, fixedGender: gender));
 
                 RestorePawnName(root, p);
-                RestorePawnGender(root, p);
                 RestorePawnAge(root, p);
                 RestorePawnHealth(root, p);
                 RestorePawnApparel(root, p);
@@ -128,24 +131,12 @@ namespace RealRuins
             }
         }
 
-        private void RestorePawnGender(XmlNode root, Pawn p)
+        private Gender? BlueprintGender(XmlNode root)
         {
-            try
-            {
-                string gender = root.SelectSingleNode("gender")?.InnerText;
-                if (gender == "Male")
-                {
-                    p.gender = Gender.Male;
-                }
-                else if (gender == "Female")
-                {
-                    p.gender = Gender.Female;
-                }
-            }
-            catch (Exception ex)
-            {
-                Debug.Extra(Debug.BlueprintPawnDecoder, "Failed to restore pawn gender: {0}", ex.Message);
-            }
+            string gender = root.SelectSingleNode("gender")?.InnerText;
+            if (gender == "Male") return Gender.Male;
+            if (gender == "Female") return Gender.Female;
+            return null;
         }
 
         private void RestorePawnAge(XmlNode root, Pawn p)
@@ -214,6 +205,9 @@ namespace RealRuins
                             }
                             if (hediff != null)
                             {
+                                //the blueprint keeps the id from its own game, which may already be taken in this one
+                                hediff.loadID = Find.UniqueIDsManager.GetNextHediffID();
+
                                 // If the hediff targets a specific body part, verify the part is still
                                 // present and not missing (PartIsMissing can use a stale cache after
                                 // a MissingPart hediff was added earlier in the same loop).
@@ -274,6 +268,12 @@ namespace RealRuins
                     if (stuffDefName != null)
                     {
                         stuffDef = DefDatabase<ThingDef>.GetNamedSilentFail(stuffDefName);
+                    }
+
+                    if (thingDef != null && !TechLevelFilter.Allows(options, thingDef, stuffDef))
+                    {
+                        Debug.Extra(Debug.BlueprintPawnDecoder, "Apparel {0} is above the tech level cap, skipping", thingDef.defName);
+                        continue;
                     }
 
                     if (thingDef != null)

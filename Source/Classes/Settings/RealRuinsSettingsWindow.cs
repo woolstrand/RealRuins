@@ -17,12 +17,17 @@ namespace RealRuins.Settings
         // Tab styling colors - each tab has a distinct color
         private static readonly Color[] TabAccentColors = new Color[]
         {
-            new Color(0.2f, 0.35f, 0.5f),   // Network & Cache - Blue
-            new Color(0.2f, 0.45f, 0.3f),   // Map Generation - Green
-            new Color(0.4f, 0.3f, 0.45f),   // Events & Advanced - Purple
-            new Color(0.45f, 0.35f, 0.2f),  // Planetary Ruins - Orange
+            new Color(0.4f, 0.3f, 0.45f),   // Presets - Purple
+            new Color(0.2f, 0.35f, 0.5f),   // Cache and storage - Blue
+            new Color(0.5f, 0.42f, 0.15f),  // Wealth and balance - Gold
+            new Color(0.2f, 0.45f, 0.3f),   // Spawn and tech level - Green
+            new Color(0.45f, 0.35f, 0.2f),  // Gameplay - Orange
             new Color(0.55f, 0.2f, 0.2f)    // Debug - Red
         };
+
+        private const float ScrollbarWidth = 16f;
+        private const float ContentPaddingLeft = 8f;
+        private const float ContentPaddingRight = 16f;
 
         private static readonly Color TabBackgroundColor = new Color(0.09f, 0.09f, 0.09f);
         private static readonly Color TabBorderColor = new Color(0.2f, 0.2f, 0.2f);
@@ -36,10 +41,13 @@ namespace RealRuins.Settings
         {
             pages = new List<SettingsPage>
             {
+                new PresetsSettingsPage(),
                 new NetworkCacheSettingsPage(),
-                new MapGenerationSettingsPage(),
-                new AdvancedSettingsPage(),
-                new PlanetaryRuinsSettingsPage(),
+                new WealthBalanceSettingsPage(),
+                new SpawnSettingsPage(),
+                new GameplaySettingsPage(),
+                // Shown without dev mode on purpose (playtest S-05, 2026-11-11): players may need to switch to staging when asked,
+                // and the Cache tab warns in red while staging is on. Not an issue, don't hide it behind Prefs.DevMode.
                 new DebugSettingsPage()
             };
         }
@@ -50,11 +58,8 @@ namespace RealRuins.Settings
             Rect tabRect = rect.TopPartPixels(50f);
             DrawTabs(tabRect);
 
-            // Draw padding/spacing between tabs and content
-            Rect spacingRect = rect.TopPartPixels(60f).BottomPartPixels(10f);
-            
-            // Draw current page content
-            Rect contentRect = rect.BottomPartPixels(rect.height - 60f);
+            // Current page content, 10 px below the tabs and 10 px above the window's own buttons
+            Rect contentRect = new Rect(rect.x, rect.y + 60f, rect.width, rect.height - 70f);
             DrawPageContent(contentRect);
         }
 
@@ -126,15 +131,19 @@ namespace RealRuins.Settings
             float innerHeight = pages[selectedTabIndex].ContentHeight;
             float viewportHeight = rect.height;
             float scrollHeight = Mathf.Max(innerHeight, viewportHeight);
-            
-            Rect innerRect = new Rect(0, 0, rect.width - 20f, scrollHeight);
-            
+
+            // The scrollbar width is reserved on every page, so the layout doesn't jump between pages with and without one
+            Rect innerRect = new Rect(0, 0, rect.width - ScrollbarWidth, scrollHeight);
+
             Widgets.BeginScrollView(
                 rect,
                 ref scrollPosition,
                 innerRect);
 
-            pages[selectedTabIndex].Draw(innerRect);
+            // Padding on both sides: controls must not touch the window edge on the left or the scrollbar on the right
+            Rect pageRect = new Rect(innerRect.x + ContentPaddingLeft, innerRect.y,
+                innerRect.width - ContentPaddingLeft - ContentPaddingRight, innerRect.height);
+            pages[selectedTabIndex].Draw(pageRect);
 
             Widgets.EndScrollView();
         }

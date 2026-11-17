@@ -84,17 +84,23 @@ namespace RealRuins {
             Debug.Extra(Debug.Scatter, "Recalculating stats...");
 
             bp.UpdateBlueprintStats(true); //Update total cost, items count, etc
+            Debug.Log(Debug.Scatter, "Blueprint {0} before deterioration and scavenging: cost {1:F0}", filename, bp.totalCost);
 
             Debug.Extra(Debug.Scatter, "Deteriorating...");
             DeteriorationProcessor.Process(bp, options); //create deterioration maps and do deterioration
 
             Debug.Extra(Debug.Scatter, "Scavenging...");
             ScavengingProcessor sp = new ScavengingProcessor();
-            sp.RaidAndScavenge(bp, options); //scavenge remaining items according to scavenge options
+            sp.RaidAndScavenge(bp, options, context.settings, context.wealthAllowance); //scavenge remaining items according to scavenge options
 
             Debug.Extra(Debug.Scatter, "[{0} s] Prepared, about to start transferring.", DateTime.UtcNow.Subtract(start).TotalSeconds);
             try {
                 btu.Transfer(coverage); //transfer blueprint
+                if (context.state.wealthReport != null) {
+                    context.state.wealthReport.blueprintName = filename;
+                    context.state.wealthReport.allowance = context.wealthAllowance;
+                    Debug.Report(Debug.Wealth, "Chunk {0}", context.state.wealthReport.Summary());
+                }
                 Debug.Extra(Debug.Scatter, "[{0} s] Transferred.", DateTime.UtcNow.Subtract(start).TotalSeconds);
             } catch (Exception e) {
                 Debug.Error(Debug.BlueprintTransfer, "Failed to transfer blueprint due to {0}", e);

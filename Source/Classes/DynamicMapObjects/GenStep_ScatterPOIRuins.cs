@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -25,6 +25,7 @@ namespace RealRuins {
             RealRuinsPOIComp poiComp;
             bool skipForcesGeneration = false;
             bool overrideSpawnAsRuins = false;
+            bool takenOver = false;
             Faction faction = null;
             if (PlanetaryRuinsInitData.shared.startingPOI != null) {
                 Debug.Log("[MapGen]", "Found starting poi in game init context.");
@@ -40,6 +41,7 @@ namespace RealRuins {
                         faction = Faction.OfPlayer;
                         skipForcesGeneration = true;
                         overrideSpawnAsRuins = false;
+                        takenOver = true;
                         break;
                     case SettleMode.attack:
                         faction = poi.Faction;
@@ -78,7 +80,15 @@ namespace RealRuins {
                 skipForcesGeneration = true;
             }
 
-            ScatterOptions options = ScatterOptionsFactory.ForPOI(filename, bp, (POIType)poiComp.poiType, faction != null, overrideSpawnAsRuins);
+            ScatterOptions options = ScatterOptionsFactory.ForPOI(filename, bp, (POIType)poiComp.poiType, faction != null, overrideSpawnAsRuins, takenOver);
+
+            if (takenOver) {
+                //the player's own base has no unexplored rooms. Vanilla fog (GenStep_Fog, order 1500) runs after this genstep,
+                //so the fog is cleared once map generation (a long event at game start) is over
+                LongEventHandler.ExecuteWhenFinished(() => {
+                    if (map.fogGrid != null) map.fogGrid.ClearAllFog();
+                });
+            }
 
             Debug.Log(Debug.BlueprintTransfer, "Trying to place POI map at tile {0}, at {1},{2} to {3},{4} ({5}x{6})",
                 map.Parent.Tile,
@@ -127,11 +137,13 @@ namespace RealRuins {
 
             Debug.Log(Debug.Scatter, "Selecting force generators");
             //override forces for any kind of POI if no faction selected
+            //no animals or mechanoids on the starting map (attack start at a POI); the POI's own faction still defends it
+            bool startingMap = SessionState.GeneratingStartingMap;
             if (faction == null || (POIType)poiComp.poiType == POIType.Ruins) {
                 if (Rand.Chance(0.2f)) {
-                    result.Add(new AnimalInhabitantsForcesGenerator());
+                    if (!startingMap) result.Add(new AnimalInhabitantsForcesGenerator());
                 } else if (Rand.Chance(0.2f)) {
-                    result.Add(new MechanoidsForcesGenerator(0));
+                    if (!startingMap) result.Add(new MechanoidsForcesGenerator(0));
                 } else if (Rand.Chance(0.2f)) {
                     result.Add(new CitizenForcesGeneration(Rand.RangeInclusive(300, 1000), Find.FactionManager.RandomEnemyFaction(true, true, false)));
                 }
@@ -144,9 +156,14 @@ namespace RealRuins {
                 case POIType.MilitaryBaseLarge:
                 case POIType.Stronghold:
                 case POIType.Outpost:
+                case POIType.Communication:
+                case POIType.Castle:
                     result.Add(new MilitaryForcesGenerator(poiComp.militaryPower));
                     break;
                 case POIType.Camp:
+                case POIType.Village:
+                case POIType.Workshop:
+                case POIType.Shipwreck:
                 case POIType.City:
                 case POIType.Factory:
                 case POIType.PowerPlant:
@@ -165,7 +182,7 @@ namespace RealRuins {
                     break;
                 case POIType.Ruins:
                 default:
-                    if (Rand.Chance(0.5f)) {
+                    if (!startingMap && Rand.Chance(0.5f)) {
                         result.Add(new MechanoidsForcesGenerator(0));
                     }
                     break;

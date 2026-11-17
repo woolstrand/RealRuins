@@ -30,9 +30,10 @@ what differs is the genstep around it:
 - `ScatterOptionsFactory` — the only place where a scatterer's options are built (`ForGenericRuins`, `ForCaravanSmallRuins`,
   `ForAbandonedBase`, `ForPOI`, `ForAnalyzer`). Each call returns a fresh object, never linked to the settings store.
 - `PipelineSettings` — global mod options applied the same way everywhere (blacklists, fallback material, force multiplier).
-- `ScatterContext` — one per `Scatter` call: a private copy of the options, the settings, a fresh `ScatterState`, and an
-  optional `preloadedBlueprint`.
-- `ScatterState` — data produced by the run (`roomMap`, `uncoveredCost`, `placementRect`), read by force generators.
+- `ScatterContext` — one per `Scatter` call: a private copy of the options, the settings, a fresh `ScatterState`, an
+  optional `preloadedBlueprint` and `wealthAllowance` (-1 = no limit, see Ruins wealth per map).
+- `ScatterState` — data produced by the run (`roomMap`, `uncoveredCost`, `transferredCost`, `placementRect`), read by force
+  generators and the wealth budget.
 
 ---
 
@@ -92,6 +93,61 @@ produce dense "cities".
 Each chunk gets its own `ScatterContext`, a random `RandomNotEdgeCell(10)` position and, with `hostileChance`, animal (80%)
 or mechanoid (20%) defenders. The game is paused while scattering.
 
+### Ruins wealth limits
+`RuinsWealthLimits` is the only place that decides what ruins may be worth: `For(RuinsKind)` gives the limit of regular ruins (per map),
+a caravan ruin, an abandoned base or an abandoned POI, `NoLimit` if there is none. Nothing else reads the cap settings for generation.
+With `ruinsScaleWithColonyWealth` a limit is `setting × max(0.5, colony wealth / ruinsReferenceColonyWealth)`, so the settings are base
+values and the order between kinds holds at any wealth. Unlimited stays unlimited. Colony wealth is `PlayerWealthForStoryteller` of home
+maps and player caravans, without the map being generated, so the starting map gets the 0.5 multiplier. An abandoned base gets its limit
+when the quest is created, the others on map generation. A ruined POI still rolls its own cap by footprint; the limit only trims the roll.
+
+### Ruins wealth per map
+`RealRuins_ModSettings.ruinsWealthPerMap` (default 5,000; slider on the map generation page, 100,000 = no limit) is the
+market value all chunks of a map may share. `RuinsWealthBudget` gives each chunk, in order, what is left minus a reserve of
+`min(500, limit / chunks / 2)` for every chunk still to come, and is charged with what the chunk actually transferred
+(`ScatterState.transferredCost`). `ScavengingProcessor.CutTo` runs after the normal raids when a blueprint is over its
+allowance: it takes the most valuable things first (by `OwnCost`, ignoring weight), with the same removal as raids (contents out
+of containers, cheap door/wall replacements). The same cut serves the abandoned base, caravan ruin and ruined POI cost caps, which dismantle
+walls instead (see 03-blueprint-pipeline). Only regular scattered ruins are limited by this budget; abandoned bases, POIs and the
+main ruin of the caravan event have their own cost caps.
+
+Options next to the slider:
+- `ruinsWealthScaleWithProximity` (default off): the limit is multiplied by the proximity count multiplier, the same factor as the
+  chunk count (x1.72 at 4 tiles or closer, x0.49 at 16+), so each chunk keeps about the same share. Off is the lore-friendly
+  default: denser ruins near settlements share one limit and are more picked over. Needs `enableProximity`.
+- `ruinsWealthIgnoreStructure` (default on): `Tile.IsBasicStructure` (walls, doors and floors worth at most
+  `Tile.basicStructureMaxCost` = 50 per tile: granite wall ~8, wooden door ~32; golden walls, silver floors, autodoors still count)
+  doesn't count toward the limit and is never cut for it. Without it, dense maps ran out of budget and late chunks were cut to
+  bare walls, whose own value still pushed the map over the limit.
+- `ruinsWealthCountDamage` (default off): the budget is charged with the full-price estimate (repairing is free, a damaged thing
+  often works the same). On: with the live market value of what spawned (`StatPart_Health` lowers it for damage, quality changes it).
+
+What a chunk is charged with is `ScatterState.transferredCost` (`BlueprintTransferUtility.WealthLimitCost`); pawns never count.
+The cost cap of abandoned bases / ruined POIs always counts everything.
+
+Measured on 50 sampled maps (Sample ruins wealth debug action, 2026-11-03): median ruins wealth 3k per map, p90 ~10k; before the
+limit the maximum was 33k, with the limit 15k. The limit only touched the last chunks of maps already close to it.
+
+## Tech level cap
+Settings tab "Tech Level": master toggle `techLimitEnabled`, `techLimitMaxLevel` (Neolithic–Ultra; `TechLevel` is a game enum,
+mods can't add levels), `techLimitStrict` and three groups: `techLimitRuins` (`ForGenericRuins`), `techLimitPOIs` (`ForPOI` and
+`ForAnalyzer`), `techLimitEvents` (`ForAbandonedBase`, `ForCaravanSmallRuins`). `ScatterOptionsFactory.ApplyTechLimit` copies
+them into `ScatterOptions.maxTechLevel` (Undefined = no cap) and `techLimitStrict`.
+
+`TechLevelFilter` does the work in `BlueprintPreprocessor.ProcessBlueprint`, so the analyzer sees the same filtered blueprint as
+the scatterer and costs are estimated after the filter. A def's tech level (cached) is the highest of: its own `techLevel`, its
+`researchPrerequisites`, its `recipeMaker` research, the research of the easiest standalone recipe making it (modded fabricated
+materials, chemfuel), and the own `techLevel` of its `costList` ingredients (one level deep, which catches buildings made of
+components). The stuff counts too. Undefined everywhere means it always stays: mined or found materials (plasteel, sky steel).
+- Items above the cap are removed; walls and doors are replaced with a granite wall / wooden door so rooms stay closed.
+- Contents of containers are filtered at any depth (an emptied minified thing is not spawned); terrain too.
+- Restored pawns skip apparel above the cap (`PawnRestoreUtility`); pawn races themselves are not filtered.
+- Limited strategy: a thing `n` levels above the cap stays with chance `TechLevelFilter.limitedKeepChance ^ n` (0.1). It is a roll
+  on each pass, so the analyzer and the visit see different results; nothing about it is stored.
+- POI factions (`RealRuinsPOIFactory.CommitPOI`): with the POI group on, the faction's tech level is capped too (limited strategy:
+  except with `limitedKeepChance`), and the type's minimum faction tech level is lowered to the cap.
+- Not covered: defender forces (mechanoids in regular ruins, raid parties, battle royale) come from the world's factions as they are.
+
 ---
 
 ## GenStep_RealRuinsSite
@@ -114,8 +170,10 @@ Blueprint name, cost cap and raiders activity from `RuinedBaseComp`; `ForAbandon
 `BattleRoyaleForcesGenerator` unless the force multiplier is 0.
 
 ### `GenStep_ScatterMediumRealRuins` (caravan small ruins)
-Random blueprint via `ForCaravanSmallRuins` (min cost 25k, area 4000); no `ensureCanHoldRoof`. In `PushExtraSymbols`, with
-`0.5 × threatScale` chance pushes a `pawnGroup` raid of a random enemy faction (`|gaussian| × 500 × threatScale` points).
+Random blueprint via `ForCaravanSmallRuins` (min cost 15k, area 4000, capped by `caravanRuinsCostCap`); no `ensureCanHoldRoof`.
+`CaravanRuinsForcesGenerator` sets raiders of random enemy factions on the map once the ruin is placed: value / 40 points, plus
+`|gaussian| × 500` with `0.5 × threatScale` chance, at most 5,000 before threat scale and force multiplier. Below 200 points after
+scaling nobody comes.
 
 ### `GenStep_ScatterPOIRuins` (planetary POI)
 Context: `PlanetaryRuinsInitData.shared.startingPOI` (new-game settle flow) or the map parent's `RealRuinsPOIComp`.

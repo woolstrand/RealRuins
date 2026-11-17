@@ -1,3 +1,4 @@
+using RimWorld;
 using RimWorld.Planet;
 using Verse;
 
@@ -17,6 +18,16 @@ namespace RealRuins {
         public override void ExposeData() {
             base.ExposeData();
             Scribe_References.Look(ref mapParent, "mapParent");
+        }
+
+        //Saves made before mapParent was saved load the action without a target, and the site may be gone by now.
+        //Vanilla checks this while the caravan travels and on arrival, and drops an invalid action with a message.
+        public override FloatMenuAcceptanceReport StillValid(Caravan caravan, PlanetTile destinationTile) {
+            FloatMenuAcceptanceReport report = base.StillValid(caravan, destinationTile);
+            if (!report) {
+                return report;
+            }
+            return mapParent != null && mapParent.Spawned && mapParent.Tile == destinationTile;
         }
 
         public override void Arrived(Caravan caravan) {

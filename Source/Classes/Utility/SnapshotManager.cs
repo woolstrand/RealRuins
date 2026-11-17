@@ -221,6 +221,13 @@ namespace RealRuins {
                 return;
             }
 
+            //a cleared planetary POI becomes player-owned (and so a player home) while it is only being raided.
+            //Its map is someone else's blueprint, so it must not be uploaded. Settling replaces the POI with a Settlement, after which uploading is fine.
+            if (map.Parent is RealRuinsPOIWorldObject) {
+                Debug.Log(Debug.Store, "Skipping snapshot of a planetary POI map");
+                return;
+            }
+
             string worldId = (Math.Abs(Find.World.info.persistentRandomValue)).ToString();
             string mapId = map.uniqueID.ToString();
             string snapshotId = worldId + mapId;
@@ -229,11 +236,12 @@ namespace RealRuins {
                 return; //skip upload if we're trying to do it more frequent than once per three hours.
             }
 
-            //we actually don't care if something goes wrong. big data, y'know
-            snapshotTimestamps[snapshotId] = DateTime.Now;
-
             SnapshotGenerator generator = new SnapshotGenerator(map);
             if (!generator.CanGenerate()) return; //skip if generation is not allowed on some reason (too small area, empty area, whatever)
+
+            //set only once a snapshot is really taken: a skipped one must not use up the three hours
+            //we actually don't care if something goes wrong. big data, y'know
+            snapshotTimestamps[snapshotId] = DateTime.Now;
 
             string tmpFilename = generator.Generate();
 

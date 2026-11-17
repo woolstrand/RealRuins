@@ -50,20 +50,13 @@ Minimal `MapParent` for small caravan-found ruins. Removes map and world object 
 
 ---
 
-## IncidentWorker_RuinsFound
+## IncidentWorker_RuinsFound (retired in 1.6+)
 
-Fires a `StandardLetter` and spawns an `AbandonedBaseWorldObject` on the world map. The code comment notes it was once removed and then "RESTORED."
+Worker of the `Quest_PristineRuins` incident. Since 1.6 Pristine ruins are created only by the `RealRuins_AbandonedBase` quest (`QuestNode_FindBlueprint` -> `QuestNode_GenerateRuinsObject`). As a `GiveQuest`-category incident with `baseChance` 1 it used to take about half of all random quest slots (it competed with vanilla `GiveQuest_Random`).
 
-**`CanFireNowSub()`**: Requires `enableAbandonedRuinsFoundEvent`, `CanFireLargeEvent()` (≥250 stored blueprints), and existence of a non-hostile faction.
+The def is kept with `baseChance` 0 so saves (storyteller `lastFireTicks` / `recentRandomIncidents`) and translations still resolve. Firing it by hand only sends a letter pointing to the quest. Ruins it spawned in older saves keep working: they are plain `AbandonedBaseWorldObject`s with no quest attached (null signals in `RuinedBaseComp`).
 
-**`TryExecuteWorker()`**:
-1. Selects (or falls back to) a random non-hostile faction
-2. Finds tile 5–30 world-tiles away
-3. Creates `AbandonedBaseWorldObject` — sets faction to `null` on world object (faction used only for letter text)
-4. Calls `BlueprintFinder.FindRandomBlueprintWithParameters()` (min area 6400, min density 1%, max 50 attempts)
-5. Sets `RuinedBaseComp.blueprintFileName` and calls `StartScavenging(capped_cost)`
-6. Computes letter lifetime: `Math.Pow(cost/1000, 0.41) × 1.1` days (power curve)
-7. Sends letter referencing faction leader
+The 1.4/1.5 builds keep the old behavior (the incident spawns the ruins directly).
 
 ---
 
@@ -111,7 +104,7 @@ The richest world object. Handles icon rendering, faction dynamics, wealth track
 - `Material` computed from faction color; cached in `cachedMat`, reset on faction change
 
 ### `PostMapGenerate()`
-Captures `wealthOnEnter` by summing `ThingComponentsMarketCost × stackCount` for all map things. Stores `originalFaction`.
+Captures `wealthOnEnter` = `WealthUtility.MapWealth(Map)`: market value (with contents) of all map things. Stores `originalFaction`.
 
 ### `Tick()`
 When the map is loaded and `!AnyHostileActiveThreatToPlayer`: transfers ownership to `Faction.OfPlayer`. Note: runs every tick — safe because `SetFaction` is idempotent, but potentially wasteful.
@@ -124,14 +117,14 @@ Computes `ratio = (wealthOnEnter - currentWealth) / blueprintCost`:
 
 Cooldown = `max(4, difference / 2000)` days.
 
-**Wealth measurement**: Uses `ThingComponentsMarketCost × stackCount` for **all** map things — intentionally different from vanilla `WealthWatcher` (which counts only player-owned things).
+**Wealth measurement**: `WealthUtility.MapWealth` over **all** map things — intentionally different from vanilla `WealthWatcher` (which counts only player-owned things). Same units as `approximateSnapshotCost` (the game's market value), which the difference is divided by.
 
 ### Gizmos
 Shows `SettleCommand` when map is active and world selector shows this object, allowing the player to settle at the POI.
 
 ### Known Issues
 - `wealthOnEnter` initialized to 1 (non-zero to avoid division-by-zero); `blueprintCost` also defaults to 1 — if comp is null, all damage ratios are inflated
-- `CurrentMapWealth()` and `RuinedBaseComp.GetTotalMapWealth()` use different calculation methods (see **RuinedBaseComp** below)
+- `CurrentMapWealth()` and `RuinedBaseComp.GetTotalMapWealth()` use the same calculation (`WealthUtility.MapWealth`) with different filters (see **RuinedBaseComp** below)
 
 ---
 
@@ -188,10 +181,10 @@ Iterates `triggersCache` (pre-built list of `RaidTrigger` things). When all trig
 Fires `RaidEnemy` incident directly via `IncidentDef.Worker.TryExecute()` with `FactionSelector.GetRandomFaction()`.
 
 ### `GetInspectString()`
-Wealth and activity described in 5 tiers each (threshold arrays). Only shown when `WaitingForArrival`.
+Wealth (`WealthUtility.WealthDescription`, shared with POIs) and activity described in 5 tiers each. Only shown when `WaitingForArrival`.
 
 ### Wealth Calculation
-`GetTotalMapWealth()` counts only `CountAsResource` things — differs from `RealRuinsPOIWorldObject.CurrentMapWealth()` which counts all things with market cost. The two systems never compare their numbers, so this is fine.
+`GetTotalMapWealth()` = `WealthUtility.MapWealth` over `CountAsResource` things only; `RealRuinsPOIWorldObject.CurrentMapWealth()` counts all things. The two systems never compare their numbers, so this is fine.
 
 ### Exit Lock
 `mapExitLocked` is true from `FightingWaves` until `InformedWaitingForLeaving`. Used only in manual reform mode (`caravanReformType == 2`): `FormCaravanComp_CanFormOrReform_Patch` (in `RealRuins.cs`) makes `CanFormOrReformCaravanNow` false, which hides reforming and turns on vanilla `ExitMapGrid`, and the reform gizmo is disabled with `RealRuins.ReformLockedManual`.
