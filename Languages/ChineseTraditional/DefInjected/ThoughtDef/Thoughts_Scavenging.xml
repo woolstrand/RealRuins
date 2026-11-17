@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LanguageData>
+
+  <!-- EN: low wealth ruins / Did we really have to go that far just for stones and trash? -->
+  <ScavengingRuins.stages.0.label>寒酸的遺跡</ScavengingRuins.stages.0.label>
+  <ScavengingRuins.stages.0.description>大老遠跑這一趟，就為了一堆石頭和垃圾？</ScavengingRuins.stages.0.description>
+  <!-- EN: medium wealth ruins / Looks like we can find some really useful things here. -->
+  <ScavengingRuins.stages.1.label>普通的遺跡</ScavengingRuins.stages.1.label>
+  <ScavengingRuins.stages.1.description>看起來這裡能找到一些真正有用的東西。</ScavengingRuins.stages.1.description>
+  <!-- EN: high wealth ruins / This journey was definitely worth it. -->
+  <ScavengingRuins.stages.2.label>富有的遺跡</ScavengingRuins.stages.2.label>
+  <ScavengingRuins.stages.2.description>這趟絕對值得！</ScavengingRuins.stages.2.description>
+  <!-- EN: very high wealth ruins / There is a whole fortune here! We should take everything and I will fight for it! -->
+  <ScavengingRuins.stages.3.label>非常富有的遺跡</ScavengingRuins.stages.3.label>
+  <ScavengingRuins.stages.3.description>這裡簡直是座金山！全部都要帶走，誰來搶我就跟誰拚！</ScavengingRuins.stages.3.description>
+  <!-- EN: insanely wealthy ruins / OH MY THAT'S INSANE SUCH WEALTH MUCH MONEY -->
+  <ScavengingRuins.stages.4.label>富得離譜的遺跡</ScavengingRuins.stages.4.label>
+  <ScavengingRuins.stages.4.description>天啊這也太誇張了吧！好多財富！好多錢！</ScavengingRuins.stages.4.description>
+
+</LanguageData>

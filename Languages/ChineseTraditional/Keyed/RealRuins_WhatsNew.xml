@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LanguageData>
+
+  <!-- EN: What's new in Real Ruins -->
+  <RealRuins.WhatsNew.Title>真實遺跡更新內容</RealRuins.WhatsNew.Title>
+  <!-- EN: Open Real Ruins settings -->
+  <RealRuins.WhatsNew.OpenSettings>開啟真實遺跡設定</RealRuins.WhatsNew.OpenSettings>
+  <!-- EN: Something has significantly changed in the mod. If you closed the window accidentally, it's a good moment to get back and read the brief update. You still can close the window and proceed. -->
+  <RealRuins.WhatsNew.SkipText>模組發生了重大變化。如果你不小心關掉了視窗，現在正是回來閱讀更新說明的好時機。你仍然可以關閉視窗繼續遊戲。</RealRuins.WhatsNew.SkipText>
+  <!-- EN: Close anyway -->
+  <RealRuins.WhatsNew.SkipConfirm>仍然關閉</RealRuins.WhatsNew.SkipConfirm>
+  <!-- EN: Back to the notes -->
+  <RealRuins.WhatsNew.SkipBack>返回更新說明</RealRuins.WhatsNew.SkipBack>
+
+</LanguageData>

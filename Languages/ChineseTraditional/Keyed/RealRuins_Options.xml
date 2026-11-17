@@ -1,202 +1,655 @@
-<?xml version="1.0" encoding="utf-8" ?>
+<?xml version="1.0" encoding="utf-8"?>
 <LanguageData>
+
+  <!-- EN: Real Ruins -->
   <RealRuins_ModOptions_Category>真實遺跡</RealRuins_ModOptions_Category>
-
-  <RealRuins_ModOptions_AllowDownloads>允許從遠端資料庫下載遺跡</RealRuins_ModOptions_AllowDownloads>
-
-  <RealRuins_ModOptions_AllowUploads>允許上傳你的基地到遠端資料庫</RealRuins_ModOptions_AllowUploads>
-  
-  <RealRuins_ModOptions_CacheSize>限制本地端快取大小為 </RealRuins_ModOptions_CacheSize>
-  <RealRuins_ModOptions_OfflineMode>僅限本地端模式</RealRuins_ModOptions_OfflineMode>
-  <RealRuins_ModOptions_AllowDownloadsTooltip>若關閉此選項，將不會移除任何已下載資料。</RealRuins_ModOptions_AllowDownloadsTooltip>
-  <RealRuins_ModOptions_AllowUploadsTooltip>建議開啟此選項以協助豐富資料庫，取得更多有趣的基地設計。每次遊戲周期上傳的資料量應該不會超過 MB(megabytes) 等級。</RealRuins_ModOptions_AllowUploadsTooltip>
-  <RealRuins_ModOptions_CacheSizeTooltip>當達到限制的容量時，模此會繼續下載新的遺跡藍圖，並移除舊有的。</RealRuins_ModOptions_CacheSizeTooltip>
-  <RealRuins_ModOptions_OfflineModeTooltip>此模式會刪除所有從遠端下載的資料，且將不會再進行任何上傳及下載的動作。然而，你曾經創建過的基地仍然會儲存在本地端，用以生成你遊戲中的遺跡.</RealRuins_ModOptions_OfflineModeTooltip>
-
-  <RealRuins_ModOptions_CurrentCacheSize>目前本地端快取大小: </RealRuins_ModOptions_CurrentCacheSize>
+  <!-- EN: Allow downloading ruins from database -->
+  <RealRuins_ModOptions_AllowDownloads>允許從資料庫下載遺跡</RealRuins_ModOptions_AllowDownloads>
+  <!-- EN: Allow uploading your bases to ruins database -->
+  <RealRuins_ModOptions_AllowUploads>允許上傳你的基地到遺跡資料庫</RealRuins_ModOptions_AllowUploads>
+  <!-- EN: Limit local cache size to  -->
+  <RealRuins_ModOptions_CacheSize>將本地快取大小限制為</RealRuins_ModOptions_CacheSize>
+  <!-- EN: Local mode only -->
+  <RealRuins_ModOptions_OfflineMode>僅本地模式</RealRuins_ModOptions_OfflineMode>
+  <!-- EN: If you switch this off, it won't remove anything you have already downloaded. -->
+  <RealRuins_ModOptions_AllowDownloadsTooltip>關閉後不會刪除已經快取到本地的資料。</RealRuins_ModOptions_AllowDownloadsTooltip>
+  <!-- EN: It's recommended to keep this on to help populate the database with various interesting base designs. This should not consume more than several megabytes per game session. -->
+  <RealRuins_ModOptions_AllowUploadsTooltip>建議保持開啟，協助以各種有趣的基地設計充實資料庫。每次遊戲通常只會用掉幾MB。</RealRuins_ModOptions_AllowUploadsTooltip>
+  <!-- EN: Even if you reach this limit, the mod will continue downloading new blueprints, removing the older ones. -->
+  <RealRuins_ModOptions_CacheSizeTooltip>即使達到上限，模組仍會繼續下載新藍圖，並移除較舊的藍圖。</RealRuins_ModOptions_CacheSizeTooltip>
+  <!-- EN: This mode will delete all cached data that was downloaded from the server and prevent any further uploads and downloads. However, your own bases will still be stored locally and used for creating ruins in your game. -->
+  <RealRuins_ModOptions_OfflineModeTooltip>啟用後將刪除從伺服器下載的所有快取資料，並阻止任何上傳和下載。你自己的基地仍然會被儲存在本地，並用於在遊戲中建立遺跡。</RealRuins_ModOptions_OfflineModeTooltip>
+  <!-- EN: Current local cache size:  -->
+  <RealRuins_ModOptions_CurrentCacheSize>目前本地快取大小：</RealRuins_ModOptions_CurrentCacheSize>
+  <!-- EN: Clear Cache -->
   <RealRuins_ModOptions_RemoveAll>清除快取</RealRuins_ModOptions_RemoveAll>
-
-  <RealRuins_ModOptions_DownloadMore>下載更多基地藍圖</RealRuins_ModOptions_DownloadMore>
-  <RealRuins_ModOptions_CurrentCacheCount>快取中藍圖數量: </RealRuins_ModOptions_CurrentCacheCount>
-
+  <!-- EN: Download more blueprints -->
+  <RealRuins_ModOptions_DownloadMore>下載更多藍圖</RealRuins_ModOptions_DownloadMore>
+  <!-- EN: Blueprints in cache:  -->
+  <RealRuins_ModOptions_CurrentCacheCount>快取中的藍圖：</RealRuins_ModOptions_CurrentCacheCount>
+  <!-- EN: Ruins density -->
   <RealRuins_MapOptions_Density>遺跡密度</RealRuins_MapOptions_Density>
-  <RealRuins_MapOptions_Size>碎片尺寸最小值</RealRuins_MapOptions_Size>
-  <RealRuins_MapOptions_Size_Max>碎片尺寸最大值</RealRuins_MapOptions_Size_Max>
-  <RealRuins_MapOptions_Deterioration>附加的風化程度</RealRuins_MapOptions_Deterioration>
-  <RealRuins_MapOptions_Scavengers>尋寶者活躍係數</RealRuins_MapOptions_Scavengers>
-  <RealRuins_MapOptions_CostLimit>限制物品最高價值</RealRuins_MapOptions_CostLimit>
-  <RealRuins_MapOptions_DisableHaulables>禁止生成可運輸物品</RealRuins_MapOptions_DisableHaulables>
+  <!-- EN: Minimum fragment size -->
+  <RealRuins_MapOptions_Size>最小碎片大小</RealRuins_MapOptions_Size>
+  <!-- EN: Maximum fragment size -->
+  <RealRuins_MapOptions_Size_Max>最大碎片大小</RealRuins_MapOptions_Size_Max>
+  <!-- EN: Additional deterioration degree -->
+  <RealRuins_MapOptions_Deterioration>額外損毀程度</RealRuins_MapOptions_Deterioration>
+  <!-- EN: Scavengers activity multiplier -->
+  <RealRuins_MapOptions_Scavengers>拾荒者活動倍率</RealRuins_MapOptions_Scavengers>
+  <!-- EN: Single item cost limit (regular and pristine ruins) -->
+  <RealRuins_MapOptions_CostLimit>單件物品價值上限（一般與完整遺跡）</RealRuins_MapOptions_CostLimit>
+  <!-- EN: No haulable items -->
+  <RealRuins_MapOptions_DisableHaulables>不生成可搬運物品</RealRuins_MapOptions_DisableHaulables>
+  <!-- EN: Walls and doors only -->
   <RealRuins_MapOptions_WallsAndDoorsOnly>僅生成牆和門</RealRuins_MapOptions_WallsAndDoorsOnly>
-  <RealRuins_MapOptions_DisableHostiles>敵對單位數量</RealRuins_MapOptions_DisableHostiles>
-  
-  <RealRuins_MapOptions_DensityTT>在 100x100 的單位內平均可生成的遺跡數量</RealRuins_MapOptions_DensityTT>
-  <RealRuins_MapOptions_SizeTT>遺跡大小在輸入值的 50% ~ 150% 之間隨機選擇</RealRuins_MapOptions_SizeTT>
-  <RealRuins_MapOptions_DeteriorationTT>這個值額外增加了每一個單元被破壞的機率，不會影響其它單元剩餘的生命值。預設值是 0，填入最大值遺跡將一無所有</RealRuins_MapOptions_DeteriorationTT>
-  <RealRuins_MapOptions_ScavengersTT>設為 0 將得到完整未被掠奪過的遺跡</RealRuins_MapOptions_ScavengersTT>
-  <RealRuins_MapOptions_CostLimitTT>所有高於設定價格的物品都會被尋寶者奪走</RealRuins_MapOptions_CostLimitTT>
-  <RealRuins_MapOptions_DisableHaulablesTT>所有可搬運的物資都不會出現，但是仍然可以找到家具</RealRuins_MapOptions_DisableHaulablesTT>
-  <RealRuins_MapOptions_WallsAndDoorsOnlyTT>將會移除所有意義上不是牆或門的物件，且金子打造的建築也會被移除，不會有奇蹟</RealRuins_MapOptions_WallsAndDoorsOnlyTT>
-  <RealRuins_MapOptions_DisableHostilesTT></RealRuins_MapOptions_DisableHostilesTT>
-
-  <RealRuins_MapOptions_EnableProximity>考慮與定居點的距離</RealRuins_MapOptions_EnableProximity>
-  <RealRuins_MapOptions_EnableProximityTT>到定居點的距離會影響生成參數：離定居點越近，廢墟越密集，但被掠奪的越多</RealRuins_MapOptions_EnableProximityTT>
-
-  <RealRuins_MapOptions_StartWithoutRuins>起始地圖不會生成遺跡</RealRuins_MapOptions_StartWithoutRuins>
-  <!-- -->
-  <RealRuins_MapOptions_StartWithoutRuinsTT>起始地圖不會生成遺跡，後續的遺跡生成由設定的參數決定</RealRuins_MapOptions_StartWithoutRuinsTT>
-
-  <!-- Caravan entered map -->
-  <LetterLabelCaravanEnteredRuins>商隊抵達遺跡</LetterLabelCaravanEnteredRuins>
-  <LetterCaravanEnteredRuins>{0}已經抵達廢棄的基地遺跡，準備開始尋寶行動。</LetterCaravanEnteredRuins>
-
-  <RealRuins.CaravanFoundRuins>在旅途中，{0}在附近發現了幾座保存良好的老舊建築。其中必定有些值錢的東西。但同時也許是一個機械軍團的基地、野生動物的巢穴或是掠奪者的基地 - 這些建築物如此完整一定有它的原因在</RealRuins.CaravanFoundRuins>
-  <RealRuins.CaravanFoundRuins.Investigate>進入調查</RealRuins.CaravanFoundRuins.Investigate>
-  <RealRuins.CaravanFoundRuinsTitle>發現老舊建築群</RealRuins.CaravanFoundRuinsTitle>
-
-
-  <!-- Art -->
-  <DeterioratedArtDescription>這件物品已經太過老舊且損壞。你可以肯定它曾經是一件美麗的藝術品，但現在已經無法辨別它究竟是什麼了。</DeterioratedArtDescription>
-
-  <!-- Ruins info -->
-  <RealRuins.RuinsWealth>財富: </RealRuins.RuinsWealth>
-  <RealRuins.RuinsActivity>襲擊者出現: </RealRuins.RuinsActivity>
-
-  <RealRuins.RuinsWealth.0>趨近於零 (&lt;10K)</RealRuins.RuinsWealth.0>
-  <RealRuins.RuinsWealth.1>低</RealRuins.RuinsWealth.1>
-  <RealRuins.RuinsWealth.2>中</RealRuins.RuinsWealth.2>
-  <RealRuins.RuinsWealth.3>高 (&gt;1M)</RealRuins.RuinsWealth.3>
-  <RealRuins.RuinsWealth.4>超高 (&gt;10M)</RealRuins.RuinsWealth.4>
-
-  <RealRuins.RuinsActivity.0>幾乎不會</RealRuins.RuinsActivity.0>
-  <RealRuins.RuinsActivity.1>低</RealRuins.RuinsActivity.1>
-  <RealRuins.RuinsActivity.2>中</RealRuins.RuinsActivity.2>
-  <RealRuins.RuinsActivity.3>高</RealRuins.RuinsActivity.3>
-  <RealRuins.RuinsActivity.4>異常的高</RealRuins.RuinsActivity.4>
-  
-  <!-- Ruins messages -->
-  <RealRuins.NoMoreEnemies>附近似乎以杳無人煙，你可以安全的收拾物品並離開。</RealRuins.NoMoreEnemies>
-
-  <!-- POI captions and descriptions -->
-  <RealRuins.CaptionPOI0>小型軍事基地</RealRuins.CaptionPOI0>
-  <RealRuins.CaptionPOI1>前線哨站</RealRuins.CaptionPOI1>
-  <RealRuins.CaptionPOI2>臨時營地</RealRuins.CaptionPOI2>
-  <RealRuins.CaptionPOI3>城市</RealRuins.CaptionPOI3>
-  <RealRuins.CaptionPOI4>工廠</RealRuins.CaptionPOI4>
-  <RealRuins.CaptionPOI5>研發中心</RealRuins.CaptionPOI5>
-  <RealRuins.CaptionPOI6>發電廠</RealRuins.CaptionPOI6>
-  <RealRuins.CaptionPOI7>大型軍事基地</RealRuins.CaptionPOI7>
-  <RealRuins.CaptionPOI8>倉庫</RealRuins.CaptionPOI8>
-  <RealRuins.CaptionPOI9>通訊站</RealRuins.CaptionPOI9>
-  <RealRuins.CacheSettings.TabCaption>一般、網路和快取</RealRuins.CacheSettings.TabCaption>
-  <RealRuins.CacheSettings.Caption>一般、網路和快取設定</RealRuins.CacheSettings.Caption>
-  <RealRuins.CacheSettings.Description>管理您的快照快取設定。調整儲存限制和下載選項。</RealRuins.CacheSettings.Description>
+  <!-- EN: Inhabitants in regular ruins -->
+  <RealRuins_MapOptions_DisableHostiles>一般遺跡中的棲息者</RealRuins_MapOptions_DisableHostiles>
+  <!-- EN: Average number of ruins spawned on 100x100 area -->
+  <RealRuins_MapOptions_DensityTT>每100x100區域平均生成的遺跡數量</RealRuins_MapOptions_DensityTT>
+  <!-- EN: Ruins area is selected randomly in the range from 50% to 150% of the entered value -->
+  <RealRuins_MapOptions_SizeTT>遺跡面積在輸入值的50%到150%之間隨機選擇</RealRuins_MapOptions_SizeTT>
+  <!-- EN: This value determines additional chance for a tile to be destroyed and does not influence the remaining hit points. Zero is the default setting, max will result in no ruins at all. -->
+  <RealRuins_MapOptions_DeteriorationTT>此數值決定每一格額外被摧毀的機率，不影響剩餘耐久度。預設為0，調到最大則完全不會有遺跡。</RealRuins_MapOptions_DeteriorationTT>
+  <!-- EN: Zero means pristine blueprints. -->
+  <RealRuins_MapOptions_ScavengersTT>數值越高，遺跡被搜刮得越徹底（值錢的東西越少）。0表示藍圖保持原樣。</RealRuins_MapOptions_ScavengersTT>
+  <!-- EN: Regular ruins, per map -->
+  <RealRuins_MapOptions_WealthPerMap>一般遺跡（每張地圖）</RealRuins_MapOptions_WealthPerMap>
+  <!-- EN: Total market value that all scattered ruins of one map may have together (things and floors). Most maps stay well below the default; on a map with an unusually rich ruin its most valuable things are taken away until the ruins fit. Rightmost position: no limit. Does not affect pristine ruins, planetary locations and the main ruin of a caravan event. -->
+  <RealRuins_MapOptions_WealthPerMapTT>一張地圖上所有散落遺跡加總的市場價值上限（物品與地板）。大多數地圖遠低於預設值；若地圖上出現特別富有的遺跡，會移除其中最值錢的東西，直到符合上限。調到最右：不設上限。不影響完整遺跡、行星地點和旅隊事件的主遺跡。</RealRuins_MapOptions_WealthPerMapTT>
+  <!-- EN: Scale with settlement proximity -->
+  <RealRuins_MapOptions_WealthScaleWithProximity>依據點遠近調整</RealRuins_MapOptions_WealthScaleWithProximity>
+  <!-- EN: Raise the limit near settlements and lower it far from them, the same way the number of ruins changes with proximity, so each ruin keeps about the same share. Off: ruins near settlements share one limit, so the dense ruins there are more picked over. Needs proximity to be enabled. -->
+  <RealRuins_MapOptions_WealthScaleWithProximityTT>靠近據點時提高上限、遠離時降低，方式與遺跡數量隨距離變化相同，讓每座遺跡分到的份額大致不變。關閉：據點附近的遺跡共用同一個上限，所以那裡密集的遺跡會被搜刮得更乾淨。需要開啟「考慮據點距離」。</RealRuins_MapOptions_WealthScaleWithProximityTT>
+  <!-- EN: Don't count walls and floors -->
+  <RealRuins_MapOptions_WealthIgnoreStructure>不計入牆與地板</RealRuins_MapOptions_WealthIgnoreStructure>
+  <!-- EN: Plain walls, doors and floors (up to 50 silver per tile) don't count toward the limit and are never removed for it: there are lots of them and they are not loot. Golden walls, silver floors, autodoors and the like still count. -->
+  <RealRuins_MapOptions_WealthIgnoreStructureTT>普通的牆、門和地板（每格最多50銀）不計入上限，也不會因上限而被移除：它們數量很多，也不算戰利品。金牆、銀地板、自動門等仍會計入。</RealRuins_MapOptions_WealthIgnoreStructureTT>
+  <!-- EN: Count damaged things at lower value -->
+  <RealRuins_MapOptions_WealthCountDamage>受損物品按較低價值計算</RealRuins_MapOptions_WealthCountDamage>
+  <!-- EN: Off: everything counts at full price, since repairing restores it and a damaged thing often works just as well. On: the actual market value of what spawned is counted (damage lowers it, quality changes it), so more fits into the limit. -->
+  <RealRuins_MapOptions_WealthCountDamageTT>關閉：一切按原價計入，因為修復能復原，受損物品往往也能正常使用。開啟：按生成時的實際市場價值計算（損壞降低價值，品質改變價值），因此上限能容納更多東西。</RealRuins_MapOptions_WealthCountDamageTT>
+  <!-- EN: Things worth more than this are removed from regular and pristine ruins. Caravan ruins and planetary locations have their own fixed limits. Rightmost position: no limit. -->
+  <RealRuins_MapOptions_CostLimitTT>價值超過此值的物品會從一般遺跡和完整遺跡中移除。旅隊遺跡和行星地點有各自固定的上限。調到最右：不設上限。</RealRuins_MapOptions_CostLimitTT>
+  <!-- EN: No haulable items will spawn, but furniture may still appear. Applies to regular ruins, caravan ruins and ruined planetary locations, not to pristine ruins and intact locations. -->
+  <RealRuins_MapOptions_DisableHaulablesTT>不會生成任何可搬運的物品，但仍可能出現家具。適用於一般遺跡、旅隊遺跡和已成廢墟的行星地點，不適用於完整遺跡和完好的地點。</RealRuins_MapOptions_DisableHaulablesTT>
+  <!-- EN: This setting is pretty aggressive and will remove everything that is not based on a vanilla wall or a door. Applies to regular ruins, caravan ruins and ruined planetary locations, not to pristine ruins and intact locations. -->
+  <RealRuins_MapOptions_WallsAndDoorsOnlyTT>這個設定相當激進，會移除所有不是以原版牆或門為基礎的東西。適用於一般遺跡、旅隊遺跡和已成廢墟的行星地點，不適用於完整遺跡和完好的地點。</RealRuins_MapOptions_WallsAndDoorsOnlyTT>
+  <!-- EN: Chance for every ruin fragment that animals (80%) or mechanoids (20%) live in it. Other ruins have fixed values: caravan ruins 80%, pristine ruins always, planetary locations never. Threat scale still applies to all of them. -->
+  <RealRuins_MapOptions_DisableHostilesTT>每個遺跡碎片有動物（80%）或機械族（20%）棲息的機率。其他遺跡為固定值：旅隊遺跡80%，完整遺跡必定有，行星地點則沒有。威脅規模設定仍對所有遺跡生效。</RealRuins_MapOptions_DisableHostilesTT>
+  <!-- EN: Consider settlement proximity -->
+  <RealRuins_MapOptions_EnableProximity>考慮據點距離</RealRuins_MapOptions_EnableProximity>
+  <!-- EN: Settlement proximity influences generation parameters: ruins are denser near cities, but also emptier. -->
+  <RealRuins_MapOptions_EnableProximityTT>與據點的距離會影響生成參數：靠近城市的遺跡更密集，但也更空。</RealRuins_MapOptions_EnableProximityTT>
+  <!-- EN: No ruins on starting map -->
+  <RealRuins_MapOptions_StartWithoutRuins>起始地圖上沒有遺跡</RealRuins_MapOptions_StartWithoutRuins>
+  <!-- EN: No ruins will be generated on the starting map. Later ruins will be generated normally according to settings. -->
+  <RealRuins_MapOptions_StartWithoutRuinsTT>起始地圖上不會產生遺跡，其他地圖的遺跡將根據設定正常生成。</RealRuins_MapOptions_StartWithoutRuinsTT>
+  <!-- EN: Cache and storage -->
+  <RealRuins.CacheSettings.TabCaption>快取與儲存</RealRuins.CacheSettings.TabCaption>
+  <!-- EN: Cache and storage -->
+  <RealRuins.CacheSettings.Caption>快取與儲存</RealRuins.CacheSettings.Caption>
+  <!-- EN: Where blueprints come from and where they are stored on your disk. -->
+  <RealRuins.CacheSettings.Description>藍圖從哪裡來，以及存放在硬碟的哪個位置。</RealRuins.CacheSettings.Description>
+  <!-- EN: Downloads and uploads -->
+  <RealRuins.CacheSettings.NetworkSection>下載與上傳</RealRuins.CacheSettings.NetworkSection>
+  <!-- EN: No limit -->
   <RealRuins_ModOptions_NoLimit>無限制</RealRuins_ModOptions_NoLimit>
-  <RealRuins_ModOptions_ClearCacheConfirm>您確定要清除所有快取的快照嗎？此操作無法復原。</RealRuins_ModOptions_ClearCacheConfirm>
+  <!-- EN: Are you sure you want to clear all cached snapshots, including planetary ruins blueprints? This action cannot be undone. -->
+  <RealRuins_ModOptions_ClearCacheConfirm>你確定要清除所有快取的快照（包括行星遺跡藍圖）嗎？此動作無法復原。</RealRuins_ModOptions_ClearCacheConfirm>
+  <!-- EN: Local mode deletes all ruins blueprints downloaded from the server as soon as you close the settings. Only your own bases and the blueprints of planetary ruins are kept.\n\nIf you change your mind later, you will have to switch local mode off and download the blueprints again, which can take several minutes. Until then, ruins are built from your own bases only.\n\nSwitch to local mode? -->
+  <RealRuins_ModOptions_OfflineModeConfirm>僅本地模式會在你關閉設定時，立即刪除所有從伺服器下載的遺跡藍圖。只保留你自己的基地和行星遺跡的藍圖。\n\n如果之後改變主意，你需要關閉僅本地模式並重新下載藍圖，這可能需要幾分鐘。在那之前，遺跡只會由你自己的基地生成。\n\n要切換到僅本地模式嗎？</RealRuins_ModOptions_OfflineModeConfirm>
+  <!-- EN: Planetary ruins cache -->
+  <RealRuins.CacheSettings.PlanetaryCaption>行星遺跡快取</RealRuins.CacheSettings.PlanetaryCaption>
+  <!-- EN: Blueprints downloaded for planetary ruins are stored separately for every world seed, coverage and map size. -->
+  <RealRuins.CacheSettings.PlanetaryDescription>為行星遺跡下載的藍圖會按每個世界的種子、覆蓋率和地圖大小分開儲存。</RealRuins.CacheSettings.PlanetaryDescription>
+  <!-- EN: No planetary ruins blueprints are stored. -->
+  <RealRuins.CacheSettings.PlanetaryEmpty>未儲存任何行星遺跡藍圖。</RealRuins.CacheSettings.PlanetaryEmpty>
+  <!-- EN: Seed -->
+  <RealRuins.CacheSettings.Seed>種子</RealRuins.CacheSettings.Seed>
+  <!-- EN: Coverage -->
+  <RealRuins.CacheSettings.Coverage>覆蓋率</RealRuins.CacheSettings.Coverage>
+  <!-- EN: Map size -->
+  <RealRuins.CacheSettings.MapSize>地圖大小</RealRuins.CacheSettings.MapSize>
+  <!-- EN: Blueprints -->
+  <RealRuins.CacheSettings.Blueprints>藍圖</RealRuins.CacheSettings.Blueprints>
+  <!-- EN: Size -->
+  <RealRuins.CacheSettings.FolderSize>大小</RealRuins.CacheSettings.FolderSize>
+  <!-- EN: Clear -->
+  <RealRuins.CacheSettings.ClearFolder>清除</RealRuins.CacheSettings.ClearFolder>
+  <!-- EN: Remove all {1} planetary ruins blueprints ({2}) stored for seed "{0}"?
+
+They are not downloaded again on their own: missing blueprints are downloaded only when a save of this world is loaded, and only while downloads are allowed. Until then, ruins of this world that you haven't visited yet will be empty. -->
+  <RealRuins.CacheSettings.ClearFolderConfirm>要刪除種子「{0}」儲存的全部{1}個行星遺跡藍圖（{2}）嗎？\n\n它們不會自動重新下載：只有在載入這個世界的存檔、且允許下載時，才會下載缺少的藍圖。在那之前，這個世界中尚未造訪的遺跡會是空的。</RealRuins.CacheSettings.ClearFolderConfirm>
+  <!-- EN: This includes the blueprints of the world you are playing now. Ruins you haven't visited yet will be empty until you save and load the game again. -->
+  <RealRuins.CacheSettings.ClearLoadedWorldWarning>這也包括你目前正在玩的世界的藍圖。在你存檔並重新讀取之前，尚未造訪的遺跡會是空的。</RealRuins.CacheSettings.ClearLoadedWorldWarning>
+  <!-- EN: Download additional blueprints from the server. -->
   <RealRuins_ModOptions_DownloadMoreTooltip>從伺服器下載額外的藍圖。</RealRuins_ModOptions_DownloadMoreTooltip>
-
-  <RealRuins.SpawnSettings.TabCaption>生成設定</RealRuins.SpawnSettings.TabCaption>
-  <RealRuins.SpawnSettings.Caption>生成設定</RealRuins.SpawnSettings.Caption>
-  <RealRuins.SpawnSettings.Description>配置遺跡如何生成、大小、密度和內容。</RealRuins.SpawnSettings.Description>
-  <RealRuins.KeepVanillaRuins>保留原生遺跡</RealRuins.KeepVanillaRuins>
-  <RealRuins.KeepVanillaRuinsTT>若啟用，將在真實遺跡旁邊保留RimWorld原生遺跡。</RealRuins.KeepVanillaRuinsTT>
-
-  <RealRuins.PlanetarySettings.DisableFriendly>不生成友善位置</RealRuins.PlanetarySettings.DisableFriendly>
-  <RealRuins.PlanetarySettings.DisableFriendlyTT>若啟用，世界位置將僅由敵對勢力占據。</RealRuins.PlanetarySettings.DisableFriendlyTT>
-  <RealRuins.PlanetaryLoader.DisableFriendlyLocations>不生成友善位置</RealRuins.PlanetaryLoader.DisableFriendlyLocations>
-  <RealRuins.PlanetaryLoader.DisableFriendlyLocationsTT>若啟用，世界位置將僅由敵對勢力占據。</RealRuins.PlanetaryLoader.DisableFriendlyLocationsTT>
-  <RealRuins.PlanetarySettings.RemoveAll>刪除所有位置</RealRuins.PlanetarySettings.RemoveAll>
-  <RealRuins.PlanetarySettings.RemoveAllConfirm>您確定要刪除由真實遺跡生成的所有位置嗎？</RealRuins.PlanetarySettings.RemoveAllConfirm>
-
-  <RealRuins.DisableFriendlyRaids>禁用友善襲擊</RealRuins.DisableFriendlyRaids>
-  <RealRuins.DisableFriendlyRaidsTT>若啟用，在遺跡事件中只會進行敵對勢力的襲擊。</RealRuins.DisableFriendlyRaidsTT>
-  <RealRuins.SpawnRoofs>生成屋頂</RealRuins.SpawnRoofs>
-  <RealRuins.SpawnRoofsTT>若停用，所有遺跡（包括興趣點和廢棄基地）都將在沒有屋頂的情況下生成。因損壞而坍塌的屋頂在任何情況下都不會恢復。</RealRuins.SpawnRoofsTT>
-
-  <RealRuins.SpawnBlacklist>物品黑名單</RealRuins.SpawnBlacklist>
-  <RealRuins.SpawnBlacklistTT>逗號分隔的物品定義清單，用於排除不應生成的物品。</RealRuins.SpawnBlacklistTT>
-
-  <RealRuins.MaterialBlacklist>材料黑名單</RealRuins.MaterialBlacklist>
-  <RealRuins.MaterialBlacklistTT>逗號分隔的材料清單，用於排除不應生成的材料。當遇到由黑名單材料製成的物品時，它將被替換為備用材料。</RealRuins.MaterialBlacklistTT>
-
-  <RealRuins.FallbackMaterial>備用材料</RealRuins.FallbackMaterial>
-  <RealRuins.FallbackMaterialTT>當遇到黑名單材料時使用的材料。預設為木材。</RealRuins.FallbackMaterialTT>
-
-  <RealRuins.Unlimited>無限制</RealRuins.Unlimited>
-  <RealRuins.AdvancedSettings>進階和事件設定</RealRuins.AdvancedSettings>
-
-  <RealRuins.DebugSettings.LogLevel>日誌級別</RealRuins.DebugSettings.LogLevel>
-  <RealRuins.DebugSettings.LogLevelAll>所有訊息</RealRuins.DebugSettings.LogLevelAll>
-  <RealRuins.DebugSettings.LogLevelWarnings>警告和錯誤</RealRuins.DebugSettings.LogLevelWarnings>
-  <RealRuins.DebugSettings.LogLevelErrors>僅錯誤</RealRuins.DebugSettings.LogLevelErrors>
-  <RealRuins.DebugSettings.DebugCategories>除錯類別</RealRuins.DebugSettings.DebugCategories>
-  <RealRuins.DebugSettings.ResetSettings>重設所有設定</RealRuins.DebugSettings.ResetSettings>
-  <RealRuins.DebugSettings.ResetSettingsConfirm>您確定要將所有設定重設為預設值嗎？</RealRuins.DebugSettings.ResetSettingsConfirm>
-  <RealRuins.CaptionPOI11>據點</RealRuins.CaptionPOI11>
-
-
-  <RealRuins.DescPOI0>一小群疑似軍事用途的建築。可能是軍械庫或小型運輸軍事基地。它也許有幾個陣地武器和少量(&lt;1x)的士兵。</RealRuins.DescPOI0>
-  <RealRuins.DescPOI1>一個很小的軍事前哨站，幾個房間，幾座砲塔，幾名士兵。</RealRuins.DescPOI1>
-  <RealRuins.DescPOI2>為開採資源、狩獵或作為轉運點而設立的臨時營地。</RealRuins.DescPOI2>
-  <RealRuins.DescPOI3>一個繁榮的大城市。儘管它通常沒有巨大的牆城或大量的陣地武器，但它可以在受到攻擊時請求強大的增援。</RealRuins.DescPOI3>
-  <RealRuins.DescPOI4>這些建築內可能存在很多工作台、原料以及產品。但很可能會配備精良的守衛。</RealRuins.DescPOI4>
-  <RealRuins.DescPOI5>研發中心負責生產比普通工廠更複雜、更昂貴的產品。除了可能配備精良的守衛之外，一旦你決定進攻，守衛就會請求增援。</RealRuins.DescPOI5>
-  <RealRuins.DescPOI6>主要由發電設備組成的建築群。</RealRuins.DescPOI6>
-  <RealRuins.DescPOI7>一個擁有大量陣地武器的大型軍事基地，駐守著大量的兵力及隨時可抵達的增援。</RealRuins.DescPOI7>
-  <RealRuins.DescPOI8>遠遠看起來像是個堆滿貨物的大型機房，配備著大量的守衛。</RealRuins.DescPOI8>
-  <RealRuins.DescPOI9>看起來像是通訊站的小型建築。也許只是個臨時的軍營，只有幾名士兵看守著。</RealRuins.DescPOI9>
-  <RealRuins.DescPOI10>一片殘破的建築，充滿了損壞的家具、工作台及各種廢棄物，空蕩蕩的廢墟，看不出已經荒廢在這邊多長的歲月了。</RealRuins.DescPOI10>
-  <RealRuins.DescPOI11>戒備森嚴的要塞。配備大量的陣地武器、部隊和增援，擁有強大的自衛能力。</RealRuins.DescPOI11>
-
-  <RealRuins.POINowRuined>這裡曾是個生氣勃勃的地方，但現在卻已被遺棄，沒有人知道發生了什麼事。所以最好小心提防各種潛在的危險。</RealRuins.POINowRuined>
-
-  <RealRuins.EnterPOI>探索: {0}</RealRuins.EnterPOI>
-  <RealRuins.AttackPOI>攻擊: {0}</RealRuins.AttackPOI>
-
-  <RealRuins.CaravanEnteringPOI>前往地點: {0}</RealRuins.CaravanEnteringPOI>
-
-  <LetterLabelCaravanEnteredUnownedPOI>商隊抵達</LetterLabelCaravanEnteredUnownedPOI>
-  <LetterCaravanEnteredUnownedPOI>{0}已抵達目的地。請步步為營, 小心謹慎。</LetterCaravanEnteredUnownedPOI>
-  <LetterLabelCaravanAttackedPOI>商隊襲擊</LetterLabelCaravanAttackedPOI>
-  <LetterCaravanAttackedPOI>{0}正在攻擊其它派系的資產。</LetterCaravanAttackedPOI>
-  <LetterTransportPodsArrivedInUnownedPOI>運輸艙抵達目的地。</LetterTransportPodsArrivedInUnownedPOI>
-  <LetterLabelTransportPodsAttackedPOI>運輸艙抵達目的地。</LetterLabelTransportPodsAttackedPOI>
-  <LetterTransportPodsAttackedPOI>運輸艙抵達目的地。開始攻行動。</LetterTransportPodsAttackedPOI>
-  <LetterLabelTransportPodsArrivedAtRuins>運輸艙抵達遺跡</LetterLabelTransportPodsArrivedAtRuins>
-  <LetterTransportPodsArrivedAtRuins>運輸艙已抵達遺跡</LetterTransportPodsArrivedAtRuins>
-
-  <!-- POI load dialog -->
-  <RealRuins.PlanetaryLoader.LoadBlueprintsCaption>載入整個行星的藍圖</RealRuins.PlanetaryLoader.LoadBlueprintsCaption>
-  <RealRuins.PlanetaryLoader.LoadBlueprints>載入藍圖</RealRuins.PlanetaryLoader.LoadBlueprints>
+  <!-- EN: Spawn and tech level -->
+  <RealRuins.SpawnSettings.TabCaption>生成與科技等級</RealRuins.SpawnSettings.TabCaption>
+  <!-- EN: Spawn and tech level -->
+  <RealRuins.SpawnSettings.Caption>生成與科技等級</RealRuins.SpawnSettings.Caption>
+  <!-- EN: What the ruins look like: how many, how big, how worn, and what may appear in them. The wealth limits are on the Wealth and balance tab. -->
+  <RealRuins.SpawnSettings.Description>遺跡的樣貌：數量、大小、破損程度，以及其中可能出現的東西。財富上限在「財富與平衡」分頁。</RealRuins.SpawnSettings.Description>
+  <!-- EN: Keep vanilla ruins -->
+  <RealRuins.KeepVanillaRuins>保留原版遺跡</RealRuins.KeepVanillaRuins>
+  <!-- EN: If enabled, vanilla RimWorld ruins will be preserved alongside Real Ruins. -->
+  <RealRuins.KeepVanillaRuinsTT>啟用後，原版RimWorld的遺跡會與真實遺跡並存。</RealRuins.KeepVanillaRuinsTT>
+  <!-- EN: Planetary ruins and locations -->
+  <RealRuins.PlanetarySettings.Caption>行星遺跡與地點</RealRuins.PlanetarySettings.Caption>
+  <!-- EN: Offer to load planetary locations at game start -->
+  <RealRuins.PlanetarySettings.Enable>遊戲開始時詢問是否載入行星地點</RealRuins.PlanetarySettings.Enable>
+  <!-- EN: Maximum number of blueprints to download -->
+  <RealRuins.PlanetarySettings.DownloadLimit>藍圖下載數量上限</RealRuins.PlanetarySettings.DownloadLimit>
+  <!-- EN: Maximum number of locations to spawn -->
+  <RealRuins.PlanetarySettings.TransferLimit>地點生成數量上限</RealRuins.PlanetarySettings.TransferLimit>
+  <!-- EN: Discard uncategorized locations (plain ruins) -->
+  <RealRuins.PlanetarySettings.ExcludePlain>捨棄未分類地點（普通遺跡）</RealRuins.PlanetarySettings.ExcludePlain>
+  <!-- EN: Amount of abandoned locations -->
+  <RealRuins.PlanetarySettings.AbandonedPercentage>廢棄地點比例</RealRuins.PlanetarySettings.AbandonedPercentage>
+  <!-- EN: Do not spawn friendly locations -->
+  <RealRuins.PlanetarySettings.DisableFriendly>不生成友善地點</RealRuins.PlanetarySettings.DisableFriendly>
+  <!-- EN: If enabled, world locations will be occupied by hostile factions only. -->
+  <RealRuins.PlanetarySettings.DisableFriendlyTT>啟用後，世界上的地點只會由敵對派系佔據。</RealRuins.PlanetarySettings.DisableFriendlyTT>
+  <!-- EN: Remove All Locations -->
+  <RealRuins.PlanetarySettings.RemoveAll>移除所有地點</RealRuins.PlanetarySettings.RemoveAll>
+  <!-- EN: Are you sure you want to remove all locations spawned by Real Ruins? -->
+  <RealRuins.PlanetarySettings.RemoveAllConfirm>你確定要移除真實遺跡生成的所有地點嗎？</RealRuins.PlanetarySettings.RemoveAllConfirm>
+  <!-- EN: Do not spawn friendly locations -->
+  <RealRuins.PlanetaryLoader.DisableFriendlyLocations>不生成友善地點</RealRuins.PlanetaryLoader.DisableFriendlyLocations>
+  <!-- EN: If enabled, world locations will be occupied by hostile factions only. -->
+  <RealRuins.PlanetaryLoader.DisableFriendlyLocationsTT>啟用後，世界上的地點只會由敵對派系佔據。</RealRuins.PlanetaryLoader.DisableFriendlyLocationsTT>
+  <!-- EN: Caravan arrived at the ruins -->
+  <LetterLabelCaravanEnteredRuins>旅隊抵達遺跡</LetterLabelCaravanEnteredRuins>
+  <!-- EN: {0} has arrived at the abandoned base ruins and is ready to begin scavenging. -->
+  <LetterCaravanEnteredRuins>{0}已抵達廢棄基地遺跡，準備開始搜刮。</LetterCaravanEnteredRuins>
+  <!-- EN: During their travel, {0} spotted a bunch of destroyed buildings nearby, which seem to be in better condition than usual. There are probably still some valuables left. On the other hand, there might be a wild animal lair, a mechanoid nest or a raider outpost: there must be a reason why those buildings seem untouched. -->
+  <RealRuins.CaravanFoundRuins>旅途中，{0}在附近發現一群損毀的建築，狀況似乎比一般的好，裡面可能還留有值錢的東西。但另一方面，那裡也可能是野生動物的巢穴、機械族的巢穴或掠奪者的前哨：這些建築看起來沒人動過，一定有它的原因。</RealRuins.CaravanFoundRuins>
+  <!-- EN: Investigate -->
+  <RealRuins.CaravanFoundRuins.Investigate>調查</RealRuins.CaravanFoundRuins.Investigate>
+  <!-- EN: Small ruins spotted nearby -->
+  <RealRuins.CaravanFoundRuinsTitle>附近發現小型遺跡</RealRuins.CaravanFoundRuinsTitle>
+  <!-- EN: Small abandoned buildings. Something valuable may still be inside. -->
+  <RealRuins.SmallRuinsInspectString>小型廢棄建築。裡面可能還有值錢的東西。</RealRuins.SmallRuinsInspectString>
+  <!-- EN: This item is too worn and damaged. You can tell for sure it was a beautiful art object once, but now you can hardly guess what it was about. -->
+  <DeterioratedArtDescription>這件物品太過老舊破損。你可以肯定它曾經是一件美麗的藝術品，但現在幾乎看不出它原本是什麼。</DeterioratedArtDescription>
+  <!-- EN: Wealth:  -->
+  <RealRuins.RuinsWealth>財富：</RealRuins.RuinsWealth>
+  <!-- EN: Raiders presence:  -->
+  <RealRuins.RuinsActivity>掠奪者出沒：</RealRuins.RuinsActivity>
+  <!-- EN: almost zero (&lt;10K) -->
+  <RealRuins.RuinsWealth.0>幾乎為零(&lt;10K)</RealRuins.RuinsWealth.0>
+  <!-- EN: low -->
+  <RealRuins.RuinsWealth.1>低</RealRuins.RuinsWealth.1>
+  <!-- EN: medium -->
+  <RealRuins.RuinsWealth.2>中</RealRuins.RuinsWealth.2>
+  <!-- EN: high (&gt;1M) -->
+  <RealRuins.RuinsWealth.3>高(&gt;1M)</RealRuins.RuinsWealth.3>
+  <!-- EN: extremely high (&gt;10M) -->
+  <RealRuins.RuinsWealth.4>極高(&gt;10M)</RealRuins.RuinsWealth.4>
+  <!-- EN: almost none -->
+  <RealRuins.RuinsActivity.0>幾乎沒有</RealRuins.RuinsActivity.0>
+  <!-- EN: low -->
+  <RealRuins.RuinsActivity.1>低</RealRuins.RuinsActivity.1>
+  <!-- EN: medium -->
+  <RealRuins.RuinsActivity.2>中</RealRuins.RuinsActivity.2>
+  <!-- EN: high -->
+  <RealRuins.RuinsActivity.3>高</RealRuins.RuinsActivity.3>
+  <!-- EN: extreme -->
+  <RealRuins.RuinsActivity.4>極高</RealRuins.RuinsActivity.4>
+  <!-- EN: Looks like no one's gonna show up anymore. You can safely pack up and leave. -->
+  <RealRuins.NoMoreEnemies>看來不會再有人出現了。你可以放心收拾東西離開。</RealRuins.NoMoreEnemies>
+  <!-- EN: Pristine ruins incident removed -->
+  <RealRuins.PristineRuinsIncidentRetired.Label>完整遺跡事件已移除</RealRuins.PristineRuinsIncidentRetired.Label>
+  <!-- EN: The "nearby ruins found" incident was removed, nothing has been spawned. Pristine ruins now come as a quest. To create one manually, use Debug actions -> Generate quest -> RealRuins_AbandonedBase. -->
+  <RealRuins.PristineRuinsIncidentRetired.Text>「發現附近遺跡」事件已移除，沒有生成任何東西。完整遺跡現在改以任務形式出現。如要手動建立，請使用Debug actions -&gt; Generate quest -&gt; RealRuins_AbandonedBase。</RealRuins.PristineRuinsIncidentRetired.Text>
+  <!-- EN: Raiders may still show up. Pick up what your pawns can carry and leave via the map edge, or wait until things calm down. -->
+  <RealRuins.ReformLockedManual>掠奪者可能還會出現。撿起殖民者帶得走的物品，從地圖邊緣離開，或等局勢平靜下來。</RealRuins.ReformLockedManual>
+  <!-- EN: Small military base -->
+  <RealRuins.CaptionPOI0>小型軍事基地</RealRuins.CaptionPOI0>
+  <!-- EN: Military outpost -->
+  <RealRuins.CaptionPOI1>軍事前哨</RealRuins.CaptionPOI1>
+  <!-- EN: Temporary camp -->
+  <RealRuins.CaptionPOI2>臨時營地</RealRuins.CaptionPOI2>
+  <!-- EN: City -->
+  <RealRuins.CaptionPOI3>城市</RealRuins.CaptionPOI3>
+  <!-- EN: Factory -->
+  <RealRuins.CaptionPOI4>工廠</RealRuins.CaptionPOI4>
+  <!-- EN: Research center -->
+  <RealRuins.CaptionPOI5>研究中心</RealRuins.CaptionPOI5>
+  <!-- EN: Power plant -->
+  <RealRuins.CaptionPOI6>發電廠</RealRuins.CaptionPOI6>
+  <!-- EN: Large military base -->
+  <RealRuins.CaptionPOI7>大型軍事基地</RealRuins.CaptionPOI7>
+  <!-- EN: Warehouse -->
+  <RealRuins.CaptionPOI8>倉庫</RealRuins.CaptionPOI8>
+  <!-- EN: Comm center -->
+  <RealRuins.CaptionPOI9>通訊中心</RealRuins.CaptionPOI9>
+  <!-- EN: Ruins -->
+  <RealRuins.CaptionPOI10>遺跡</RealRuins.CaptionPOI10>
+  <!-- EN: Stronghold -->
+  <RealRuins.CaptionPOI11>要塞</RealRuins.CaptionPOI11>
+  <!-- EN: Village -->
+  <RealRuins.CaptionPOI12>村莊</RealRuins.CaptionPOI12>
+  <!-- EN: Castle -->
+  <RealRuins.CaptionPOI13>城堡</RealRuins.CaptionPOI13>
+  <!-- EN: Workshop -->
+  <RealRuins.CaptionPOI14>工坊</RealRuins.CaptionPOI14>
+  <!-- EN: Shipwreck -->
+  <RealRuins.CaptionPOI15>船艦殘骸</RealRuins.CaptionPOI15>
+  <!-- EN: A small group of buildings, presumably military. Probably an armoury or a small transit military base. It can have several stationary weapons and a dozen or two soldiers. -->
+  <RealRuins.DescPOI0>一小群建築物，推測為軍事用途。可能是軍械庫或小型的中轉軍事基地。這裡可能有幾座固定武器和一、二十名士兵。</RealRuins.DescPOI0>
+  <!-- EN: A very small military outpost: a couple of rooms, a couple of turrets, a couple of soldiers. -->
+  <RealRuins.DescPOI1>一個很小的軍事前哨，有幾個房間，幾座砲塔還有一些士兵。</RealRuins.DescPOI1>
+  <!-- EN: A temporary camp set up for mining or hunting, or as a transshipment point. -->
+  <RealRuins.DescPOI2>為開採資源、狩獵或作為轉運點而建立的臨時營地。</RealRuins.DescPOI2>
+  <!-- EN: A large thriving city. Even though it usually does not have massive walls or a lot of stationary weapons, it can request powerful reinforcements in case of an assault. -->
+  <RealRuins.DescPOI3>一座繁榮的大型城市。儘管它通常沒有厚重的城牆或大量的固定武器，但一旦遭到襲擊，它可以請求強大的增援。</RealRuins.DescPOI3>
+  <!-- EN: Those buildings contain a lot of workbenches and produced goods. Most likely the factory is well guarded. -->
+  <RealRuins.DescPOI4>那些建築裡有很多工作台和成品。這家工廠很可能守衛森嚴。</RealRuins.DescPOI4>
+  <!-- EN: This research and development center is focused on production, but its goods are more sophisticated and pricey than in a regular factory. Most likely it's well guarded and guards will call reinforcements as soon as you decide to assault. -->
+  <RealRuins.DescPOI5>這座研發中心以生產為主，但其產出的貨物比普通工廠更加精密且昂貴。這裡極有可能守衛森嚴，一旦你決定發動進攻，守衛便會立即呼叫增援。</RealRuins.DescPOI5>
+  <!-- EN: A group of buildings focused primarily on power production. -->
+  <RealRuins.DescPOI6>主要用於發電的一組建築物。</RealRuins.DescPOI6>
+  <!-- EN: A large military base with lots of stationary weapons, several dozens of personnel and reinforcements ready to arrive. -->
+  <RealRuins.DescPOI7>一座大型軍事基地，有大量固定武器、數十名人員，還有隨時可抵達的增援。</RealRuins.DescPOI7>
+  <!-- EN: From a distance it looks like a large hangar filled with goods. And a lot of guards. -->
+  <RealRuins.DescPOI8>從遠處看，它像是一個裝滿貨物的大型機庫。而且還有很多守衛。</RealRuins.DescPOI8>
+  <!-- EN: A small building that looks like a communication center. Probably just a temporary military camp with only a few guards. -->
+  <RealRuins.DescPOI9>一棟看起來像通訊中心的小建築。可能只是一個臨時軍事營地，只有幾名守衛。</RealRuins.DescPOI9>
+  <!-- EN: Remains of some buildings, bits of furniture, broken workbenches, pipes and metal bars. You can't tell what it was long ago: all that's left are empty ruins. -->
+  <RealRuins.DescPOI10>幾棟建築的殘骸、零星的家具、損壞的工作台、管線和金屬條。已經看不出它很久以前是什麼了：留下的只有空蕩蕩的廢墟。</RealRuins.DescPOI10>
+  <!-- EN: Heavily guarded stronghold. Extremely well defended with tons of stationary weapons, troops and reinforcements. -->
+  <RealRuins.DescPOI11>守衛森嚴的要塞。防禦極為嚴密，配備大量固定武器、部隊和增援。</RealRuins.DescPOI11>
+  <!-- EN: A village of farmers and craftsmen. Its houses are simple, but the villagers will defend them. -->
+  <RealRuins.DescPOI12>一座由農民和工匠組成的村莊。這裡的房屋雖然簡陋，但村民們會奮力保衛自己的家園。</RealRuins.DescPOI12>
+  <!-- EN: A castle behind thick walls. A garrison of armed men guards it, and its lord will not give it up without a fight. -->
+  <RealRuins.DescPOI13>一座隱於厚重城牆之後的城堡。一隊全副武裝的守軍駐守於此，而它的領主絕不會不戰而降。</RealRuins.DescPOI13>
+  <!-- EN: Workshops full of benches, tools and finished goods made by hand. The craftsmen keep a few guards to protect their wares. -->
+  <RealRuins.DescPOI14>擺滿工作台、工具和手工成品的工坊。工匠們雇了幾名守衛來保護他們的貨物。</RealRuins.DescPOI14>
+  <!-- EN: A gravship that landed here and never took off again. Its hull still holds whatever the crew carried, and someone may have moved in. -->
+  <RealRuins.DescPOI15>一艘降落在此後就再也沒有起飛的重力船。船體內仍留著船員帶來的東西，而且可能已經有人住進去了。</RealRuins.DescPOI15>
+  <!-- EN: This {0} was once full of life, but now it's abandoned, and no one knows why. So better beware of all kinds of danger. -->
+  <RealRuins.POINowRuined>這座{0}曾經充滿生機，但如今已被廢棄，且無人知曉緣由。因此，最好小心防範各種危險。</RealRuins.POINowRuined>
+  <!-- EN: You wonder what it could have been long ago. Now it's mostly rock and rubble. -->
+  <RealRuins.POIUselessRuins>你不禁好奇它很久以前曾是什麼模樣。如今，這裡大多只剩下亂石和瓦礫。</RealRuins.POIUselessRuins>
+  <!-- EN: Enter {0} -->
+  <RealRuins.EnterPOI>進入{0}</RealRuins.EnterPOI>
+  <!-- EN: Attack {0} -->
+  <RealRuins.AttackPOI>攻擊{0}</RealRuins.AttackPOI>
+  <!-- EN: Entering {0} -->
+  <RealRuins.CaravanEnteringPOI>正在進入{0}</RealRuins.CaravanEnteringPOI>
+  <!-- EN: Caravan arrived -->
+  <LetterLabelCaravanEnteredUnownedPOI>旅隊已抵達</LetterLabelCaravanEnteredUnownedPOI>
+  <!-- EN: {0} has arrived at the destination. Proceed with caution. -->
+  <LetterCaravanEnteredUnownedPOI>{0}已抵達目的地。請謹慎行動。</LetterCaravanEnteredUnownedPOI>
+  <!-- EN: Caravan is attacking -->
+  <LetterLabelCaravanAttackedPOI>旅隊正在進攻</LetterLabelCaravanAttackedPOI>
+  <!-- EN: {0} is attacking other faction's property. -->
+  <LetterCaravanAttackedPOI>{0}正在攻擊其他派系的財產。</LetterCaravanAttackedPOI>
+  <!-- EN: Transport pods have arrived at the destination. -->
+  <LetterTransportPodsArrivedInUnownedPOI>運輸艙已抵達目的地。</LetterTransportPodsArrivedInUnownedPOI>
+  <!-- EN: Transport pods have arrived -->
+  <LetterLabelTransportPodsAttackedPOI>運輸艙已抵達</LetterLabelTransportPodsAttackedPOI>
+  <!-- EN: Transport pods have arrived at the destination. The attack has begun. -->
+  <LetterTransportPodsAttackedPOI>運輸艙已抵達目的地。攻擊開始了。</LetterTransportPodsAttackedPOI>
+  <!-- EN: Transport pods have arrived at the ruins -->
+  <LetterLabelTransportPodsArrivedAtRuins>運輸艙已抵達遺跡</LetterLabelTransportPodsArrivedAtRuins>
+  <!-- EN: Transport pods have arrived at the ruins. -->
+  <LetterTransportPodsArrivedAtRuins>運輸艙已抵達遺跡。</LetterTransportPodsArrivedAtRuins>
+  <!-- EN: Load blueprints for the planet -->
+  <RealRuins.PlanetaryLoader.LoadBlueprintsCaption>載入此星球的藍圖</RealRuins.PlanetaryLoader.LoadBlueprintsCaption>
+  <!-- EN: This feature will load maps of other players who had their colonies on the same planet. Their colonies will be spawned as other factions' settlements and outposts, or as abandoned ruins. Unlike random ruins, those will be placed at their original locations. -->
+  <RealRuins.PlanetaryLoader.LoadBlueprintsDescription>此功能將載入在同一星球上建立過殖民地的其他玩家的地圖。他們的殖民地將作為其他派系的據點和前哨站，或作為廢棄遺跡生成。與隨機生成的遺跡不同，這些遺跡將位於其原始位置。</RealRuins.PlanetaryLoader.LoadBlueprintsDescription>
+  <!-- EN: In this mode you can control every step. First you load only the number of blueprints available for the planet and choose how many of them you want to download. Then, after loading, you choose how many of them you want to transfer and how they should be filtered. You can stop at any step, remove everything and start over. -->
+  <RealRuins.PlanetaryLoader.OptionsDescription>此模式允許你逐步控制載入流程：先取得星球上的可用藍圖數量並設定下載上限；下載完畢後，再根據設定匯入世界的數量及篩選條件。過程中可隨時中止、清空資料並重來。</RealRuins.PlanetaryLoader.OptionsDescription>
+  <!-- EN: WARNING: If you're going to change map size, press Close now and download blueprints after changing map size. -->
+  <RealRuins.PlanetaryLoader.MapSizeChangeWarning>警告：如果你打算更改地圖大小，請立即按「關閉」，在更改地圖大小之後再下載藍圖。</RealRuins.PlanetaryLoader.MapSizeChangeWarning>
+  <!-- EN: You have too few blueprints. If it bothers you, try selecting another seed or other map settings. You can check the most populated worlds by visiting https://woolstrand.art/view/maps/topseeds -->
+  <RealRuins.PlanetaryLoader.LowCountWarning>目前可用的藍圖數量過少。如果你介意這一點，可以嘗試更換其他世界種子或調整地圖生成設定。你可以造訪https://woolstrand.art/view/maps/topseeds查看玩家人數最多的熱門世界。</RealRuins.PlanetaryLoader.LowCountWarning>
+  <!-- EN: Sorry -->
+  <RealRuins.PlanetaryLoader.NoBlueprintsWarning.Caption>抱歉</RealRuins.PlanetaryLoader.NoBlueprintsWarning.Caption>
+  <!-- EN: This world does not contain any maps. It means nobody has played with the same seed, coverage and map size yet. If you want to have some locations on the world map, try selecting a more common seed. You can check the most populated worlds by visiting https://woolstrand.art/view/maps/topseeds -->
+  <RealRuins.PlanetaryLoader.NoBlueprintsWarning.Text>目前世界不包含任何地圖資料。這意味著尚無其他玩家使用過相同的種子、星球覆蓋率和地圖尺寸進行遊玩。如果你想在世界地圖上生成一些遺跡地點，請嘗試選擇更常見的種子。你可以造訪https://woolstrand.art/view/maps/topseeds查看玩家人數最多的熱門世界。</RealRuins.PlanetaryLoader.NoBlueprintsWarning.Text>
+  <!-- EN: Load automatically -->
+  <RealRuins.PlanetaryLoader.StartAuto>自動載入</RealRuins.PlanetaryLoader.StartAuto>
+  <!-- EN: Load list -->
+  <RealRuins.PlanetaryLoader.GetCount>載入清單</RealRuins.PlanetaryLoader.GetCount>
+  <!-- EN: More options... -->
+  <RealRuins.PlanetaryLoader.MoreOptions>更多選項...</RealRuins.PlanetaryLoader.MoreOptions>
+  <!-- EN: Stop -->
+  <RealRuins.PlanetaryLoader.StopButtonTitle1>停止</RealRuins.PlanetaryLoader.StopButtonTitle1>
+  <!-- EN: Enough! -->
+  <RealRuins.PlanetaryLoader.StopButtonTitle2>夠了！</RealRuins.PlanetaryLoader.StopButtonTitle2>
+  <!-- EN: STOP LITTLE POT, STOP!!! -->
+  <RealRuins.PlanetaryLoader.StopButtonTitle3>小鍋子，快停下來！！！</RealRuins.PlanetaryLoader.StopButtonTitle3>
+  <!-- EN: Interrupt -->
+  <RealRuins.PlanetaryLoader.Interrupt>中斷</RealRuins.PlanetaryLoader.Interrupt>
+  <!-- EN: Download limit (0 for no limit):  -->
+  <RealRuins.PlanetaryLoader.DownloadLimit>下載數量上限（0為不限制）： </RealRuins.PlanetaryLoader.DownloadLimit>
+  <!-- EN: Transfer limit (0 for no limit):  -->
+  <RealRuins.PlanetaryLoader.TransferLimit>匯入數量上限（0為不限制）： </RealRuins.PlanetaryLoader.TransferLimit>
+  <!-- EN: Percentage of abandoned locations -->
+  <RealRuins.PlanetaryLoader.AbandonedPercentage>廢棄地點百分比</RealRuins.PlanetaryLoader.AbandonedPercentage>
+  <!-- EN: Transfer -->
+  <RealRuins.PlanetaryLoader.TransferringOptions>轉移</RealRuins.PlanetaryLoader.TransferringOptions>
+  <!-- EN: Just load -->
+  <RealRuins.PlanetaryLoader.LoadBlueprints>僅載入</RealRuins.PlanetaryLoader.LoadBlueprints>
+  <!-- EN: Load and spawn -->
+  <RealRuins.PlanetaryLoader.LoadAndSpawnBlueprints>載入並生成</RealRuins.PlanetaryLoader.LoadAndSpawnBlueprints>
+  <!-- EN: Create outposts -->
+  <RealRuins.PlanetaryLoader.TransferBlueprints>建立前哨</RealRuins.PlanetaryLoader.TransferBlueprints>
+  <!-- EN: Remove all spawned locations -->
+  <RealRuins.PlanetaryLoader.RemoveSites>移除所有已生成地點</RealRuins.PlanetaryLoader.RemoveSites>
+  <!-- EN: Close -->
   <RealRuins.PlanetaryLoader.Close>關閉</RealRuins.PlanetaryLoader.Close>
-  <RealRuins.PlanetaryLoader.Searching>搜尋藍圖...</RealRuins.PlanetaryLoader.Searching>
-  <RealRuins.PlanetaryLoader.Loading>載入藍圖: </RealRuins.PlanetaryLoader.Loading>
-  <RealRuins.PlanetaryLoader.Processing>分析藍圖: </RealRuins.PlanetaryLoader.Processing>
-  <RealRuins.PlanetaryLoader.Completed>完成!</RealRuins.PlanetaryLoader.Completed>
-  <RealRuins.PlanetaryLoader.BiomeFiltering>過濾生物群系</RealRuins.PlanetaryLoader.BiomeFiltering>
-  <RealRuins.PlanetaryLoader.BiomeFilteringTT>排除與地圖不符合或不相容的生物群系。</RealRuins.PlanetaryLoader.BiomeFilteringTT>
-  <RealRuins.PlanetaryLoader.CostFiltering>過濾價值</RealRuins.PlanetaryLoader.CostFiltering>
-  <RealRuins.PlanetaryLoader.CostFilteringTT>排除價值過低的地圖。(低於平均被認定為 "廢墟" 的價值)</RealRuins.PlanetaryLoader.CostFilteringTT>
-  <RealRuins.PlanetaryLoader.AreaFiltering>過濾區域及物品</RealRuins.PlanetaryLoader.AreaFiltering>
-  <RealRuins.PlanetaryLoader.AreaFilteringTT>排除太小或物品太少的地圖。</RealRuins.PlanetaryLoader.AreaFilteringTT>
-  <RealRuins.PlanetaryLoader.UsedMaps>被使用的地圖: </RealRuins.PlanetaryLoader.UsedMaps>
-  <RealRuins.PlanetaryLoader.DroppedMaps>被丟棄的地圖: </RealRuins.PlanetaryLoader.DroppedMaps>
-
-  <RealRuins.PlanetarySettings.MapsModuleButton>匯入藍圖到行星(BETA)</RealRuins.PlanetarySettings.MapsModuleButton>
-  <RealRuins.PlanetaryLoader.NeedsGameInProgress>必須在遊戲中才能使用此設定。</RealRuins.PlanetaryLoader.NeedsGameInProgress>
-
-  <RealRuins.CaravanReformType>商隊重組形式</RealRuins.CaravanReformType>
+  <!-- EN: Planetary ruins -->
+  <RealRuins.PlanetaryLoader.OpenButton>行星遺跡</RealRuins.PlanetaryLoader.OpenButton>
+  <!-- EN: Searching for blueprints... -->
+  <RealRuins.PlanetaryLoader.Searching>正在搜尋藍圖...</RealRuins.PlanetaryLoader.Searching>
+  <!-- EN: Loading blueprints:  -->
+  <RealRuins.PlanetaryLoader.Loading>正在載入藍圖：</RealRuins.PlanetaryLoader.Loading>
+  <!-- EN: Transferring blueprints:  -->
+  <RealRuins.PlanetaryLoader.Transferring>正在匯入藍圖： </RealRuins.PlanetaryLoader.Transferring>
+  <!-- EN: Processing blueprints:  -->
+  <RealRuins.PlanetaryLoader.Processing>正在處理藍圖：</RealRuins.PlanetaryLoader.Processing>
+  <!-- EN: Completed -->
+  <RealRuins.PlanetaryLoader.Completed>已完成</RealRuins.PlanetaryLoader.Completed>
+  <!-- EN: Server has {0} blueprints for this planet. -->
+  <RealRuins.PlanetaryLoader.LoadedAmount>伺服器上有{0}個此星球的藍圖。</RealRuins.PlanetaryLoader.LoadedAmount>
+  <!-- EN: Seems there are a whole lot of blueprints! -->
+  <RealRuins.PlanetaryLoader.TooManyBlueprints.Load.Title>藍圖似乎非常多！</RealRuins.PlanetaryLoader.TooManyBlueprints.Load.Title>
+  <!-- EN: The server says this world has {0} blueprints. This can take a while to download and process, and the world map can become cluttered. If it's your first time using this game mode, it's recommended to limit blueprint count. -->
+  <RealRuins.PlanetaryLoader.TooManyBlueprints.Load.Text>伺服器顯示這個世界有{0}個藍圖。下載和處理可能要花一段時間，世界地圖也可能變得雜亂。如果你是第一次使用這個遊戲模式，建議限制藍圖數量。</RealRuins.PlanetaryLoader.TooManyBlueprints.Load.Text>
+  <!-- EN: Get all blueprints anyway -->
+  <RealRuins.PlanetaryLoader.TooManyBlueprints.GetAll>仍然取得全部藍圖</RealRuins.PlanetaryLoader.TooManyBlueprints.GetAll>
+  <!-- EN: Show advanced settings and let me decide -->
+  <RealRuins.PlanetaryLoader.TooManyBlueprints.ShowOptions>顯示進階設定，讓我自己決定</RealRuins.PlanetaryLoader.TooManyBlueprints.ShowOptions>
+  <!-- EN: Get just 500 blueprints -->
+  <RealRuins.PlanetaryLoader.TooManyBlueprints.Get500>只取得500個藍圖</RealRuins.PlanetaryLoader.TooManyBlueprints.Get500>
+  <!-- EN: Biome filtering -->
+  <RealRuins.PlanetaryLoader.BiomeFiltering>生態區篩選</RealRuins.PlanetaryLoader.BiomeFiltering>
+  <!-- EN: Exclude maps with missing or mismatching biome -->
+  <RealRuins.PlanetaryLoader.BiomeFilteringTT>排除缺少生態區或生態區不符的地圖</RealRuins.PlanetaryLoader.BiomeFilteringTT>
+  <!-- EN: Cost filtering -->
+  <RealRuins.PlanetaryLoader.CostFiltering>價值篩選</RealRuins.PlanetaryLoader.CostFiltering>
+  <!-- EN: Exclude maps with too low cost (lower than average "empty" map) -->
+  <RealRuins.PlanetaryLoader.CostFilteringTT>排除價值過低的地圖（低於「空」地圖的平均值）</RealRuins.PlanetaryLoader.CostFilteringTT>
+  <!-- EN: Area and items filtering -->
+  <RealRuins.PlanetaryLoader.AreaFiltering>面積與物品篩選</RealRuins.PlanetaryLoader.AreaFiltering>
+  <!-- EN: Exclude maps with too small area and too low items count -->
+  <RealRuins.PlanetaryLoader.AreaFilteringTT>排除面積太小、物品數量太少的地圖</RealRuins.PlanetaryLoader.AreaFilteringTT>
+  <!-- EN: Aggressive discard -->
+  <RealRuins.PlanetaryLoader.DiscardAbandoned>積極捨棄</RealRuins.PlanetaryLoader.DiscardAbandoned>
+  <!-- EN: Discard all maps that do not qualify as any specific kind of POI (this usually drops about a half of all maps) -->
+  <RealRuins.PlanetaryLoader.DiscardAbandonedTT>捨棄所有不屬於任何特定地點類型的地圖（通常會刷掉約一半的地圖）</RealRuins.PlanetaryLoader.DiscardAbandonedTT>
+  <!-- EN: Maps used:  -->
+  <RealRuins.PlanetaryLoader.UsedMaps>使用的地圖：</RealRuins.PlanetaryLoader.UsedMaps>
+  <!-- EN: Maps discarded:  -->
+  <RealRuins.PlanetaryLoader.DroppedMaps>捨棄的地圖：</RealRuins.PlanetaryLoader.DroppedMaps>
+  <!-- EN: Download and spawn now -->
+  <RealRuins.PlanetarySettings.MapsModuleButton>立即下載並生成</RealRuins.PlanetarySettings.MapsModuleButton>
+  <!-- EN: You have to be in an ongoing game to use this menu -->
+  <RealRuins.PlanetaryLoader.NeedsGameInProgress>你必須在正在進行的遊戲中才能使用此選單</RealRuins.PlanetaryLoader.NeedsGameInProgress>
+  <!-- EN: Caravan reform at pristine ruins -->
+  <RealRuins.CaravanReformType>在完整遺跡重組旅隊</RealRuins.CaravanReformType>
+  <!-- EN: Automatic -->
   <RealRuins.Reform.Automatic>自動</RealRuins.Reform.Automatic>
+  <!-- EN: Instant -->
   <RealRuins.Reform.Instant>即時</RealRuins.Reform.Instant>
+  <!-- EN: Manual -->
   <RealRuins.Reform.Manual>手動</RealRuins.Reform.Manual>
-  <RealRuins.CaravanReformTooltip>在遺跡中重組商隊的方式。"自動" 與原始在基地上生成商隊的方式相同。"即時" 允許通過世界地圖上的按鈕即時重組。"手動" 需要自行撿拾物品並透過移動到地圖邊緣來組成商隊。</RealRuins.CaravanReformTooltip>
+  <!-- EN: How you leave pristine ruins.\n\nAutomatic: works the same way as forming a caravan on your home map.\n\nInstant: a button on the world map reforms the caravan at once, when no enemies are around.\n\nManual: no reforming until the raids are over. Pick up the items by hand and leave via the map edge. -->
+  <RealRuins.CaravanReformTooltip>離開完整遺跡的方式。\n\n自動：與在殖民地地圖上組成旅隊的方式相同。\n\n即時：附近沒有敵人時，可用世界地圖上的按鈕立即重組旅隊。\n\n手動：襲擊結束前無法重組旅隊。需手動撿起物品，從地圖邊緣離開。</RealRuins.CaravanReformTooltip>
+  <!-- EN: Threat scale (all ruins) -->
+  <RealRuins.ForceMultiplier>威脅規模（所有遺跡）</RealRuins.ForceMultiplier>
+  <!-- EN: Pristine ruins -->
+  <RealRuins.AbsoluteWealthCap>完整遺跡</RealRuins.AbsoluteWealthCap>
+  <!-- EN: Scales every threat Real Ruins creates: the animals and mechanoids in regular ruins, the raiders at caravan ruins, the raids and raid triggers at pristine ruins, and the starting parties. 0 means no inhabitants, raiders or raid triggers at all. -->
+  <RealRuins.ForceMultiplierTT>調整真實遺跡產生的所有威脅：一般遺跡中的動物和機械族、旅隊遺跡的掠奪者、完整遺跡的襲擊與襲擊觸發器，以及初始駐守隊伍。設為0則完全沒有棲息者、掠奪者或襲擊觸發器。</RealRuins.ForceMultiplierTT>
+  <!-- EN: The most pristine ruins (the quest) may be worth. Caravan ruins have their own limit. Wooden walls and doors are not counted. -->
+  <RealRuins.AbsoluteWealthCapTT>完整遺跡（任務）的價值上限。旅隊遺跡有自己的上限。木牆和木門不計入。</RealRuins.AbsoluteWealthCapTT>
+  <!-- EN: Small raids keep coming (pristine ruins) -->
+  <RealRuins.UseForcesGenerationV2>小型襲擊持續來襲（完整遺跡）</RealRuins.UseForcesGenerationV2>
+  <!-- EN: While you're at pristine ruins, small groups of enemies keep arriving, a few at a time, on top of the big raids. The more loot is still left, the more of them come. As you carry it off, they thin out. Turn this off to get only the big raids. -->
+  <RealRuins.UseForcesGenerationV2TT>待在完整遺跡期間，除了大型襲擊之外，還會不斷有小股敵人分批抵達。剩下的戰利品越多，來的人就越多；隨著你把東西搬走，他們會逐漸減少。關閉後只會有大型襲擊。</RealRuins.UseForcesGenerationV2TT>
+  <!-- EN: Disable friendly raids -->
+  <RealRuins.DisableFriendlyRaids>停用友善派系襲擊</RealRuins.DisableFriendlyRaids>
+  <!-- EN: If enabled, only hostile factions will spawn raids during ruins events. Friendly faction raids will be prevented. -->
+  <RealRuins.DisableFriendlyRaidsTT>啟用後，遺跡事件中只有敵對派系會發動襲擊，友善派系不會。</RealRuins.DisableFriendlyRaidsTT>
+  <!-- EN: Spawn roofs -->
+  <RealRuins.SpawnRoofs>生成屋頂</RealRuins.SpawnRoofs>
+  <!-- EN: If disabled, ruins of all kinds (including points of interest and abandoned bases) are generated without roofs. Roofs that collapsed from deterioration stay collapsed either way. -->
+  <RealRuins.SpawnRoofsTT>停用後，所有遺跡（包括地點和廢棄基地）都不會生成屋頂。因損毀而坍塌的屋頂不論如何都維持坍塌。</RealRuins.SpawnRoofsTT>
+  <!-- EN: Item spawn blacklist -->
+  <RealRuins.SpawnBlacklist>物品黑名單</RealRuins.SpawnBlacklist>
+  <!-- EN: Comma-separated list of item defs to exclude from spawning. -->
+  <RealRuins.SpawnBlacklistTT>以英文逗號分隔、要排除生成的物品def清單。例如排除高爆砲彈和毒性廢料包：\n\nShell_HighExplosive,Wastepack</RealRuins.SpawnBlacklistTT>
+  <!-- EN: Material blacklist -->
+  <RealRuins.MaterialBlacklist>材料黑名單</RealRuins.MaterialBlacklist>
+  <!-- EN: Comma-separated list of materials to exclude from spawning. When a thing made of a blacklisted material is encountered, it will be replaced with the fallback material. -->
+  <RealRuins.MaterialBlacklistTT>以英文逗號分隔、要排除生成的材料清單。遇到以黑名單材料製成的東西時，會改用備用材料。</RealRuins.MaterialBlacklistTT>
+  <!-- EN: Fallback material -->
+  <RealRuins.FallbackMaterial>備用材料</RealRuins.FallbackMaterial>
+  <!-- EN: Material to use when a blacklisted material is encountered. Default is Wood. If invalid or empty, items with blacklisted materials will be discarded. -->
+  <RealRuins.FallbackMaterialTT>遇到黑名單材料時改用的材料。預設為木材。若無效或留空，使用黑名單材料的物品會被捨棄。</RealRuins.FallbackMaterialTT>
+  <!-- EN: Unlimited -->
+  <RealRuins.Unlimited>無限制</RealRuins.Unlimited>
+  <!-- EN: Events and Advanced Settings -->
+  <RealRuins.AdvancedSettings>事件與進階設定</RealRuins.AdvancedSettings>
+  <!-- EN: Tech Level -->
+  <RealRuins.TechLimit.Caption>科技等級</RealRuins.TechLimit.Caption>
+  <!-- EN: Limit tech level -->
+  <RealRuins.TechLimit.Enabled>限制科技等級</RealRuins.TechLimit.Enabled>
+  <!-- EN: Things more advanced than the selected tech level are removed from ruins. A thing's tech level comes from its own tech level, the research needed to build or craft it and its ingredients. Walls and doors above the limit are replaced with plain stone walls and wooden doors. Things with no tech level at all always stay. -->
+  <RealRuins.TechLimit.EnabledTT>比所選科技等級更先進的東西會從遺跡中移除。物品的科技等級取決於它本身的科技等級、建造或製作所需的研究，以及它的原料。超過上限的牆和門會換成普通石牆和木門。完全沒有科技等級的東西一律保留。</RealRuins.TechLimit.EnabledTT>
+  <!-- EN: Maximum tech level -->
+  <RealRuins.TechLimit.MaxLevel>最高科技等級</RealRuins.TechLimit.MaxLevel>
+  <!-- EN: The most advanced tech level of things which can spawn in ruins. -->
+  <RealRuins.TechLimit.MaxLevelTT>可在遺跡中生成的物品的最高科技等級。</RealRuins.TechLimit.MaxLevelTT>
+  <!-- EN: Capping strategy -->
+  <RealRuins.TechLimit.Strategy>上限策略</RealRuins.TechLimit.Strategy>
+  <!-- EN: Strict: nothing above the limit ever spawns. Good for true medieval or fantasy playthroughs.\n\nLimited: things above the limit are rare relics of the past: 10% of them stay one level above the limit, 1% two levels above, and so on. Good for post-apocalyptic low tech playthroughs. -->
+  <RealRuins.TechLimit.StrategyTT>嚴格：超過上限的東西完全不會生成。適合純中世紀或奇幻玩法。\n\n寬鬆：超過上限的東西是罕見的古代遺物：其中10%保留比上限高一級，1%高兩級，依此類推。適合低科技的末日後玩法。</RealRuins.TechLimit.StrategyTT>
+  <!-- EN: Strict -->
+  <RealRuins.TechLimit.Strict>嚴格</RealRuins.TechLimit.Strict>
+  <!-- EN: Limited -->
+  <RealRuins.TechLimit.Limited>寬鬆</RealRuins.TechLimit.Limited>
+  <!-- EN: Apply to: -->
+  <RealRuins.TechLimit.AppliesTo>套用於：</RealRuins.TechLimit.AppliesTo>
+  <!-- EN: Regular ruins -->
+  <RealRuins.TechLimit.Ruins>一般遺跡</RealRuins.TechLimit.Ruins>
+  <!-- EN: Ruins scattered over newly generated maps. -->
+  <RealRuins.TechLimit.RuinsTT>散佈在新生成地圖上的遺跡。</RealRuins.TechLimit.RuinsTT>
+  <!-- EN: Planetary locations -->
+  <RealRuins.TechLimit.POIs>行星地點</RealRuins.TechLimit.POIs>
+  <!-- EN: Locations created from other players' bases when a new game starts, ruined or inhabited. The location type is decided after the limit is applied, and inhabitants come from factions of the allowed tech level. Type and inhabitants are picked when a location is created, so for existing locations only their contents change. -->
+  <RealRuins.TechLimit.POIsTT>開新遊戲時由其他玩家基地建立的地點，可能是廢墟或有人居住。地點類型在套用上限後決定，居民來自允許科技等級的派系。類型和居民在建立地點時就已決定，因此對既有地點只會改變其內容。</RealRuins.TechLimit.POIsTT>
+  <!-- EN: Events and quests -->
+  <RealRuins.TechLimit.Events>事件與任務</RealRuins.TechLimit.Events>
+  <!-- EN: Pristine ruins and small ruins spotted by caravans. -->
+  <RealRuins.TechLimit.EventsTT>完整遺跡和旅隊發現的小型遺跡。</RealRuins.TechLimit.EventsTT>
+  <!-- EN: Tile is occupied -->
+  <RealRuins.FactionOwnedStartTile>地塊已被佔據</RealRuins.FactionOwnedStartTile>
+  <!-- EN: You're about to enter a tile with a settlement on it, and this settlement belongs to another faction. You can either make it abandoned and settle in the ruins, make it yours, or you can attack it with your starting party. -->
+  <RealRuins.FactionOwnedStartTileDesc>你即將進入的地塊上有一個屬於其他派系的據點。你可以讓它變成廢墟並在遺跡中定居、直接佔為己有，或用初始隊伍攻打它。</RealRuins.FactionOwnedStartTileDesc>
+  <!-- EN: Make abandoned and settle -->
+  <RealRuins.FactionOwnedStartTile.MakeAbandoned>廢棄並定居</RealRuins.FactionOwnedStartTile.MakeAbandoned>
+  <!-- EN: Own this tile and settle -->
+  <RealRuins.FactionOwnedStartTile.CaptureUntouched>佔據此地並定居</RealRuins.FactionOwnedStartTile.CaptureUntouched>
+  <!-- EN: Attack with starting party -->
+  <RealRuins.FactionOwnedStartTile.Attack>用初始隊伍攻打</RealRuins.FactionOwnedStartTile.Attack>
+  <!-- EN: Cancel -->
+  <RealRuins.FactionOwnedStartTile.Cancel>取消</RealRuins.FactionOwnedStartTile.Cancel>
+  <!-- EN: Debug Settings -->
+  <RealRuins.DebugSettings.Caption>除錯設定</RealRuins.DebugSettings.Caption>
+  <!-- EN: Log Level -->
+  <RealRuins.DebugSettings.LogLevel>記錄層級</RealRuins.DebugSettings.LogLevel>
+  <!-- EN: All Messages -->
+  <RealRuins.DebugSettings.LogLevelAll>所有訊息</RealRuins.DebugSettings.LogLevelAll>
+  <!-- EN: Warnings &amp; Errors -->
+  <RealRuins.DebugSettings.LogLevelWarnings>警告和錯誤</RealRuins.DebugSettings.LogLevelWarnings>
+  <!-- EN: Errors Only -->
+  <RealRuins.DebugSettings.LogLevelErrors>僅錯誤</RealRuins.DebugSettings.LogLevelErrors>
+  <!-- EN: Debug Categories -->
+  <RealRuins.DebugSettings.DebugCategories>除錯類別</RealRuins.DebugSettings.DebugCategories>
+  <!-- EN: Reset All Settings -->
+  <RealRuins.DebugSettings.ResetSettings>重設所有設定</RealRuins.DebugSettings.ResetSettings>
+  <!-- EN: Are you sure you want to reset all settings to their default values? -->
+  <RealRuins.DebugSettings.ResetSettingsConfirm>你確定要將所有設定重設為預設值嗎？</RealRuins.DebugSettings.ResetSettingsConfirm>
+  <!-- EN: Keep snapshot files after upload -->
+  <RealRuins.DebugSettings.KeepSnapshotsAfterUpload>上傳後保留快照檔案</RealRuins.DebugSettings.KeepSnapshotsAfterUpload>
+  <!-- EN: When enabled, snapshot files will be kept in the temp directory after uploading instead of being deleted. Useful for debugging upload issues. -->
+  <RealRuins.DebugSettings.KeepSnapshotsAfterUploadTooltip>開啟後，快照檔案上傳後會保留在暫存資料夾而不刪除。可用於排查上傳問題。</RealRuins.DebugSettings.KeepSnapshotsAfterUploadTooltip>
+  <!-- EN: Log ruins wealth -->
+  <RealRuins.DebugSettings.LogRuinsWealth>記錄遺跡財富</RealRuins.DebugSettings.LogRuinsWealth>
+  <!-- EN: When enabled, every generated ruin logs its estimated wealth (new and legacy cost schemes) and the actual market value of what was spawned, and every map with scattered ruins logs a summary. Logged regardless of the log level. Also toggled from the dev mode debug actions menu (RealRuins). -->
+  <RealRuins.DebugSettings.LogRuinsWealthTooltip>開啟後，每個生成的遺跡都會記錄其估算財富（新舊兩套計價方式）和實際生成物的市場價值，每張有散落遺跡的地圖也會記錄摘要。不受記錄層級影響。也可從開發者模式的除錯動作選單（RealRuins）切換。</RealRuins.DebugSettings.LogRuinsWealthTooltip>
+  <!-- EN: Use staging environment -->
+  <RealRuins.DebugSettings.UseStagingEnvironment>使用測試環境</RealRuins.DebugSettings.UseStagingEnvironment>
+  <!-- EN: When enabled, all API requests go to staging.woolstrand.art and blueprints are stored in the staging bucket (realruins-staging, sfo3). Disable for normal play. -->
+  <RealRuins.DebugSettings.UseStagingEnvironmentTooltip>開啟後，所有API請求都送往staging.woolstrand.art，藍圖存入測試用的儲存桶（realruins-staging, sfo3）。正常遊玩請關閉。</RealRuins.DebugSettings.UseStagingEnvironmentTooltip>
+  <!-- EN: Manually trigger blueprint capture -->
+  <RealRuins.DebugSettings.ManualUpload>手動擷取藍圖</RealRuins.DebugSettings.ManualUpload>
+  <!-- EN: Manually trigger a blueprint capture and upload of the current map. Useful for testing upload functionality. -->
+  <RealRuins.DebugSettings.ManualUploadTooltip>手動擷取並上傳目前地圖的藍圖。可用於測試上傳功能。</RealRuins.DebugSettings.ManualUploadTooltip>
+  <!-- EN: Blueprint capture triggered. Check logs for details. -->
+  <RealRuins.DebugSettings.UploadTriggered>已開始擷取藍圖。詳情請查看記錄。</RealRuins.DebugSettings.UploadTriggered>
+  <!-- EN: No map available. Please load a game first. -->
+  <RealRuins.DebugSettings.NoMap>沒有可用地圖。請先載入遊戲。</RealRuins.DebugSettings.NoMap>
+  <!-- EN: Pristine ruins quest -->
+  <RealRuins.EnableAbandonedRuinsFoundEvent>完整遺跡任務</RealRuins.EnableAbandonedRuinsFoundEvent>
+  <!-- EN: When enabled, you can get a quest to large pristine ruins nearby: rich and untouched, but contested by raiders. -->
+  <RealRuins.EnableAbandonedRuinsFoundEventTT>開啟後，你可能接到前往附近大型完整遺跡的任務：富有且未被動過，但會有掠奪者來爭奪。</RealRuins.EnableAbandonedRuinsFoundEventTT>
+  <!-- EN: Enable "caravan spotted small ruins" event -->
+  <RealRuins.EnableCaravanFoundRuinsEvent>啟用「旅隊發現小型遺跡」事件</RealRuins.EnableCaravanFoundRuinsEvent>
+  <!-- EN: When enabled, travelling caravans can spot a small ruin nearby and give you the option to investigate it. -->
+  <RealRuins.EnableCaravanFoundRuinsEventTT>開啟後，行進中的旅隊可能在附近發現小型遺跡，並讓你選擇是否調查。</RealRuins.EnableCaravanFoundRuinsEventTT>
+  <!-- EN: Scale all limits with colony wealth -->
+  <RealRuins.ScaleWithColonyWealth>所有上限隨殖民地財富調整</RealRuins.ScaleWithColonyWealth>
+  <!-- EN: All ruins wealth limits are multiplied by your colony wealth divided by the value below: a richer colony finds richer ruins, a poorer one poorer ruins, but at least half of each limit. Limits can go above what you set this way. Unlimited ruins stay unlimited. Colony wealth is counted the way the storyteller does, over your home maps and caravans. -->
+  <RealRuins.ScaleWithColonyWealthTT>所有遺跡的財富上限會乘以「殖民地財富 ÷ 下方數值」：殖民地越富有，遺跡越富有；越窮則遺跡越窮，但至少是各上限的一半。因此上限可能超過你設定的值。不設上限的遺跡仍不設上限。殖民地財富的計算方式與敘事者相同，包含你的主地圖和旅隊。</RealRuins.ScaleWithColonyWealthTT>
+  <!-- EN: Colony wealth the limits are set for -->
+  <RealRuins.ReferenceColonyWealth>上限對應的殖民地財富</RealRuins.ReferenceColonyWealth>
+  <!-- EN: At this colony wealth all ruins wealth limits are exactly what you set. At twice this wealth they are doubled. -->
+  <RealRuins.ReferenceColonyWealthTT>在此殖民地財富下，所有遺跡財富上限恰好等於你設定的值。財富翻倍時上限也翻倍。</RealRuins.ReferenceColonyWealthTT>
+  <!-- EN: Abandoned planetary locations -->
+  <RealRuins.POIRuinsCostCap>廢棄的行星地點</RealRuins.POIRuinsCostCap>
+  <!-- EN: The most an abandoned location on the planet may be worth. Most of them are worth less than this. -->
+  <RealRuins.POIRuinsCostCapTT>行星上一處廢棄地點的價值上限。大多數地點低於此值。</RealRuins.POIRuinsCostCapTT>
+  <!-- EN: Caravan ruins -->
+  <RealRuins.CaravanRuinsCostCap>旅隊遺跡</RealRuins.CaravanRuinsCostCap>
+  <!-- EN: The most a ruin spotted by a caravan may be worth. Its most valuable things are taken away until it fits. Raiders at the ruin scale with what is left. -->
+  <RealRuins.CaravanRuinsCostCapTT>旅隊發現的遺跡的價值上限。會移除最值錢的東西直到符合上限。遺跡中的掠奪者規模依剩下的價值調整。</RealRuins.CaravanRuinsCostCapTT>
+  <!-- EN: Export Settings -->
+  <RealRuins.Settings.ExportSettings>匯出設定</RealRuins.Settings.ExportSettings>
+  <!-- EN: Import Settings -->
+  <RealRuins.Settings.ImportSettings>匯入設定</RealRuins.Settings.ImportSettings>
+  <!-- EN: Export Settings -->
+  <RealRuins.Settings.ExportTitle>匯出設定</RealRuins.Settings.ExportTitle>
+  <!-- EN: Import Settings -->
+  <RealRuins.Settings.ImportTitle>匯入設定</RealRuins.Settings.ImportTitle>
+  <!-- EN: Copy to clipboard -->
+  <RealRuins.Settings.CopyToClipboard>複製到剪貼簿</RealRuins.Settings.CopyToClipboard>
+  <!-- EN: Settings string copied to clipboard. -->
+  <RealRuins.Settings.CopiedToClipboard>設定字串已複製到剪貼簿。</RealRuins.Settings.CopiedToClipboard>
+  <!-- EN: Import -->
+  <RealRuins.Settings.ImportApply>匯入</RealRuins.Settings.ImportApply>
+  <!-- EN: Settings imported successfully. -->
+  <RealRuins.Settings.ImportSuccess>設定匯入成功。</RealRuins.Settings.ImportSuccess>
+  <!-- EN: Failed to import settings. The string may be invalid or corrupted. -->
+  <RealRuins.Settings.ImportFailed>匯入設定失敗。字串可能無效或已損壞。</RealRuins.Settings.ImportFailed>
+  <!-- EN: Presets -->
+  <RealRuins.Presets.TabCaption>預設</RealRuins.Presets.TabCaption>
+  <!-- EN: Presets -->
+  <RealRuins.Presets.Caption>預設</RealRuins.Presets.Caption>
+  <!-- EN: Quick setups for common ways to play. A preset changes only the settings it is about. Your cache, network and debug settings and your item blacklist are never touched. Play style and tech level presets don't affect each other. -->
+  <RealRuins.Presets.Description>常見玩法的快速配置。預設只會改動它所涵蓋的設定。快取、網路和除錯設定以及物品黑名單不會被修改。玩法風格預設和科技等級預設互不影響。</RealRuins.Presets.Description>
+  <!-- EN: Play style -->
+  <RealRuins.Presets.PlayStyle>玩法風格</RealRuins.Presets.PlayStyle>
+  <!-- EN: Tech level -->
+  <RealRuins.Presets.TechLevel>科技等級</RealRuins.Presets.TechLevel>
+  <!-- EN: All settings -->
+  <RealRuins.Presets.SettingsSection>全部設定</RealRuins.Presets.SettingsSection>
+  <!-- EN: Current -->
+  <RealRuins.Presets.Current>目前</RealRuins.Presets.Current>
+  <!-- EN: Custom -->
+  <RealRuins.Presets.Custom>自訂</RealRuins.Presets.Custom>
+  <!-- EN: Default -->
+  <RealRuins.Presets.Default>預設</RealRuins.Presets.Default>
+  <!-- EN: The intended way to play. There are ruins everywhere, but they were looted long ago and usually hold nothing really valuable, though now and then you may get lucky. The pristine ruins quest, however, has no limits on either wealth or the scale of the fighting. -->
+  <RealRuins.Presets.DefaultTT>本模組的預期玩法。到處都有遺跡，但早已被搜刮過，通常沒什麼真正值錢的東西，不過偶爾也會走運。完整遺跡任務則在財富和戰鬥規模上都沒有任何限制。</RealRuins.Presets.DefaultTT>
+  <!-- EN: Nomadic -->
+  <RealRuins.Presets.Nomadic>遊牧</RealRuins.Presets.Nomadic>
+  <!-- EN: Richer ruins, enough to live off what you find even without a permanent settlement. Maps have more ruins, and they are larger, richer and less picked over. The planet itself has more abandoned locations than ones held by a faction. -->
+  <RealRuins.Presets.NomadicTT>更富有的遺跡，即使沒有固定據點，也能靠找到的東西過活。地圖上的遺跡更多、更大、更富有，也較少被搜刮。行星上廢棄的地點也比派系佔據的更多。</RealRuins.Presets.NomadicTT>
+  <!-- EN: Balanced -->
+  <RealRuins.Presets.Balanced>平衡</RealRuins.Presets.Balanced>
+  <!-- EN: Strict wealth limits that grow with your colony, worn and well scavenged ruins. All so that you never find anything truly useful until you sacrifice half of your colonists. -->
+  <RealRuins.Presets.BalancedTT>嚴格的財富上限，並隨殖民地成長；遺跡破舊且被搜刮得很徹底。這一切都是為了讓你在犧牲半數殖民者之前，絕對找不到真正有用的東西。</RealRuins.Presets.BalancedTT>
+  <!-- EN: Dense ruins -->
+  <RealRuins.Presets.Dense>密集遺跡</RealRuins.Presets.Dense>
+  <!-- EN: Ruins all over the map. Many more and larger fragments, also far from settlements, with a moderate wealth limit. -->
+  <RealRuins.Presets.DenseTT>遺跡遍布整張地圖。碎片更多也更大，遠離據點的地方也有，財富上限適中。</RealRuins.Presets.DenseTT>
+  <!-- EN: Your own settings. Selected as soon as the settings match no preset, and remembered: after you pick a preset, this brings your settings back. -->
+  <RealRuins.Presets.CustomTT>你自己的設定。只要設定不符合任何預設就會自動選取，並會記住：選了預設之後，點這裡就能還原你原本的設定。</RealRuins.Presets.CustomTT>
+  <!-- EN: Normal -->
+  <RealRuins.Presets.TechNormal>正常</RealRuins.Presets.TechNormal>
+  <!-- EN: No tech level limit: anything the original base had may spawn. -->
+  <RealRuins.Presets.TechNormalTT>不限制科技等級：原基地擁有的一切都可能出現。</RealRuins.Presets.TechNormalTT>
+  <!-- EN: True neolithic -->
+  <RealRuins.Presets.TechNeolithic>純新石器</RealRuins.Presets.TechNeolithic>
+  <!-- EN: Nothing above the neolithic level ever spawns, in any ruins or locations. -->
+  <RealRuins.Presets.TechNeolithicTT>任何遺跡或地點中，都永遠不會生成超過新石器時代的東西。</RealRuins.Presets.TechNeolithicTT>
+  <!-- EN: True medieval -->
+  <RealRuins.Presets.TechMedieval>純中世紀</RealRuins.Presets.TechMedieval>
+  <!-- EN: A medieval or fantasy world: nothing above the medieval level ever spawns, in any ruins or locations. -->
+  <RealRuins.Presets.TechMedievalTT>中世紀或奇幻世界：任何遺跡或地點中，都永遠不會生成超過中世紀時代的東西。</RealRuins.Presets.TechMedievalTT>
+  <!-- EN: Medieval post-apocalypse -->
+  <RealRuins.Presets.TechPostApocalyptic>中世紀末日後</RealRuins.Presets.TechPostApocalyptic>
+  <!-- EN: A medieval world after a cataclysm. Civilization has fallen back to the middle ages, but rare relics of the industrial and spacer past still turn up. -->
+  <RealRuins.Presets.TechPostApocalypticTT>大災變後的中世紀世界。文明倒退回中世紀，但工業時代和太空時代的罕見遺物仍偶爾會出現。</RealRuins.Presets.TechPostApocalypticTT>
+  <!-- EN: Resets every Real Ruins setting to its default, including cache, network and debug settings. The Default play style preset resets only the play style settings. -->
+  <RealRuins.Presets.ResetAllTT>將真實遺跡的所有設定還原為預設值，包括快取、網路和除錯設定。「預設」玩法風格只會還原玩法風格相關的設定。</RealRuins.Presets.ResetAllTT>
+  <!-- EN: Wealth and balance -->
+  <RealRuins.WealthSettings.TabCaption>財富與平衡</RealRuins.WealthSettings.TabCaption>
+  <!-- EN: Wealth and balance -->
+  <RealRuins.WealthSettings.Caption>財富與平衡</RealRuins.WealthSettings.Caption>
+  <!-- EN: How much the ruins on your map may be worth, and how dangerous they are. The limits are the main balance tool: whatever else you set, ruins never exceed them. -->
+  <RealRuins.WealthSettings.Description>地圖上的遺跡值多少錢，以及它們有多危險。上限是最主要的平衡工具：無論其他怎麼設定，遺跡都不會超過上限。</RealRuins.WealthSettings.Description>
+  <!-- EN: Limits -->
+  <RealRuins.WealthSettings.Limits>上限</RealRuins.WealthSettings.Limits>
+  <!-- EN: Scaling -->
+  <RealRuins.WealthSettings.Scaling>調整</RealRuins.WealthSettings.Scaling>
+  <!-- EN: Threats and difficulty -->
+  <RealRuins.WealthSettings.Threats>威脅與難度</RealRuins.WealthSettings.Threats>
+  <!-- EN: Regular ruins: how the limit counts -->
+  <RealRuins.Settings.RegularLimitCounting>一般遺跡：上限的計算方式</RealRuins.Settings.RegularLimitCounting>
+  <!-- EN: All ruins and locations -->
+  <RealRuins.SpawnSettings.Common>所有遺跡與地點</RealRuins.SpawnSettings.Common>
+  <!-- EN: Regular ruins -->
+  <RealRuins.SpawnSettings.Regular>一般遺跡</RealRuins.SpawnSettings.Regular>
+  <!-- EN: Events (pristine ruins, caravan ruins) -->
+  <RealRuins.SpawnSettings.Events>事件（完整遺跡、旅隊遺跡）</RealRuins.SpawnSettings.Events>
+  <!-- EN: Planetary locations -->
+  <RealRuins.SpawnSettings.Planetary>行星地點</RealRuins.SpawnSettings.Planetary>
+  <!-- EN: Tech level limit applies here -->
+  <RealRuins.TechLimit.AppliesHere>此處受科技等級上限約束</RealRuins.TechLimit.AppliesHere>
+  <!-- EN: Part of the tech level limit at the top of this page: it only works while the limit is on. -->
+  <RealRuins.TechLimit.AppliesHereTT>本頁頂部的科技等級上限的一部分：只有在上限開啟時才生效。</RealRuins.TechLimit.AppliesHereTT>
+  <!-- EN: Gameplay and\nPlanetary Ruins -->
+  <RealRuins.GameplaySettings.TabCaption>玩法與\n行星遺跡</RealRuins.GameplaySettings.TabCaption>
+  <!-- EN: Gameplay -->
+  <RealRuins.GameplaySettings.Caption>玩法</RealRuins.GameplaySettings.Caption>
+  <!-- EN: Which special sites exist in your game and how you interact with them. -->
+  <RealRuins.GameplaySettings.Description>你的遊戲中存在哪些特殊地點，以及你如何與它們互動。</RealRuins.GameplaySettings.Description>
+  <!-- EN: Events and quests -->
+  <RealRuins.GameplaySettings.Events>事件與任務</RealRuins.GameplaySettings.Events>
+  <!-- EN: Planetary locations -->
+  <RealRuins.GameplaySettings.Planetary>行星地點</RealRuins.GameplaySettings.Planetary>
+  <!-- EN: Staging server is on (Debug tab). Turn it off for normal play. -->
+  <RealRuins.CacheSettings.StagingWarning>測試伺服器已開啟（「除錯」分頁）。正常遊玩請關閉。</RealRuins.CacheSettings.StagingWarning>
+  <!-- EN: Logging and developer tools. You only need these when you report a bug. -->
+  <RealRuins.DebugSettings.Description>記錄與開發者工具。只有在回報bug時才需要。</RealRuins.DebugSettings.Description>
 
-  <RealRuins.ForceMultiplier>事件難度係數</RealRuins.ForceMultiplier>
-  <RealRuins.AbsoluteWealthCap>事件總價值硬上限</RealRuins.AbsoluteWealthCap>
-  <RealRuins.ForceMultiplierTT>改變此參數來調整事件的難度。</RealRuins.ForceMultiplierTT>
-  <RealRuins.AbsoluteWealthCapTT>設定事件的總價值上限。木牆和木門不列入計算。</RealRuins.AbsoluteWealthCapTT>
-
-  <!-- -->
-  <!-- -->
-  <!-- -->
-  <!-- -->
 </LanguageData>
