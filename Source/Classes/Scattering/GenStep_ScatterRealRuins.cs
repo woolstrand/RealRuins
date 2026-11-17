@@ -166,7 +166,11 @@ namespace RealRuins
                 if (hasWealthLimit && RealRuins_ModSettings.ruinsWealthScaleWithProximity && options.enableProximity) wealthLimit *= countMultiplier;
                 RuinsWealthBudget wealthBudget = hasWealthLimit ? new RuinsWealthBudget(wealthLimit, num) : null;
                 List<RuinsWealthReport> wealthReports = new List<RuinsWealthReport>();
-                bool startingMap = SessionState.GeneratingStartingMap;
+                //Animal or mechanoid inhabitants only on settled maps (player homes), and not on the starting one: a fresh colony
+                //can't handle them next door. Everywhere else (caravan encounters, quest and ruins sites, enemy bases) they would
+                //block leaving: vanilla refuses to reform a caravan while any hostile is on the map, dormant and fogged ones included
+                //(FormCaravanComp.GetGizmos), and they would also keep vanilla from declaring an ambush won (CaravansBattlefield).
+                bool allowInhabitants = map.IsPlayerHome && !SessionState.GeneratingStartingMap;
 
                 for (int i = 0; i < num; i++) {
                     try {
@@ -174,8 +178,7 @@ namespace RealRuins
                         ResolveParams rp = default(ResolveParams);
 
                         List<AbstractDefenderForcesGenerator> generators = new List<AbstractDefenderForcesGenerator>();
-                        //no animals or mechanoids on the starting map: a fresh colony can't handle them next door
-                        if (!startingMap && Rand.Chance(options.hostileChance)) {
+                        if (allowInhabitants && Rand.Chance(options.hostileChance)) {
                             if (Rand.Chance(0.8f)) {
                                 generators = new List<AbstractDefenderForcesGenerator> { new AnimalInhabitantsForcesGenerator() };
                             } else {
