@@ -209,15 +209,13 @@ Extends vanilla `FormCaravanComp`. Overrides only `GetGizmos()`: the reform butt
 
 ## RaidTrigger
 
-A `Thing` placed on the map. After a countdown (`|Rand.Gaussian(0, 100)|` rare ticks of 250 game ticks, half-normal), fires a `RaidEnemy` incident and destroys itself.
+A `Thing` placed on the map. After a countdown (uniform 48–672 rare ticks of 250 game ticks: 0.2–2.8 days after map generation, 1.5 days on average), fires a `RaidEnemy` incident and destroys itself.
 
 **`IAttackTarget`** implementation is vestigial — `TargetPriorityFactor = 0` and `ThreatDisabled = true`, so it's invisible to AI targeting. Comment notes the "step-on-trigger" mechanic was abandoned.
 
 The def uses `tickerType` `Rare`, so the engine calls `TickRare()` directly. Spawn and fire are logged at the Generic level with game ticks (spawn log includes the expected fire tick).
 
 **`ExposeData()`**: Persists `faction`, `value`, `ticksLeft` — allows save/load to resume countdowns.
-
-**Issue**: All triggers placed simultaneously fire in a tight cluster (all initialized with similar random values from the same distribution).
 
 ---
 

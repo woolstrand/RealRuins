@@ -25,7 +25,8 @@ namespace RealRuins {
 
         public LocalTargetInfo TargetCurrentlyAimingAt => null;
 
-        private int ticksLeft = (int) Math.Abs(Rand.Gaussian(0, 100));
+        // Rare ticks (250 ticks) until the raid: uniform 48..672, i.e. 0.2..2.8 days after the map is generated, 1.5 days on average.
+        private int ticksLeft = Rand.RangeInclusive(48, 672);
 
         public int TicksLeft() {
             return ticksLeft;
