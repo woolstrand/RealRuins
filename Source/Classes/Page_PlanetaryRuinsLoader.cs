@@ -305,7 +305,6 @@ namespace RealRuins {
             Debug.Log("Loading list for seed: {0}", Find.World.info.seedString);
 
             gamePath = SnapshotStoreManager.CurrentGamePath();
-            initialMapSize = Find.World.info.initialMapSize;
 
             var seed = Find.World.info.seedString;
             var coverage = (int)(Find.World.PlanetCoverage * 100);
@@ -316,6 +315,8 @@ namespace RealRuins {
             } else {
                 size = Find.World.info.initialMapSize.x;
             }
+            // Blueprints must fit the map the game will have. Before the game starts WorldInfo.initialMapSize is still its default (250).
+            initialMapSize = new IntVec3(size, 1, size);
 
             service.LoadAllMapsForSeed(seed, size, coverage, delegate (bool success, List<PlanetTileInfo> mapTiles) {
                 if (success) {
