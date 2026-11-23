@@ -147,8 +147,8 @@ namespace RealRuins {
             Debug.Log(Debug.POI, "Started with cost of  {0}", wealthOnEnter);
         }
 
-        protected override void Tick() {
-            base.Tick();
+        // TickInterval (every 15 ticks, every tick while the world is shown): scanning the map's hostiles every tick cost ~1% of tick time.
+        protected override void TickInterval(int delta) {
             if (HasMap && Faction != Faction.OfPlayer) {
                 if (!GenHostility.AnyHostileActiveThreatToPlayer(Map)) {
                     //show letter about enemies defeated
@@ -158,6 +158,7 @@ namespace RealRuins {
                     cachedMat = null;
                 }
             }
+            base.TickInterval(delta);
         }
 
         public override bool ShouldRemoveMapNow(out bool alsoRemoveWorldObject) {
