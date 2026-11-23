@@ -49,7 +49,7 @@ namespace RealRuins {
         private const float SmallRaidIntervalWidth = 1800f;
         private const int SmallRaidIntervalMin = 1800;
 
-        // When the ruins were discovered (StartScavenging): raid triggers are scheduled from it on arrival. -1: unknown (older saves).
+        // When the ruins were discovered (StartScavenging): how long the site waited picks the shape of the raid triggers' delays. -1: unknown (older saves).
         private int discoveryTick = -1;
         // Continuous (V2) raids scale with the share of the map's items still there: resource wealth now / at arrival.
         // Updated after each raid; 1.0 = nothing taken, 0.0 = everything gone.
@@ -117,9 +117,9 @@ namespace RealRuins {
             if (state == RuinedBaseState.WaitingForArrival) {
                 state = RuinedBaseState.FightingWaves;
                 BuildRaidTriggersCache();
-                int sinceDiscovery = discoveryTick >= 0 ? Find.TickManager.TicksGame - discoveryTick : 0;
+                int ticksWaited = discoveryTick >= 0 ? Find.TickManager.TicksGame - discoveryTick : 0;
                 foreach (RaidTrigger trigger in triggersCache) {
-                    trigger.Reschedule(sinceDiscovery);
+                    trigger.Reschedule(ticksWaited);
                 }
             }
 

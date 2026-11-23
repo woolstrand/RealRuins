@@ -25,42 +25,37 @@ namespace RealRuins {
 
         public LocalTargetInfo TargetCurrentlyAimingAt => null;
 
-        // Rare ticks (250 ticks) until the raid. Triggers on a ruins site are rescheduled from the site's discovery (see Reschedule).
+        // Rare ticks (250 ticks) until the raid. Triggers on a ruins site get a delay that depends on how long the site
+        // waited before the player came (see Reschedule).
         private int ticksLeft = ArrivalRareTicks(0);
 
-        // Troops of the neighbours set off when the ruins are discovered and reach them over ArrivalWindowDays: few at first,
-        // most around the first day, fewer and fewer after (Beta(2,3) over the window, mode at 1 day, mean 1.2 days).
-        // Raids are scheduled when the player enters, from what is left of that curve: no raid sooner than MinRareTicks after
-        // entering, and the time that already passed counts only up to MaxElapsedDays, so a late arrival still faces
-        // the tail of the arrivals (about 0.4-1.5 days after entering) instead of nothing.
-        public const int MinRareTicks = 100; // 25000 ticks, 0.42 days
-        private const float ArrivalWindowDays = 3f;
-        private const float MaxElapsedDays = 1.5f;
+        // The neighbours' troops set off when the ruins are discovered: few at first, then more and more, then fewer and fewer.
+        // The time the site waited before the player came only picks the part of that bell the player still meets: none waited -
+        // the whole bell, ~3 days - its steep right side, ~6 days - the gentle far slope. That part is spread over the time after
+        // entering, MinRareTicks..MaxRareTicks. The two clocks are not aligned: the site loses value slowly while it waits,
+        // the raids are dense once the player is there. The bell is a Cauchy one (peak BellPeak, half width BellWidth, in days of
+        // waiting / WaitDaysPerUnit): its far slope flattens out, so long waits give an almost even spread.
+        public const int MinRareTicks = 100; // 0.42 days
+        public const int MaxRareTicks = 672; // 2.8 days
+        private const float WaitDaysPerUnit = 2.5f;
+        private const float BellPeak = 1.0f;
+        private const float BellWidth = 0.4f;
+        private const float BellWindow = 2.4f; // the part of the bell spread over Min..MaxRareTicks
+        private const float MaxBellOffset = 4f; // 10 days of waiting
 
-        public static int ArrivalRareTicks(int ticksSinceDiscovery) {
-            float rareTicksPerDay = GenDate.TicksPerDay / (float)GenTicks.TickRareInterval;
-            float window = ArrivalWindowDays * rareTicksPerDay;
-            float elapsed = Math.Min(Math.Max(ticksSinceDiscovery, 0) / (float)GenTicks.TickRareInterval, MaxElapsedDays * rareTicksPerDay);
-            float earliest = elapsed + MinRareTicks;
-            for (int i = 0; i < 1000; i++) {
-                float arrival = window * BetaTwoThree();
-                if (arrival >= earliest) return (int)(arrival - elapsed);
-            }
-            return (int)Rand.Range(MinRareTicks, window - elapsed);
+        public static int ArrivalRareTicks(int ticksWaited) {
+            float offset = Math.Min(Math.Max(ticksWaited, 0) / (float)GenDate.TicksPerDay / WaitDaysPerUnit, MaxBellOffset);
+            double low = Math.Atan((offset - BellPeak) / BellWidth);
+            double high = Math.Atan((offset + BellWindow - BellPeak) / BellWidth);
+            double x = BellPeak + BellWidth * Math.Tan(low + Rand.Value * (high - low));
+            return MinRareTicks + (int)((x - offset) / BellWindow * (MaxRareTicks - MinRareTicks));
         }
 
-        // Beta(2,3): the second smallest of four uniform values
-        private static float BetaTwoThree() {
-            float[] values = { Rand.Value, Rand.Value, Rand.Value, Rand.Value };
-            Array.Sort(values);
-            return values[1];
-        }
-
-        public void Reschedule(int ticksSinceDiscovery) {
-            ticksLeft = ArrivalRareTicks(ticksSinceDiscovery);
+        public void Reschedule(int ticksWaited) {
+            ticksLeft = ArrivalRareTicks(ticksWaited);
             int now = Find.TickManager.TicksGame;
-            Debug.Log(Debug.Generic, "Raid trigger {0} rescheduled {1} ticks after discovery: {2} rare ticks left, expected to fire at about tick {3}",
-                thingIDNumber, ticksSinceDiscovery, ticksLeft, now + (ticksLeft + 1) * GenTicks.TickRareInterval);
+            Debug.Log(Debug.Generic, "Raid trigger {0} rescheduled for a site that waited {1} ticks: {2} rare ticks left, expected to fire at about tick {3}",
+                thingIDNumber, ticksWaited, ticksLeft, now + (ticksLeft + 1) * GenTicks.TickRareInterval);
         }
 
         public int TicksLeft() {
