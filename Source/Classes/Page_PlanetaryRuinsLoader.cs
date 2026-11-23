@@ -68,6 +68,13 @@ namespace RealRuins {
 
         private APIService service = new APIService();
 
+        // Taken once per loading run: downloads and the transfer must use the same blueprint folder. The folder name includes
+        // WorldInfo.initialMapSize, which Game.InitNewGame changes at its end, so a run that spans a game start (see CreateSites)
+        // would otherwise download into one folder and look for blueprints in another.
+        private string gamePath;
+        private IntVec3 initialMapSize;
+        private bool waitingForLongEvent = false;
+
         public Page_PlanetaryRuinsLoader() {
             doCloseX = true;
         }
@@ -297,6 +304,9 @@ namespace RealRuins {
             pageState = RuinsPageState.LoadingHeader;
             Debug.Log("Loading list for seed: {0}", Find.World.info.seedString);
 
+            gamePath = SnapshotStoreManager.CurrentGamePath();
+            initialMapSize = Find.World.info.initialMapSize;
+
             var seed = Find.World.info.seedString;
             var coverage = (int)(Find.World.PlanetCoverage * 100);
 
@@ -379,7 +389,7 @@ namespace RealRuins {
             filteredList = null;
             
             // Get blueprints already available on disk for this game
-            List<string> alreadyAvailable = SnapshotStoreManager.Instance.GetAvailableBlueprintsForGamePath(SnapshotStoreManager.CurrentGamePath());
+            List<string> alreadyAvailable = SnapshotStoreManager.Instance.GetAvailableBlueprintsForGamePath(gamePath);
             
             // Filter to get only NEW blueprints (not yet available)
             List<string> newBlueprints = new List<string>();
@@ -420,7 +430,7 @@ namespace RealRuins {
 
                 Debug.Log(Debug.POI, "Loading blueprints one by one...");
                 
-                manager.AggressiveLoadSnaphotsFromList(filteredList, gamePath: SnapshotStoreManager.CurrentGamePath(), loadIfExists: false);
+                manager.AggressiveLoadSnaphotsFromList(filteredList, gamePath: gamePath, loadIfExists: false);
             }
         }
 
@@ -467,15 +477,22 @@ namespace RealRuins {
         }
 
         private void CreateSites() {
-            if (pageState == RuinsPageState.ProcessingBlueprints || pageState == RuinsPageState.Completed) {
+            if (pageState == RuinsPageState.ProcessingBlueprints || pageState == RuinsPageState.Completed || waitingForLongEvent) {
+                return;
+            }
+
+            // Other mods may start the loader right after queueing a game start: Random Start calls it after
+            // PageUtility.InitGameStart, whose map generation runs on a worker thread. Adding world objects and using Rand
+            // on the main thread meanwhile breaks that generation, so sites are created once the long event is over.
+            if (LongEventHandler.AnyEventNowOrWaiting) {
+                Debug.Log(Debug.POI, "A long event is running, sites will be created after it.");
+                waitingForLongEvent = true;
+                CoroutineManager.Instance.RunCoroutine(CreateSitesAfterLongEvent(Find.World));
                 return;
             }
 
             Debug.Log(Debug.POI, "Completed loading, creating sites.");
             pageState = RuinsPageState.ProcessingBlueprints;
-
-            string gamePath = SnapshotStoreManager.CurrentGamePath();
-            IntVec3 initialMapSize = Find.World.info.initialMapSize;
 
             // Get all blueprints available on disk for this game (previous sessions + current)
             HashSet<string> availableBlueprints = new HashSet<string>(SnapshotStoreManager.Instance.GetAvailableBlueprintsForGamePath(gamePath));
@@ -507,6 +524,18 @@ namespace RealRuins {
             currentJob = job;
             new Thread(() => PrepareSites(job, candidates, gamePath, initialMapSize)) { IsBackground = true }.Start();
             CoroutineManager.Instance.RunCoroutine(CommitSites(job, gamePath));
+        }
+
+        private IEnumerator CreateSitesAfterLongEvent(World world) {
+            while (LongEventHandler.AnyEventNowOrWaiting) {
+                yield return null;
+            }
+            waitingForLongEvent = false;
+            if (Find.World != world) {
+                pageState = RuinsPageState.Idle;
+                yield break;
+            }
+            CreateSites();
         }
 
         // Background thread: no engine state access here.
