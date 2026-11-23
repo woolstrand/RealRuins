@@ -171,7 +171,7 @@ Inactive → WaitingForArrival → FightingWaves → WaitingForEnemiesToBeDefeat
 Stores `referenceWealth = max(actual_map_wealth, 150000)` (saved) and sets `destructionLevel = actualCost / referenceWealth`. `referenceWealth` is used only for V2 force scaling and the unlock timer; `currentCapCost` keeps the value left by off-map scavenging. Saves from before this change overwrote `currentCapCost` with the reference value, and `ReferenceWealth` falls back to it.
 
 ### `DoRareTask()` (every 60 ticks)
-- V2 forces (only in `FightingWaves`): if hostile count < `15 × destructionLevel × forceMultiplier` AND total < 90: triggers small patrol raid (500–2500 pts). `destructionLevel` is recomputed if a pre-fix save loaded it as 0.
+- V2 forces (only in `FightingWaves`): if hostile count < `15 × destructionLevel × forceMultiplier` AND total < 90: triggers small patrol raid (500–1500 pts × `destructionLevel` × `forceMultiplier`), then waits `max(1800, Gaussian(7200, 1800))` ticks before the next one (~95% of gaps 60–180 s at 1x). The first one may start right away. These raids run until the trigger phase ends (all triggers fired + 1000 ticks). `destructionLevel` is recomputed if a pre-fix save loaded it as 0.
 - Drives the state machine through `FightingWaves → ... → InformedWaitingForLeaving` in every reform mode. After the last enemy is gone it waits `45000 .. 60000 + referenceWealth` ticks, then shows `RealRuins.NoMoreEnemies`.
 
 ### `CheckTriggers()`

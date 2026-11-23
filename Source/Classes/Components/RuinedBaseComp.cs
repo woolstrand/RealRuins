@@ -42,7 +42,12 @@ namespace RealRuins {
         // Empty/null signals can match Lords with null/empty inSignalLeave tags, causing unintended "are leaving" messages
         public string expireSignal = null;
         public string successSignal = null;
-        private float baseSmallRaidChance = 0.05f;
+        // Continuous (V2) raids: the next one may start at this tick. -1: as soon as the map is below the hostile cap.
+        private int nextSmallRaidTick = -1;
+        // Gap between continuous raids: 7200 +- 1800 ticks, i.e. about 95% of them 60-180 s apart at 1x speed (60 ticks/s), never under 30 s.
+        private const float SmallRaidIntervalMean = 7200f;
+        private const float SmallRaidIntervalWidth = 1800f;
+        private const int SmallRaidIntervalMin = 1800;
 
         private float destructionLevel = 0.0f; // 1.0 = intact, 0.0 = total destruction
 
@@ -141,7 +146,7 @@ namespace RealRuins {
             triggersCache = null;
             referenceWealth = -1;
             destructionLevel = 0;
-            baseSmallRaidChance = 0.05f;
+            nextSmallRaidTick = -1;
         }
 
         public void StartScavenging(int initialCost) {
@@ -162,7 +167,7 @@ namespace RealRuins {
             Scribe_Values.Look(ref successSignal, "successSignal", "");
             Scribe_Values.Look(ref allTriggersFiredTick, "allTriggersFiredTick", -1);
             Scribe_Values.Look(ref destructionLevel, "destructionLevel", 0.0f);
-            Scribe_Values.Look(ref baseSmallRaidChance, "baseSmallRaidChance", 0.05f);
+            Scribe_Values.Look(ref nextSmallRaidTick, "nextSmallRaidTick", -1);
         }
 
         public override void CompTick() {
@@ -212,14 +217,15 @@ namespace RealRuins {
                     }
                     int hostileCount = map.mapPawns.AllPawnsSpawned.Count(p => p.HostileTo(Faction.OfPlayer));
                     if (hostileCount < 15 * destructionLevel * RealRuins_ModSettings.forceMultiplier && map.mapPawns.AllPawnsSpawned.Count < 90) {
-                        if (Rand.Chance(baseSmallRaidChance)) {
+                        int now = Find.TickManager.TicksGame;
+                        if (now >= nextSmallRaidTick) {
                             Debug.Log(Debug.Generic, "Triggering small raid");
-                            TriggerRaid((int)(Rand.Range(500, 2500) * destructionLevel * RealRuins_ModSettings.forceMultiplier));
+                            TriggerRaid((int)(Rand.Range(500, 1500) * destructionLevel * RealRuins_ModSettings.forceMultiplier));
 
                             var currentWealth = GetTotalMapWealth(map);
                             destructionLevel = currentWealth / ReferenceWealth;
-                            baseSmallRaidChance = (float)(0.05f * destructionLevel) * RealRuins_ModSettings.forceMultiplier;
-                            Debug.Log(Debug.Generic, "Recalculating raid chance. Destruction level is {0}, new chance is {1}", destructionLevel, baseSmallRaidChance);
+                            nextSmallRaidTick = now + Math.Max(SmallRaidIntervalMin, (int)Rand.Gaussian(SmallRaidIntervalMean, SmallRaidIntervalWidth));
+                            Debug.Log(Debug.Generic, "Destruction level is {0}, next small raid not before tick {1}", destructionLevel, nextSmallRaidTick);
                         }
                     }
                 }
