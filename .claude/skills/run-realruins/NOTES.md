@@ -125,7 +125,8 @@ searching to figure out. Keep entries short; no screen coordinates (they change 
 - `esc` on the world map closes the world view; a debug click made right after can then land on the colony map's menu
   (different actions). With a caravan selected, "Do incident" targets the caravan, not the World - deselect first.
 - A "T: ..." debug tool (e.g. Spawn Random Caravan) stays active after the first click; the next world click spawns again.
-- **Speed 3 is unavailable while hostiles are on the map** (the click is ignored); use speed 2 or the dev speed.
+- **Speed 3 is unavailable while hostiles are on the map** (the click is ignored); use speed 2 or the dev speed. Or Debug actions →
+  Settings → **Never Force Normal Speed**: speed 3 (360 TPS) works with hostiles around.
 - **Log stops at ~420k lines**: `Reached max messages limit. Stopping logging to avoid spam.` - a long fight can trigger it.
   Mark/check the log before long runs; after it, `logsince` returns nothing and only a relaunch helps.
 - Mod settings window is small and scrolls: move the mouse over it and `scroll -10 3` to reach the bottom of a page (planetary cache table).
@@ -327,3 +328,14 @@ blueprint id) - that file also states the spawn philosophy: spawn what can be sp
   `click/scroll` refuse to work without the game running; call the helper directly: `$TMPDIR/realruins-run/input move|click|scroll`,
   and `screencapture` + `sips -Z 1512` for screenshots. The Subscribe button is below the screenshots carousel. The item lands in
   `steamapps/workshop/content/294100/<id>` within seconds; activate it via `ModsConfig.xml`. Some items ship their `Source/`.
+
+## Learned in the 2026-11-23 session (raid timing)
+
+- **Long waits on a ruins map without losing the caravan:** Debug actions → Settings → turn off **Enable Player Damage**
+  before entering. The DEV: Explore caravan then survives the trigger raids; defenders flee instead.
+- A trigger raid's letter **pauses the game**: poll with screenshots and unpause (`key space`) or you lose minutes.
+- Raid triggers log `spawned ... expected to fire at about tick N` and `fired at tick M`; M lands within one rare tick
+  (250) of N. Continuous (V2) raids log `next small raid not before tick N` after each one.
+- **V2 `destructionLevel` counts only `CountAsResource` things against a 150k reference:** a 157k blueprint gave 13k at
+  map generation and ~600 a day later (level 0.004), so the hostile cap was below 1 and V2 raids were a few points each,
+  firing only while no hostile was on the map.
