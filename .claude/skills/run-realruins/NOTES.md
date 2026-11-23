@@ -306,3 +306,20 @@ blueprint id) - that file also states the spawn philosophy: spawn what can be sp
   `scavengingMultiplier` 0 in `defaultScatterOptions` to see them.
 - **Staging has no planetary lists**: turn `useStagingEnvironment` off for planetary tests.
 - **1.7 map size** is in Create world → Advanced settings (Edit...), not on the site page.
+
+## Learned in the 2026-11-23 session (TPS profiling)
+
+- **TPS profiling (macOS, 1.7):** `~/.dotnet/tools/dotnet-trace collect -p <pid> --profile dotnet-sampled-thread-time
+  --format speedscope --duration 00:00:00:30 -o X.nettrace` while the game runs at speed 2-3, then
+  `speedscope_ticks.py X.speedscope.json 'RealRuins' 'WorldObjectsHolderTick|DoSingleTick'` (share of tick time per frame)
+  or `--callees 'Frame.Name()'`. The profile is "evented" (open/close events), not sampled stacks. ~1 ms resolution:
+  anything below a few ms per 30 s is noise. Only ~20% of wall time is ticking at speed 3; the rest is rendering.
+- **Save with POIs + a ruins map:** `PT-old-S5-poi` (1.7, 335 POIs, 250 settlements, 2 abandoned bases). Loading it asks
+  "Mods mismatch" (Load anyway) and then ~10 VEF "New faction" dialogs: "Do nothing" moves between y=576 (spawning
+  factions), 616 (non-spawning) and 640 (hidden) - a blind click on the wrong row adds a faction or sets "Don't ask again".
+  World view → the blue factory left of the lake is a POI; DEV: Explore it for a POI map with defenders. The explore
+  caravan dies within a minute and the map is removed (`Leaving POI map`), so start the trace right after the map appears.
+- **World object TickInterval runs every tick while the world view is open** (`UpdateRateTicks` 1 vs 15): profile from a
+  colony map, or the world-object share is inflated.
+- **Installing third-party mods downloaded by the agent into the game folder was refused by the permission classifier**
+  (2026-11-23, Random Start). Ask the user to subscribe in Steam instead.
