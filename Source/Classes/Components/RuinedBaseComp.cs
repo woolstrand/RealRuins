@@ -50,6 +50,8 @@ namespace RealRuins {
         private const int SmallRaidIntervalMin = 1800;
 
         private float destructionLevel = 0.0f; // 1.0 = intact, 0.0 = total destruction
+        // When the ruins were discovered (StartScavenging): raid triggers are scheduled from it on arrival. -1: unknown (older saves).
+        private int discoveryTick = -1;
 
         // True while raids may still come. In manual reform mode this blocks reforming (see FormCaravanComp_CanFormOrReform_Patch),
         // so the only way out is the map edge.
@@ -110,6 +112,10 @@ namespace RealRuins {
             if (state == RuinedBaseState.WaitingForArrival) {
                 state = RuinedBaseState.FightingWaves;
                 BuildRaidTriggersCache();
+                int sinceDiscovery = discoveryTick >= 0 ? Find.TickManager.TicksGame - discoveryTick : 0;
+                foreach (RaidTrigger trigger in triggersCache) {
+                    trigger.Reschedule(sinceDiscovery);
+                }
             }
 
             var map = (parent as MapParent)?.Map;
@@ -152,6 +158,7 @@ namespace RealRuins {
         public void StartScavenging(int initialCost) {
             currentCapCost = initialCost;
             raidersActivity = 0;
+            discoveryTick = Find.TickManager.TicksGame;
             state = RuinedBaseState.WaitingForArrival;
         }
 
@@ -167,6 +174,7 @@ namespace RealRuins {
             Scribe_Values.Look(ref successSignal, "successSignal", "");
             Scribe_Values.Look(ref allTriggersFiredTick, "allTriggersFiredTick", -1);
             Scribe_Values.Look(ref destructionLevel, "destructionLevel", 0.0f);
+            Scribe_Values.Look(ref discoveryTick, "discoveryTick", -1);
             Scribe_Values.Look(ref nextSmallRaidTick, "nextSmallRaidTick", -1);
         }
 

@@ -168,7 +168,7 @@ Inactive → WaitingForArrival → FightingWaves → WaitingForEnemiesToBeDefeat
 - Creates emergent time pressure: unvisited ruins are eventually looted by NPCs
 
 ### `PostMapGenerate()`
-Stores `referenceWealth = max(actual_map_wealth, 150000)` (saved) and sets `destructionLevel = actualCost / referenceWealth`. `referenceWealth` is used only for V2 force scaling and the unlock timer; `currentCapCost` keeps the value left by off-map scavenging. Saves from before this change overwrote `currentCapCost` with the reference value, and `ReferenceWealth` falls back to it.
+Stores `referenceWealth = max(actual_map_wealth, 150000)` (saved) and sets `destructionLevel = actualCost / referenceWealth`. `referenceWealth` is used only for V2 force scaling and the unlock timer; `currentCapCost` keeps the value left by off-map scavenging. On the first generation it also reschedules the raid triggers from the discovery time (see RaidTrigger). Saves from before this change overwrote `currentCapCost` with the reference value, and `ReferenceWealth` falls back to it.
 
 ### `DoRareTask()` (every 60 ticks)
 - V2 forces (only in `FightingWaves`): if hostile count < `15 × destructionLevel × forceMultiplier` AND total < 90: triggers small patrol raid (500–1500 pts × `destructionLevel` × `forceMultiplier`), then waits `max(1800, Gaussian(7200, 1800))` ticks before the next one (~95% of gaps 60–180 s at 1x). The first one may start right away. These raids run until the trigger phase ends (all triggers fired + 1000 ticks). `destructionLevel` is recomputed if a pre-fix save loaded it as 0.
@@ -209,7 +209,9 @@ Extends vanilla `FormCaravanComp`. Overrides only `GetGizmos()`: the reform butt
 
 ## RaidTrigger
 
-A `Thing` placed on the map. After a countdown (uniform 48–672 rare ticks of 250 game ticks: 0.2–2.8 days after map generation, 1.5 days on average), fires a `RaidEnemy` incident and destroys itself.
+A `Thing` placed on the map. After a countdown in rare ticks (250 game ticks), fires a `RaidEnemy` incident and destroys itself.
+
+Arrival times emulate neighbours' troops setting off when the ruins are discovered: Beta(2,3) over a 3-day window from discovery (few at first, most around day 1, a tail after). On arrival `RuinedBaseComp.PostMapGenerate` reschedules every trigger with the time since discovery (`discoveryTick`, set in `StartScavenging`, saved; counted up to 1.5 days) from what is left of that curve, and never sooner than 100 rare ticks (0.42 days) after entering. Entering right away: 0.42–2.9 days, median 1.24. Entering 1.5+ days after discovery: 0.42–1.5 days, median 0.66. Triggers on maps without a ruins site (no discovery) use the curve from 0. The count and size of the raids depend only on the ruins wealth at entering.
 
 **`IAttackTarget`** implementation is vestigial — `TargetPriorityFactor = 0` and `ThreatDisabled = true`, so it's invisible to AI targeting. Comment notes the "step-on-trigger" mechanic was abandoned.
 
