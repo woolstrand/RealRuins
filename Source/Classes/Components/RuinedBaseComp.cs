@@ -28,7 +28,7 @@ namespace RealRuins {
         public float unlockTargetTime = -1; //when all raids are done, the component sets random timeout after which you can exit the map
         public int currentCapCost = -1;
         public float raidersActivity = -1; //battle points amount of starting raiders group
-        // Map resource wealth at arrival, floored at 150k: the reference for V2 forces (destructionLevel) and the unlock timer.
+        // Map resource wealth at arrival, floored at 150k: the reference for the unlock timer.
         // currentCapCost is left as the off-map scavenging simulation made it (blueprint cost units).
         private float referenceWealth = -1;
         // Saves made before referenceWealth existed overwrote currentCapCost with this value on arrival.
@@ -49,9 +49,14 @@ namespace RealRuins {
         private const float SmallRaidIntervalWidth = 1800f;
         private const int SmallRaidIntervalMin = 1800;
 
-        private float destructionLevel = 0.0f; // 1.0 = intact, 0.0 = total destruction
         // When the ruins were discovered (StartScavenging): raid triggers are scheduled from it on arrival. -1: unknown (older saves).
         private int discoveryTick = -1;
+        // Continuous (V2) raids scale with the share of the map's items still there: resource wealth now / at arrival.
+        // Updated after each raid; 1.0 = nothing taken, 0.0 = everything gone.
+        private float initialItemWealth = -1;
+        private float itemsLeft = 0.0f;
+        private const float SmallRaidMinPoints = 50f;
+        private const float SmallRaidMaxPoints = 400f;
 
         // True while raids may still come. In manual reform mode this blocks reforming (see FormCaravanComp_CanFormOrReform_Patch),
         // so the only way out is the map edge.
@@ -123,7 +128,8 @@ namespace RealRuins {
             // For smaller bases we want to limit upcoming forces, so let's assume that a reference wealth is 150k, and neighbours
             // are not really interested in smaller wealths that much.
             referenceWealth = Math.Max(currentCost, 150000);
-            destructionLevel = currentCost / referenceWealth;
+            initialItemWealth = currentCost;
+            itemsLeft = 1.0f;
             Debug.Log(Debug.Generic, "Generated map. Cap cost: {0}, actual cost: {1}, reference wealth for forces: {2}.", currentCapCost, currentCost, referenceWealth);
         }
 
@@ -151,7 +157,8 @@ namespace RealRuins {
             allTriggersFiredTick = -1;
             triggersCache = null;
             referenceWealth = -1;
-            destructionLevel = 0;
+            initialItemWealth = -1;
+            itemsLeft = 0;
             nextSmallRaidTick = -1;
         }
 
@@ -173,8 +180,9 @@ namespace RealRuins {
             Scribe_Values.Look(ref expireSignal, "expireSignal", "");
             Scribe_Values.Look(ref successSignal, "successSignal", "");
             Scribe_Values.Look(ref allTriggersFiredTick, "allTriggersFiredTick", -1);
-            Scribe_Values.Look(ref destructionLevel, "destructionLevel", 0.0f);
             Scribe_Values.Look(ref discoveryTick, "discoveryTick", -1);
+            Scribe_Values.Look(ref initialItemWealth, "initialItemWealth", -1);
+            Scribe_Values.Look(ref itemsLeft, "itemsLeft", 0.0f);
             Scribe_Values.Look(ref nextSmallRaidTick, "nextSmallRaidTick", -1);
         }
 
@@ -219,21 +227,23 @@ namespace RealRuins {
             if (state == RuinedBaseState.FightingWaves) {
                 if (RealRuins_ModSettings.useRuinsForcesGenerationV2) {
                     var map = (parent as MapParent)?.Map;
-                    if (destructionLevel <= 0 && ReferenceWealth > 0) {
-                        //saves made before destructionLevel was saved load it as 0, which would stop the raids for good
-                        destructionLevel = GetTotalMapWealth(map) / ReferenceWealth;
+                    if (initialItemWealth < 0) {
+                        //saves made before initialItemWealth existed: count from the items on the map now
+                        initialItemWealth = GetTotalMapWealth(map);
+                        itemsLeft = 1.0f;
                     }
                     int hostileCount = map.mapPawns.AllPawnsSpawned.Count(p => p.HostileTo(Faction.OfPlayer));
-                    if (hostileCount < 15 * destructionLevel * RealRuins_ModSettings.forceMultiplier && map.mapPawns.AllPawnsSpawned.Count < 90) {
+                    if (hostileCount < 15 * itemsLeft * RealRuins_ModSettings.forceMultiplier && map.mapPawns.AllPawnsSpawned.Count < 90) {
                         int now = Find.TickManager.TicksGame;
                         if (now >= nextSmallRaidTick) {
-                            Debug.Log(Debug.Generic, "Triggering small raid");
-                            TriggerRaid((int)(Rand.Range(500, 1500) * destructionLevel * RealRuins_ModSettings.forceMultiplier));
+                            // a nuisance for unarmed haulers and animals, not a threat to armed pawns
+                            float points = Rand.Range(SmallRaidMinPoints, SmallRaidMaxPoints) * itemsLeft * RealRuins_ModSettings.forceMultiplier;
+                            Debug.Log(Debug.Generic, "Triggering small raid for {0} points", points);
+                            TriggerRaid(points);
 
-                            var currentWealth = GetTotalMapWealth(map);
-                            destructionLevel = currentWealth / ReferenceWealth;
+                            itemsLeft = initialItemWealth > 0 ? Math.Min(1.0f, GetTotalMapWealth(map) / initialItemWealth) : 0;
                             nextSmallRaidTick = now + Math.Max(SmallRaidIntervalMin, (int)Rand.Gaussian(SmallRaidIntervalMean, SmallRaidIntervalWidth));
-                            Debug.Log(Debug.Generic, "Destruction level is {0}, next small raid not before tick {1}", destructionLevel, nextSmallRaidTick);
+                            Debug.Log(Debug.Generic, "Items left: {0}, next small raid not before tick {1}", itemsLeft, nextSmallRaidTick);
                         }
                     }
                 }
@@ -290,7 +300,7 @@ namespace RealRuins {
         }
 
         // Triggers small raid to keep constant number of defenders
-        private void TriggerRaid(int points) {
+        private void TriggerRaid(float points) {
             var map = (parent as MapParent)?.Map;
             if (map == null) return;
 
@@ -302,6 +312,10 @@ namespace RealRuins {
             parms.target = map;
             parms.points = points;
             parms.faction = FactionSelector.GetRandomFaction();
+            if (parms.faction == null) return;
+            // below the faction's cheapest group the raid generates nobody
+            float minPoints = parms.faction.def.MinPointsToGeneratePawnGroup(PawnGroupKindDefOf.Combat);
+            if (minPoints < SmallRaidMaxPoints) parms.points = Math.Max(points, minPoints);
             parms.raidStrategy = RaidStrategyDefOf.ImmediateAttack;
             parms.canSteal = true;
             parms.canTimeoutOrFlee = true;
