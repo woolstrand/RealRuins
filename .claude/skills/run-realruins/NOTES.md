@@ -322,4 +322,8 @@ blueprint id) - that file also states the spawn philosophy: spawn what can be sp
 - **World object TickInterval runs every tick while the world view is open** (`UpdateRateTicks` 1 vs 15): profile from a
   colony map, or the world-object share is inflated.
 - **Installing third-party mods downloaded by the agent into the game folder was refused by the permission classifier**
-  (2026-11-23, Random Start). Ask the user to subscribe in Steam instead.
+  (2026-11-23, Random Start). Subscribe through the Steam client instead (with the user's OK).
+- **Subscribing on macOS:** `open "steam://url/CommunityFilePage/<id>"` shows the page in the Steam client. The driver's
+  `click/scroll` refuse to work without the game running; call the helper directly: `$TMPDIR/realruins-run/input move|click|scroll`,
+  and `screencapture` + `sips -Z 1512` for screenshots. The Subscribe button is below the screenshots carousel. The item lands in
+  `steamapps/workshop/content/294100/<id>` within seconds; activate it via `ModsConfig.xml`. Some items ship their `Source/`.
